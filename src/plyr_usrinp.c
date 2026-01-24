@@ -21,7 +21,7 @@
 
 #include <assert.h>
 #include "bfkeybd.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 
 #include "display.h"

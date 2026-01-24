@@ -22,7 +22,7 @@
 #include "bfstrut.h"
 #include <assert.h>
 
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 
 #include "campaign.h"
 #include "display.h"
@@ -369,7 +369,7 @@ void read_user_settings(void)
 
     i = -1;
     if (ctl_joystick_type)
-        i = joy_func_067(&joy, ctl_joystick_type);
+        i = joy_setup_device(&joy, ctl_joystick_type);
     if (i != 1)
         ctl_joystick_type = JTyp_NONE;
 }

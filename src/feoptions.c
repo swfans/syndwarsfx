@@ -25,7 +25,7 @@
 #include "bfaudio.h"
 #include "bfscd.h"
 
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "engindrwlstm.h"
 #include "femain.h"
 #include "feshared.h"

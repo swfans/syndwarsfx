@@ -49,7 +49,7 @@
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_vidraw.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 #include "matrix.h"
 #include "dos.h"
@@ -6979,8 +6979,45 @@ void load_packet(void)
 
 void joy_input(void)
 {
+#if 0
     asm volatile ("call ASM_joy_input\n"
         :  :  : "eax" );
+#endif
+    PlayerInfo *p_locplayer;
+    int i, dev_count;
+
+    joy_update_inputs(&joy);
+
+    p_locplayer = &players[local_player_no];
+    
+    if (p_locplayer->field_102 && (ingame.DisplayMode != DpM_PURPLEMNU))
+    {
+        if (ingame.DisplayMode == DpM_ENGINEPLY)
+        {
+            for (i = 0; i < joy.NumberOfDevices; i++)
+            {
+                if (joy.Init[i])
+                {
+                    ushort button_mask = jskeys[GKey_VIEW_SPIN_L] | jskeys[GKey_VIEW_SPIN_R];
+                    joy.Buttons[0] |= joy.Buttons[i] & button_mask;
+                }
+            }
+        }
+    }
+    else
+    {
+        dev_count = 0;
+        for (i = 0; i < joy.NumberOfDevices; i++)
+        {
+            if (joy.Init[i])
+            {
+                joy.Buttons[0] |= joy.Buttons[i];
+                joy.DigitalX[0] |= joy.DigitalX[i];
+                joy.DigitalY[0] |= joy.DigitalY[i];
+                dev_count++;
+            }
+        }
+    }
 }
 
 /** Orbital station explosion code.

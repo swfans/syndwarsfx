@@ -17,7 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 
 #include <string.h>
 #include <stdarg.h>
@@ -58,6 +58,19 @@ extern int16_t word_1E607A;
 extern int16_t word_1E607C;
 
 extern struct UnkVFXStruct1 vfxunk1;
+/******************************************************************************/
+struct TbInputHandler {
+    short InterruptNo;
+    short field_2;
+    ubyte field_4[128];
+    struct DevInput Input;
+};
+
+struct UnkVFXStruct1 {
+    short field_0;
+    short field_2;
+    short field_4;
+};
 /******************************************************************************/
 int JoySetInterrupt(short val)
 {
@@ -152,11 +165,11 @@ int joy_func_251(int val, int acen, int amin, int amax)
     return result;
 }
 
-int joy_func_063(char *textbuf)
+int joy_get_device_name(char *textbuf)
 {
 #if 0
     int ret;
-    asm volatile ("call ASM_joy_func_063\n"
+    asm volatile ("call ASM_joy_get_device_name\n"
         : "=r" (ret) : "a" (textbuf));
     return ret;
 #endif
@@ -179,7 +192,7 @@ int joy_func_063(char *textbuf)
     return Lb_SUCCESS;
 }
 
-void joy_func_065_lab93(struct DevInput *dinp, short ipos)
+void joy_update_inputs_lab93(struct DevInput *dinp, short ipos)
 {
     long val, thresh;
 
@@ -349,7 +362,7 @@ int CallJoy(ushort a1)
 
 #endif
 
-int joy_func_065_sub6(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub6(struct DevInput *dinp, short ipos)
 {
     if (InputHandler == NULL) {
         dinp->Type = 17;
@@ -363,7 +376,7 @@ int joy_func_065_sub6(struct DevInput *dinp, short ipos)
     return 1;
 }
 
-int joy_func_065_sub8(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub8(struct DevInput *dinp, short ipos)
 {
     long val, thresh;
 
@@ -447,7 +460,7 @@ int joy_func_065_sub8(struct DevInput *dinp, short ipos)
     return 0;
 }
 
-int joy_func_065_sub7(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub7(struct DevInput *dinp, short ipos)
 {
 #if defined(DOS)||defined(GO32)
     short gridx, i;
@@ -573,38 +586,38 @@ ubyte joy_port_unkn03_s(ubyte oval)
 }
 #endif
 
-int joy_func_065_sub9(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub9(struct DevInput *dinp, short ipos)
 {
 #if defined(DOS)||defined(GO32)
     if (!joy_port_unkn02_s(dinp->ConfigType[ipos] - 1))
         return 0;
 #endif
-    joy_func_065_lab93(dinp, ipos);
+    joy_update_inputs_lab93(dinp, ipos);
     return 0;
 }
 
-int joy_func_065_sub4(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub4(struct DevInput *dinp, short ipos)
 {
 #if defined(DOS)||defined(GO32)
     if (!joy_port_unkn01_s(dinp->ConfigType[ipos] - 1))
         return -1;
 #endif
     dinp->HatMax[ipos] = (dword_1E2F30 + dword_1E2F2C) >> 2;
-    joy_func_065_lab93(dinp, ipos);
+    joy_update_inputs_lab93(dinp, ipos);
     return 0;
 }
 
-int joy_func_065_sub1(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub1(struct DevInput *dinp, short ipos)
 {
 #if defined(DOS)||defined(GO32)
     if (!joy_port_unkn03_s(dinp->ConfigType[ipos] - 1))
         return -1;
 #endif
-    joy_func_065_lab93(dinp, ipos);
+    joy_update_inputs_lab93(dinp, ipos);
     return 0;
 }
 
-int joy_func_065_sub2(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub2(struct DevInput *dinp, short ipos)
 {
     int i;
 #if defined(DOS)||defined(GO32)
@@ -642,11 +655,11 @@ int joy_func_065_sub2(struct DevInput *dinp, short ipos)
         dinp->HatY[0] = 0;
         break;
     }
-    joy_func_065_lab93(dinp, ipos);
+    joy_update_inputs_lab93(dinp, ipos);
     return 0;
 }
 
-void joy_func_065_sub3(struct DevInput *dinp, short ipos, ubyte v115)
+void joy_update_inputs_sub3(struct DevInput *dinp, short ipos, ubyte v115)
 {
     int ret;
 
@@ -689,7 +702,7 @@ void joy_func_065_sub3(struct DevInput *dinp, short ipos, ubyte v115)
     }
 }
 
-int joy_func_065_sub5(struct DevInput *dinp, short ipos)
+int joy_update_inputs_sub5(struct DevInput *dinp, short ipos)
 {
     vfx1_unkn_func_03();
     dword_1E2F24 = word_1E6078;
@@ -698,11 +711,11 @@ int joy_func_065_sub5(struct DevInput *dinp, short ipos)
      dinp->AnalogueY[ipos] = dword_1E2F28;
     dword_1E2F30 = word_1E607C;
     dinp->AnalogueZ[ipos] = dword_1E2F30;
-    joy_func_065_lab93(dinp, ipos);
+    joy_update_inputs_lab93(dinp, ipos);
     return 0;
 }
 
-int joy_func_065(struct DevInput *dinp)
+int joy_update_inputs(struct DevInput *dinp)
 {
     short i, ipos;
     ubyte v115;
@@ -748,56 +761,56 @@ int joy_func_065(struct DevInput *dinp)
         case 5:
         case 0xC:
         case 0xD:
-            ret = joy_func_065_sub1(dinp, ipos);
+            ret = joy_update_inputs_sub1(dinp, ipos);
             if (ret != 0)
                 return ret;
             break;
         case 3:
         case 4:
         case 7:
-            ret = joy_func_065_sub2(dinp, ipos);
+            ret = joy_update_inputs_sub2(dinp, ipos);
             if (ret != 0)
                 return ret;
             break;
         case 6:
-            joy_func_065_sub3(dinp, ipos, v115);
+            joy_update_inputs_sub3(dinp, ipos, v115);
             ++v115;
             break;
         case 9:
         case 0xE:
         case 0xF:
-            ret = joy_func_065_sub4(dinp, ipos);
+            ret = joy_update_inputs_sub4(dinp, ipos);
             if (ret != 0)
                 return ret;
             break;
         case 0xB:
         case 0x16:
-            ret = joy_func_065_sub5(dinp, ipos);
+            ret = joy_update_inputs_sub5(dinp, ipos);
             if (ret != 0)
                 return ret;
             break;
         case 0x11:
-            joy_func_065_sub6(dinp, ipos);
+            joy_update_inputs_sub6(dinp, ipos);
             return ret;
             break;
         case 0x12:
-            ret = joy_func_065_sub7(dinp, ipos);
+            ret = joy_update_inputs_sub7(dinp, ipos);
             if (ret != 0)
                 return ret;
             break;
         case 0x13:
-            ret = joy_func_065_sub8(dinp, ipos);
+            ret = joy_update_inputs_sub8(dinp, ipos);
             if (ret != 0)
                 return ret;
             break;
         case 0x14:
         case 0x15:
-            ret = joy_func_065_sub9(dinp, ipos);
+            ret = joy_update_inputs_sub9(dinp, ipos);
             if (ret != 0)
                 return ret;
             break;
         default:
-            joy_func_065_lab93(dinp, ipos);
+            joy_update_inputs_lab93(dinp, ipos);
             break;
         }
     }
@@ -812,10 +825,10 @@ short vfx1_init(void)
     return ret;
 }
 
-int joy_func_066(struct DevInput *dinp)
+int joy_refresh_devices(struct DevInput *dinp)
 {
     int ret;
-    asm volatile ("call ASM_joy_func_066\n"
+    asm volatile ("call ASM_joy_refresh_devices\n"
         : "=r" (ret) : "a" (dinp));
     return ret;
 }
@@ -991,7 +1004,7 @@ ushort cbptr_call(short v26, intptr_t a2, int v27)
     return cb_ret;
 }
 
-int joy_func_067_sub1(void)
+int joy_setup_device_sub1(void)
 {
     short v26;
     int v27;
@@ -1024,7 +1037,7 @@ int joy_func_067_sub1(void)
     return dword_1E2F38;
 }
 
-int joy_func_067_sub2(void)
+int joy_setup_device_sub2(void)
 {
     int cbi;
 
@@ -1090,11 +1103,11 @@ int joy_enumerate_devices(struct DevInput *dinp)
     return dinp->NumberOfDevices;
 }
 
-int joy_func_067(struct DevInput *dinp, int jtype)
+int joy_setup_device(struct DevInput *dinp, int jtype)
 {
 #if 0
     int ret;
-    asm volatile ("call ASM_joy_func_067\n"
+    asm volatile ("call ASM_joy_setup_device\n"
         : "=r" (ret) : "a" (dinp), "d" (jtype));
     return ret;
 #endif
@@ -1115,7 +1128,7 @@ int joy_func_067(struct DevInput *dinp, int jtype)
     case 2:
     case 20:
     case 21:
-        jaddr = joy_func_067_sub1();
+        jaddr = joy_setup_device_sub1();
         if (jaddr == 1)
         {
             result = -1;
@@ -1154,7 +1167,7 @@ TRY_TYPE_01:
     case 4:
     case 7:
     case 8:
-        jaddr = joy_func_067_sub1();
+        jaddr = joy_setup_device_sub1();
         if (jaddr == 1)
         {
             result = -1;
@@ -1186,7 +1199,7 @@ TRY_TYPE_01:
     case 5:
     case 12:
     case 13:
-        jaddr = joy_func_067_sub1();
+        jaddr = joy_setup_device_sub1();
         if (jaddr == 1)
         {
             result = -1;
@@ -1218,7 +1231,7 @@ TRY_TYPE_05:
         break;
 
     case 6:
-        jaddr = joy_func_067_sub1();
+        jaddr = joy_setup_device_sub1();
         if (jaddr == 1)
         {
             result = -1;
@@ -1268,7 +1281,7 @@ TRY_TYPE_05:
 
     case 9:
 TRY_TYPE_09:
-        jaddr = joy_func_067_sub1();
+        jaddr = joy_setup_device_sub1();
         if (jaddr == 1)
         {
             result = -1;
@@ -1323,7 +1336,7 @@ TRY_TYPE_09:
 
     case 14:
     case 15:
-        jaddr = joy_func_067_sub1();
+        jaddr = joy_setup_device_sub1();
         if (jaddr == 1)
         {
             result = -1;
@@ -1368,9 +1381,9 @@ TRY_TYPE_09:
 
     case 18:
         if (byte_1E2F0C)
-          i = joy_func_067_sub1();
+          i = joy_setup_device_sub1();
         else
-          i = joy_func_067_sub2();
+          i = joy_setup_device_sub2();
         if (i != 1)
         {
             dinp->Type = -1;
@@ -1402,7 +1415,7 @@ TRY_TYPE_09:
 
     case 23:
     case 24:
-        jaddr = joy_func_067_sub1();
+        jaddr = joy_setup_device_sub1();
         if (jaddr == 1)
         {
             result = -1;
@@ -1605,4 +1618,5 @@ int joy_driver_shutdown(void)
     }
     return 1;
 }
+
 /******************************************************************************/

@@ -30,6 +30,7 @@ extern "C" {
 #pragma pack(1)
 
 enum GuiStrings {
+    GSTR_JOYSTICK = 463,
     // Names for network protocols
     GSTR_NET_PROTO_NAMES = 497,
     // Extra names for network protocols if modem is in use

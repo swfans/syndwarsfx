@@ -25,7 +25,7 @@
 #include "bfmemut.h"
 #include "bfscrcopy.h"
 #include "bfutility.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 
 #include "feappbar.h"

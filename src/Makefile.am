@@ -42,9 +42,6 @@ syndwarsfx_SOURCES = \
 	../swrendersoft/include/render_gpoly.h \
 	../swrendersoft/src/render_gpoly.c \
 	../swrendersoft/include/privrdlog.h \
-	bflib_joyst.c \
-	bflib_joyst.h \
-	bflib_joyst_s.sx \
 	bflib_snd_mss_s.sx \
 	bflib_vidraw.c \
 	bflib_vidraw.h \
@@ -174,8 +171,6 @@ syndwarsfx_SOURCES = \
 	hud_panel.h \
 	hud_target.c \
 	hud_target.h \
-	joy_modul1.sx \
-	joy_modul2.sx \
 	keyboard.c \
 	keyboard.h \
 	lvdraw3d.c \

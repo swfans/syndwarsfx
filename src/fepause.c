@@ -30,7 +30,7 @@
 #include "bfscd.h"
 #include "ssampply.h"
 
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "campaign.h"
 #include "display.h"
 #include "game_data.h"
@@ -409,7 +409,7 @@ void wait_for_keypress_end(ushort game_key, TbBool impatient)
     ended = false;
     while (!ended)
     {
-        joy_func_065(&joy);
+        joy_update_inputs(&joy);
 
         if (!is_gamekey_pressed(game_key))
             ended = true;
@@ -632,7 +632,7 @@ TbBool pause_screen_handle(void)
     resume_game = false;
     while (!resume_game)
     {
-        joy_func_065(&joy);
+        joy_update_inputs(&joy);
 
         affected = input_pause_screen();
 

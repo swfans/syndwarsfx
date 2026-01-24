@@ -21,7 +21,7 @@
 #include "bfkeybd.h"
 #include "bftext.h"
 #include "bfutility.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 
 #include "femain.h"
@@ -168,9 +168,9 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     wpos_y = 126;
 
     lbDisplay.DrawFlags |= 0x8000;
-    if (ctl_joystick_type == JTyp_EXT_DRIVER)
+    if (ctl_joystick_type == JTyp_EXT_DRIVER || ctl_joystick_type == JTyp_SDL_GAMECONTROLLER)
     {
-      if (joy_func_063(locstr) != -1)
+      if (joy_get_device_name(locstr) != -1)
       {
         text = loctext_to_gtext(locstr);
         tx_width = my_string_width(locstr);
@@ -199,7 +199,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
             ubyte v24;
 
             if (ctl_joystick_type != JTyp_NONE)
-                joy_func_066(&joy);
+                joy_refresh_devices(&joy);
             lbDisplay.LeftButton = 0;
 
             v23 = -1;
@@ -214,7 +214,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
                     ctl_joystick_type = JTyp_NONE;
                 }
                 if (unkn01_maskarr[ctl_joystick_type])
-                    v23 = joy_func_067(&joy, ctl_joystick_type);
+                    v23 = joy_setup_device(&joy, ctl_joystick_type);
                 if (!v24)
                     v24 = 1;
             }
@@ -282,7 +282,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
                     n_found++;
                 i++;
             }
-            sprintf(locstr, "%s %d", gui_strings[463], i);
+            sprintf(locstr, "Bob %s %d", gui_strings[463], i);
             text = loctext_to_gtext(locstr);
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         }
