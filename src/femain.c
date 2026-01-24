@@ -31,6 +31,8 @@
 
 #include "app_gentab.h"
 #include "app_sprite.h"
+#include "engincolour.h"
+
 #include "campaign.h"
 #include "display.h"
 #include "feappbar.h"

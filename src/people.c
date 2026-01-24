@@ -26,13 +26,14 @@
 #include "bfutility.h"
 #include "ssampply.h"
 
+#include "engincolour.h"
+#include "drawtext.h"
+
 #include "bmbang.h"
 #include "bigmap.h"
 #include "building.h"
 #include "command.h"
-#include "display.h"
 #include "drawtext_wrp.h"
-#include "drawtext.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "engintrns.h"
@@ -2516,10 +2517,12 @@ void camera_track_thing(short thing, TbBool revert)
     {
         ThingIdx dcthing;
         dcthing = players[local_player_no].DirectControl[0];
+        LOGDBG("Revert track to dcthing offs=%d", (int)dcthing);
         ingame.TrackThing = 0;
         game_set_cam_track_thing_xz(dcthing);
         return;
     }
+    LOGDBG("Begin track thing offs=%d", (int)thing);
     ingame.TrackThing = thing;
 }
 
@@ -2540,6 +2543,12 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     struct Thing *p_othertng;
     StateChRes res;
     short othertng;
+
+    if ((debug_log_things & 0x01) != 0) {
+        LOGSYNC("%s %d inits %s %d",
+          thing_type_name(p_person->Type, p_person->SubType),
+          (int)p_person->ThingOffset, command_codename(cmd), (int)cmd);
+    }
 
     p_cmd = &game_commands[cmd];
     switch (p_cmd->Type)

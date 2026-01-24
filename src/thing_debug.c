@@ -24,13 +24,14 @@
 #include "bfmath.h"
 
 #include "drawtext.h"
+#include "engincolour.h"
+#include "engintrns.h"
 
 #include "bigmap.h"
 #include "building.h"
 #include "command.h"
 #include "drawtext_wrp.h"
 #include "display.h"
-#include "engintrns.h"
 #include "game.h"
 #include "game_options.h"
 #include "game_sprts.h"

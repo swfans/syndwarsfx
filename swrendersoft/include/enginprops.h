@@ -27,6 +27,10 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum RenderFloorFlags {
+  RendFlrF_NonPlanetary = 0x01,
+  RendFlrF_WobblyTerrain = 0x02,
+};
 
 #pragma pack()
 /******************************************************************************/
@@ -42,6 +46,12 @@ extern "C" {
  * the game code.
  */
 extern u32 render_anim_turn;
+
+/** Floor rendering flags.
+ *
+ * Affects how the floor is rendered.
+ */
+extern u32 render_floor_flags;
 
 /** Amount of available screen points, cached in render module to optimize speed.
  *

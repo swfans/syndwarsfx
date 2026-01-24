@@ -25,6 +25,8 @@
 #include "insspr.h"
 #include <assert.h>
 
+#include "enginfloor.h"
+#include "enginpeff.h"
 #include "enginprops.h"
 #include "render_gpoly.h"
 
@@ -32,18 +34,15 @@
 #include "display.h"
 #include "drawtext.h"
 #include "enginbckt.h"
+#include "engincolour.h"
 #include "engindrwlstm.h"
-#include "enginfexpl.h"
-#include "enginfloor.h"
 #include "enginlights.h"
-#include "enginpeff.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "enginshadws.h"
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "frame_sprani.h"
-#include "game_data.h"
 #include "game_options.h"
 #include "game_speed.h"
 #include "game_sprts.h"
@@ -52,7 +51,6 @@
 #include "player.h"
 #include "scandraw.h"
 #include "thing.h"
-#include "thing_onface.h"
 #include "swlog.h"
 #include "vehicle.h"
 /******************************************************************************/
@@ -204,11 +202,6 @@ uint cummulate_shade_from_quick_lights(ushort light_first)
             shade += intens * p_qlight->Ratio;
         }
         return shade;
-}
-
-ushort floor_texture_index(struct SingleFloorTexture *p_sftex)
-{
-    return (p_sftex - game_textures);
 }
 
 /**
@@ -363,7 +356,6 @@ ubyte check_mouse_overlap(ushort sspr)
     struct ScreenBoxBase box;
     struct SortSprite *p_sspr;
     struct Frame *p_frm;
-    PlayerInfo *p_locplayer;
 
     p_sspr = &game_sort_sprites[sspr];
     box.X = p_sspr->X + ((overall_scale * word_1A5834) >> 8);
@@ -373,19 +365,20 @@ ubyte check_mouse_overlap(ushort sspr)
     box.Width = (overall_scale * p_frm->SWidth) >> 9;
     box.Height = (overall_scale * p_frm->SHeight) >> 9;
 
-    p_locplayer = &players[local_player_no];
     if (box.Width < 16)
     {
-        box.X -= ((17 - box.Width) >> 1);
+        box.X -= ((16 + 1 - box.Width) >> 1);
         box.Width = 16;
     }
     if (box.Height < 20) {
-        box.Y -= ((21 - box.Height) >> 1);
+        box.Y -= ((20 + 1 - box.Height) >> 1);
         box.Height = 20;
     }
 
     if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
     {
+        PlayerInfo *p_locplayer;
+        p_locplayer = &players[local_player_no];
         p_locplayer->Target = p_sspr->PThing->ThingOffset;
         p_locplayer->TargetType = TrgTp_Unkn7;
         return 1;
@@ -519,217 +512,6 @@ ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
         return 1;
     }
     return 0;
-}
-
-void draw_sort_sprite1a_callback(ushort sspr)
-{
-    struct Thing *p_thing;
-    PlayerInfo *p_locplayer;
-
-    p_locplayer = &players[local_player_no];
-    p_thing = game_sort_sprites[sspr].PThing;
-    if ((p_locplayer->TargetType <= TrgTp_DroppedTng) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
-        check_mouse_overlap_item(sspr);
-    }
-
-    if ((p_locplayer->TargetType < TrgTp_Unkn6) && (p_thing->Type == TT_MINE))
-    {
-        if ((p_thing->SubType == 7) || (p_thing->SubType == 3))
-            check_mouse_overlap_item(sspr);
-        else if (p_thing->SubType == 48)
-            check_mouse_overlap(sspr);
-    }
-}
-
-void draw_sort_sprite1a(ushort sspr)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_sort_sprite1a\n"
-        : : "a" (a1));
-    return;
-#endif
-    struct SortSprite *p_sspr;
-
-    p_sspr = &game_sort_sprites[sspr];
-
-    word_1A5834 = 120;
-    word_1A5836 = 120;
-    draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
-    draw_sort_sprite1a_callback(sspr);
-}
-
-void draw_floor_tile1a(ushort tl)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_floor_tile1a\n"
-        : : "a" (tl));
-    return;
-#endif
-    struct FloorTile *p_floortl;
-    struct PolyPoint point3;
-    struct PolyPoint point1;
-    struct PolyPoint point2;
-    struct PolyPoint point4;
-    int dist;
-
-    p_floortl = &game_floor_tiles[tl];
-    vec_colour = p_floortl->Col;
-    vec_mode = p_floortl->Flags;
-    if ((p_floortl->Flags == 5) || (p_floortl->Flags == 21))
-    {
-        if (engine_render_lights) {
-            if (current_map == 11) // map011 Orbital Station
-                vec_mode = 6;
-        } else {
-            if (p_floortl->Flags == 5)
-                vec_mode = 2;
-            else
-                vec_mode = 19;
-        }
-        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4, &point3, &point1, 0);
-    }
-    point1.X = p_floortl->X[0];
-    point1.Y = p_floortl->Y[0];
-    point1.S = p_floortl->Shade[0] << 7;
-    point2.X = p_floortl->X[3];
-    point2.Y = p_floortl->Y[3];
-    point2.S = p_floortl->Shade[3] << 7;
-    point3.X = p_floortl->X[1];
-    point3.Y = p_floortl->Y[1];
-    point3.S = p_floortl->Shade[1] << 7;
-    point4.X = p_floortl->X[2];
-    point4.Y = p_floortl->Y[2];
-    point4.S = p_floortl->Shade[2] << 7;
-
-    if (game_perspective == 7) {
-        vec_mode = 7;
-        vec_colour = point3.S >> 16;
-    }
-
-    dist = (point3.Y - point2.Y) * (point2.X - point1.X)
-       - (point3.X - point2.X) * (point2.Y - point1.Y);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-
-    dist = (point2.X - point3.X) * (point4.Y - point2.Y)
-       - (point2.Y - point3.Y) * (point4.X - point2.X);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point3, &point2, &point4);
-    }
-    dword_176D4C += 2;
-
-    // damage overlays
-    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
-    {
-        vec_mode = 6;
-        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
-        draw_trigpoly(&point1, &point2, &point3);
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point3, &point2, &point4);
-        dword_176D4C += 2;
-    }
-}
-
-
-void draw_floor_tile1b(ushort tl)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_floor_tile1b\n"
-        : : "a" (tl));
-    return;
-#endif
-    struct FloorTile *p_floortl;
-    struct PolyPoint point2;
-    struct PolyPoint point1;
-    struct PolyPoint point4;
-    struct PolyPoint point3;
-    int dist;
-
-    p_floortl = &game_floor_tiles[tl];
-    vec_colour = p_floortl->Col;
-    vec_mode = p_floortl->Flags;
-    if ((p_floortl->Flags == 5) || (p_floortl->Flags == 21))
-    {
-        if (engine_render_lights) {
-            if (current_map == 11) // map011 Orbital Station
-                vec_mode = 6;
-        } else {
-            if (p_floortl->Flags == 5)
-                vec_mode = 2;
-            else
-                vec_mode = 19;
-        }
-        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4, &point3, &point1, 0);
-    }
-    point1.X = p_floortl->X[0];
-    point1.Y = p_floortl->Y[0];
-    point1.S = p_floortl->Shade[0] << 7;
-    point2.X = p_floortl->X[3];
-    point2.Y = p_floortl->Y[3];
-    point2.S = p_floortl->Shade[3] << 7;
-    point3.X = p_floortl->X[1];
-    point3.Y = p_floortl->Y[1];
-    point3.S = p_floortl->Shade[1] << 7;
-    point4.X = p_floortl->X[2];
-    point4.Y = p_floortl->Y[2];
-    point4.S = p_floortl->Shade[2] << 7;
-
-    if (game_perspective == 7) {
-        vec_mode = 7;
-        vec_colour = point3.S << 16;
-    }
-
-    dist = (point2.X - point1.X) * (point4.Y - point2.Y)
-       - (point2.Y - point1.Y) * (point4.X - point2.X);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point4);
-    }
-    dist = (point3.X - point4.X) * (point1.Y - point3.Y)
-       - (point3.Y - point4.Y) * (point1.X - point3.X);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point1);
-    }
-    dword_176D4C += 2;
-
-    // damage overlays
-    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
-    {
-        vec_mode = 6;
-        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
-        draw_trigpoly(&point1, &point2, &point4);
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point1);
-        dword_176D4C += 2;
-    }
-    //TODO why the second time using the same page?
-    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
-    {
-        vec_mode = 6;
-        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
-        draw_trigpoly(&point1, &point2, &point4);
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point1);
-        dword_176D4C += 2;
-    }
 }
 
 /**
@@ -1184,12 +966,7 @@ void draw_object_face3_textrd(ushort face)
 
     if ((p_face->GFlags & FGFlg_Unkn04) != 0)
     {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < TrgTp_Unkn3) {
-            check_mouse_over_face(&point1, &point2, &point3, face, 1);
-        }
+        screen_position_face_render_cb(&point1, &point2, &point3, face, 1);
     }
 
     if (byte_1C844E) {
@@ -1364,12 +1141,7 @@ void draw_object_face4d_textrd(ushort face4)
 
     if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < TrgTp_Unkn3) {
-            check_mouse_over_face(&point1, &point2, &point3, face4, 2);
-        }
+        screen_position_face_render_cb(&point1, &point2, &point3, face4, 2);
     }
 
     if (p_face4->Texture != 0)
@@ -1408,12 +1180,7 @@ void draw_object_face4d_textrd(ushort face4)
 
     if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < TrgTp_Unkn3) {
-            check_mouse_over_face(&point4, &point3, &point2, face4, 3);
-        }
+        screen_position_face_render_cb(&point4, &point3, &point2, face4, 3);
     }
 }
 
@@ -1522,12 +1289,7 @@ void draw_object_face4_deep_rdr(ushort face4)
 
     if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < TrgTp_Unkn3) {
-            check_mouse_over_face(&point1, &point2, &point3, face4, 2);
-        }
+        screen_position_face_render_cb(&point1, &point2, &point3, face4, 2);
     }
 
     poly_line(&point4, &point3);
@@ -1535,12 +1297,7 @@ void draw_object_face4_deep_rdr(ushort face4)
 
     if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < TrgTp_Unkn3) {
-            check_mouse_over_face(&point4, &point3, &point2, face4, 3);
-        }
+        screen_position_face_render_cb(&point4, &point3, &point2, face4, 3);
     }
 }
 
@@ -1598,12 +1355,7 @@ void draw_object_face3_deep_rdr(ushort face)
 
     if ((p_face->GFlags & FGFlg_Unkn04) != 0)
     {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if (p_locplayer->TargetType < TrgTp_Unkn3) {
-            check_mouse_over_face(&point1, &point2, &point3, face, 1);
-        }
+        screen_position_face_render_cb(&point1, &point2, &point3, face, 1);
     }
 }
 
@@ -1788,6 +1540,9 @@ void draw_drawitem_2(ushort dihead)
     struct DrawItem *itm;
     ushort iidx;
     ushort i;
+
+    assert(screen_position_face_render_cb != NULL);
+    assert(screen_sorted_sprite_render_cb != NULL);
 
     i = 0;
     for (iidx = dihead; iidx != 0; iidx = itm->Child)

@@ -25,8 +25,9 @@
 #include "bfscreen.h"
 #include "ssampply.h"
 
+#include "engincolour.h"
+
 #include "bigmap.h"
-#include "display.h"
 #include "game.h"
 #include "game_options.h"
 #include "keyboard.h"

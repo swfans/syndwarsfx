@@ -35,6 +35,7 @@ extern uint32_t MSSSpeed;
 extern uint32_t MSSTimerPeriod;
 
 extern uint32_t timeradjust;
+extern uint32_t lasttimerread;
 extern uint32_t mss_i_count;
 extern uint32_t sndinit;
 extern uint32_t msstimer;
@@ -399,7 +400,10 @@ uint32_t RADAPI DEFSMACKTIMERREAD(void)
     return 2746 * (uint64_t)(timeradjust + tick) / 50;
 #else
     clock_t tick = clock();
-    return 1000 * (uint64_t)tick / CLOCKS_PER_SEC;
+    if ((uint32_t)tick < lasttimerread)
+        timeradjust += lasttimerread - tick;
+    lasttimerread = tick;
+    return 1000 * (uint64_t)(timeradjust + tick) / CLOCKS_PER_SEC;
 #endif
 }
 
@@ -425,6 +429,9 @@ void RADAPI DEFSMACKTIMERSETUP(void)
     outb(0x43, 0x34);
     outb(0x40, 0);
     outb(0x40, 0);
+#else
+    clock_t tick = clock();
+    timeradjust = -tick;
 #endif
 }
 

@@ -26,6 +26,7 @@
 #include "bigmap.h"
 #include "display.h"
 #include "enginbckt.h"
+#include "engincolour.h"
 #include "engindrwlstx.h"
 #include "enginfloor.h"
 #include "enginsngobjs.h"
@@ -242,7 +243,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
     struct SortSprite *p_sspr;
     int scr_depth;
 
-    if (current_map == 9) // map009 Singapore on-water map
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
         y += waft_table[gameturn & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
@@ -270,7 +271,7 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
     struct SortSprite *p_sspr;
     int scr_depth;
 
-    if (current_map == 9) // map009 Singapore on-water map
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
         y += waft_table[gameturn & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
@@ -299,7 +300,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 
     bri = byte_152EF0[p_thing->SubType] + intensity;
 
-    if (current_map == 9) // map009 Singapore on-water map
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
         y += waft_table[gameturn & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
@@ -359,7 +360,7 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
         y = p_flame->y - engn_yc;
         z = p_flame->z - engn_zc;
 
-        if (current_map == 9) // map009 Singapore on-water map
+        if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
             y += waft_table[gameturn & 0x1F];
 
         transform_shpoint(&sp, x, y - 8 * engn_yc, z);
@@ -1159,7 +1160,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
       faceWH = 0;
     }
 
-    if (current_map == 9) // map009 Singapore on-water map
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
         offset_y += waft_table[gameturn & 0x1F];
 
     for (i = point_object->StartPoint; i < point_object->EndPoint; i++)

@@ -360,6 +360,7 @@ extern struct CommandDef command_defs[];
 extern struct Command *game_commands;
 extern ushort next_command;
 
+const char *command_codename(ushort cmd);
 void snprint_command(char *buf, ulong buflen, ushort cmd);
 TbBool is_command_any_until(struct Command *p_cmd);
 

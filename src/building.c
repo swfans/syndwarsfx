@@ -23,10 +23,12 @@
 #include "bfmemory.h"
 #include "bfutility.h"
 
+#include "enginprops.h"
+#include "enginsngobjs.h"
+
 #include "ssampply.h"
 #include "bigmap.h"
 #include "bmbang.h"
-#include "enginsngobjs.h"
 #include "game_options.h"
 #include "game_speed.h"
 #include "game.h"
@@ -512,7 +514,7 @@ void collapse_building(short x, short y, short z, struct Thing *p_building)
         struct SingleObject *p_sobj;
 
         p_sobj = &game_objects[p_building->U.UObject.Object];
-        if (((p_sobj->field_1C & 0x0100) == 0) || current_map == 9) // map009 Singapore on-water map
+        if (((p_sobj->field_1C & 0x0100) == 0) || ((render_floor_flags & RendFlrF_WobblyTerrain) != 0))
         {
             short cra_cor_x, cra_cor_z;
 

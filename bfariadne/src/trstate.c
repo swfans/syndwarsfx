@@ -27,10 +27,6 @@
 
 void triangulation_initialize(void)
 {
-#if 0
-    asm volatile ("call ASM_triangulation_initialize\n"
-        :  :  : "eax" );
-#endif
     int n;
 
     for (n = 0; n < TRIANGULATIONS_COUNT; n++)

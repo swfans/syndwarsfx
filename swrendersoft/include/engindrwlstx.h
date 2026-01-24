@@ -63,6 +63,14 @@ struct SortLine {
 };
 
 struct TbSprite;
+struct PolyPoint;
+
+typedef void (*ScreenTriangleRenderCallback)(
+  struct PolyPoint *p_pt1,
+  struct PolyPoint *p_pt2,
+  struct PolyPoint *p_pt3,
+  ushort face, ubyte type);
+typedef void (*ScreenSortSpriteRenderCallback)(ushort sspr);
 
 #pragma pack()
 /******************************************************************************/
@@ -89,11 +97,18 @@ extern ushort next_special_face4;
 
 extern ubyte engine_render_lights;
 
+extern ScreenTriangleRenderCallback screen_position_face_render_cb;
+extern ScreenSortSpriteRenderCallback screen_sorted_sprite_render_cb;
+
 /******************************************************************************/
 
 void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y,
   ushort scale, ushort alpha);
 void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte csel);
+void draw_sort_sprite1a(ushort sspr);
+
+void draw_floor_tile1a(ushort tl);
+void draw_floor_tile1b(ushort tl);
 
 uint cummulate_shade_from_quick_lights(ushort light_first);
 

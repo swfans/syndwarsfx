@@ -63,6 +63,11 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1);
 
 struct FloorTile *draw_item_add_floor_tile(ubyte ditype, int bckt);
 
+// Mouse overlap, to be moved somewhere matching
+
+ubyte check_mouse_overlap_item(ushort sspr);
+ubyte check_mouse_overlap(ushort sspr);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

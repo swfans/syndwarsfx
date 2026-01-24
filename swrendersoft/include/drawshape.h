@@ -1,15 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
-/** @file timer.h
- *     Time counting and time related events implementation.
+/** @file drawshape.h
+ *     Header file for drawshape.c.
  * @par Purpose:
- *     Additional app-specific time related routines, expanding what is
- *     available in bflibrary.
+ *     Drawing simple 2D shapes within the 3D world.
  * @par Comment:
- *     None.
+ *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     10 Oct 2012 - 13 Oct 2021
+ * @date     19 Apr 2022 - 20 Jan 2026
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,20 +16,26 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include <SDL.h>
-#include <assert.h>
-#include <stdint.h>
+#ifndef DRAWSHAPE_H
+#define DRAWSHAPE_H
 
-#include "timer.h"
+#include "bftypes.h"
 
-#include "sound.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+/******************************************************************************/
+#pragma pack(1)
 
+
+#pragma pack()
 /******************************************************************************/
 
-uint32_t
-timer_get_18_2_hz_ticks (void)
-{
-  return (((uint64_t) SDL_GetTicks () * 1193182 / 1000) >> 15);
+void draw_line_transformed_col(int x1, int y1, int z1, int x2, int y2, int z2,
+  TbPixel colour);
+
+/******************************************************************************/
+#ifdef __cplusplus
 }
-
-/******************************************************************************/
+#endif
+#endif

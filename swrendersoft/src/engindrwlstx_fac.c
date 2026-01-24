@@ -24,8 +24,9 @@
 #include "bfgentab.h"
 #include "poly.h"
 
-#include "display.h"
+#include "engincolour.h"
 #include "enginfexpl.h"
+#include "enginfloor.h"
 #include "enginprops.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
@@ -34,6 +35,8 @@
 #include "engintxtrmap.h"
 #include "render_gpoly.h"
 #include "privrdlog.h"
+
+#include "engindrwlstm.h"
 /******************************************************************************/
 #define SINGLE_TEXTURE_DIM 32
 
@@ -44,6 +47,9 @@ extern s32 engn_nuclear_shade_timer;
 extern s32 engn_nuclear_shade_x;
 extern s32 engn_nuclear_shade_y;
 extern s32 engn_nuclear_shade_z;
+
+ScreenTriangleRenderCallback screen_position_face_render_cb = NULL;
+
 /******************************************************************************/
 
 void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
@@ -1125,6 +1131,178 @@ void draw_object_face4d_textrd_dk(ushort face4)
         draw_trigpoly(&point4, &point2, &point3);
     }
     dword_176D4C++;
+}
+
+void draw_floor_tile1a(ushort tl)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_floor_tile1a\n"
+        : : "a" (tl));
+    return;
+#endif
+    struct FloorTile *p_floortl;
+    struct PolyPoint point3;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point4;
+    int dist;
+
+    p_floortl = &game_floor_tiles[tl];
+    vec_colour = p_floortl->Col;
+    vec_mode = p_floortl->Flags;
+    if ((p_floortl->Flags == 5) || (p_floortl->Flags == 21))
+    {
+        if (engine_render_lights) {
+            if ((render_floor_flags & RendFlrF_NonPlanetary) != 0)
+                vec_mode = 6; // Different light mode
+        } else {
+            if (p_floortl->Flags == 5)
+                vec_mode = 2;
+            else
+                vec_mode = 19;
+        }
+        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4, &point3, &point1, 0);
+    }
+    point1.X = p_floortl->X[0];
+    point1.Y = p_floortl->Y[0];
+    point1.S = p_floortl->Shade[0] << 7;
+    point2.X = p_floortl->X[3];
+    point2.Y = p_floortl->Y[3];
+    point2.S = p_floortl->Shade[3] << 7;
+    point3.X = p_floortl->X[1];
+    point3.Y = p_floortl->Y[1];
+    point3.S = p_floortl->Shade[1] << 7;
+    point4.X = p_floortl->X[2];
+    point4.Y = p_floortl->Y[2];
+    point4.S = p_floortl->Shade[2] << 7;
+
+    if (game_perspective == 7) {
+        vec_mode = 7;
+        vec_colour = point3.S >> 16;
+    }
+
+    dist = (point3.Y - point2.Y) * (point2.X - point1.X)
+       - (point3.X - point2.X) * (point2.Y - point1.Y);
+    if (dist > 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    dist = (point2.X - point3.X) * (point4.Y - point2.Y)
+       - (point2.Y - point3.Y) * (point4.X - point2.X);
+    if (dist > 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point3, &point2, &point4);
+    }
+    dword_176D4C += 2;
+
+    // damage overlays
+    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
+    {
+        vec_mode = 6;
+        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+        draw_trigpoly(&point1, &point2, &point3);
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point3, &point2, &point4);
+        dword_176D4C += 2;
+    }
+}
+
+void draw_floor_tile1b(ushort tl)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_floor_tile1b\n"
+        : : "a" (tl));
+    return;
+#endif
+    struct FloorTile *p_floortl;
+    struct PolyPoint point2;
+    struct PolyPoint point1;
+    struct PolyPoint point4;
+    struct PolyPoint point3;
+    int dist;
+
+    p_floortl = &game_floor_tiles[tl];
+    vec_colour = p_floortl->Col;
+    vec_mode = p_floortl->Flags;
+    if ((p_floortl->Flags == 5) || (p_floortl->Flags == 21))
+    {
+        if (engine_render_lights) {
+            if ((render_floor_flags & RendFlrF_NonPlanetary) != 0)
+                vec_mode = 6; // Different light mode
+        } else {
+            if (p_floortl->Flags == 5)
+                vec_mode = 2;
+            else
+                vec_mode = 19;
+        }
+        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4, &point3, &point1, 0);
+    }
+    point1.X = p_floortl->X[0];
+    point1.Y = p_floortl->Y[0];
+    point1.S = p_floortl->Shade[0] << 7;
+    point2.X = p_floortl->X[3];
+    point2.Y = p_floortl->Y[3];
+    point2.S = p_floortl->Shade[3] << 7;
+    point3.X = p_floortl->X[1];
+    point3.Y = p_floortl->Y[1];
+    point3.S = p_floortl->Shade[1] << 7;
+    point4.X = p_floortl->X[2];
+    point4.Y = p_floortl->Y[2];
+    point4.S = p_floortl->Shade[2] << 7;
+
+    if (game_perspective == 7) {
+        vec_mode = 7;
+        vec_colour = point3.S << 16;
+    }
+
+    dist = (point2.X - point1.X) * (point4.Y - point2.Y)
+       - (point2.Y - point1.Y) * (point4.X - point2.X);
+    if (dist > 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point4);
+    }
+    dist = (point3.X - point4.X) * (point1.Y - point3.Y)
+       - (point3.Y - point4.Y) * (point1.X - point3.X);
+    if (dist > 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point1);
+    }
+    dword_176D4C += 2;
+
+    // damage overlays
+    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
+    {
+        vec_mode = 6;
+        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+        draw_trigpoly(&point1, &point2, &point4);
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point1);
+        dword_176D4C += 2;
+    }
+    //TODO why the second time using the same page?
+    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
+    {
+        vec_mode = 6;
+        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+        draw_trigpoly(&point1, &point2, &point4);
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point1);
+        dword_176D4C += 2;
+    }
 }
 
 /**

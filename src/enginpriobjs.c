@@ -79,7 +79,7 @@ void point_unkn_func_03(struct SinglePoint *p_point)
     p_point->Z = z >> 6;
 }
 
-static TbBool face_textures_equal(struct SingleTexture *p_textr1, struct SingleTexture *p_textr2)
+static TbBool face_textures_equal(const struct SingleTexture *p_textr1, const struct SingleTexture *p_textr2)
 {
     return ((p_textr1->TMapX1 == p_textr2->TMapX1)
          && (p_textr1->TMapX2 == p_textr2->TMapX2)
@@ -90,7 +90,7 @@ static TbBool face_textures_equal(struct SingleTexture *p_textr1, struct SingleT
          && (p_textr1->Page == p_textr2->Page));
 }
 
-static TbBool floor_textures_equal(struct SingleFloorTexture *p_textr1, struct SingleFloorTexture *p_textr2)
+static TbBool floor_textures_equal(const struct SingleFloorTexture *p_textr1, const struct SingleFloorTexture *p_textr2)
 {
     return ((p_textr1->TMapX1 == p_textr2->TMapX1)
          && (p_textr1->TMapX2 == p_textr2->TMapX2)
@@ -101,6 +101,13 @@ static TbBool floor_textures_equal(struct SingleFloorTexture *p_textr1, struct S
          && (p_textr1->TMapY3 == p_textr2->TMapY3)
          && (p_textr1->TMapY4 == p_textr2->TMapY4)
          && (p_textr1->Page == p_textr2->Page));
+}
+
+static TbBool normals_equal(const struct Normal *p_nrml1, const struct Normal *p_nrml2)
+{
+    return ((p_nrml1->NX == p_nrml2->NX) &&
+          (p_nrml1->NY == p_nrml2->NY) &&
+          (p_nrml1->NZ == p_nrml2->NZ));
 }
 
 /** Find within game_face_textures index of a texture equivalent to given.
@@ -135,9 +142,29 @@ ushort find_floor_texture(struct SingleFloorTexture *p_textr)
     return 0;
 }
 
+ushort find_normal(struct Normal *p_normal)
+{
+    struct Normal *p_cnormal;
+    ushort nrml;
+
+    for (nrml = 1; nrml < next_normal; nrml++)
+    {
+        p_cnormal = &game_normals[nrml];
+        if (normals_equal(p_normal, p_cnormal))
+            return nrml;
+    }
+    return 0;
+}
+
 void calc_normal(short face, struct Normal *p_normal)
 {
     asm volatile ("call ASM_calc_normal\n"
+        : : "a" (face), "d" (p_normal));
+}
+
+void calc_normal4(short face, struct Normal *p_normal)
+{
+    asm volatile ("call ASM_calc_normal4\n"
         : : "a" (face), "d" (p_normal));
 }
 
@@ -150,32 +177,58 @@ ushort obj_face3_create_normal(short face)
         : "=r" (ret) : "a" (face));
     return ret;
 #else
-    struct Normal loc_norm;
-    struct Normal *p_nnorm;
+    struct Normal loc_nrml;
+    struct Normal *p_nnrml;
     ushort i;
 
-    calc_normal(face, &loc_norm);
-    for (i = 0; i < next_normal; i++) //TODO why are we treating 0 as correct value?
+    loc_nrml.LightRatio = 0;
+    calc_normal(face, &loc_nrml);
+    i = find_normal(&loc_nrml);
+    if (i == 0)
     {
-        p_nnorm = &game_normals[i];
-        if ((loc_norm.NX == p_nnorm->NX) &&
-          (loc_norm.NY == p_nnorm->NY) &&
-          (loc_norm.NZ == p_nnorm->NZ))
-            break;
-    }
-    if (i == next_normal)
-    {
-        ushort new_norm;
+        ushort nrml;
 
-        if (next_normal + 1 >= mem_game[8].N)
+        if (next_normal + 1 >= mem_game[8].N) {
             return 0;
-        new_norm = next_normal++;
-        p_nnorm = &game_normals[new_norm];
-        memcpy(p_nnorm, &loc_norm, sizeof(struct Normal));
-        i = new_norm;
+        }
+        nrml = next_normal++;
+        p_nnrml = &game_normals[nrml];
+        memcpy(p_nnrml, &loc_nrml, sizeof(struct Normal));
+        i = nrml;
     }
     return i;
 #endif
+}
+
+ushort obj_face4_create_normal(short face)
+{
+#if 0
+    int ret;
+    asm volatile (
+      "call ASM_obj_face4_create_normal\n"
+        : "=r" (ret) : "a" (a1));
+    return ret;
+#endif
+    struct Normal loc_nrml;
+    struct Normal *p_nnrml;
+    int i;
+
+    loc_nrml.LightRatio = 0;
+    calc_normal4(face, &loc_nrml);
+    i = find_normal(&loc_nrml);
+    if (i == 0)
+    {
+        ushort nrml;
+
+        if (next_normal + 1 > mem_game[8].N) {
+            return 0;
+        }
+        nrml = next_normal++;
+        p_nnrml = &game_normals[nrml];
+        memcpy(p_nnrml, &loc_nrml, sizeof(struct Normal));
+        i = nrml;
+    }
+    return i;
 }
 
 void update_texture_from_anim_tmap(ushort ani_tmap)
@@ -209,15 +262,6 @@ void update_texture_from_anim_tmap(ushort ani_tmap)
         }
     }
 #endif
-}
-
-int obj_face4_create_normal(ushort a1)
-{
-    int ret;
-    asm volatile (
-      "call ASM_obj_face4_create_normal\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
 }
 
 void prim_obj_mem_debug(int itm_beg, int itm_end)

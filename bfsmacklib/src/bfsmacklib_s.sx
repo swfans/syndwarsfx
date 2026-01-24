@@ -10215,71 +10215,6 @@ GLOBAL_FUNC(ASM_smkmalloc)
 		ret
 
 
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_DEFSMACKTIMERSETUP)	/* 10f110 */
-/*----------------------------------------------------------------*/
-		mov    $ac_DEFSMACKTIMERREAD,%edx
-		mov    $0x46c,%eax
-		mov    $ac_DEFSMACKTIMERDONE,%ebx
-		mov    %edx,SmackTimerReadAddr
-
-		/* XXX: mov    (%eax),%eax */
-		call   ac_timer_get_18_2_hz_ticks
-
-		mov    %ebx,EXPORT_SYMBOL(SmackTimerDoneAddr)
-		mov    %eax,%ecx
-		mov    %eax,EXPORT_SYMBOL(timeradjust)
-		neg    %ecx
-		xor    %ebx,%ebx
-		mov    %ecx,EXPORT_SYMBOL(timeradjust)
-/* XXX: cut out */
-#if 0
-		mov    $0x34,%al
-		out    %al,$0x43
-		jmp    jump_10f144
-	jump_10f144:
-		mov    %bl,%al
-		out    %al,$0x40
-		jmp    jump_10f14a
-	jump_10f14a:
-		mov    %bh,%al
-		out    %al,$0x40
-#endif
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_DEFSMACKTIMERDONE)	/* 0x10F150 */
-/*----------------------------------------------------------------*/
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_DEFSMACKTIMERREAD)
-/*----------------------------------------------------------------*/
-		mov    $0x46c,%eax
-		mov    _lasttimerread,%edx
-
-		/* mov    (%eax),%eax */
-		call   ac_timer_get_18_2_hz_ticks
-
-		cmp    %edx,%eax
-		jae    jump_10f181
-		mov    EXPORT_SYMBOL(timeradjust),%ebx
-		sub    %eax,%edx
-		add    %edx,%ebx
-		mov    %ebx,EXPORT_SYMBOL(timeradjust)
-	jump_10f181:
-		mov    $0x32,%ebx
-		mov    EXPORT_SYMBOL(timeradjust),%ecx
-		mov    %eax,_lasttimerread
-		add    %ecx,%eax
-		mov    $0xaba,%ecx
-		mul    %ecx
-		div    %ebx
-		ret
-
-
 .data
 
 _smack_malloc:
@@ -10746,6 +10681,6 @@ GLOBAL (smack_draw_callback)	/* 0x1E5A2C */
 		.long	0x0
 GLOBAL (timeradjust)
 		.long	0x0
-_lasttimerread:	/* 0x1ED5E4 */
+GLOBAL (lasttimerread)	/* 0x1ED5E4 */
 		.long	0x0
 

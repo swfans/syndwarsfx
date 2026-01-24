@@ -233,6 +233,24 @@ struct CommandDef command_defs[] = {
 
 ushort next_command = 1;
 
+const char *command_codename(ushort cmd)
+{
+    struct Command *p_cmd;
+    struct CommandDef *p_cdef;
+
+    if (cmd >= next_command) {
+        return "TNG_CMD_INVALID";
+    }
+    p_cmd = &game_commands[cmd];
+
+    if (p_cmd->Type > PCmd_TYPES_COUNT) {
+        return "TNG_CMD_BADTYPE";
+    }
+    p_cdef = &command_defs[p_cmd->Type];
+
+    return p_cdef->CmdName;
+}
+
 void snprint_command(char *buf, ulong buflen, ushort cmd)
 {
     struct Command *p_cmd;

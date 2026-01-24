@@ -20,12 +20,14 @@
 
 #include "bfgentab.h"
 #include "bfmath.h"
+#include "bfscreen.h"
 #include "bfutility.h"
 
 #include "app_sprite.h"
+#include "engincolour.h"
+
 #include "bigmap.h"
 #include "campaign.h"
-#include "display.h"
 #include "player.h"
 #include "thing.h"
 #include "thing_search.h"

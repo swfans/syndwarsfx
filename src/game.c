@@ -40,6 +40,7 @@
 #include "bftringl.h"
 #include "bfscd.h"
 
+#include "engincolour.h"
 #include "enginprops.h"
 #include "engintxtrmap.h"
 
@@ -133,14 +134,13 @@
 #include "scandraw.h"
 #include "thing.h"
 #include "thing_search.h"
+#include "thing_onface.h"
 #include "tngcolisn.h"
 #include "tngobjdrw.h"
 #include "vehicle.h"
 #include "wadfile.h"
 #include "weapon.h"
 #include "wrcities.h"
-
-#include "timer.h"
 
 /** Expected sizes for font DAT/TAB files for resolution 320x200.
  * Each file has 205 sprites, TAB has 6 bytes per entry, DAT varies to use empirical value.
@@ -171,17 +171,16 @@ ushort word_1531E0 = 1;
 
 ushort next_mission = 1;
 
-extern ulong stored_l3d_next_object;
-extern ulong stored_l3d_next_object_face;
-extern ulong stored_l3d_next_object_face4;
-extern ulong stored_l3d_next_object_point;
-extern ulong stored_l3d_next_normal;
-extern ulong stored_l3d_next_face_texture;
-extern ulong stored_l3d_next_floor_texture;
-extern ulong stored_l3d_next_local_mat;
-extern ulong stored_level3d_inuse;
+ulong stored_l3d_next_object;
+ulong stored_l3d_next_object_face;
+ulong stored_l3d_next_object_face4;
+ulong stored_l3d_next_object_point;
+ulong stored_l3d_next_normal;
+ulong stored_l3d_next_face_texture;
+ulong stored_l3d_next_floor_texture;
+ulong stored_l3d_next_local_mat;
+ulong stored_level3d_inuse;
 
-extern unsigned char *display_palette;
 extern int data_1c8428;
 const char *primvehobj_fname = "qdata/primveh.obj";
 
@@ -1310,6 +1309,16 @@ void change_current_map(ushort mapno)
     init_things();
     load_mad_pc(mapno);
     fill_floor_textures();
+
+    if (current_map == 11) // map011 Orbital Station
+        render_floor_flags |= RendFlrF_NonPlanetary;
+    else
+        render_floor_flags &= ~RendFlrF_NonPlanetary;
+
+    if (current_map == 9) // map009 Singapore on-water map
+        render_floor_flags |= RendFlrF_WobblyTerrain;
+    else
+        render_floor_flags &= ~RendFlrF_WobblyTerrain;
 }
 
 void traffic_unkn_func_01(void)
@@ -1722,6 +1731,40 @@ ubyte get_engine_inputs(void)
     return did_inp;
 }
 
+void screen_position_face_render_callback(
+  struct PolyPoint *p_pt1,
+  struct PolyPoint *p_pt2,
+  struct PolyPoint *p_pt3,
+  ushort face, ubyte type)
+{
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    if (p_locplayer->TargetType < TrgTp_Unkn3) {
+        check_mouse_over_face(p_pt1, p_pt2, p_pt3, face, type);
+    }
+}
+
+void screen_sorted_sprite_1a_render_callback(ushort sspr)
+{
+    struct Thing *p_thing;
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+    p_thing = game_sort_sprites[sspr].PThing;
+    if ((p_locplayer->TargetType <= TrgTp_DroppedTng) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
+        check_mouse_overlap_item(sspr);
+    }
+
+    if ((p_locplayer->TargetType < TrgTp_Unkn6) && (p_thing->Type == TT_MINE))
+    {
+        if ((p_thing->SubType == 7) || (p_thing->SubType == 3))
+            check_mouse_overlap_item(sspr);
+        else if (p_thing->SubType == 48)
+            check_mouse_overlap(sspr);
+    }
+}
+
 void process_engine_unk3(void)
 {
     PlayerInfo *p_locplayer;
@@ -1729,6 +1772,8 @@ void process_engine_unk3(void)
     get_engine_inputs();
 
     reset_drawlist();
+    screen_position_face_render_cb = screen_position_face_render_callback;
+    screen_sorted_sprite_render_cb = screen_sorted_sprite_1a_render_callback;
     player_target_clear(local_player_no);
     mech_unkn_dw_1DC880 = mech_unkn_tile_x1;
     mech_unkn_dw_1DC884 = mech_unkn_tile_y1;

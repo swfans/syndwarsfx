@@ -37,6 +37,11 @@ extern ubyte textwalk_data[640];
 
 /******************************************************************************/
 
+ushort floor_texture_index(struct SingleFloorTexture *p_sftex)
+{
+    return (p_sftex - game_textures);
+}
+
 /** Convert given texture index into page+U+V coordinates in texture atlas.
  */
 void texture_index_to_page_u_v(ubyte *p_page, ubyte *p_tmap_u, ubyte *p_tmap_v, int index)

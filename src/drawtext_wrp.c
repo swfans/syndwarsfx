@@ -20,21 +20,32 @@
 /******************************************************************************/
 #include "drawtext_wrp.h"
 
+#include "bfline.h"
 #include "bfscreen.h"
 
 #include "drawtext.h"
-#include "bigmap.h"
-#include "display.h"
+#include "drawshape.h"
+#include "engincolour.h"
 #include "engintrns.h"
+
+#include "bigmap.h"
 #include "swlog.h"
 /******************************************************************************/
 
-void draw_line_transformed_at_ground(int x1, int y1, int x2, int y2, TbPixel colour)
+void draw_line_transformed_at_ground(int x1, int z1, int x2, int z2, TbPixel colour)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_draw_line_transformed_at_ground\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
+        : : "a" (x1), "d" (z1), "b" (x2), "c" (z2), "g" (colour));
+#endif
+    int coord1_y, coord2_y;
+
+    coord1_y = PRCCOORD_TO_YCOORD(alt_at_point(x1, z1));
+    coord2_y = PRCCOORD_TO_YCOORD(alt_at_point(x2, z2));
+
+    draw_line_transformed_col(x1, coord1_y, z1, x2, coord2_y, z2, colour);
 }
 
 void draw_text_transformed_at_ground(int coord_x, int coord_z, const char *text)

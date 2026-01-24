@@ -21,12 +21,14 @@
 #include <stdio.h>
 #include "bfline.h"
 
-#include "bigmap.h"
-#include "display.h"
 #include "drawtext.h"
-#include "drawtext_wrp.h"
+#include "engincolour.h"
 #include "engintrns.h"
 #include "enginzoom.h"
+
+#include "bigmap.h"
+#include "display.h"
+#include "drawtext_wrp.h"
 #include "thing.h"
 /******************************************************************************/
 

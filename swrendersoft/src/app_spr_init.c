@@ -26,7 +26,8 @@
 #include "insspr.h"
 #include "bfscreen.h"
 
-#include "display.h"
+#include "engincolour.h"
+/******************************************************************************/
 
 void LowTransGrey_InitPaletteBright(void)
 {

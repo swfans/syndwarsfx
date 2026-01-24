@@ -24,11 +24,13 @@
 #include "bfsprite.h"
 #include "insspr.h"
 
+#include "engincolour.h"
+#include "engintrns.h"
+
 #include "bigmap.h"
 #include "display.h"
 #include "engindrwlstm.h"
 #include "engindrwlstx.h"
-#include "engintrns.h"
 #include "frame_sprani.h"
 #include "game_sprts.h"
 #include "game.h"

@@ -64,17 +64,17 @@ struct ScreenBox brief_graphical_box = {0};
 extern sbyte selected_netscan_objective;// = -1;
 extern char unkn39_text[];
 
-extern ubyte brief_state_city_selected;
-extern ubyte brief_citymap_content;// = BriCtM_AUTO_SCANNER;
+ubyte brief_state_city_selected = 0;
+ubyte brief_citymap_content = BriCtM_AUTO_SCANNER;
 
 /** Amount of cities available in brief of a selected mail message.
  */
-extern long mail_num_active_cities;
+long mail_num_active_cities = 0;
 
-extern long dword_1C47E0;
-extern ubyte byte_1C47E4;
-extern short word_1C47E6;
-extern short word_1C47E8;
+long dword_1C47E0 = 0;
+ubyte byte_1C47E4 = 0;
+short word_1C47E6 = 0;
+short word_1C47E8 = 0;
 
 /******************************************************************************/
 

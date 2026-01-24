@@ -24,6 +24,11 @@
 #include "bfmath.h"
 #include "bfmemut.h"
 
+#include "drawtext.h"
+#include "engincolour.h"
+#include "enginfexpl.h"
+#include "enginlights.h"
+
 #include "bat.h"
 #include "triangls.h"
 #include "trpoints.h"
@@ -33,9 +38,6 @@
 #include "campaign.h"
 #include "command.h"
 #include "display.h"
-#include "drawtext.h"
-#include "enginfexpl.h"
-#include "enginlights.h"
 #include "enginpriobjs.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
@@ -72,15 +74,15 @@ struct BillboardNBreakout {
 
 TbBool level_deep_fix = false;
 
-extern ulong stored_g3d_next_object[1];
-extern ulong stored_g3d_next_object_face[1];
-extern ulong stored_g3d_next_object_face4[1];
-extern ulong stored_g3d_next_object_point[1];
-extern ulong stored_g3d_next_normal[1];
-extern ulong stored_g3d_next_face_texture[1];
-extern ulong stored_g3d_next_floor_texture[1];
-extern ulong stored_g3d_next_local_mat[1];
-extern ulong stored_global3d_inuse[1];
+ulong stored_g3d_next_object;
+ulong stored_g3d_next_object_face;
+ulong stored_g3d_next_object_face4;
+ulong stored_g3d_next_object_point;
+ulong stored_g3d_next_normal;
+ulong stored_g3d_next_face_texture;
+ulong stored_g3d_next_floor_texture;
+ulong stored_g3d_next_local_mat;
+ulong stored_global3d_inuse;
 
 extern struct QuickLoad quick_load_pc[19];
 
@@ -130,36 +132,36 @@ void global_3d_store(int action)
 {
     if (action == 2)
     {
-        if (stored_global3d_inuse[0])
+        if (stored_global3d_inuse)
             draw_text(100, 120, " GLOBAL 3d STORED ->INUSE", colour_lookup[ColLU_RED]);
     }
     else if (action == 1)
     {
-        if (stored_global3d_inuse[0])
+        if (stored_global3d_inuse)
         {
-            next_object = stored_g3d_next_object[0];
-            next_object_face = stored_g3d_next_object_face[0];
-            next_object_face4 = stored_g3d_next_object_face4[0];
-            next_object_point = stored_g3d_next_object_point[0];
-            next_normal = stored_g3d_next_normal[0];
-            next_face_texture = stored_g3d_next_face_texture[0];
-            next_floor_texture = stored_g3d_next_floor_texture[0];
-            next_local_mat = stored_g3d_next_local_mat[0];
-            stored_global3d_inuse[0] = 0;
+            next_object = stored_g3d_next_object;
+            next_object_face = stored_g3d_next_object_face;
+            next_object_face4 = stored_g3d_next_object_face4;
+            next_object_point = stored_g3d_next_object_point;
+            next_normal = stored_g3d_next_normal;
+            next_face_texture = stored_g3d_next_face_texture;
+            next_floor_texture = stored_g3d_next_floor_texture;
+            next_local_mat = stored_g3d_next_local_mat;
+            stored_global3d_inuse = 0;
         }
     } else
     {
-        if (!stored_global3d_inuse[0])
+        if (!stored_global3d_inuse)
         {
-            stored_g3d_next_object[0] = next_object;
-            stored_g3d_next_object_face[0] = next_object_face;
-            stored_g3d_next_object_face4[0] = next_object_face4;
-            stored_g3d_next_object_point[0] = next_object_point;
-            stored_g3d_next_normal[0] = next_normal;
-            stored_g3d_next_face_texture[0] = next_face_texture;
-            stored_g3d_next_floor_texture[0] = next_floor_texture;
-            stored_g3d_next_local_mat[0] = next_local_mat;
-            stored_global3d_inuse[0] = 1;
+            stored_g3d_next_object = next_object;
+            stored_g3d_next_object_face = next_object_face;
+            stored_g3d_next_object_face4 = next_object_face4;
+            stored_g3d_next_object_point = next_object_point;
+            stored_g3d_next_normal = next_normal;
+            stored_g3d_next_face_texture = next_face_texture;
+            stored_g3d_next_floor_texture = next_floor_texture;
+            stored_g3d_next_local_mat = next_local_mat;
+            stored_global3d_inuse = 1;
         }
     }
 }

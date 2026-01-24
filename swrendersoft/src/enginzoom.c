@@ -21,8 +21,10 @@
 #include "bfmath.h"
 #include "bfutility.h"
 
-#include "display.h"
+#include "engincolour.h"
 #include "privrdlog.h"
+
+#include "display.h"
 /******************************************************************************/
 
 extern long dword_176D70;

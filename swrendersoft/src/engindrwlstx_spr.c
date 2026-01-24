@@ -27,8 +27,8 @@
 #include "bfsprite.h"
 #include "insspr.h"
 
-#include "display.h"
 #include "drawtext.h"
+#include "engincolour.h"
 #include "engindrwlstm.h"
 #include "enginshrapn.h"
 #include "enginzoom.h"
@@ -55,6 +55,9 @@ extern struct TbSprite *unkn1_spr;
 
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
+
+ScreenSortSpriteRenderCallback screen_sorted_sprite_render_cb = NULL;
+
 /******************************************************************************/
 
 void draw_sort_line(struct SortLine *p_sline)
@@ -418,6 +421,24 @@ void draw_sort_sprite1c(ushort sspr)
     struct SortSprite *p_sspr;
     p_sspr = &game_sort_sprites[sspr];
     draw_sort_sprite1c_sub(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, p_sspr->Scale);
+}
+
+void draw_sort_sprite1a(ushort sspr)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_sort_sprite1a\n"
+        : : "a" (a1));
+    return;
+#endif
+    struct SortSprite *p_sspr;
+
+    p_sspr = &game_sort_sprites[sspr];
+
+    word_1A5834 = 120;
+    word_1A5836 = 120;
+    draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
+    screen_sorted_sprite_render_cb(sspr);
 }
 
 /**

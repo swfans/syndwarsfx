@@ -26,6 +26,8 @@
 #include "bfmemut.h"
 #include "bfini.h"
 
+#include "engincolour.h"
+
 #include "bigmap.h"
 #include "campaign.h"
 #include "drawtext.h"
@@ -37,7 +39,6 @@
 #include "player.h"
 #include "scanner.h"
 #include "scandraw.h"
-#include "display.h"
 #include "game.h"
 #include "game_options.h"
 #include "game_speed.h"

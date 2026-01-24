@@ -17725,7 +17725,7 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		mov    display_palette,%eax
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
-		mov    %edx,EXPORT_SYMBOL(dword_1AA270)
+		mov    %edx,EXPORT_SYMBOL(colour_lookup_lock)
 		xor    %edx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
@@ -17794,7 +17794,7 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		mov    %ecx,EXPORT_SYMBOL(unkn_changing_color_counter1)
 		xor    %ebx,%ebx
 		mov    EXPORT_SYMBOL(unkn_changing_color_counter1),%ah
-		mov    %ebx,EXPORT_SYMBOL(dword_1AA270)
+		mov    %ebx,EXPORT_SYMBOL(colour_lookup_lock)
 		test   $0x1,%ah
 		je     jump_41276
 		mov    EXPORT_SYMBOL(colour_lookup)+0x05,%al
@@ -18564,7 +18564,7 @@ GLOBAL_FUNC(ASM_obj_face4_create_normal)	/* 0x420f8 */
 	jump_4211f:
 		mov    %esp,%edx
 		and    $0xffff,%eax
-		call   calc_normal4
+		call   ac_calc_normal4
 		mov    EXPORT_SYMBOL(next_normal),%cx
 		xor    %eax,%eax
 		mov    %cx,%ax
@@ -23258,7 +23258,7 @@ GLOBAL_FUNC (ASM_calc_normal)	/* 0x045B84 */
 
 
 /*----------------------------------------------------------------*/
-calc_normal4:	/* 0x045DD4 */
+GLOBAL_FUNC(ASM_calc_normal4)	/* 0x045DD4 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -75957,7 +75957,7 @@ GLOBAL_FUNC (ASM_init_level_3d)	/* 0x07445C */
 		xor    %ebx,%ebx
 		mov    %ax,EXPORT_SYMBOL(next_floor_texture)
 		mov    EXPORT_SYMBOL(stored_l3d_next_local_mat),%ax
-		mov    %ebx,stored_level3d_inuse
+		mov    %ebx,EXPORT_SYMBOL(stored_level3d_inuse)
 		mov    %ax,EXPORT_SYMBOL(next_local_mat)
 		jmp    jump_745aa
 	jump_744d3:
@@ -75986,7 +75986,7 @@ GLOBAL_FUNC (ASM_init_level_3d)	/* 0x07445C */
 		xor    %eax,%eax
 		xor    %esi,%esi
 		mov    EXPORT_SYMBOL(next_local_mat),%ax
-		mov    %edx,stored_level3d_inuse
+		mov    %edx,EXPORT_SYMBOL(stored_level3d_inuse)
 		mov    %eax,EXPORT_SYMBOL(stored_l3d_next_local_mat)
 		xor    %ebp,%ebp
 		jmp    jump_74586
@@ -89854,40 +89854,6 @@ Synd_nav_rulesA2B:	/* 0x07E85C */
 		and    $0x6,%edx
 		sete   %al
 		and    $0xff,%eax
-		ret
-
-
-/*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_triangulation_initialize)	/* 0x7E898 */
-/*----------------------------------------------------------------*/
-		push   %ebx
-		push   %edx
-		mov    $0x1,%edx
-		xor    %eax,%eax
-		mov    %edx,EXPORT_SYMBOL(triangulation_initied)
-		mov    $0xffffffff,%ebx
-		xor    %edx,%edx
-	jump_7e8ae:
-		add    $0x3c,%eax
-		mov    %edx,EXPORT_SYMBOL(stored_level3d_inuse)(%eax)
-		mov    %edx,EXPORT_SYMBOL(stored_g3d_next_object)(%eax)
-		mov    %ebx,EXPORT_SYMBOL(stored_g3d_next_object_face)(%eax)
-		mov    %edx,EXPORT_SYMBOL(stored_g3d_next_object_face4)(%eax)
-		mov    %edx,EXPORT_SYMBOL(stored_g3d_next_object_point)(%eax)
-		mov    %ebx,EXPORT_SYMBOL(stored_g3d_next_normal)(%eax)
-		mov    %edx,EXPORT_SYMBOL(stored_g3d_next_face_texture)(%eax)
-		mov    %edx,EXPORT_SYMBOL(stored_g3d_next_floor_texture)(%eax)
-		mov    %edx,EXPORT_SYMBOL(stored_g3d_next_local_mat)(%eax)
-		mov    %edx,EXPORT_SYMBOL(stored_global3d_inuse)(%eax)
-		mov    %edx,EXPORT_SYMBOL(things_init_times)(%eax)
-		mov    %ebx,EXPORT_SYMBOL(word_1AABD0)(%eax)
-		mov    %edx,EXPORT_SYMBOL(data_1aabd4)(%eax)
-		mov    %edx,EXPORT_SYMBOL(data_1aabd8)(%eax)
-		mov    %edx,EXPORT_SYMBOL(data_1aabdc)(%eax)
-		cmp    $0x258,%eax
-		jne    jump_7e8ae
-		pop    %edx
-		pop    %ebx
 		ret
 
 
@@ -107581,7 +107547,7 @@ GLOBAL_FUNC(ASM_show_net_comms_box)	/* 0x08E7EC */
 		mov    login_control__State,%al
 		cmp    $0x5,%eax
 		jne    jump_8eaf3
-		mov    data_1c47e9,%eax
+		mov    EXPORT_SYMBOL(net_unkn1_text)-3,%eax
 		sar    $0x18,%eax
 		test   %eax,%eax
 		je     jump_8eaf3
@@ -181602,7 +181568,7 @@ data_1aa21e:
 		.fill   0x4e
 GLOBAL (unkn_changing_color_counter1)	/* 0x1AA26C */
 		.long	0x0
-GLOBAL (dword_1AA270)	/* 0x1AA270 */
+GLOBAL (colour_lookup_lock)	/* 0x1AA270 */
 		.long	0x0
 
 GLOBAL (data_1aa330)	/* 0x1aa330 */
@@ -181766,42 +181732,6 @@ data_1aab7c:
 		.long	0x0
 data_1aab80:
 		.long	0x0
-GLOBAL (stored_l3d_next_object)	/* 0x1AAB84 */
-		.long	0x0
-GLOBAL (stored_l3d_next_object_face)	/* 0x1AAB88 */
-		.long	0x0
-GLOBAL (stored_l3d_next_object_face4)	/* 0x1AAB8C */
-		.long	0x0
-GLOBAL (stored_l3d_next_object_point)	/* 0x1AAB90 */
-		.long	0x0
-GLOBAL (stored_l3d_next_normal)	/* 0x1AAB94 */
-		.long	0x0
-GLOBAL (stored_l3d_next_face_texture)	/* 0x1AAB98 */
-		.long	0x0
-GLOBAL (stored_l3d_next_floor_texture)	/* 0x1AAB9C */
-		.long	0x0
-GLOBAL (stored_l3d_next_local_mat)	/* 0x1AABA0 */
-		.long	0x0
-GLOBAL (stored_level3d_inuse)	/* 0x1AABA4 */
-		.long	0x0
-GLOBAL (stored_g3d_next_object)	/* 0x1aaba8 */
-		.long	0x0
-GLOBAL (stored_g3d_next_object_face)	/* 0x1aabac */
-		.long	0x0
-GLOBAL (stored_g3d_next_object_face4)	/* 0x1aabb0 */
-		.long	0x0
-GLOBAL (stored_g3d_next_object_point)	/* 0x1aabb4 */
-		.long	0x0
-GLOBAL (stored_g3d_next_normal)	/* 0x1aabb8 */
-		.long	0x0
-GLOBAL (stored_g3d_next_face_texture)	/* 0x1aabbc */
-		.long	0x0
-GLOBAL (stored_g3d_next_floor_texture)	/* 0x1aabc0 */
-		.long	0x0
-GLOBAL (stored_g3d_next_local_mat)	/* 1aabc4 */
-		.long	0x0
-GLOBAL (stored_global3d_inuse)	/* 0x1AABC8 */
-		.long	0x0
 
 GLOBAL (things_init_times)	/* 0x1AABCC */
 		.long	0x0
@@ -181813,7 +181743,6 @@ GLOBAL (data_1aabd4)
 		.long	0x0
 GLOBAL (data_1aabd8)	/* 0x1AABD8 */
 		.long	0x0
-GLOBAL (data_1aabdc)
 		.long	0x0
 GLOBAL (triangulation)	/* 0x1AABE0 */
 		.long	0x0
@@ -182058,24 +181987,6 @@ data_1c4770:
 		.long	0x0
 
 
-GLOBAL (brief_state_city_selected)	/* 0x1C47D8 */
-		.byte	0x0
-GLOBAL (brief_citymap_content)	/* 0x1C47D9 */
-		.byte	0x0
-		.ascii  "\x00\x00"
-GLOBAL (mail_num_active_cities)	/* 0x1C47DC */
-		.long	0x0
-GLOBAL (dword_1C47E0)	/* 0x1C47E0 */
-		.long	0x0
-GLOBAL (byte_1C47E4)	/* 0x1C47E4 */
-		.byte	0x0
-		.byte	0x0
-GLOBAL (word_1C47E6)	/* 0x1C47E6 */
-		.short  0x0
-GLOBAL (word_1C47E8)	/* 0x1C47E8 */
-		.byte	0x0
-data_1c47e9:
-		.byte	0x0
 GLOBAL (byte_1C47EA)	/* 0x1C47EA */
 		.short  0x0
 GLOBAL (net_unkn1_text)	/* 0x1C47EC */
