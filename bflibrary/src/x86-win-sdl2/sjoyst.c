@@ -82,7 +82,7 @@ int joy_update_inputs(struct DevInput *dinp)
         
         // Read analog stick axes (standardized)
         dinp->AnalogueX[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
-        dinp->AnalogueY[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY);
+        dinp->AnalogueY[i] = -SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY);
         dinp->AnalogueZ[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX);
         dinp->AnalogueR[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY);
         dinp->AnalogueU[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
@@ -113,8 +113,6 @@ int joy_update_inputs(struct DevInput *dinp)
 
 int joy_refresh_devices(struct DevInput *dinp)
 {
-    // SDL2 implementation - reinitialize game controllers
-    // First close existing ones
     for (int i = 0; i < sdl_num_controllers; i++) {
         if (sdl_controllers[i]) {
             SDL_GameControllerClose(sdl_controllers[i]);
@@ -170,8 +168,6 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
     // Setup basic controller parameters
     for (int i = 0; i < sdl_num_controllers; i++) {
         if (sdl_controllers[i]) {
-            dinp->DeviceType[i] = 112;
-            // GameController has standardized 15 buttons
             dinp->NumberOfButtons[i] = SDL_CONTROLLER_BUTTON_MAX;
             dinp->Init[i] = 1;
             dinp->ConfigType[i] = jtype;
@@ -264,7 +260,7 @@ TbResult JEvent(const SDL_Event *ev)
 
     case SDL_CONTROLLERDEVICEADDED:
     case SDL_CONTROLLERDEVICEREMOVED:
-        // Could handle hot-plugging here
+        joy_refresh_devices(dinp);
         break;
     }
         
@@ -277,13 +273,11 @@ TbResult JEvent(const SDL_Event *ev)
  */
 int joy_driver_init(void)
 {
-    // Initialize SDL game controller subsystem
     if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
         LOGERR("Failed to initialize SDL game controller subsystem: %s", SDL_GetError());
         return 0;
     }
     
-    // Open all available game controllers
     sdl_num_controllers = 0;
     int num_joysticks = SDL_NumJoysticks();
     
@@ -307,8 +301,6 @@ int joy_driver_init(void)
     return 1;
 }
 
-/** Joystick drivers shutdown.
- */
 int joy_driver_shutdown(void)
 {
     // Close all opened game controllers
@@ -320,7 +312,6 @@ int joy_driver_shutdown(void)
     }
     sdl_num_controllers = 0;
     
-    // Shutdown SDL game controller subsystem
     SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
     
     return 1;

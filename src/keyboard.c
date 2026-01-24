@@ -434,15 +434,21 @@ void input(void)
 void set_default_game_keys(void)
 {
     LbMemorySet(jskeys, 0, sizeof(jskeys));
-    jskeys[GKey_VIEW_SPIN_L] = 0x40;
-    jskeys[GKey_VIEW_SPIN_R] = 0x80;
-    jskeys[GKey_FIRE] = 0x01;
-    jskeys[GKey_CHANGE_MD_WP] = 0x02;
-    jskeys[GKey_CHANGE_AGENT] = 0x04;
-    jskeys[GKey_SELF_DESTRUCT] = 0x0F;
-    jskeys[GKey_GROUP] = 0x20;
-    jskeys[GKey_GOTO_POINT] = 0x08;
-    jskeys[GKey_DROP_WEAPON] = 0x10;
+    jskeys[GKey_VIEW_SPIN_L]   = 1 << CONTROLLER_BUTTON_LEFTSHOULDER;
+    jskeys[GKey_VIEW_SPIN_R]   = 1 << CONTROLLER_BUTTON_RIGHTSHOULDER;
+    jskeys[GKey_FIRE]          = 1 << CONTROLLER_BUTTON_A;
+    jskeys[GKey_CHANGE_MD_WP]  = 1 << CONTROLLER_BUTTON_B;
+    jskeys[GKey_CHANGE_AGENT]  = 1 << CONTROLLER_BUTTON_X;
+    jskeys[GKey_SELF_DESTRUCT] = (1 << CONTROLLER_BUTTON_A | 1 << CONTROLLER_BUTTON_B | 1 << CONTROLLER_BUTTON_X | 1 << CONTROLLER_BUTTON_Y);
+    jskeys[GKey_GROUP]         = 1 << CONTROLLER_BUTTON_SELECT;
+    jskeys[GKey_GOTO_POINT]    = 1 << CONTROLLER_BUTTON_Y;
+    jskeys[GKey_DROP_WEAPON]   = (1 << CONTROLLER_BUTTON_A | 1 << CONTROLLER_BUTTON_DPAD_LEFT);
+
+    jskeys[GKey_SEL_AGENT_1] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_UP);
+    jskeys[GKey_SEL_AGENT_2] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_DOWN);
+    jskeys[GKey_SEL_AGENT_4] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_RIGHT);
+    jskeys[GKey_SEL_AGENT_3] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_LEFT);
+
     ctl_joystick_type = JTyp_SDL_GAMECONTROLLER;
 
     LbMemorySet(kbkeys, 0, sizeof(kbkeys));
