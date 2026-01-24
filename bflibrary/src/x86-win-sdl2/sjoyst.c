@@ -57,8 +57,6 @@ int joy_update_inputs(struct DevInput *dinp)
     // Clear all device states
     for (int i = 0; i < 16; i++)
     {
-        dinp->NumberOfButtons[i] = 0;
-        dinp->Buttons[i] = 0;
         dinp->HatMax[i] = 0;
         dinp->HatY[i] = 0;
         dinp->HatX[i] = 0;
@@ -206,7 +204,7 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
 }
 
 
-static int get_DevInput_by_instanceId(SDL_JoystickID instance_id)
+static int get_JoyId_by_instanceId(SDL_JoystickID instance_id)
 {
     for (int i = 0; i < sdl_num_joysticks; i++) {
         if (SDL_JoystickInstanceID(sdl_joysticks[i]) == instance_id) {
@@ -218,6 +216,7 @@ static int get_DevInput_by_instanceId(SDL_JoystickID instance_id)
 
 TbResult JEvent(const SDL_Event *ev)
 {   
+    
     int i;
     struct DevInput *dinp = &joy;
     switch (ev->type)
@@ -227,14 +226,15 @@ TbResult JEvent(const SDL_Event *ev)
         // Currently handled in joy_update_inputs()
         break;
     case SDL_JOYBUTTONDOWN:
-        i = get_DevInput_by_instanceId(ev->jbutton.which);
+        i = get_JoyId_by_instanceId(ev->jbutton.which);
         dinp->Buttons[i] |= (1 << ev->jbutton.button);
         break;
     case SDL_JOYBUTTONUP:
-        i = get_DevInput_by_instanceId(ev->jbutton.which);
+        i = get_JoyId_by_instanceId(ev->jbutton.which);
         dinp->Buttons[i] &= ~(1 << ev->jbutton.button);
         break;
     }
+        
     return Lb_OK;
 }
 
