@@ -30,9 +30,8 @@
 #include <SDL.h>
 
 /******************************************************************************/
-// SDL2 joystick state
-static SDL_Joystick *sdl_joysticks[16] = {NULL};
-static int sdl_num_joysticks = 0;
+static SDL_GameController *sdl_controllers[MAX_JOYSTICK_COUNT] = {NULL};
+static int sdl_num_controllers = 0;
 /******************************************************************************/
 
 int JoySetInterrupt(short val)
@@ -43,7 +42,7 @@ int JoySetInterrupt(short val)
 
 int joy_get_device_name(char *textbuf)
 {
-    const char *name = sdl_joysticks[0] ? SDL_JoystickName(sdl_joysticks[0]) : "No Joystick";
+    const char *name = sdl_controllers[0] ? SDL_GameControllerName(sdl_controllers[0]) : "No Controller";
     strncpy(textbuf, name, 52);
     textbuf[51] = '\0';
     return Lb_SUCCESS;
@@ -55,7 +54,7 @@ int joy_update_inputs(struct DevInput *dinp)
         return -1;
     
     // Clear all device states
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < MAX_JOYSTICK_COUNT; i++)
     {
         dinp->HatMax[i] = 0;
         dinp->HatY[i] = 0;
@@ -74,42 +73,39 @@ int joy_update_inputs(struct DevInput *dinp)
         dinp->DigitalU[i] = 0;
     }
     
-    // Update joystick events
-    //SDL_JoystickUpdate();
-    
-    // Read state from all opened joysticks
-    for (int i = 0; i < sdl_num_joysticks; i++)
+    // Read state from all opened game controllers
+    for (int i = 0; i < sdl_num_controllers; i++)
     {
-        SDL_Joystick *joy = sdl_joysticks[i];
-        if (!joy || !dinp->Init[i])
+        SDL_GameController *controller = sdl_controllers[i];
+        if (!controller || !dinp->Init[i])
             continue;
         
-        // Read analog axes
-        int num_axes = SDL_JoystickNumAxes(joy);
-        if (num_axes > 16)
-            num_axes = 16;
-        for (int axis = 0; axis < num_axes; axis++) {
-            dinp->AnalogueX[i] = SDL_JoystickGetAxis(joy, axis);
-            dinp->DigitalX[i] = (dinp->AnalogueX[i] < -16384) ? -1 : (dinp->AnalogueX[i] > 16384) ? 1 : 0;
-        }
+        // Read analog stick axes (standardized)
+        dinp->AnalogueX[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
+        dinp->AnalogueY[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY);
+        dinp->AnalogueZ[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX);
+        dinp->AnalogueR[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY);
+        dinp->AnalogueU[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
+        dinp->AnalogueV[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
         
-        // Read hat (D-pad)
-        int num_hats = SDL_JoystickNumHats(joy);
-        if (num_hats > 0) {
-            Uint8 hat_state = SDL_JoystickGetHat(joy, 0);
-            dinp->HatX[i] = 0;
-            dinp->HatY[i] = 0;
-            
-            if (hat_state & SDL_HAT_LEFT)
-                dinp->HatX[i] = -1;
-            else if (hat_state & SDL_HAT_RIGHT)
-                dinp->HatX[i] = 1;
-            
-            if (hat_state & SDL_HAT_UP)
-                dinp->HatY[i] = -1;
-            else if (hat_state & SDL_HAT_DOWN)
-                dinp->HatY[i] = 1;
-        }
+        // Convert analog to digital
+        dinp->DigitalX[i] = (dinp->AnalogueX[i] < -16384) ? -1 : (dinp->AnalogueX[i] > 16384) ? 1 : 0;
+        dinp->DigitalY[i] = (dinp->AnalogueY[i] < -16384) ? -1 : (dinp->AnalogueY[i] > 16384) ? 1 : 0;
+        dinp->DigitalZ[i] = (dinp->AnalogueZ[i] < -16384) ? -1 : (dinp->AnalogueZ[i] > 16384) ? 1 : 0;
+        dinp->DigitalR[i] = (dinp->AnalogueR[i] < -16384) ? -1 : (dinp->AnalogueR[i] > 16384) ? 1 : 0;
+        
+        // Read D-pad
+        dinp->HatX[i] = 0;
+        dinp->HatY[i] = 0;
+        if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT))
+            dinp->HatX[i] = -1;
+        else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT))
+            dinp->HatX[i] = 1;
+        
+        if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_UP))
+            dinp->HatY[i] = -1;
+        else if (SDL_GameControllerGetButton(controller, SDL_CONTROLLER_BUTTON_DPAD_DOWN))
+            dinp->HatY[i] = 1;
     }
     
     return 1;
@@ -117,25 +113,26 @@ int joy_update_inputs(struct DevInput *dinp)
 
 int joy_refresh_devices(struct DevInput *dinp)
 {
-    // SDL2 implementation - reinitialize joysticks
+    // SDL2 implementation - reinitialize game controllers
     // First close existing ones
-    for (int i = 0; i < sdl_num_joysticks; i++) {
-        if (sdl_joysticks[i]) {
-            SDL_JoystickClose(sdl_joysticks[i]);
-            sdl_joysticks[i] = NULL;
+    for (int i = 0; i < sdl_num_controllers; i++) {
+        if (sdl_controllers[i]) {
+            SDL_GameControllerClose(sdl_controllers[i]);
+            sdl_controllers[i] = NULL;
         }
     }
     
-    // Reopen all joysticks
-    sdl_num_joysticks = SDL_NumJoysticks();
-    if (sdl_num_joysticks > 16)
-        sdl_num_joysticks = 16;
-    
-    for (int i = 0; i < sdl_num_joysticks; i++) {
-        sdl_joysticks[i] = SDL_JoystickOpen(i);
-        if (sdl_joysticks[i]) {
-            dinp->Init[i] = 1;
-            dinp->NumberOfDevices++;
+    // Reopen all game controllers
+    sdl_num_controllers = 0;
+    int num_joysticks = SDL_NumJoysticks();
+    for (int i = 0; i < num_joysticks && sdl_num_controllers < MAX_JOYSTICK_COUNT; i++) {
+        if (SDL_IsGameController(i)) {
+            sdl_controllers[sdl_num_controllers] = SDL_GameControllerOpen(i);
+            if (sdl_controllers[sdl_num_controllers]) {
+                dinp->Init[sdl_num_controllers] = 1;
+                dinp->NumberOfDevices++;
+                sdl_num_controllers++;
+            }
         }
     }
     
@@ -165,20 +162,17 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
 {
     devinput_clear(dinp);
     
-    sdl_num_joysticks = SDL_NumJoysticks();
-    if (sdl_num_joysticks > 16)
-        sdl_num_joysticks = 16;
-    
-    if (sdl_num_joysticks == 0) {
+    if (sdl_num_controllers == 0) {
         dinp->Type = -1;
         return -1;
     }
     
-    // Setup basic joystick parameters
-    for (int i = 0; i < sdl_num_joysticks; i++) {
-        if (sdl_joysticks[i]) {
+    // Setup basic controller parameters
+    for (int i = 0; i < sdl_num_controllers; i++) {
+        if (sdl_controllers[i]) {
             dinp->DeviceType[i] = 112;
-            dinp->NumberOfButtons[i] = SDL_JoystickNumButtons(sdl_joysticks[i]);
+            // GameController has standardized 15 buttons
+            dinp->NumberOfButtons[i] = SDL_CONTROLLER_BUTTON_MAX;
             dinp->Init[i] = 1;
             dinp->ConfigType[i] = jtype;
             
@@ -194,11 +188,15 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
             dinp->MinZAxis[i] = -32768;
             dinp->MaxZAxis[i] = 32767;
             dinp->ZCentre[i] = 0;
+            
+            dinp->MinRAxis[i] = -32768;
+            dinp->MaxRAxis[i] = 32767;
+            dinp->RCentre[i] = 0;
         }
     }
     
     dinp->Type = jtype;
-    dinp->NumberOfDevices = sdl_num_joysticks;
+    dinp->NumberOfDevices = sdl_num_controllers;
     
     return 1;
 }
@@ -206,32 +204,67 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
 
 static int get_JoyId_by_instanceId(SDL_JoystickID instance_id)
 {
-    for (int i = 0; i < sdl_num_joysticks; i++) {
-        if (SDL_JoystickInstanceID(sdl_joysticks[i]) == instance_id) {
-            return i;
+    for (int i = 0; i < sdl_num_controllers; i++) {
+        if (sdl_controllers[i]) {
+            SDL_Joystick *joy = SDL_GameControllerGetJoystick(sdl_controllers[i]);
+            if (joy && SDL_JoystickInstanceID(joy) == instance_id) {
+                return i;
+            }
         }
     }
     return -1;
 }
 
+static Uint8 joystickbutton_to_gamepadbutton(const Uint8 button, SDL_GameController *controller)
+{
+    // Find which controller button this joystick button corresponds to
+    SDL_GameControllerButton ctrl_button = SDL_CONTROLLER_BUTTON_INVALID;
+    for (int i = 0; i < SDL_CONTROLLER_BUTTON_MAX; i++)
+    {
+        SDL_GameControllerButtonBind bind = SDL_GameControllerGetBindForButton(controller, (SDL_GameControllerButton)i);
+        if (bind.bindType == SDL_CONTROLLER_BINDTYPE_BUTTON && bind.value.button == button)
+        {
+            ctrl_button = (SDL_GameControllerButton)i;
+            break;
+        }
+    }
+    return ctrl_button;
+
+}
+
 TbResult JEvent(const SDL_Event *ev)
 {   
-    
     int i;
     struct DevInput *dinp = &joy;
     switch (ev->type)
     {
-    case SDL_JOYAXISMOTION:
-    case SDL_JOYHATMOTION:
+    case SDL_CONTROLLERAXISMOTION:
         // Currently handled in joy_update_inputs()
+        break;
+    case SDL_CONTROLLERBUTTONDOWN:
+        i = get_JoyId_by_instanceId(ev->cbutton.which);
+        if (i >= 0 && i < MAX_JOYSTICK_COUNT)
+            dinp->Buttons[i] |= (1 << ev->cbutton.button);
+        break;
+    case SDL_CONTROLLERBUTTONUP:
+        i = get_JoyId_by_instanceId(ev->cbutton.which);
+        if (i >= 0 && i < MAX_JOYSTICK_COUNT)
+            dinp->Buttons[i] &= ~(1 << ev->cbutton.button);
         break;
     case SDL_JOYBUTTONDOWN:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
-        dinp->Buttons[i] |= (1 << ev->jbutton.button);
+        if (i >= 0 && i < MAX_JOYSTICK_COUNT)
+            dinp->Buttons[i] |= (1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
         break;
     case SDL_JOYBUTTONUP:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
-        dinp->Buttons[i] &= ~(1 << ev->jbutton.button);
+        if (i >= 0 && i < MAX_JOYSTICK_COUNT)
+            dinp->Buttons[i] &= ~(1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
+        break;
+
+    case SDL_CONTROLLERDEVICEADDED:
+    case SDL_CONTROLLERDEVICEREMOVED:
+        // Could handle hot-plugging here
         break;
     }
         
@@ -244,25 +277,30 @@ TbResult JEvent(const SDL_Event *ev)
  */
 int joy_driver_init(void)
 {
-    // Initialize SDL joystick subsystem
-    if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0) {
-        LOGERR("Failed to initialize SDL joystick subsystem: %s", SDL_GetError());
+    // Initialize SDL game controller subsystem
+    if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
+        LOGERR("Failed to initialize SDL game controller subsystem: %s", SDL_GetError());
         return 0;
     }
     
-    // Open all available joysticks
-    sdl_num_joysticks = SDL_NumJoysticks();
-    if (sdl_num_joysticks > 16)
-        sdl_num_joysticks = 16;
+    // Open all available game controllers
+    sdl_num_controllers = 0;
+    int num_joysticks = SDL_NumJoysticks();
     
-    LOGDBG("Found %d joystick(s)", sdl_num_joysticks);
+    LOGDBG("Found %d joystick(s)", num_joysticks);
     
-    for (int i = 0; i < sdl_num_joysticks; i++) {
-        sdl_joysticks[i] = SDL_JoystickOpen(i);
-        if (sdl_joysticks[i]) {
-            LOGDBG("Opened joystick %d: %s", i, SDL_JoystickName(sdl_joysticks[i]));
+    for (int i = 0; i < num_joysticks && sdl_num_controllers < MAX_JOYSTICK_COUNT; i++) {
+        if (SDL_IsGameController(i)) {
+            sdl_controllers[sdl_num_controllers] = SDL_GameControllerOpen(i);
+            if (sdl_controllers[sdl_num_controllers]) {
+                LOGDBG("Opened game controller %d: %s", sdl_num_controllers, 
+                    SDL_GameControllerName(sdl_controllers[sdl_num_controllers]));
+                sdl_num_controllers++;
+            } else {
+                LOGERR("Failed to open game controller %d: %s", i, SDL_GetError());
+            }
         } else {
-            LOGERR("Failed to open joystick %d: %s", i, SDL_GetError());
+            LOGDBG("Joystick %d is not a game controller, skipping", i);
         }
     }
     
@@ -273,17 +311,17 @@ int joy_driver_init(void)
  */
 int joy_driver_shutdown(void)
 {
-    // Close all opened joysticks
-    for (int i = 0; i < sdl_num_joysticks; i++) {
-        if (sdl_joysticks[i]) {
-            SDL_JoystickClose(sdl_joysticks[i]);
-            sdl_joysticks[i] = NULL;
+    // Close all opened game controllers
+    for (int i = 0; i < sdl_num_controllers; i++) {
+        if (sdl_controllers[i]) {
+            SDL_GameControllerClose(sdl_controllers[i]);
+            sdl_controllers[i] = NULL;
         }
     }
-    sdl_num_joysticks = 0;
+    sdl_num_controllers = 0;
     
-    // Shutdown SDL joystick subsystem
-    SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+    // Shutdown SDL game controller subsystem
+    SDL_QuitSubSystem(SDL_INIT_GAMECONTROLLER);
     
     return 1;
 }

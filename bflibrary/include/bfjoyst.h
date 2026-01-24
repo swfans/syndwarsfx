@@ -28,51 +28,53 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+ #define MAX_JOYSTICK_COUNT 16
+
 struct DevInput {
-        int32_t Yaw[16];
-        int32_t Roll[16];
-        int32_t Pitch[16];
-        int32_t AnalogueX[16];
-        int32_t AnalogueY[16];
-        int32_t AnalogueZ[16];
-        int32_t AnalogueU[16];
-        int32_t AnalogueV[16];
-        int32_t AnalogueR[16];
-        int32_t DigitalX[16];
-        int32_t DigitalY[16];
-        int32_t DigitalZ[16];
-        int32_t DigitalU[16];
-        int32_t DigitalV[16];
-        int32_t DigitalR[16];
-        int32_t MinXAxis[16];
-        int32_t MinYAxis[16];
-        int32_t MinZAxis[16];
-        int32_t MinUAxis[16];
-        int32_t MinVAxis[16];
-        int32_t MinRAxis[16];
-        int32_t MaxXAxis[16];
-        int32_t MaxYAxis[16];
-        int32_t MaxZAxis[16];
-        int32_t MaxUAxis[16];
-        int32_t MaxVAxis[16];
-        int32_t MaxRAxis[16];
-        int32_t XCentre[16];
-        int32_t YCentre[16];
-        int32_t ZCentre[16];
-        int32_t UCentre[16];
-        int32_t VCentre[16];
-        int32_t RCentre[16];
-        int32_t HatX[16];
-        int32_t HatY[16];
-        int32_t HatMax[16];
-        int32_t Buttons[16];
-        int32_t NumberOfButtons[16];
-        int32_t ConfigType[16];
-        int32_t MenuButtons[16];
+        int32_t Yaw[MAX_JOYSTICK_COUNT];
+        int32_t Roll[MAX_JOYSTICK_COUNT];
+        int32_t Pitch[MAX_JOYSTICK_COUNT];
+        int32_t AnalogueX[MAX_JOYSTICK_COUNT];
+        int32_t AnalogueY[MAX_JOYSTICK_COUNT];
+        int32_t AnalogueZ[MAX_JOYSTICK_COUNT];
+        int32_t AnalogueU[MAX_JOYSTICK_COUNT];
+        int32_t AnalogueV[MAX_JOYSTICK_COUNT];
+        int32_t AnalogueR[MAX_JOYSTICK_COUNT];
+        int32_t DigitalX[MAX_JOYSTICK_COUNT];
+        int32_t DigitalY[MAX_JOYSTICK_COUNT];
+        int32_t DigitalZ[MAX_JOYSTICK_COUNT];
+        int32_t DigitalU[MAX_JOYSTICK_COUNT];
+        int32_t DigitalV[MAX_JOYSTICK_COUNT];
+        int32_t DigitalR[MAX_JOYSTICK_COUNT];
+        int32_t MinXAxis[MAX_JOYSTICK_COUNT];
+        int32_t MinYAxis[MAX_JOYSTICK_COUNT];
+        int32_t MinZAxis[MAX_JOYSTICK_COUNT];
+        int32_t MinUAxis[MAX_JOYSTICK_COUNT];
+        int32_t MinVAxis[MAX_JOYSTICK_COUNT];
+        int32_t MinRAxis[MAX_JOYSTICK_COUNT];
+        int32_t MaxXAxis[MAX_JOYSTICK_COUNT];
+        int32_t MaxYAxis[MAX_JOYSTICK_COUNT];
+        int32_t MaxZAxis[MAX_JOYSTICK_COUNT];
+        int32_t MaxUAxis[MAX_JOYSTICK_COUNT];
+        int32_t MaxVAxis[MAX_JOYSTICK_COUNT];
+        int32_t MaxRAxis[MAX_JOYSTICK_COUNT];
+        int32_t XCentre[MAX_JOYSTICK_COUNT];
+        int32_t YCentre[MAX_JOYSTICK_COUNT];
+        int32_t ZCentre[MAX_JOYSTICK_COUNT];
+        int32_t UCentre[MAX_JOYSTICK_COUNT];
+        int32_t VCentre[MAX_JOYSTICK_COUNT];
+        int32_t RCentre[MAX_JOYSTICK_COUNT];
+        int32_t HatX[MAX_JOYSTICK_COUNT];
+        int32_t HatY[MAX_JOYSTICK_COUNT];
+        int32_t HatMax[MAX_JOYSTICK_COUNT];
+        int32_t Buttons[MAX_JOYSTICK_COUNT];
+        int32_t NumberOfButtons[MAX_JOYSTICK_COUNT];
+        int32_t ConfigType[MAX_JOYSTICK_COUNT];
+        int32_t MenuButtons[MAX_JOYSTICK_COUNT];
         int32_t Type;
         int32_t NumberOfDevices;
-        int32_t DeviceType[16];
-        uint8_t Init[16];
+        int32_t DeviceType[MAX_JOYSTICK_COUNT];
+        uint8_t Init[MAX_JOYSTICK_COUNT];
 };
 
 #pragma pack()

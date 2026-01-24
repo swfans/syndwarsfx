@@ -159,6 +159,9 @@ static void LbI_ProcessEvent(const SDL_Event *ev)
     case SDL_JOYHATMOTION:
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP:
+    case SDL_CONTROLLERAXISMOTION:
+    case SDL_CONTROLLERBUTTONDOWN:
+    case SDL_CONTROLLERBUTTONUP:
         JEvent(ev);
         break;
 
