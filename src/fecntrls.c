@@ -263,7 +263,6 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     wpos_y = ln_height + 18;
     lbDisplay.DrawFlags |= 0x8000;
 
-    active_rect.Y = text_window_y1 + wpos_y;
     active_rect.Height = ln_height;
     for (dmuser = 0; dmuser < p_locplayer->DoubleMode + 1; dmuser++)
     {
@@ -288,13 +287,14 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
         }
         else
         {
-            sprintf(locstr, "%s", gui_strings[461 + ctlmode]);
+            sprintf(locstr, "%s", gui_strings[461 + ctlmode]); // Keyboard or Mouse
             text = loctext_to_gtext(locstr);
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         }
         tx_width = LbTextStringWidth(locstr);
 
         active_rect.X = text_window_x1 + wpos_x;
+        active_rect.Y = text_window_y1 + wpos_y;
         active_rect.Width = tx_width;
         if (mouse_down_over_box(&active_rect))
         {
