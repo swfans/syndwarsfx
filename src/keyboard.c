@@ -434,6 +434,17 @@ void input(void)
 void set_default_game_keys(void)
 {
     LbMemorySet(jskeys, 0, sizeof(jskeys));
+    #if defined(DOS)||defined(GO32)
+    jskeys[GKey_VIEW_SPIN_L] = 0x40;
+    jskeys[GKey_VIEW_SPIN_R] = 0x80;
+    jskeys[GKey_FIRE] = 0x01;
+    jskeys[GKey_CHANGE_MD_WP] = 0x02;
+    jskeys[GKey_CHANGE_AGENT] = 0x04;
+    jskeys[GKey_SELF_DESTRUCT] = 0x0F;
+    jskeys[GKey_GROUP] = 0x20;
+    jskeys[GKey_GOTO_POINT] = 0x08;
+    jskeys[GKey_DROP_WEAPON] = 0x10;
+    #else
     jskeys[GKey_VIEW_SPIN_L]   = 1 << CONTROLLER_BUTTON_LEFTSHOULDER;
     jskeys[GKey_VIEW_SPIN_R]   = 1 << CONTROLLER_BUTTON_RIGHTSHOULDER;
     jskeys[GKey_FIRE]          = 1 << CONTROLLER_BUTTON_A;
@@ -448,8 +459,8 @@ void set_default_game_keys(void)
     jskeys[GKey_SEL_AGENT_2] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_DOWN);
     jskeys[GKey_SEL_AGENT_4] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_RIGHT);
     jskeys[GKey_SEL_AGENT_3] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_LEFT);
-
-    ctl_joystick_type = JTyp_SDL_GAMECONTROLLER;
+    #endif
+    ctl_joystick_type = JTyp_EXT_DRIVER;
 
     LbMemorySet(kbkeys, 0, sizeof(kbkeys));
     kbkeys[GKey_NONE] = KC_UNASSIGNED;

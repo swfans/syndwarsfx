@@ -110,7 +110,6 @@ enum JoystickType
   JTyp_VFX1_PUCK,
   JTyp_ANALG_2JSTCKS,
   JTyp_DIGTL_2JSTCKS,
-  JTyp_SDL_GAMECONTROLLER,
   JTyp_TYPES_COUNT,
 };
 

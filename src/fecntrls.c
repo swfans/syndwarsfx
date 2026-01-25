@@ -168,7 +168,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     wpos_y = 126;
 
     lbDisplay.DrawFlags |= 0x8000;
-    if (ctl_joystick_type == JTyp_EXT_DRIVER || ctl_joystick_type == JTyp_SDL_GAMECONTROLLER)
+    if (ctl_joystick_type == JTyp_EXT_DRIVER)
     {
       if (joy_get_device_name(locstr) != -1)
       {
