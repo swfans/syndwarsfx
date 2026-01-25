@@ -7024,53 +7024,11 @@ void load_packet(void)
 
 void joy_input(void)
 {
-#if 0
     asm volatile ("call ASM_joy_input\n"
         :  :  : "eax" );
     return;
-#endif
 
-    PlayerInfo *p_locplayer;
-    int i, dev_count;
-
-    joy_update_inputs(&joy);
-
-    p_locplayer = &players[local_player_no];
-    
-
-    if (p_locplayer->field_102 && (ingame.DisplayMode != DpM_PURPLEMNU))
-    {
-        if (ingame.DisplayMode == DpM_ENGINEPLY)
-        {
-            for (i = 0; i < joy.NumberOfDevices; i++)
-            {
-                if (joy.Init[i])
-                {
-                    ushort button_mask = jskeys[GKey_VIEW_SPIN_L] | jskeys[GKey_VIEW_SPIN_R];
-                    joy.Buttons[0] |= joy.Buttons[i] & button_mask;
-                }
-            }
-        }
-    }
-    else
-    {
-        // Only merge joystick inputs if in single-player mode (DoubleMode == 0)
-        // In multi-player mode, each player reads from their own joystick slot
-        if (p_locplayer->DoubleMode == 0)
-        {
-            dev_count = 0;
-            for (i = 0; i < joy.NumberOfDevices; i++)
-            {
-                if (joy.Init[i])
-                {
-                    joy.Buttons[0] |= joy.Buttons[i];
-                    joy.DigitalX[0] |= joy.DigitalX[i];
-                    joy.DigitalY[0] |= joy.DigitalY[i];
-                    dev_count++;
-                }
-            }
-        }
-    }
+    // calls joy_update_inputs, and conditionally combines inputs from all joysticks into joy0
 }
 
 /** Orbital station explosion code.
