@@ -174,7 +174,7 @@ int joy_update_inputs(struct DevInput *dinp)
         
         // Read analog stick axes (standardized)
         dinp->AnalogueX[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTX);
-        dinp->AnalogueY[i] = -SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY);
+        dinp->AnalogueY[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_LEFTY);
         dinp->AnalogueZ[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTX);
         dinp->AnalogueR[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_RIGHTY);
         dinp->AnalogueU[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
