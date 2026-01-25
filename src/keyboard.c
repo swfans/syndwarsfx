@@ -444,6 +444,7 @@ void set_default_game_keys(void)
     jskeys[GKey_GROUP] = 0x20;
     jskeys[GKey_GOTO_POINT] = 0x08;
     jskeys[GKey_DROP_WEAPON] = 0x10;
+    ctl_joystick_type = JTyp_GRAVIS_GRIP;
     #else
     jskeys[GKey_VIEW_SPIN_L]   = 1 << CONTROLLER_BUTTON_LEFTSHOULDER;
     jskeys[GKey_VIEW_SPIN_R]   = 1 << CONTROLLER_BUTTON_RIGHTSHOULDER;
@@ -459,8 +460,8 @@ void set_default_game_keys(void)
     jskeys[GKey_SEL_AGENT_2] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_DOWN);
     jskeys[GKey_SEL_AGENT_4] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_RIGHT);
     jskeys[GKey_SEL_AGENT_3] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_LEFT);
-    #endif
     ctl_joystick_type = JTyp_EXT_DRIVER;
+    #endif
 
     LbMemorySet(kbkeys, 0, sizeof(kbkeys));
     kbkeys[GKey_NONE] = KC_UNASSIGNED;
