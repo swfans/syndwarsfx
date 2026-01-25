@@ -98,7 +98,7 @@ TbResult JEvent(const SDL_Event *ev)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init(void)
+int joy_driver_init(struct DevInput *dinp)
 {
     return 1;
 }

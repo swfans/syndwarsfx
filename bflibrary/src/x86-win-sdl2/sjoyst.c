@@ -32,7 +32,9 @@
 /******************************************************************************/
 static SDL_GameController *sdl_controllers[MAX_JOYSTICK_COUNT] = {NULL};
 static int sdl_num_controllers = 0;
+static struct DevInput *devinput;
 /******************************************************************************/
+
 
 static void devinput_clear(struct DevInput *dinp);
 
@@ -322,7 +324,6 @@ static Uint8 joystickbutton_to_gamepadbutton(const Uint8 button, SDL_GameControl
 TbResult JEvent(const SDL_Event *ev)
 {   
     int i;
-    struct DevInput *dinp = &joy;
     switch (ev->type)
     {
     case SDL_CONTROLLERAXISMOTION:
@@ -331,27 +332,27 @@ TbResult JEvent(const SDL_Event *ev)
     case SDL_CONTROLLERBUTTONDOWN:
         i = get_JoyId_by_instanceId(ev->cbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            dinp->Buttons[i] |= (1 << ev->cbutton.button);
+            devinput->Buttons[i] |= (1 << ev->cbutton.button);
         break;
     case SDL_CONTROLLERBUTTONUP:
         i = get_JoyId_by_instanceId(ev->cbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            dinp->Buttons[i] &= ~(1 << ev->cbutton.button);
+            devinput->Buttons[i] &= ~(1 << ev->cbutton.button);
         break;
     case SDL_JOYBUTTONDOWN:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            dinp->Buttons[i] |= (1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
+            devinput->Buttons[i] |= (1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
         break;
     case SDL_JOYBUTTONUP:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            dinp->Buttons[i] &= ~(1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
+            devinput->Buttons[i] &= ~(1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
         break;
 
     case SDL_CONTROLLERDEVICEADDED:
     case SDL_CONTROLLERDEVICEREMOVED:
-        joy_refresh_devices(dinp);
+        joy_refresh_devices(devinput);
         break;
     }
         
@@ -362,8 +363,10 @@ TbResult JEvent(const SDL_Event *ev)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init(void)
+int joy_driver_init(struct DevInput *dinp)
 {
+    devinput = dinp;
+    
     if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
         LOGERR("Failed to initialize SDL game controller subsystem: %s", SDL_GetError());
         return 0;

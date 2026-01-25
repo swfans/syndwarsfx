@@ -1592,7 +1592,7 @@ int joy_spaceball_shutdown(void)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init(void)
+int joy_driver_init(struct DevInput *dinp)
 {
     int ret;
     if (!joy_grip_initialized)
