@@ -243,7 +243,7 @@ GLOBAL_FUNC(ASM_place_default_player)	/* 0x0101F0 */
 		push   %eax
 		xor    %edx,%edx
 		mov    0x14(%esp),%eax
-		call   replace_thing_given_thing_idx
+		call   ac_replace_thing_given_thing_idx
 		mov    0x3a(%eax),%dx
 		mov    0x3a(%eax),%cx
 		add    %edx,%edx
@@ -77142,7 +77142,7 @@ GLOBAL_FUNC(ASM_create_building_thing)	/* 0x7554C */
 
 
 /*----------------------------------------------------------------*/
-replace_thing_given_thing_idx:	/* 0x075674 */
+GLOBAL_FUNC(ASM_replace_thing_given_thing_idx)	/* 0x075674 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi

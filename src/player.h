@@ -115,6 +115,9 @@ extern PlayerInfo players[PLAYERS_LIMIT];
 extern PlayerIdx local_player_no;
 extern struct AgentInfo cryo_agents;
 
+extern ushort netgame_agent_pos_x[PLAYERS_LIMIT][4];
+extern ushort netgame_agent_pos_z[PLAYERS_LIMIT][4];
+
 extern ubyte playable_agents;
 
 /******************************************************************************/
@@ -147,6 +150,8 @@ TbBool player_agent_has_weapon(PlayerIdx plyr, ushort plagent, WeaponType wtype)
 short player_agent_weapon_delay(PlayerIdx plyr, ushort plagent, WeaponType wtype);
 void player_agent_set_weapon_delay(PlayerIdx plyr, ushort plagent, WeaponType wtype, short delay_turns);
 void player_agents_clear_weapon_delays(PlayerIdx plyr);
+int place_default_player(PlayerIdx plyr, TbBool replace);
+void place_single_player(void);
 
 TbBool player_can_toggle_thermal(PlayerIdx plyr);
 void player_toggle_thermal(PlayerIdx plyr);

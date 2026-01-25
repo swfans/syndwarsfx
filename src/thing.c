@@ -1716,4 +1716,19 @@ int static_hit_by_bullet(struct SimpleThing *p_sthing, short hp,
     return 100;
 }
 
+struct Thing *replace_thing_given_thing_idx(int x, int y, int z, short owner, ThingIdx pv_thing)
+{
+    struct Thing *p_pv_thing;
+    struct Thing *p_nx_thing;
+
+    p_pv_thing = &things[pv_thing];
+    if (on_mapwho(p_pv_thing))
+        delete_node(p_pv_thing);
+    unkn01_thing_idx = pv_thing;
+    p_nx_thing = new_sim_person(x, y, z, 101u);
+    p_nx_thing->State = 0;
+    p_nx_thing->Owner = owner;
+    return p_nx_thing;
+}
+
 /******************************************************************************/

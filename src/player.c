@@ -22,12 +22,14 @@
 #include "bfutility.h"
 #include "ssampply.h"
 
+#include "bigmap.h"
 #include "display.h"
 #include "game.h"
 #include "game_options.h"
 #include "guitext.h"
 #include "hud_panel.h"
 #include "people.h"
+#include "pepgroup.h"
 #include "sound.h"
 #include "thing.h"
 #include "weapon.h"
@@ -39,6 +41,9 @@ ubyte default_agent_tiles_x[8] = {
 ubyte default_agent_tiles_z[8] = {
     46, 44, 60, 60, 30, 30, 70, 70,
 };
+
+ushort netgame_agent_pos_x[PLAYERS_LIMIT][4];
+ushort netgame_agent_pos_z[PLAYERS_LIMIT][4];
 
 ubyte playable_agents;
 /******************************************************************************/
@@ -515,6 +520,145 @@ void player_update_thermal(PlayerIdx plyr)
         ingame.Flags &= ~GamF_ThermalView;
         change_brightness(0);
     }
+}
+
+/** Figure out how many agents are attending the mission.
+ */
+ushort player_agents_place_in_mission_count(PlayerIdx plyr)
+{
+    PlayerInfo *p_player;
+    ushort nagents;
+
+    p_player = &players[plyr];
+    if (p_player->DoubleMode)
+        nagents = p_player->DoubleMode + 1;
+    else
+        nagents = 4;
+
+    if (p_player->MissionAgents < (1 << nagents) - 1)
+    {
+        switch (p_player->MissionAgents)
+        {
+        case 1:
+            nagents = 1;
+            break;
+        case 3:
+            nagents = 2;
+            break;
+        case 7:
+            nagents = 3;
+            break;
+        }
+    }
+    return nagents;
+}
+
+int place_default_player(PlayerIdx plyr, TbBool replace)
+{
+#if 0
+    int ret;
+    asm volatile ("call ASM_place_default_player\n"
+        : "=r" (ret) : "a" (plyr), "d" (replace));
+    return ret;
+#endif
+    PlayerInfo *p_player;
+    int cor_x, cor_z;
+    ushort nagents, plagent;
+    short new_type;
+    ubyte net_plyr_id;
+
+    nagents = player_agents_place_in_mission_count(plyr);
+    if (in_network_game)
+        nagents = 4;
+
+    cor_x = TILE_TO_MAPCOORD(default_agent_tiles_x[plyr], 0);
+    cor_z = TILE_TO_MAPCOORD(default_agent_tiles_z[plyr], 0);
+
+    net_plyr_id = plyr;
+    if (in_network_game)
+    {
+        if ((net_game_play_flags & NGPF_Unkn20) != 0)
+            net_plyr_id = LbRandomAnyShort() & 7;
+    }
+
+    p_player = &players[plyr];
+    if (in_network_game)
+        new_type = group_types[plyr];
+    else
+        new_type = -1;
+
+    for (plagent = 0; plagent < nagents; plagent++)
+    {
+        struct Thing *p_pv_agent;
+        struct Thing *p_agent;
+
+        if (in_network_game) {
+            cor_x = netgame_agent_pos_x[net_plyr_id][plagent];
+            cor_z = netgame_agent_pos_z[net_plyr_id][plagent];
+        }
+        p_pv_agent = p_player->MyAgent[plagent];
+        if ((p_pv_agent == NULL) || ((p_pv_agent->Flag & TngF_Destroyed) != 0) || (replace))
+        {
+            ThingIdx pv_agent;
+
+            if (p_pv_agent != NULL)
+                pv_agent = p_pv_agent->ThingOffset;
+            else
+                pv_agent = 0;
+            p_agent = replace_thing_given_thing_idx(cor_x, 0, cor_z, 1, pv_agent);
+            reset_default_player_agent(plyr, plagent, p_agent, new_type);
+        }
+        cor_x += 256;
+    }
+    // Fill the rest of agents array, to avoid using leftovers
+    for (; plagent < AGENTS_SQUAD_MAX_COUNT; plagent++)
+        p_player->MyAgent[plagent] = &things[0];
+
+    playable_agents = AGENTS_SQUAD_MAX_COUNT;
+    player_agents_init_prev_weapon(plyr);
+    player_agents_clear_weapon_delays(plyr);
+    return 0;
+}
+
+void place_single_player(void)
+{
+    ulong n;
+    ushort nagents, pl_agents, pl_group;
+
+    nagents = player_agents_place_in_mission_count(local_player_no);
+
+    pl_group = level_def.PlayableGroups[0];
+    pl_agents = make_group_into_players(pl_group, local_player_no, nagents, -1);
+    if (pl_agents == 0) {
+        struct Thing *p_person;
+        LOGERR("Player %d group %d playable agents not found amongst %d things",
+          (int)local_player_no, (int)pl_group, (int)things_used_head);
+        p_person = new_sim_person(513, 1, 513, SubTT_PERS_AGENT);
+        p_person->U.UPerson.Group = pl_group;
+        p_person->U.UPerson.EffectiveGroup = pl_group;
+        pl_agents = make_group_into_players(pl_group, local_player_no, 1, -1);
+    } else {
+        LOGSYNC("Player %d group %d playable agents found %d expected %d",
+          (int)local_player_no, (int)pl_group, (int)pl_agents, (int)nagents);
+    }
+
+    n = things_used_head;
+    while (n != 0)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[n];
+        n = p_thing->LinkChild;
+        if ((p_thing->U.UPerson.Group == pl_group) && (p_thing->Type == TT_PERSON)
+          && !(p_thing->Flag & TngF_PlayerAgent))
+        {
+            remove_thing(p_thing->ThingOffset);
+            delete_node(p_thing);
+        }
+    }
+    playable_agents = pl_agents;
+    if (pl_agents == 0)
+      place_default_player(0, 1);
 }
 
 /******************************************************************************/

@@ -30,6 +30,8 @@ extern "C" {
 
 #define PEOPLE_GROUPS_COUNT 32
 
+struct Thing;
+
 /** Data presenting group attitude toward other groups.
  */
 struct WarFlag { // sizeof=40
@@ -105,6 +107,9 @@ TbBool group_has_no_less_members_killed_or_persuaded_by_player(ushort group, ush
 TbBool group_has_no_less_members_dead(ushort group, ushort amount);
 TbBool group_has_no_less_members_near_thing(ThingIdx neartng, ushort group, ushort amount, ushort radius);
 TbBool group_has_no_less_members_persuaded_by_person(ushort group, ThingIdx owntng, ushort amount);
+
+void reset_default_player_agent(PlayerIdx plyr, short plagent, struct Thing *p_agent, short new_type);
+ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type);
 
 /******************************************************************************/
 #ifdef __cplusplus

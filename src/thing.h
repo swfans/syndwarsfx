@@ -1087,6 +1087,8 @@ int mine_hit_by_bullet(struct Thing *p_thing, short hp,
 int static_hit_by_bullet(struct SimpleThing *p_sthing, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, ushort type);
 
+struct Thing *replace_thing_given_thing_idx(int x, int y, int z, short owner, ThingIdx pv_thing);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

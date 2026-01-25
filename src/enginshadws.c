@@ -21,6 +21,7 @@
 #include <assert.h>
 #include <string.h>
 #include "bfmath.h"
+#include "bfsprite.h"
 
 #include "bigmap.h"
 #include "display.h"
@@ -36,6 +37,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "game_options.h"
+#include "game_sprts.h"
 #include "matrix.h"
 #include "render_gpoly.h"
 #include "thing.h"
@@ -351,14 +353,58 @@ void copy_from_screen_ani(ubyte *buf)
     }
 }
 
-struct Element *element_unkn_func_05(ushort a1, short *a2, short *a3, short *a4, short *a5)
+struct Element *element_unkn_func_05(ushort frm, short *x1, short *x2, short *y1, short *y2)
 {
+#if 0
     struct Element *ret;
     asm volatile (
       "push %5\n"
       "call ASM_element_unkn_func_05\n"
-        : "=r" (ret) : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5));
+        : "=r" (ret) : "a" (frm), "d" (x1), "b" (x2), "c" (y1), "g" (y2));
     return ret;
+#endif
+    struct Element *p_el;
+    struct Frame *p_frm;
+    ushort el;
+
+    *y1 = 32000;
+    *x1 = *y1;
+    *y2 = -32000;
+    *x2 = *y2;
+
+    p_frm = &frame[frm];
+    for (el = p_frm->FirstElement; el > 0; el = p_el->Next)
+    {
+        struct TbSprite *p_spr;
+
+        p_el = &melement_ani[el];
+        if ((p_el < melement_ani) || (p_el >= mele_ani_end))
+            break;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if ((p_spr < m_sprites) || (p_spr >= m_sprites_end))
+            continue;
+
+        if ((p_el->Flags & 0xFE00) == 0)
+        {
+            short scr_beg_x, scr_beg_y;
+            short scr_fin_x, scr_fin_y;
+
+            scr_beg_x = p_el->X >> 1;
+            scr_beg_y = p_el->Y >> 1;
+            scr_fin_x = scr_beg_x + p_spr->SWidth;
+            scr_fin_y = scr_beg_y + p_spr->SHeight;
+            if (scr_fin_x > *x2)
+                *x2 = scr_fin_x;
+            if (scr_beg_x < *x1)
+                *x1 = scr_beg_x;
+            if (scr_fin_y > *y2)
+                *y2 = scr_fin_y;
+            if (scr_beg_y < *y1)
+                *y1 = scr_beg_y;
+        }
+    }
+    return p_el;
 }
 
 /** Prepare buffer with sprite shadows.

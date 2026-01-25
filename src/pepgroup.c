@@ -20,8 +20,12 @@
 
 #include "bfutility.h"
 #include "bfmemut.h"
+
+#include "command.h"
+#include "player.h"
 #include "thing.h"
 #include "game.h"
+#include "game_options.h"
 /******************************************************************************/
 
 short find_unused_group_id(TbBool largest)
@@ -439,4 +443,215 @@ TbBool group_has_no_less_members_persuaded_by_person(ushort group, ThingIdx ownt
     return false;
 }
 
+void reset_default_player_agent(PlayerIdx plyr, short plagent, struct Thing *p_agent, short new_type)
+{
+    PlayerInfo *p_player;
+    ubyte grp;
+
+    p_player = &players[plyr];
+
+    p_player->MyAgent[plagent] = p_agent;
+    p_agent->Flag = TngF_PlayerAgent;
+
+    grp = level_def.PlayableGroups[plyr];
+    p_agent->U.UPerson.Group = grp;
+    p_agent->U.UPerson.EffectiveGroup = grp;
+
+    if (plagent > p_player->DoubleMode)
+    {
+        if (in_network_game && p_player->DoubleMode) {
+            p_agent->State = PerSt_DEAD;
+            p_agent->Flag |= TngF_Unkn02000000 | TngF_Destroyed;
+        }
+        p_player->DirectControl[plagent] = 0;
+    }
+    else
+    {
+        p_player->DirectControl[plagent] = p_agent->ThingOffset;
+        p_agent->Flag |= TngF_Unkn1000;
+        if ((local_player_no == plyr) && (plagent == 0)) {
+            game_set_cam_track_thing_xz(p_agent->ThingOffset);
+        }
+    }
+
+    p_agent->State = PerSt_NONE;
+    { // Why are we tripling the health?
+        uint health;
+        health = 3 * p_agent->Health;
+        if (health > PERSON_MAX_HEALTH_LIMIT)
+            health = PERSON_MAX_HEALTH_LIMIT;
+        p_agent->Health = health;
+        p_agent->U.UPerson.MaxHealth = health;
+    }
+    p_agent->U.UPerson.Mood = 0;
+    p_agent->U.UPerson.ComHead = 0;
+    p_agent->U.UPerson.Target2 = 0;
+    p_agent->PTarget = NULL;
+    p_agent->U.UPerson.ComCur = (plyr << 2) + plagent;
+    p_agent->OldTarget = 0;
+
+    {
+        p_agent->U.UPerson.WeaponsCarried = p_player->Weapons[plagent] | (1 << (WEP_ENERGYSHLD-1));
+        p_agent->U.UPerson.UMod = p_player->Mods[plagent];
+        p_agent->U.UPerson.CurrentWeapon = WEP_NULL;
+    }
+    if (in_network_game)
+        do_weapon_quantities_net_to_player(p_agent);
+    else
+        player_agent_set_weapon_quantities_max(p_agent);
+
+    switch (new_type)
+    {
+    case 0:
+        p_agent->SubType = SubTT_PERS_AGENT;
+        reset_person_frame(p_agent);
+        break;
+    case 1:
+        p_agent->SubType = SubTT_PERS_ZEALOT;
+        reset_person_frame(p_agent);
+        break;
+    case 2:
+        p_agent->SubType = SubTT_PERS_PUNK_M;
+        reset_person_frame(p_agent);
+        break;
+    default:
+        break;
+    }
+    switch_person_anim_mode(p_agent, 0);
+}
+
+void reset_group_member_player_agent(PlayerIdx plyr, ushort plagent, ushort high_tier, struct Thing *p_agent, short new_type)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+
+    p_player->MyAgent[plagent] = p_agent;
+    p_agent->Flag |= TngF_PlayerAgent;
+
+    if (plagent > p_player->DoubleMode)
+    {
+        if (in_network_game && p_player->DoubleMode) {
+            p_agent->State = PerSt_DEAD;
+            p_agent->Flag |= TngF_Unkn02000000 | TngF_Destroyed;
+        }
+        p_player->DirectControl[plagent] = 0;
+    }
+    else
+    {
+        p_player->DirectControl[plagent] = p_agent->ThingOffset;
+        p_agent->Flag |= TngF_Unkn1000;
+        if ((plyr == local_player_no) && (plagent == 0)) {
+            game_set_cam_track_thing_xz(p_agent->ThingOffset);
+        }
+    }
+
+    if (in_network_game)
+        set_person_stats_type(p_agent, SubTT_PERS_AGENT);
+
+    if (ingame.GameMode != GamM_Unkn2)
+    {
+        if ((p_agent->SubType == SubTT_PERS_AGENT) || (p_agent->SubType == SubTT_PERS_ZEALOT))
+        {
+            p_agent->U.UPerson.WeaponsCarried = p_player->Weapons[high_tier] | (1 << (WEP_ENERGYSHLD-1));
+            p_agent->U.UPerson.UMod.Mods = p_player->Mods[high_tier].Mods;
+        }
+        p_agent->U.UPerson.CurrentWeapon = 0;
+    }
+
+    person_init_preplay_command(p_agent);
+
+    // Player agents can go with default loadout for the level, but usually we want them to
+    // use either the equipment selected by the player (either local one or from the net).
+    // Setting command to player control is required to properly update weapons
+    p_agent->U.UPerson.ComCur = (plyr << 2) + plagent;
+    if (ingame.GameMode == GamM_Unkn3)
+        player_agent_set_weapon_quantities_proper(p_agent);
+    else
+        player_agent_set_weapon_quantities_max(p_agent);
+
+    // Using any commands other than preplay on player agents requires explicit marking
+    // in form of use of EXECUTE_COMS.
+    if ((p_agent->U.UPerson.ComHead != 0) &&
+        (game_commands[p_agent->U.UPerson.ComHead].Type == PCmd_EXECUTE_COMS))
+    {
+        // Now we can re-set current command to the real command
+        p_agent->U.UPerson.ComCur = p_agent->U.UPerson.ComHead;
+        person_start_executing_commands(p_agent);
+    }
+    else
+    {
+        p_agent->U.UPerson.ComCur = (plyr << 2) + plagent;
+        p_agent->U.UPerson.ComHead = 0;
+    }
+
+    {
+        short cor_x, cor_z;
+        get_thing_position_mapcoords(&cor_x, NULL, &cor_z, p_agent->ThingOffset);
+        netgame_agent_pos_x[plyr][plagent] = cor_x;
+        netgame_agent_pos_z[plyr][plagent] = cor_z;
+    }
+    p_agent->State = PerSt_NONE;
+    { // Why are we tripling the health?
+        uint health;
+        health = 3 * p_agent->Health;
+        if (health > PERSON_MAX_HEALTH_LIMIT)
+            health = PERSON_MAX_HEALTH_LIMIT;
+        p_agent->Health = health;
+        p_agent->U.UPerson.MaxHealth = health;
+    }
+
+    switch (new_type)
+    {
+    case 0:
+        p_agent->SubType = SubTT_PERS_AGENT;
+        reset_person_frame(p_agent);
+        break;
+    case 1:
+        p_agent->SubType = SubTT_PERS_ZEALOT;
+        reset_person_frame(p_agent);
+        break;
+    case 2:
+        p_agent->SubType = SubTT_PERS_PUNK_M;
+        reset_person_frame(p_agent);
+        break;
+    }
+    p_agent->U.UPerson.FrameId.Version[0] = 0;
+    if (p_agent->U.UPerson.CurrentWeapon == 0)
+    {
+        switch_person_anim_mode(p_agent, ANIM_PERS_IDLE);
+    }
+}
+
+ushort make_group_into_players(ushort group, ushort plyr, ushort max_agent, short new_type)
+{
+    struct Thing *p_person;
+    ushort plagent, high_tier;
+    ulong n;
+
+    p_person = NULL;
+    plagent = 0;
+    high_tier = 0;
+    for (n = things_used_head; n != 0; n = p_person->LinkChild)
+    {
+        p_person = &things[n];
+        if ((p_person->U.UPerson.Group != group) || (p_person->Type != TT_PERSON))
+            continue;
+
+        reset_group_member_player_agent(plyr, plagent, high_tier, p_person, new_type);
+
+        if ((p_person->SubType == SubTT_PERS_AGENT) || (p_person->SubType == SubTT_PERS_ZEALOT))
+            high_tier++;
+
+        if (++plagent == max_agent)
+            break;
+    }
+    // At this point, plagent is a count of filled agents
+    n = plagent;
+    // Fill the rest of agents array, to avoid using leftovers
+    for (; plagent < AGENTS_SQUAD_MAX_COUNT; plagent++)
+        players[plyr].MyAgent[plagent] = &things[0];
+
+    return n;
+}
 /******************************************************************************/
