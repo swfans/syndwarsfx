@@ -139,18 +139,9 @@ void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys)
         {
             if (tx_len > 0)
                 ostr[tx_len++] = '+';
-            if (jbtn >= 9)
-            {
-                uint n;
-                n = jbtn + 1;
-                ostr[tx_len++] = '0' + (n / 10);
-                ostr[tx_len++] = '0' + (n % 10);
-            }
-            else
-            {
-                char c;
-                c = '1' + jbtn;
-                ostr[tx_len++] = c;
+            const char *label = joy_get_button_label(jbtn);
+            while (*label && tx_len < 50) {
+                ostr[tx_len++] = *label++;
             }
             ++pressed_count;
         }

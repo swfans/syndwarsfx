@@ -40,6 +40,94 @@ int JoySetInterrupt(short val)
     return -1;
 }
 
+const char* joy_get_button_label(int button)
+{
+    //even though with sdl we can mix controllers we'll return labels of the first one
+    // needs to distinguish between nintendo XYAB, xbox YXBA, symbols on playstation, etc.
+    //SDL3 could use SDL_GamepadButtonLabel but SDL2 does not have it
+
+    switch (button)
+    {
+        case CONTROLLER_BUTTON_BACK:
+            return "BCK";
+        case CONTROLLER_BUTTON_SELECT:
+            return "SEL";
+        case CONTROLLER_BUTTON_START:
+            return "STRT";
+        case CONTROLLER_BUTTON_LEFTSTICK:
+            return "LSTK";
+        case CONTROLLER_BUTTON_RIGHTSTICK:
+            return "RSTK";
+        case CONTROLLER_BUTTON_LEFTSHOULDER:
+            return "LB";
+        case CONTROLLER_BUTTON_RIGHTSHOULDER:
+            return "RB";
+        case CONTROLLER_BUTTON_DPAD_UP:
+            return "DPU";
+        case CONTROLLER_BUTTON_DPAD_DOWN:
+            return "DPD";
+        case CONTROLLER_BUTTON_DPAD_LEFT:
+            return "DPL";
+        case CONTROLLER_BUTTON_DPAD_RIGHT:
+            return "DPR";
+        case CONTROLLER_BUTTON_MISC1:
+            return "MSC";
+    }
+
+    SDL_GameController *controller = sdl_controllers[0];
+    SDL_GameControllerType ctrl_type = SDL_GameControllerGetType(controller);
+
+    // TODO remove true condition when testing is done
+    if (ctrl_type == SDL_CONTROLLER_TYPE_PS3 ||
+        ctrl_type == SDL_CONTROLLER_TYPE_PS4 ||
+        ctrl_type == SDL_CONTROLLER_TYPE_PS5 || true)
+    {
+        switch (button)
+        {
+            case CONTROLLER_BUTTON_A:
+                return "X";
+            case CONTROLLER_BUTTON_B:
+                return "O";
+            case CONTROLLER_BUTTON_X:
+                return "[]"; // no real square symbol in font so using brackets
+            case CONTROLLER_BUTTON_Y:
+                return "A"; // A looks like triangle already in the font used
+        }
+    }
+    else if (ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO ||
+             ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT ||
+             ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT ||
+             ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR)
+    {
+        switch (button)
+        {
+            case CONTROLLER_BUTTON_A:
+                return "B";
+            case CONTROLLER_BUTTON_B:
+                return "A";
+            case CONTROLLER_BUTTON_X:
+                return "Y";
+            case CONTROLLER_BUTTON_Y:
+                return "X";
+        }
+    }
+    else //Xbox and others
+    {
+        switch (button)
+        {
+            case CONTROLLER_BUTTON_A:
+                return "A";
+            case CONTROLLER_BUTTON_B:
+                return "B";
+            case CONTROLLER_BUTTON_X:
+                return "X";
+            case CONTROLLER_BUTTON_Y:
+                return "Y";
+        }
+    }
+    return "UNK";
+}
+
 int joy_get_device_name(char *textbuf)
 {
     const char *name = sdl_controllers[0] ? SDL_GameControllerName(sdl_controllers[0]) : "No Controller";
