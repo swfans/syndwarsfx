@@ -34,6 +34,8 @@ static SDL_GameController *sdl_controllers[MAX_JOYSTICK_COUNT] = {NULL};
 static int sdl_num_controllers = 0;
 /******************************************************************************/
 
+static void devinput_clear(struct DevInput *dinp);
+
 int JoySetInterrupt(short val)
 {
     // SDL2 does not use hardware interrupts for joystick input
@@ -207,6 +209,7 @@ int joy_refresh_devices(struct DevInput *dinp)
             sdl_controllers[i] = NULL;
         }
     }
+    devinput_clear(dinp);
     
     // Reopen all game controllers
     sdl_num_controllers = 0;
@@ -225,7 +228,7 @@ int joy_refresh_devices(struct DevInput *dinp)
     return 1;
 }
 
-void devinput_clear(struct DevInput *dinp)
+static void devinput_clear(struct DevInput *dinp)
 {
     memset(dinp, 0, sizeof(struct DevInput));
     dinp->MinXAxis[0] = 0x10000;
@@ -241,7 +244,7 @@ void devinput_clear(struct DevInput *dinp)
     dinp->MinVAxis[0] = 0x10000;
     dinp->MaxVAxis[0] = 0;
     dinp->HatMax[0] = 0;
-    dinp->NumberOfDevices = 1;
+    dinp->NumberOfDevices = 0;
 }
 
 int joy_setup_device(struct DevInput *dinp, int jtype)
