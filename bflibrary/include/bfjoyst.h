@@ -3,7 +3,7 @@
 // Syndicate Wars, Magic Carpet or Dungeon Keeper.
 /******************************************************************************/
 /** @file bfjoyst.h
- *     Header file for bflib_joyst.c.
+ *     Header file for sjoyst.c.
  * @par Purpose:
  *     Joystick support.
  * @par Comment:
