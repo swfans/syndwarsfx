@@ -98,10 +98,13 @@ const char* joy_get_button_label(int button)
                 return "A"; // A looks like triangle already in the font used
         }
     }
-    else if (ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO ||
-             ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT ||
-             ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT ||
-             ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR)
+    else if (ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO
+#if SDL_VERSION_ATLEAST(2, 0, 14)
+             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT
+             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT
+             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR
+#endif
+             )
     {
         switch (button)
         {
