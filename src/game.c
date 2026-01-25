@@ -2655,8 +2655,8 @@ void init_level(void)
         ingame.DetailLevel = 1;
         for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
         {
-            player_unkn0C9[plyr_no] = 0;
-            player_unknCC9[plyr_no][0] =  '\0';
+            player_message_timer[plyr_no] = 0;
+            player_message_text[plyr_no][0] =  '\0';
         }
     }
     else
@@ -5340,12 +5340,12 @@ ubyte do_user_interface(void)
         {
             clear_key_pressed(KC_RETURN);
             if ((p_locplayer->PanelState[mouser] != PANEL_STATE_SEND_MESSAGE)
-              && (player_unkn0C9[local_player_no] <= 140))
+              && (player_message_timer[local_player_no] <= 140))
             {
                 p_locplayer->PanelState[mouser] = PANEL_STATE_SEND_MESSAGE;
                 reset_buffered_keys();
-                player_unknCC9[local_player_no][0] = '\0';
-                player_unkn0C9[local_player_no] = 0;
+                player_message_text[local_player_no][0] = '\0';
+                player_message_timer[local_player_no] = 0;
                 scanner_unkn370 = 0;
                 scanner_unkn3CC = 0;
                 did_inp |= GINPUT_DIRECT;
@@ -6623,37 +6623,16 @@ void draw_mission_concluded(void)
     }
     else
     {
-        const char *text_time;
         uint tm_h, tm_m, tm_s;
 
         tm_h = tm / 3600;
         tm_m = tm / 60;
         tm_s = tm % 60;
-        switch (language_3str[0])
-        {
-        case 'e':
-        default:
-            text_time = "Time";
-            break;
-        case 'f':
-            text_time = "Heure";
-            break;
-        case 'g':
-            text_time = "Zeit";
-            break;
-        case 'i':
-            text_time = "Tempo";
-            break;
-        case 's':
-            if (language_3str[1] == 'p')
-                text_time = "Tiempo";
-            else
-                text_time = "Tid";
-            break;
-        }
+
         sprintf(unknmsg_str, "%s %s %s %s %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
           gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
-          gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], text_time, tm_h, tm_m % 60, tm_s);
+          gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], gui_strings[GSTR_CHK_MISSION_STA_TIME],
+          tm_h, tm_m % 60, tm_s);
         data_15319c = unknmsg_str;
         scroll_text = unknmsg_str;
         LbStringToUpper(unknmsg_str);

@@ -49,6 +49,8 @@ enum GuiStrings {
     GSTR_NET_PROTO_MODEM_NAMES = 619,
     // Name for mission metric
     GSTR_MTR_SCIENTISTS_DEAD = 537,
+    // Short name of mission time to put before the time format
+    GSTR_CHK_MISSION_STA_TIME = 632,
     // Names for mission status values
     GSTR_ENM_MISSION_STATUS = 634,
     // Chunk of a sentence to put before mission status

@@ -113,8 +113,8 @@ extern struct TbPoint *game_panel_shifts;
 extern ubyte byte_153198;
 extern long scanner_unkn370;
 
-extern char player_unknCC9[8][128];
-extern ubyte player_unkn0C9[8];
+extern char player_message_text[8][128];
+extern ubyte player_message_timer[8];
 extern long scanner_unkn3CC;
 
 /** Scale factor for figuring out GUI size.

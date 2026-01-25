@@ -17217,17 +17217,17 @@ GLOBAL_FUNC (ASM_player_chat_message_add_key)	/* 0x3E580 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %bx,%ax
-		cmpb   $0x0,player_unkn0C9(%eax)
+		cmpb   $0x0,EXPORT_SYMBOL(player_message_timer)(%eax)
 		je     jump_3e5a8
 		xor    %ch,%ch
-		mov    %ch,player_unkn0C9(%eax)
+		mov    %ch,EXPORT_SYMBOL(player_message_timer)(%eax)
 		shl    $0x7,%eax
-		mov    %ch,player_unknCC9(%eax)
+		mov    %ch,EXPORT_SYMBOL(player_message_text)(%eax)
 	jump_3e5a8:
 		xor    %esi,%esi
 		mov    %bx,%si
 		mov    %esi,%eax
-		mov    $player_unknCC9,%edi
+		mov    $EXPORT_SYMBOL(player_message_text),%edi
 		shl    $0x7,%eax
 		add    %eax,%edi
 		mov    %eax,(%esp)
@@ -17251,7 +17251,7 @@ GLOBAL_FUNC (ASM_player_chat_message_add_key)	/* 0x3E580 */
 		lea    -0x1(%ecx),%eax
 		add    %esi,%eax
 		xor    %bh,%bh
-		mov    %bh,player_unknCC9(%eax)
+		mov    %bh,EXPORT_SYMBOL(player_message_text)(%eax)
 		jmp    jump_3e71e
 	jump_3e5fe:
 		cmp    $0x1c,%edx
@@ -17264,7 +17264,7 @@ GLOBAL_FUNC (ASM_player_chat_message_add_key)	/* 0x3E580 */
 		cmp    EXPORT_SYMBOL(net_player_colours)(%eax),%cl
 		jne    jump_3e623
 	jump_3e61c:
-		movb   $0x96,player_unkn0C9(%esi)
+		movb   $0x96,EXPORT_SYMBOL(player_message_timer)(%esi)
 	jump_3e623:
 		xor    %eax,%eax
 		xor    %edx,%edx
@@ -17354,9 +17354,9 @@ GLOBAL_FUNC (ASM_player_chat_message_add_key)	/* 0x3E580 */
 		xor    %eax,%eax
 		mov    %bx,%ax
 		shl    $0x7,%eax
-		mov    %dl,player_unknCC9(%ecx,%eax,1)
+		mov    %dl,EXPORT_SYMBOL(player_message_text)(%ecx,%eax,1)
 		xor    %dl,%dl
-		mov    %dl,EXPORT_SYMBOL(player_unknCC9)+1(%ecx,%eax,1)
+		mov    %dl,EXPORT_SYMBOL(player_message_text)+1(%ecx,%eax,1)
 	jump_3e71e:
 		add    $0x4,%esp
 		pop    %edi
@@ -76459,9 +76459,9 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		xor    %bl,%bl
 	jump_74d02:
 		add    $0x80,%edx
-		mov    %bl,player_unkn0C9(%eax)
+		mov    %bl,EXPORT_SYMBOL(player_message_timer)(%eax)
 		inc    %eax
-		mov    %bl,EXPORT_SYMBOL(player_unknCC9)-0x80(%edx)
+		mov    %bl,EXPORT_SYMBOL(player_message_text)-0x80(%edx)
 		cmp    $0x8,%eax
 		jge    jump_74d21
 		jmp    jump_74d02
@@ -130528,7 +130528,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		mov    EXPORT_SYMBOL(local_player_no),%al
 		mov    %eax,%edx
 		shl    $0x7,%edx
-		add    $player_unknCC9,%edx
+		add    $EXPORT_SYMBOL(player_message_text),%edx
 		mov    EXPORT_SYMBOL(net_player_colours)(%eax),%al
 		push   %edx
 		and    $0xff,%eax
@@ -180838,7 +180838,7 @@ GLOBAL (ingame)	/* 0x1807D4 */
 		.fill   0x9A5
 
 
-GLOBAL (player_unknCC9)	/* 0x180CC9 */
+GLOBAL (player_message_text)	/* 0x180CC9 */
 		.fill   0x80
 		.fill   0x80
 		.fill   0x80
@@ -180848,7 +180848,7 @@ GLOBAL (player_unknCC9)	/* 0x180CC9 */
 		.fill   0x80
 		.fill   0x80
 
-GLOBAL (player_unkn0C9)	/* 0x1810C9 */
+GLOBAL (player_message_timer)	/* 0x1810C9 */
 		.fill   0x8
 		.align	4
 

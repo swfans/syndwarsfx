@@ -243,7 +243,7 @@ void draw_text_linewrap1(int base_x, int *p_pos_y, int plyr, const char *text)
 
             ch = my_char_to_upper(*str);
             p_spr =  LbFontCharSprite(lbFontPtr, ch);
-            fd = base_shift + 4 * player_unkn0C9[plyr];
+            fd = base_shift + 4 * player_message_timer[plyr];
             if (fd > 63)
                 fd = 63 - (fd - 63);
             if (fd > 63)
@@ -294,7 +294,7 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
 
             ch = my_char_to_upper(*str);
             p_spr =  LbFontCharSprite(lbFontPtr, ch);
-            fd = base_shift + 4 * (ubyte)player_unkn0C9[plyr];
+            fd = base_shift + 4 * (ubyte)player_message_timer[plyr];
             if (fd > 63)
                 fd = 63 - (fd - 63);
             if (fd > 63)
@@ -343,7 +343,7 @@ TbBool AppTextDrawMissionChatMessage(int posx, int *posy, int plyr, const char *
     }
 #endif
     space_bkp = FontSpacingAlter(small_font, 12);
-    ret = AppTextDrawShadClFlashResized(posx, posy, units_per_px, player_unkn0C9[plyr], text);
+    ret = AppTextDrawShadClFlashResized(posx, posy, units_per_px, player_message_timer[plyr], text);
     FontSpacingRestore(small_font, space_bkp);
     return ret;
 }
