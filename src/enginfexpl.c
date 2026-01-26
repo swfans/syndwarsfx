@@ -34,6 +34,7 @@
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "frame_sprani.h"
+#include "scanner.h"
 #include "sound.h"
 #include "swlog.h"
 #include "thing.h"
@@ -450,12 +451,6 @@ LABEL_184:
         break;
     }
     add_node_sthing(firetng);
-}
-
-void SCANNER_fill_in_a_little_bit(int x1, int y1, int x2, int y2)
-{
-    asm volatile ("call ASM_SCANNER_fill_in_a_little_bit\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2));
 }
 
 static void explode_face_delete(int exface)

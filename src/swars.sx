@@ -126021,7 +126021,7 @@ vtable_ac4b8:
 
 
 /*----------------------------------------------------------------*/
-SCANNER_find_colour:	/* 0x0AC4C8 */
+GLOBAL_FUNC(ASM_SCANNER_find_colour)	/* 0x0AC4C8 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -126268,7 +126268,7 @@ GLOBAL_FUNC (ASM_SCANNER_fill_in)	/* 0x0AC68C */
 		mov    %eax,%ebx
 		mov    %eax,%edx
 		mov    %edi,%eax
-		call   SCANNER_find_colour
+		call   ac_SCANNER_find_colour
 		cmp    $0x1,%eax
 		jb     jump_ac751
 		mov    EXPORT_SYMBOL(sthings),%esi
@@ -130818,7 +130818,7 @@ GLOBAL_FUNC(ASM_SCANNER_fill_in_a_little_bit)	/* 0x0B0C30 */
 		mov    %eax,%edx
 		mov    %ebp,%eax
 		mov    %ebp,%esi
-		call   SCANNER_find_colour
+		call   ac_SCANNER_find_colour
 		cmp    $0x1,%eax
 		jb     jump_b0d18
 		jbe    jump_b0ca5

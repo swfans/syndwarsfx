@@ -156,6 +156,65 @@ void SCANNER_fill_in(void)
         :  :  : "eax" );
 }
 
+int SCANNER_find_colour(int mapx, int mapy)
+{
+    int ret;
+    asm volatile ("call ASM_SCANNER_find_colour\n"
+        : "=r" (ret) : "a" (mapx), "d" (mapy));
+    return ret;
+}
+
+void SCANNER_fill_in_a_little_bit(int x1, int z1, int x2, int z2)
+{
+#if 0
+    asm volatile ("call ASM_SCANNER_fill_in_a_little_bit\n"
+        : : "a" (x1), "d" (z1), "b" (x2), "c" (z2));
+#endif
+    int tile_x, tile_z;
+
+    if (x1 > x2) {
+        return;
+    }
+    if (z1 > z2) {
+        return;
+    }
+
+    for (tile_x = x1; tile_x <= x2; tile_x++)
+    {
+        for (tile_z = z1; tile_z <= z2; tile_z++)
+        {
+            int alt1, alt2, alt3, alt4;
+            int cor_x, cor_z;
+            ushort sc_col;
+            short col2;
+            TbPixel col1;
+
+            cor_x = tile_x << 7;
+            cor_z = tile_z << 7;
+
+            sc_col = SCANNER_find_colour(cor_x, cor_z);
+            if (sc_col == 0)
+                col1 = SCANNER_colour[0];
+            else if (sc_col == 1)
+                col1 = SCANNER_colour[1];
+            else if (sc_col == 2)
+                col1 = SCANNER_colour[2];
+
+            alt1 = alt_at_point(cor_z, cor_x + 128);
+            alt2 = alt_at_point(cor_z, cor_x - 128);
+            alt3 = alt_at_point(cor_z + 128, cor_x);
+            alt4 = alt_at_point(cor_z - 128, cor_x);
+            col2 = ((alt1 - alt2) >> 9) + ((alt3 - alt4) >> 9) + 32;
+            if (col2 < 0)
+                col2 = 0;
+            if (col2 > 63)
+                col2 = 63;
+
+            SCANNER_data[tile_x][tile_z] = pixmap.fade_table[256 * col2 + col1];
+        }
+    }
+}
+
 void SCANNER_init_arcpoint(int x1, int z1, int x2, int z2, int c)
 {
     asm volatile (
