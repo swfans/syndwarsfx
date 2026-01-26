@@ -136,7 +136,7 @@ GetDirectoryUser(void)
         {
             snprintf(data_path_user, sizeof(data_path_user), ".");
         }
-        LbSyncLog("Dir for user files '%s'\n", data_path_user);
+        LOGSYNC_F("Dir for user files '%s'", data_path_user);
 
         pinfo = &game_dirs[DirPlace_Savegame];
         LbDirectoryMake(pinfo->directory, true);
@@ -156,7 +156,7 @@ GetDirectoryHdd(void)
         {
             snprintf(data_path_hdd, sizeof(data_path_hdd), "%s", ".");
         }
-        LbSyncLog("Dir with HDD data '%s'\n",data_path_hdd);
+        LOGSYNC_F("Dir with HDD data '%s'", data_path_hdd);
     }
     return data_path_hdd;
 }

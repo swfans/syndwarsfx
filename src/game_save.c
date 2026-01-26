@@ -229,25 +229,8 @@ TbResult reload_salt_from_keys(void)
 
 void apply_user_settings(void)
 {
-    if (game_gfx_advanced_lights)
-        ingame.Flags |= GamF_AdvLights;
-    else
-        ingame.Flags &= ~GamF_AdvLights;
-
-    if (game_billboard_movies)
-        ingame.Flags |= GamF_BillboardMovies;
-    else
-        ingame.Flags &= ~GamF_BillboardMovies;
-
-    if (game_gfx_deep_radar)
-        ingame.Flags |= GamF_DeepRadar;
-    else
-        ingame.Flags &= ~GamF_DeepRadar;
-
-    bang_set_detail(ingame.DetailLevel == 0);
-    sfx_apply_samplevol();
-    sfx_apply_midivol();
-    sfx_apply_cdvolume();
+    apply_user_gfx_settings();
+    apply_user_sfx_settings();
 }
 
 void set_default_user_settings(void)
@@ -289,7 +272,7 @@ void read_user_settings(void)
 
     if (fh == INVALID_FILE)
     {
-        LOGSYNC("Build-in defaults used, as could not open \"%s\" file", fname);
+        LOGSYNC_F("Build-in defaults used, as could not open \"%s\" file", fname);
         set_default_user_settings();
         read_mortal_salt_backup = true;
     } else

@@ -24,8 +24,9 @@
 #include "bfjoyst.h"
 #include "ssampply.h"
 
-#include "display.h"
+#include "engincam.h"
 #include "engintrns.h"
+
 #include "game.h"
 #include "game_options.h"
 #include "game_speed.h"

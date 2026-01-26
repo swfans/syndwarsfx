@@ -111499,7 +111499,7 @@ GLOBAL_FUNC(ASM_show_audio_tracks_box)	/* 0x094844 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_show_netgame_unkn1)	/* 0x094990 */
+GLOBAL_FUNC(ASM_show_options_visual_main_box)	/* 0x094990 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -169121,8 +169121,8 @@ GLOBAL_FUNC (ASM_FIRE_init_or_samples_init)	/* 0x0D6650 */
 		mov    $0x1,%ecx
 		mov    %bx,data_1de0ca(%edx)
 		xor    %edx,%edx
-		mov    %cx,data_1e08b8
-		mov    %edx,data_1e08bc
+		mov    %cx,EXPORT_SYMBOL(word_1E08B8)
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 		pop    %edx
 		pop    %ecx
 		pop    %ebx
@@ -169155,7 +169155,7 @@ GLOBAL_FUNC(ASM_FIRE_new)	/* 0x0D6738 */
 		jl     jump_d8c6f
 		cmp    $0x800000,%ebx
 		jg     jump_d8c6f
-		cmpw   $0x0,data_1e08b8
+		cmpw   $0x0,EXPORT_SYMBOL(word_1E08B8)
 		je     jump_d8c6f
 		call   ac_get_new_sthing
 		cwtl
@@ -169214,7 +169214,7 @@ func_d67a1:
 		mov    %al,0x5a4(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x5a0(%esp)
 		test   %eax,%eax
 		jne    jump_d6862
@@ -169227,11 +169227,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d688f:
 		mov    %eax,0x284(%esp)
 		test   %ax,%ax
@@ -169328,7 +169328,7 @@ func_d67a1:
 		mov    %al,0x4e8(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x414(%esp)
 		test   %eax,%eax
 		jne    jump_d6a24
@@ -169341,11 +169341,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d6a51:
 		mov    %eax,0x264(%esp)
 		test   %ax,%ax
@@ -169446,7 +169446,7 @@ func_d67a1:
 		mov    %al,0x2e8(%esp)
 		xor    %eax,%eax
 		mov    $0x39b,%edx
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %edx,0x68(%esp)
 		test   %eax,%eax
 		jne    jump_d6bf5
@@ -169459,9 +169459,9 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_d6c1b:
 		mov    %eax,0x234(%esp)
 		test   %ax,%ax
@@ -169559,7 +169559,7 @@ func_d67a1:
 		mov    %al,0x2f0(%esp)
 		xor    %eax,%eax
 		xor    %dh,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0x3d8(%esp)
 		test   %eax,%eax
 		jne    jump_d6dba
@@ -169572,9 +169572,9 @@ func_d67a1:
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_d6de0:
 		mov    %eax,0x26c(%esp)
 		test   %ax,%ax
@@ -169671,7 +169671,7 @@ func_d67a1:
 		mov    %ah,0x3dc(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x4c0(%esp)
 		test   %eax,%eax
 		jne    jump_d6f94
@@ -169684,9 +169684,9 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_d6fba:
 		mov    %eax,0x2a8(%esp)
 		test   %ax,%ax
@@ -169781,7 +169781,7 @@ func_d67a1:
 		mov    %al,0x60c(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x634(%esp)
 		test   %eax,%eax
 		jne    jump_d7166
@@ -169794,11 +169794,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d7193:
 		mov    %eax,0x2a4(%esp)
 		test   %ax,%ax
@@ -169892,7 +169892,7 @@ func_d67a1:
 		mov    %al,0x538(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0x534(%esp)
 		test   %eax,%eax
 		jne    jump_d7332
@@ -169905,11 +169905,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d735f:
 		mov    %eax,0x294(%esp)
 		test   %ax,%ax
@@ -170004,7 +170004,7 @@ func_d67a1:
 		mov    %ah,0x57c(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%bl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bl,0x2cc(%esp)
 		test   %eax,%eax
 		jne    jump_d74ff
@@ -170017,11 +170017,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d752c:
 		mov    %eax,0x250(%esp)
 		test   %ax,%ax
@@ -170117,7 +170117,7 @@ func_d67a1:
 		mov    %al,0x5cc(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x600(%esp)
 		test   %eax,%eax
 		jne    jump_d76d9
@@ -170130,11 +170130,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d7706:
 		mov    %eax,0x2a0(%esp)
 		test   %ax,%ax
@@ -170232,7 +170232,7 @@ func_d67a1:
 		mov    %al,0x64c(%esp)
 		xor    %eax,%eax
 		mov    $0x64,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bh,0x348(%esp)
 		test   %eax,%eax
 		jne    jump_d78c2
@@ -170245,11 +170245,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d78ef:
 		mov    %eax,0x268(%esp)
 		test   %ax,%ax
@@ -170349,7 +170349,7 @@ func_d67a1:
 		mov    %al,0x2dc(%esp)
 		xor    %eax,%eax
 		mov    $0x64,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bh,0x608(%esp)
 		test   %eax,%eax
 		jne    jump_d7aad
@@ -170362,11 +170362,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d7ada:
 		mov    %eax,0x240(%esp)
 		test   %ax,%ax
@@ -170463,7 +170463,7 @@ func_d67a1:
 		mov    %al,0x320(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x5a8(%esp)
 		test   %eax,%eax
 		jne    jump_d7c88
@@ -170476,11 +170476,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d7cb5:
 		mov    %eax,0x248(%esp)
 		test   %ax,%ax
@@ -170579,7 +170579,7 @@ func_d67a1:
 		xor    %eax,%eax
 		mov    %edx,0x180(%esp)
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x41c(%esp)
 		test   %eax,%eax
 		jne    jump_d7e71
@@ -170592,9 +170592,9 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_d7e97:
 		mov    %eax,0x22c(%esp)
 		test   %ax,%ax
@@ -170694,7 +170694,7 @@ func_d67a1:
 		mov    %ebx,0x1a0(%esp)
 		xor    %eax,%eax
 		mov    $0x1e,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bh,0x5f8(%esp)
 		test   %eax,%eax
 		jne    jump_d8057
@@ -170707,11 +170707,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d8084:
 		mov    %eax,0x2b0(%esp)
 		test   %ax,%ax
@@ -170809,7 +170809,7 @@ func_d67a1:
 		mov    %ah,0x638(%esp)
 		xor    %eax,%eax
 		mov    %cl,0x564(%esp)
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    $0x39c,%ecx
 		test   %eax,%eax
 		jne    jump_d822a
@@ -170822,11 +170822,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d8257:
 		mov    %eax,0x29c(%esp)
 		test   %ax,%ax
@@ -170926,7 +170926,7 @@ func_d67a1:
 		mov    %al,0x5b8(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0x3e8(%esp)
 		test   %eax,%eax
 		jne    jump_d8404
@@ -170939,9 +170939,9 @@ func_d67a1:
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_d842a:
 		mov    %eax,0x258(%esp)
 		test   %ax,%ax
@@ -171040,7 +171040,7 @@ func_d67a1:
 		mov    %al,0x430(%esp)
 		xor    %eax,%eax
 		mov    $0x39c,%ecx
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x344(%esp)
 		test   %eax,%eax
 		jne    jump_d85de
@@ -171053,9 +171053,9 @@ func_d67a1:
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_d8604:
 		mov    %eax,0x260(%esp)
 		test   %ax,%ax
@@ -171156,7 +171156,7 @@ func_d67a1:
 		mov    %ah,0x460(%esp)
 		xor    %eax,%eax
 		mov    $0x1e,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bh,0x458(%esp)
 		test   %eax,%eax
 		jne    jump_d87c3
@@ -171169,11 +171169,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d87f0:
 		mov    %eax,0x238(%esp)
 		test   %ax,%ax
@@ -171275,7 +171275,7 @@ func_d67a1:
 		mov    %al,0x310(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x494(%esp)
 		test   %eax,%eax
 		jne    jump_d89ad
@@ -171288,11 +171288,11 @@ func_d67a1:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d89da:
 		mov    %eax,0x254(%esp)
 		test   %ax,%ax
@@ -171383,7 +171383,7 @@ func_d67a1:
 		mov    %ah,0x314(%esp)
 		xor    %eax,%eax
 		sub    $0xff,%esi
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bh,0x4d8(%esp)
 		test   %eax,%eax
 		jne    jump_d8b69
@@ -171396,11 +171396,11 @@ func_d67a1:
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%ebx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%ebx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %ebx
 		mov    %edx,%eax
-		mov    %ebx,data_1e08bc
+		mov    %ebx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d8b96:
 		mov    %eax,0x24c(%esp)
 		test   %ax,%ax
@@ -171501,7 +171501,7 @@ func_d8c79:
 		mov    %ah,0x44c(%esp)
 		xor    %eax,%eax
 		xor    %bh,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bh,0x34c(%esp)
 		test   %eax,%eax
 		jne    jump_d8d17
@@ -171514,11 +171514,11 @@ func_d8c79:
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%ebx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%ebx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %ebx
 		mov    %edx,%eax
-		mov    %ebx,data_1e08bc
+		mov    %ebx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d8d44:
 		mov    %eax,0x290(%esp)
 		test   %ax,%ax
@@ -171614,7 +171614,7 @@ func_d8e17:
 		mov    %al,0x554(%esp)
 		xor    %eax,%eax
 		xor    %dh,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0x550(%esp)
 		test   %eax,%eax
 		jne    jump_d8ed1
@@ -171627,11 +171627,11 @@ func_d8e17:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d8efe:
 		mov    %eax,0x23c(%esp)
 		test   %ax,%ax
@@ -171725,7 +171725,7 @@ func_d8fe1:
 		mov    %ah,0x614(%esp)
 		xor    %eax,%eax
 		xor    %bh,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bh,0x594(%esp)
 		test   %eax,%eax
 		jne    jump_d907f
@@ -171736,12 +171736,12 @@ func_d8fe1:
 		mov    %ax,%dx
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
-		mov    data_1e08bc,%ebp
+		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		add    %edx,%eax
 		inc    %ebp
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ebp,data_1e08bc
-		mov    %ax,data_1e08b8
+		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
 	jump_d90ac:
 		mov    %eax,0x27c(%esp)
@@ -172061,7 +172061,7 @@ func_d917f:
 		mov    %al,0x63c(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x604(%esp)
 		test   %eax,%eax
 		jne    jump_d94d7
@@ -172074,11 +172074,11 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d9504:
 		mov    %eax,0x2ac(%esp)
 		test   %ax,%ax
@@ -172178,7 +172178,7 @@ func_d917f:
 		mov    %al,0x394(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x62c(%esp)
 		test   %eax,%eax
 		jne    jump_d96b4
@@ -172191,11 +172191,11 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d96e1:
 		mov    %eax,0x278(%esp)
 		test   %ax,%ax
@@ -172296,7 +172296,7 @@ func_d917f:
 		mov    %al,0x4bc(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x674(%esp)
 		test   %eax,%eax
 		jne    jump_d9893
@@ -172309,11 +172309,11 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d98c0:
 		mov    %eax,0x230(%esp)
 		test   %ax,%ax
@@ -172412,7 +172412,7 @@ func_d917f:
 		mov    %al,0x424(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x334(%esp)
 		test   %eax,%eax
 		jne    jump_d9a6e
@@ -172425,11 +172425,11 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d9a9b:
 		mov    %eax,0x25c(%esp)
 		test   %ax,%ax
@@ -172525,7 +172525,7 @@ func_d917f:
 		mov    %al,0x53c(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x610(%esp)
 		test   %eax,%eax
 		jne    jump_d9c3f
@@ -172538,11 +172538,11 @@ func_d917f:
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%ebx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%ebx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %ebx
 		mov    %edx,%eax
-		mov    %ebx,data_1e08bc
+		mov    %ebx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d9c6c:
 		mov    %eax,0x274(%esp)
 		test   %ax,%ax
@@ -172639,7 +172639,7 @@ func_d917f:
 		mov    %al,0x584(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x3b4(%esp)
 		test   %eax,%eax
 		jne    jump_d9e09
@@ -172652,11 +172652,11 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_d9e36:
 		mov    %eax,0x244(%esp)
 		test   %ax,%ax
@@ -172755,7 +172755,7 @@ func_d917f:
 		mov    %al,0x5d4(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x3f8(%esp)
 		test   %eax,%eax
 		jne    jump_d9fd8
@@ -172768,11 +172768,11 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_da005:
 		mov    %eax,0x280(%esp)
 		test   %ax,%ax
@@ -172871,7 +172871,7 @@ func_d917f:
 		mov    %al,0x658(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x444(%esp)
 		test   %eax,%eax
 		jne    jump_da1a9
@@ -172885,9 +172885,9 @@ func_d917f:
 		shl    $0x2,%eax
 		add    0x1ec(%esp),%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_da1d7:
 		mov    %eax,0x28c(%esp)
 		test   %ax,%ax
@@ -172986,7 +172986,7 @@ func_d917f:
 		mov    %al,0x55c(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x380(%esp)
 		test   %eax,%eax
 		jne    jump_da37a
@@ -172999,9 +172999,9 @@ func_d917f:
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_da3a0:
 		mov    %eax,0x298(%esp)
 		test   %ax,%ax
@@ -173100,7 +173100,7 @@ func_d917f:
 		mov    %al,0x4ac(%esp)
 		xor    %eax,%eax
 		sub    $0xff,%edx
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %edx,0x224(%esp)
 		test   %eax,%eax
 		jne    jump_da55b
@@ -173113,11 +173113,11 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    data_1e08bc,%edx
-		mov    %ax,data_1e08b8
+		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
 		mov    %ebx,%eax
-		mov    %edx,data_1e08bc
+		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
 	jump_da588:
 		mov    %eax,%ecx
 		test   %ax,%ax
@@ -173214,7 +173214,7 @@ func_d917f:
 		mov    %al,0x330(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x4f8(%esp)
 		test   %eax,%eax
 		jne    jump_da738
@@ -173227,9 +173227,9 @@ func_d917f:
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
-		incl   data_1e08bc
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_da75e:
 		mov    %eax,0x288(%esp)
 		test   %ax,%ax
@@ -173321,7 +173321,7 @@ func_d917f:
 		mov    %ah,0x36c(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x3e0(%esp)
 		test   %eax,%eax
 		jne    jump_da8ef
@@ -173332,12 +173332,12 @@ func_d917f:
 		mov    %ax,%dx
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
-		mov    data_1e08bc,%ebp
+		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		add    %edx,%eax
 		inc    %ebp
 		mov    data_1de0ca(,%eax,4),%ax
-		mov    %ebp,data_1e08bc
-		mov    %ax,data_1e08b8
+		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
 	jump_da91c:
 		mov    %eax,0x270(%esp)
@@ -173726,7 +173726,7 @@ func_dad8c:
 		mov    %ah,0x1cc(%esp)
 		xor    %eax,%eax
 		mov    0x14(%esp),%ebx
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %edi,0x30(%esp)
 		test   %eax,%eax
 		jne    jump_dae3d
@@ -173737,8 +173737,8 @@ func_dad8c:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dae59:
 		mov    %eax,%edi
 		test   %ax,%ax
@@ -173830,7 +173830,7 @@ func_dad8c:
 		mov    %ah,0x208(%esp)
 		xor    %eax,%eax
 		xor    %dh,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0x1fc(%esp)
 		test   %eax,%eax
 		jne    jump_dafd1
@@ -173841,8 +173841,8 @@ func_dad8c:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dafed:
 		mov    %eax,0xbc(%esp)
 		test   %ax,%ax
@@ -173921,7 +173921,7 @@ func_dad8c:
 		mov    %bl,0x230(%esp)
 		xor    %eax,%eax
 		mov    $0x39c,%edx
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		xor    %bl,%bl
 		mov    %edx,0x4c(%esp)
 		mov    %bl,0x238(%esp)
@@ -173941,11 +173941,11 @@ func_dad8c:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1e08bc,%ebp
+		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		inc    %ebp
 		mov    data_1de0ca(%edx),%dx
-		mov    %ebp,data_1e08bc
-		mov    %dx,data_1e08b8
+		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 	jump_db17c:
 		mov    %eax,0xcc(%esp)
 		test   %ax,%ax
@@ -173996,7 +173996,7 @@ func_dad8c:
 		mov    0xcc(%esp),%eax
 		mov    %ax,0x2c(%edi)
 	jump_db241:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_db255
 		test   %esi,%esi
 		je     jump_db255
@@ -174063,7 +174063,7 @@ func_db265:
 		mov    %al,0x104(%esp)
 		xor    %eax,%eax
 		xor    %dh,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0x13c(%esp)
 		test   %eax,%eax
 		jne    jump_db33e
@@ -174074,8 +174074,8 @@ func_db265:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db35a:
 		mov    %eax,0xa4(%esp)
 		test   %ax,%ax
@@ -174129,7 +174129,7 @@ func_db265:
 	jump_db423:
 		xor    %eax,%eax
 	jump_db425:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dad70
 		test   %eax,%eax
 		je     jump_dad70
@@ -174188,7 +174188,7 @@ func_db444:
 		mov    %al,0x12c(%esp)
 		xor    %eax,%eax
 		xor    %dh,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0xf4(%esp)
 		test   %eax,%eax
 		jne    jump_db519
@@ -174199,8 +174199,8 @@ func_db444:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db535:
 		mov    %eax,%edi
 		test   %ax,%ax
@@ -174252,7 +174252,7 @@ func_db444:
 	jump_db5ec:
 		xor    %eax,%eax
 	jump_db5ee:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dad70
 		test   %eax,%eax
 		je     jump_dad70
@@ -174311,7 +174311,7 @@ func_db60d:
 		mov    %ah,0x188(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x18c(%esp)
 		test   %eax,%eax
 		jne    jump_db6dc
@@ -174322,8 +174322,8 @@ func_db60d:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db6f8:
 		mov    %eax,0xc0(%esp)
 		test   %ax,%ax
@@ -174376,7 +174376,7 @@ func_db60d:
 	jump_db7c2:
 		xor    %eax,%eax
 	jump_db7c4:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dad70
 		test   %eax,%eax
 		je     jump_dad70
@@ -174436,7 +174436,7 @@ func_db7e3:
 		mov    %al,0x1ac(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %bl,0x1a8(%esp)
 		test   %eax,%eax
 		jne    jump_db8c4
@@ -174447,8 +174447,8 @@ func_db7e3:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db8e0:
 		mov    %eax,%edi
 		test   %ax,%ax
@@ -174500,7 +174500,7 @@ func_db7e3:
 	jump_db998:
 		xor    %eax,%eax
 	jump_db99a:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dad70
 		test   %eax,%eax
 		je     jump_dad70
@@ -174553,7 +174553,7 @@ func_db9b9:
 		mov    %al,0x1e8(%esp)
 		xor    %eax,%eax
 		mov    $0x3,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x1ec(%esp)
 		test   %eax,%eax
 		jne    jump_dba73
@@ -174563,11 +174563,11 @@ func_db9b9:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1e08bc,%ebp
+		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		inc    %ebp
 		mov    data_1de0ca(%edx),%dx
-		mov    %ebp,data_1e08bc
-		mov    %dx,data_1e08b8
+		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 	jump_dba96:
 		mov    %eax,0xc8(%esp)
 		test   %ax,%ax
@@ -174620,7 +174620,7 @@ func_db9b9:
 	jump_dbb5c:
 		xor    %eax,%eax
 	jump_dbb5e:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dbb6c
 		test   %eax,%eax
 		jne    jump_dbb6f
@@ -174676,7 +174676,7 @@ func_dbb7c:
 		mov    %al,0x110(%esp)
 		xor    %eax,%eax
 		mov    $0x3,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0x228(%esp)
 		test   %eax,%eax
 		jne    jump_dbc3e
@@ -174687,8 +174687,8 @@ func_dbb7c:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dbc5a:
 		mov    %eax,0xd0(%esp)
 		test   %ax,%ax
@@ -174808,7 +174808,7 @@ func_dbb7c:
 		mov    %al,0xd8(%esp)
 		xor    %eax,%eax
 		xor    %bl,%bl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    $0xff,%bh
 		test   %eax,%eax
 		jne    jump_dbe42
@@ -174819,8 +174819,8 @@ func_dbb7c:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dbe5e:
 		mov    %eax,0xb4(%esp)
 		test   %ax,%ax
@@ -174879,8 +174879,8 @@ func_dbb7c:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dbf4a:
 		mov    %eax,0xac(%esp)
 		test   %ax,%ax
@@ -174986,14 +174986,14 @@ func_dbb7c:
 		mov    %al,0x160(%esp)
 		xor    %eax,%eax
 		mov    $0x64,%bh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    $0xff,%bl
 		test   %eax,%eax
 		jne    jump_dbf2e
 		xor    %eax,%eax
 		jmp    jump_dbf4a
 	jump_dc109:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dc121
 		mov    0x3c(%esp),%esi
 		test   %esi,%esi
@@ -175051,7 +175051,7 @@ func_dc131:
 		mov    %al,0x17c(%esp)
 		xor    %eax,%eax
 		mov    $0x8,%dl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dl,0xf0(%esp)
 		test   %eax,%eax
 		jne    jump_dc1e6
@@ -175062,8 +175062,8 @@ func_dc131:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dc202:
 		mov    %eax,0xa8(%esp)
 		test   %ax,%ax
@@ -175114,7 +175114,7 @@ func_dc131:
 	jump_dc2b7:
 		xor    %eax,%eax
 	jump_dc2b9:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dc2c7
 		test   %eax,%eax
 		jne    jump_dc2ca
@@ -175171,7 +175171,7 @@ func_dc2d7:
 		mov    %al,0xec(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%dh
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %dh,0x128(%esp)
 		test   %eax,%eax
 		jne    jump_dc396
@@ -175182,8 +175182,8 @@ func_dc2d7:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dc3b2:
 		mov    %eax,0xb0(%esp)
 		test   %ax,%ax
@@ -175236,7 +175236,7 @@ func_dc2d7:
 	jump_dc478:
 		xor    %eax,%eax
 	jump_dc47a:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dc488
 		test   %eax,%eax
 		jne    jump_dc48b
@@ -175292,7 +175292,7 @@ func_dc498:
 		mov    %al,0x1c4(%esp)
 		xor    %eax,%eax
 		mov    $0xff,%bl
-		mov    data_1e08b8,%ax
+		mov    EXPORT_SYMBOL(word_1E08B8),%ax
 		mov    %edx,0x84(%esp)
 		test   %eax,%eax
 		jne    jump_dc550
@@ -175303,8 +175303,8 @@ func_dc498:
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
 		mov    data_1de0ca(%edx),%dx
-		mov    %dx,data_1e08b8
-		incl   data_1e08bc
+		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
+		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dc56c:
 		mov    %eax,0xb8(%esp)
 		test   %ax,%ax
@@ -175355,7 +175355,7 @@ func_dc498:
 	jump_dc625:
 		xor    %eax,%eax
 	jump_dc627:
-		cmpl   $data_1e08b8,0x18(%esp)
+		cmpl   $EXPORT_SYMBOL(word_1E08B8),0x18(%esp)
 		jne    jump_dc635
 		test   %eax,%eax
 		jne    jump_dc638
@@ -175373,13 +175373,13 @@ func_dc498:
 		and    $0xff,%eax
 		jmp    *%cs:vtable_daa58(,%eax,4)
 	jump_dc65e:
-		mov    data_1e08b8,%bx
+		mov    EXPORT_SYMBOL(word_1E08B8),%bx
 		mov    %bx,data_1de0ca(%edx)
 		mov    0x18(%esp),%edx
-		mov    %ax,data_1e08b8
+		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    0xa0(%esp),%eax
 		mov    %ax,(%edx)
-		decl   data_1e08bc
+		decl   EXPORT_SYMBOL(dword_1E08BC)
 		jmp    func_dacdf
 	jump_dc68b:
 		add    $0x23c,%esp
@@ -182995,9 +182995,9 @@ GLOBAL (FIRE_flame)	/* 0x1de0b8 */
 		.fill   0x12
 data_1de0ca:
 		.fill   0x27ee
-data_1e08b8:
+GLOBAL (word_1E08B8)	/* 0x1E08B8 */
 		.long	0x0
-data_1e08bc:
+GLOBAL (dword_1E08BC)	/* 0x1E08BC */
 		.long	0x0
 
 

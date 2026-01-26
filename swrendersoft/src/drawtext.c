@@ -23,11 +23,10 @@
 #include "bfscreen.h"
 #include "rom.h"
 
+#include "engincam.h"
 #include "engincolour.h"
 #include "engintrns.h"
 #include "privrdlog.h"
-
-#include "display.h"
 /******************************************************************************/
 
 void draw_text(short x, short y, const char *text, ubyte colour)

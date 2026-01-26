@@ -19,7 +19,7 @@
 #include "engintrns.h"
 
 #include "bigmap.h"
-#include "display.h"
+#include "engincam.h"
 #include "engindrwlstm.h"
 #include "enginzoom.h"
 #include "game.h"

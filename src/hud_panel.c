@@ -19,6 +19,7 @@
 #include "hud_panel.h"
 
 #include <assert.h>
+#include "bfanywnd.h"
 #include "bfbox.h"
 #include "bffont.h"
 #include "bfgentab.h"
@@ -32,6 +33,7 @@
 #include "bfutility.h"
 #include "ssampply.h"
 
+#include "engincam.h"
 #include "engincolour.h"
 #include "engintxtrmap.h"
 #include "render_gpoly.h"
@@ -39,7 +41,6 @@
 #include "app_sprite.h"
 #include "engintext.h"
 #include "bigmap.h"
-#include "display.h"
 #include "engintrns.h"
 #include "game_data.h"
 #include "game_options.h"

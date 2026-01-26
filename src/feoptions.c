@@ -65,7 +65,7 @@ extern short textpos[10];
 
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
-ubyte ac_show_netgame_unkn1(struct ScreenBox *box);
+ubyte ac_show_options_visual_main_box(struct ScreenBox *box);
 ubyte ac_flashy_draw_purple_label(struct ScreenButton *p_button);
 
 void show_audio_volume_box_func_02(short scr_x, short scr_y, short a3, short a4, TbPixel colour)
@@ -356,15 +356,14 @@ void update_options_gfx_state(void)
     options_gfx_buttons[i].Text = text;
 }
 
-ubyte show_netgame_unkn1(struct ScreenBox *p_box)
+ubyte show_options_visual_main_box(struct ScreenBox *p_box)
 {
 #if 0
     ubyte ret;
-    asm volatile ("call ASM_show_netgame_unkn1\n"
+    asm volatile ("call ASM_show_options_visual_main_box\n"
         : "=r" (ret) : "a" (p_box));
     return ret;
 #endif
-    int tx_height;
     int scr_x, scr_y;
     int i;
 
@@ -394,7 +393,7 @@ ubyte show_netgame_unkn1(struct ScreenBox *p_box)
     {
       scr_x = options_gfx_buttons[i].X - 19;
       scr_y = options_gfx_buttons[i].Y + 1;
-      lbDisplay.DrawFlags = 0x8000 | 0x0004;
+      lbDisplay.DrawFlags = 0x8000 | Lb_SPRITE_TRANSPAR4;
 
       if (mouse_move_over_box_coords(scr_x, scr_y, scr_x + 9, scr_y + 14))
       {
@@ -414,7 +413,7 @@ ubyte show_netgame_unkn1(struct ScreenBox *p_box)
           }
           lbDisplay.DrawFlags = 0x8000;
           draw_sprite_purple_list(scr_x, scr_y, &fe_icons_sprites[108]);
-          lbDisplay.DrawFlags |= 0x0004;
+          lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
       }
       else
       {
@@ -443,23 +442,7 @@ ubyte show_netgame_unkn1(struct ScreenBox *p_box)
       draw_sprite_purple_list(scr_x - 7, scr_y, &fe_icons_sprites[109]);
     }
     lbDisplay.DrawFlags = 0;
-
-    if (game_gfx_advanced_lights)
-      ingame.Flags |= 0x02;
-    else
-      ingame.Flags &= ~0x02;
-
-    if (game_billboard_movies)
-        ingame.Flags |= 0x01;
-    else
-        ingame.Flags &= ~0x01;
-
-    if (game_gfx_deep_radar)
-        ingame.Flags |= 0x0400;
-    else
-        ingame.Flags &= ~0x0400;
-
-    bang_set_detail(ingame.DetailLevel == 0);
+    apply_user_gfx_settings();
     return 0;
 }
 
@@ -673,7 +656,7 @@ ubyte show_options_visual_screen(void)
     asm volatile ("call *%2\n"
         : "=r" (drawn) : "a" (&options_gfx_box), "g" (options_gfx_box.DrawFn));
     if (drawn == 3) {
-        show_netgame_unkn1(&options_gfx_box);
+        show_options_visual_main_box(&options_gfx_box);
     }
     return drawn;
 }

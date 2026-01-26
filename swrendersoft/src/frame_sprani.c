@@ -23,7 +23,6 @@
 #include "bfmemut.h"
 
 #include "privrdlog.h"
-
 /******************************************************************************/
 struct Frame *frame2;
 

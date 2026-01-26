@@ -504,4 +504,19 @@ void set_default_audio_tracks(void)
     ingame.DangerTrack = OPT_DANGER_TRACK_MIN;
     ingame.CDTrack = OPT_CD_TRACK_MIN;
 }
+
+void apply_user_gfx_settings(void)
+{
+    game_option_set(GOpt_AdvancedLights, game_gfx_advanced_lights);
+    game_option_set(GOpt_BillboardMovies, game_billboard_movies);
+    game_option_set(GOpt_DeepRadar, game_gfx_deep_radar);
+    bang_set_detail(ingame.DetailLevel == 0);
+}
+
+void apply_user_sfx_settings(void)
+{
+    sfx_apply_samplevol();
+    sfx_apply_midivol();
+    sfx_apply_cdvolume();
+}
 /******************************************************************************/

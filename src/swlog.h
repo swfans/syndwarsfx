@@ -32,6 +32,9 @@ extern "C" {
 /** Macro for logging messages of warning severity within this module. */
 #define LOGWARN(format,args...) LbWarnLog("SWFX: %s: " format "\n", __func__ , ## args)
 
+/** Macro for logging sync messages, but forced - print pressure equals errors. */
+#define LOGSYNC_F(format,args...) LbSyncLog("SWFX: %s: " format "\n", __func__ , ## args)
+
 #ifdef DEBUG
 #define LOGSYNC(format,args...) LbSyncLog("SWFX: %s: " format "\n", __func__ , ## args)
 #define LOGDBG(format,args...) LbDbgLog("SWFX: %s: " format "\n", __func__ , ## args)

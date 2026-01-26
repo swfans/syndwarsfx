@@ -25,14 +25,13 @@
 #include "bfutility.h"
 
 #include "enginbckt.h"
+#include "engincam.h"
 #include "engincolour.h"
 #include "enginprops.h"
 #include "engintrns.h"
 #include "engintxtrmap.h"
 #include "scanner.h"
 #include "privrdlog.h"
-
-#include "display.h"
 /******************************************************************************/
 ushort gamep_scene_effect_intensity = 1000;
 short gamep_scene_effect_change = -1;

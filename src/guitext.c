@@ -19,6 +19,7 @@
 /******************************************************************************/
 #include "guitext.h"
 
+#include <string.h>
 #include "bffile.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
@@ -27,8 +28,8 @@
 #include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
-char *gui_strings_data;
-char *gui_strings_data_end;
+char *gui_strings_data = NULL;
+char *gui_strings_data_end = NULL;
 
 void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours)
 {

@@ -275,7 +275,7 @@ void veh_add(struct Thing *p_vehicle, short frame)
     struct SingleObject *p_snobj;
     short coord_x, coord_y, coord_z;
     short mgun;
-    ushort obj;
+    ushort snobj;
     ushort matx;
 
     switch (frame)
@@ -303,15 +303,14 @@ void veh_add(struct Thing *p_vehicle, short frame)
         coord_y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
         coord_z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
         byte_1C83D1 = 0;
-        copy_prim_obj_to_game_object(coord_x, coord_z, -19 - prim_unknprop01, coord_y + 20);
+        snobj = copy_prim_obj_to_game_object(coord_x, coord_z, -19 - prim_unknprop01, coord_y + 20);
         p_mgun->X = 0;
         p_mgun->Y = 0x2800;
         p_mgun->Z = 0;
-        obj = next_object - 1;
-        unkn_object_shift_03(obj);
+        unkn_object_shift_03(snobj);
         p_mgun->Type = TT_VEH_TURRET;
-        p_mgun->U.UMGun.Object = obj;
-        p_snobj = &game_objects[obj];
+        p_mgun->U.UMGun.Object = snobj;
+        p_snobj = &game_objects[snobj];
         p_snobj->ThingNo = p_mgun - things;
         break;
     case 26: // Replaced tank (object slots reused for mech)
@@ -337,15 +336,14 @@ void veh_add(struct Thing *p_vehicle, short frame)
         coord_y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
         coord_z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
         byte_1C83D1 = 0;
-        copy_prim_obj_to_game_object(coord_x, coord_z, -27 - prim_unknprop01, coord_y + 20);
+        snobj = copy_prim_obj_to_game_object(coord_x, coord_z, -27 - prim_unknprop01, coord_y + 20);
         p_mgun->X = 0;
         p_mgun->Y = 0x1E00;
         p_mgun->Z = 0;
-        obj = next_object - 1;
-        unkn_object_shift_03(obj);
+        unkn_object_shift_03(snobj);
         p_mgun->Type = TT_VEH_TURRET;
-        p_mgun->U.UMGun.Object = obj;
-        p_snobj = &game_objects[obj];
+        p_mgun->U.UMGun.Object = snobj;
+        p_snobj = &game_objects[snobj];
         p_snobj->ThingNo = p_mgun - things;
         break;
     case VehOM_CLAWTANK:
@@ -371,15 +369,14 @@ void veh_add(struct Thing *p_vehicle, short frame)
         coord_x = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
         coord_y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
         coord_z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
-        copy_prim_obj_to_game_object(coord_x, coord_z, -30 - prim_unknprop01, coord_y + 20);
+        snobj = copy_prim_obj_to_game_object(coord_x, coord_z, -30 - prim_unknprop01, coord_y + 20);
         p_mgun->X = 0;
         p_mgun->Y = 0x1E00;
         p_mgun->Z = 0;
-        obj = next_object - 1;
-        unkn_object_shift_03(obj);
+        unkn_object_shift_03(snobj);
         p_mgun->Type = TT_VEH_TURRET;
-        p_mgun->U.UMGun.Object = obj;
-        p_snobj = &game_objects[obj];
+        p_mgun->U.UMGun.Object = snobj;
+        p_snobj = &game_objects[snobj];
         p_snobj->ThingNo = p_mgun - things;
         break;
     default:

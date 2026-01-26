@@ -19,13 +19,13 @@
 #include "enginpriobjs.h"
 
 #include "bffile.h"
+#include "bfmemut.h"
 
 #include "enginpritxtr.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "game_data.h"
 #include "game_options.h"
-#include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -45,10 +45,10 @@ void read_primveh_obj(const char *fname, int a2)
     TbFileHandle fh;
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
-    if ( fh == INVALID_FILE )
+    if (fh == INVALID_FILE)
         return;
     LbFileRead(fh, &firstval, sizeof(long));
-    if ( firstval != 1 )
+    if (firstval != 1)
     {
       LbFileRead(fh, &prim_object_points_count, sizeof(ushort));
       LbFileRead(fh, &prim_object_faces_count, sizeof(ushort));
@@ -193,7 +193,7 @@ ushort obj_face3_create_normal(short face)
         }
         nrml = next_normal++;
         p_nnrml = &game_normals[nrml];
-        memcpy(p_nnrml, &loc_nrml, sizeof(struct Normal));
+        LbMemoryCopy(p_nnrml, &loc_nrml, sizeof(struct Normal));
         i = nrml;
     }
     return i;
@@ -225,7 +225,7 @@ ushort obj_face4_create_normal(short face)
         }
         nrml = next_normal++;
         p_nnrml = &game_normals[nrml];
-        memcpy(p_nnrml, &loc_nrml, sizeof(struct Normal));
+        LbMemoryCopy(p_nnrml, &loc_nrml, sizeof(struct Normal));
         i = nrml;
     }
     return i;
@@ -257,7 +257,7 @@ void update_texture_from_anim_tmap(ushort ani_tmap)
             new_txtr = next_floor_texture++;
             p_nftextr = &game_textures[new_txtr];
             p_pftextr = &game_textures[prv_txtr];
-            memcpy(p_nftextr, p_pftextr, sizeof(struct SingleFloorTexture));
+            LbMemoryCopy(p_nftextr, p_pftextr, sizeof(struct SingleFloorTexture));
             p_panitmap->TMap[i] = new_txtr;
         }
     }
@@ -268,7 +268,7 @@ void prim_obj_mem_debug(int itm_beg, int itm_end)
 {
 }
 
-void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
+ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
 {
 #if 0
     asm volatile ("call ASM_copy_prim_obj_to_game_object\n"
@@ -284,9 +284,9 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wtype-limits"
     if ((tx < 0) || (tx > 0x7fff))
-        return;
+        return 0;
     if ((tz < 0) || (tz > 0x7fff))
-        return;
+        return 0;
 #pragma GCC diagnostic pop
 
     old_next_object = next_object;
@@ -306,7 +306,7 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
     pt_end = p_psngobj->EndPoint;
 
     if (next_object > mem_game[5].N)
-        return;
+        return 0;
     new_obj = next_object++;
     p_nsngobj = &game_objects[new_obj];
     p_nsngobj->OffsetX = tx;
@@ -314,13 +314,14 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
     p_nsngobj->MapX = tx;
     p_nsngobj->MapZ = tz;
     p_nsngobj->OffsetZ = tz;
-    p_nsngobj->ThingNo = things_empty_head;
-    p_nsngobj->StartFace = next_object_face;
-    p_nsngobj->NumbFaces = face_num;
+    p_nsngobj->ThingNo = 0;
+    p_nsngobj->NumbFaces = 0;
+    p_nsngobj->NumbFaces4 = 0;
 
     if (next_object_point + (pt_end - pt_beg) > mem_game[3].N)
-        return;
+        return new_obj;
 
+    // All points/vertices (for all faces) used by the primitive
     for (pt = pt_beg; pt <= pt_end; pt++)
     {
         struct SinglePoint *p_psngpt;
@@ -331,12 +332,15 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
         p_psngpt = &prim_object_points[pt];
         p_nsngpt = &game_object_points[new_pt];
 
-        memcpy(p_nsngpt, p_psngpt, sizeof(struct SinglePoint));
+        LbMemoryCopy(p_nsngpt, p_psngpt, sizeof(struct SinglePoint));
 
         point_unkn_func_03(p_nsngpt);
         if (ingame.LowerMemoryUse == 3)
             prim_obj_mem_debug(pt, pt+1);
     }
+
+    p_nsngobj->StartFace = next_object_face;
+    p_nsngobj->NumbFaces = face_num;
 
     for (face_dt = 0; face_dt < face_num; face_dt++)
     {
@@ -348,8 +352,10 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
             prim_obj_mem_debug(face_beg, face_beg + face_dt);
 
         p_pface = &prim_object_faces[face_beg + face_dt];
-        if (next_object_face + 3 > mem_game[4].N)
-            return;
+        if (next_object_face + 3 > mem_game[4].N) {
+            p_nsngobj->NumbFaces = face_dt;
+            return new_obj;
+        }
         new_face = next_object_face++;
         p_nface = &game_object_faces[new_face];
         if (p_pface->Texture != 0)
@@ -366,11 +372,13 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
             }
             if (new_txtr == 0)
             {
-                if (next_face_texture + 2 > mem_game[2].N)
-                    return;
+                if (next_face_texture + 2 > mem_game[2].N) {
+                    p_nsngobj->NumbFaces = face_dt;
+                    return new_obj;
+                }
                 new_txtr = next_face_texture++;
                 p_nstxtr = &game_face_textures[new_txtr];
-                memcpy(p_nstxtr, p_pstxtr, sizeof(struct SingleTexture));
+                LbMemoryCopy(p_nstxtr, p_pstxtr, sizeof(struct SingleTexture));
             }
             p_nface->Texture = new_txtr;
             if (ingame.LowerMemoryUse == 3)
@@ -393,7 +401,7 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
     face_num = p_psngobj->NumbFaces4;
     face_beg = p_psngobj->StartFace4;
     if (face_beg > mem_game[22].N)
-        return;
+        return new_obj;
 
     p_nsngobj->StartFace4 = next_object_face4;
     p_nsngobj->NumbFaces4 = face_num;
@@ -413,7 +421,7 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
 
         p_pface = &prim_object_faces4[face_beg + face_dt];
         if (next_object_face4 + 2 > mem_game[9].N)
-            return;
+            return new_obj;
         new_face = next_object_face4++;
         p_nface = &game_object_faces4[new_face];
 
@@ -428,16 +436,20 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
                 struct AnimTmap *p_panitmap;
                 ushort new_anitmap;
 
-                if (next_anim_tmap > mem_game[10].N)
-                    return;
+                if (next_anim_tmap > mem_game[10].N) {
+                    p_nsngobj->NumbFaces4 = face_dt;
+                    return new_obj;
+                }
                 new_anitmap = next_anim_tmap++;
                 p_nanitmap = &game_anim_tmaps[new_anitmap];
                 p_panitmap = &game_anim_tmaps[p_pface->Texture + 1];
-                memcpy(p_nanitmap, p_panitmap, sizeof(struct AnimTmap));
+                LbMemoryCopy(p_nanitmap, p_panitmap, sizeof(struct AnimTmap));
                 update_texture_from_anim_tmap(new_anitmap);
 
-                if (next_floor_texture + 1 > mem_game[1].N)
-                    return;
+                if (next_floor_texture + 1 > mem_game[1].N) {
+                    p_nsngobj->NumbFaces4 = face_dt;
+                    return new_obj;
+                }
                 new_txtr = next_floor_texture++;
                 p_nanitmap->field_24 = 0;
                 p_nanitmap->Texture = new_txtr;
@@ -459,11 +471,13 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
             }
             if (new_txtr == 0)
             {
-                if (next_floor_texture + 1 > mem_game[1].N)
-                    return;
+                if (next_floor_texture + 1 > mem_game[1].N) {
+                    p_nsngobj->NumbFaces4 = face_dt;
+                    return new_obj;
+                }
                 new_txtr = next_floor_texture++;
                 p_nftxtr = &game_textures[new_txtr];
-                memcpy(p_nftxtr, p_pftxtr, sizeof(struct SingleFloorTexture));
+                LbMemoryCopy(p_nftxtr, p_pftxtr, sizeof(struct SingleFloorTexture));
             }
             p_nface->Texture = new_txtr;
             if (ingame.LowerMemoryUse == 3)
@@ -488,6 +502,7 @@ void copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
         prim_obj_mem_debug(-10005, 0);
     if (ingame.LowerMemoryUse == 3)
         prim_obj_mem_debug(-10000, 0);
+    return new_obj;
 #endif
 }
 

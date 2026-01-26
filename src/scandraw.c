@@ -26,11 +26,11 @@
 #include "bfpixel.h"
 #include "bfplanar.h"
 
+#include "engincam.h"
 #include "engincolour.h"
 #include "engintrns.h"
 
 #include "campaign.h"
-#include "display.h"
 #include "thing.h"
 #include "thing_onface.h"
 #include "game_options.h"

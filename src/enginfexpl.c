@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "enginfexpl.h"
 
+#include <assert.h>
 #include <limits.h>
 #include <stdlib.h>
 #include "bfmemut.h"
@@ -25,13 +26,17 @@
 
 #include "bigmap.h"
 #include "bmbang.h"
-#include "display.h"
 #include "enginbckt.h"
+#include "engincam.h"
 #include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "enginprops.h"
+#include "enginshrapn.h"
 #include "engintrns.h"
+#include "frame_sprani.h"
+#include "sound.h"
 #include "swlog.h"
+#include "thing.h"
 /******************************************************************************/
 #pragma pack(1)
 
@@ -44,21 +49,24 @@ struct rectangle { // sizeof=4
 
 #pragma pack()
 
-ulong next_ex_face = 1;
+u32 next_ex_face = 1;
 
 extern ushort word_1AA5CC;
 extern struct rectangle redo_scanner[128];
 
-extern long minimum_explode_depth;
-extern ulong minimum_explode_and;
-extern long minimum_explode_size;
+extern s32 minimum_explode_depth;
+extern u32 minimum_explode_and;
+extern s32 minimum_explode_size;
 
-extern long dword_1AA5C4;
-extern long dword_1AA5C8;
-extern long dword_1AA5D8;
-extern long dword_1AA5DC;
-extern long dword_1AA5E0;
-extern long dword_1AA5E4;
+extern s32 dword_1AA5C4;
+extern s32 dword_1AA5C8;
+extern s32 dword_1AA5D8;
+extern s32 dword_1AA5DC;
+extern s32 dword_1AA5E0;
+extern s32 dword_1AA5E4;
+
+extern ushort word_1E08B8;
+extern s32 dword_1E08BC;
 
 /******************************************************************************/
 
@@ -84,10 +92,364 @@ void init_free_explode_faces(void)
 #endif
 }
 
+void FIRE_add_flame(ThingIdx firetng, ushort fflame)
+{
+    struct SimpleThing *p_fire;
+    struct FireFlame *p_fflame;
+
+    if (fflame == 0) {
+        return;
+    }
+    p_fire = &sthings[firetng];
+    p_fflame = &FIRE_flame[fflame];
+
+    p_fflame->next = p_fire->U.UFire.flame;
+    p_fire->U.UFire.flame = fflame;
+}
+
+ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangemsk, ushort fbig, ushort ftype, ushort count)
+{
+    struct FireFlame *p_fflame;
+    ushort fflame;
+    ushort anim;
+    ushort flife;
+    short flame_x, flame_z;
+    ubyte flame_life;
+    sbyte flame_fvel;
+
+    switch (ftype)
+    {
+    case 21:
+    case 10:
+        anim = 923;
+        flife = 53;
+        break;
+    case 9:
+    case 8:
+        anim = 924;
+        flife = 53;
+        break;
+    case 7:
+    case 6:
+        anim = 923;
+        flife = 43;
+        break;
+    case 5:
+        anim = 924;
+        flife = 53;
+        break;
+    case 4:
+        anim = 923;
+        flife = 43;
+        break;
+    default:
+        assert(!"bad flame type");
+        break;
+    }
+
+    flame_life = flife + (LbRandomAnyShort() & 0xF);
+    flame_z = cor_z + (LbRandomAnyShort() & rangemsk) - (rangemsk >> 1);
+    flame_x = cor_x + (LbRandomAnyShort() & rangemsk) - (rangemsk >> 1);
+    flame_fvel = (LbRandomAnyShort() & 0x3F) + 50;
+    if (word_1E08B8 != 0)
+    {
+        ushort nxflame;
+
+        fflame = word_1E08B8;
+        nxflame = FIRE_flame[fflame].next;
+        ++dword_1E08BC;
+        word_1E08B8 = nxflame;
+    }
+    else
+    {
+        fflame = 0;
+    }
+
+    if (fflame != 0)
+    {
+        ushort frm;
+
+        p_fflame = &FIRE_flame[fflame];
+        p_fflame->x = flame_x;
+        p_fflame->z = flame_z;
+        p_fflame->y = cor_y;
+        p_fflame->type = ftype;
+        p_fflame->big = fbig;
+        p_fflame->dbig = 0;
+        p_fflame->ddbig = -1;
+        for (frm = nstart_ani[anim]; ; frm = frame[frm].Next)
+        {
+            p_fflame->frame = frm;
+            if ((LbRandomAnyShort() & 3) == 0)
+                break;
+        }
+        p_fflame->life = flame_life;
+        p_fflame->count = count;
+        p_fflame->fvel = flame_fvel;
+        p_fflame->fcount = LbRandomAnyShort() & 0x7F;
+    }
+    return fflame;
+}
+
 void FIRE_new(int x, int y, int z, ubyte type)
 {
+#if 0
     asm volatile ("call ASM_FIRE_new\n"
         : : "a" (x), "d" (y), "b" (z), "c" (type));
+#endif
+    struct SimpleThing *p_fire;
+    struct MyMapElement *p_mapel;
+    int cor_x, cor_z;
+    int cor_y;
+    ThingIdx firetng;
+    ushort fflame;
+    short tile_x, tile_z;
+    short sib_tl_x, sib_tl_z;
+    ubyte flame_count;
+
+    if ((PRCCOORD_TO_MAPCOORD(x) >= MAP_COORD_WIDTH)
+      || (PRCCOORD_TO_MAPCOORD(z) >= MAP_COORD_HEIGHT)) {
+        return;
+    }
+    if (word_1E08B8 == 0) {
+        return;
+    }
+
+    firetng = get_new_sthing();
+    if (firetng == 0) {
+        return;
+    }
+
+    p_fire = &sthings[firetng];
+    p_fire->Type = SmTT_FIRE;
+    p_fire->U.UFire.flame = 0;
+    p_fire->Z = z;
+    p_fire->Y = y;
+    p_fire->X = x;
+    play_dist_ssample(p_fire, 0x10u, 0x7Fu, 0x40u, 100, -1, 1);
+
+    cor_x = x >> 8;
+    cor_z = z >> 8;
+    cor_y = y;
+
+    switch (type)
+    {
+    case 1u:
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 18 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 24 + (LbRandomAnyShort() & 0xF);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
+        FIRE_add_flame(firetng, fflame);
+        break;
+    case 2u:
+        flame_count = 2;
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 30, 10, flame_count);
+        FIRE_add_flame(firetng, fflame);
+        break;
+    case 3u:
+        tile_z = cor_z >> 8;
+        tile_x = cor_x >> 8;
+        p_mapel = &game_my_big_map[128 * (z >> 16) + (cor_x >> 8)];
+        p_mapel->Flags2 &= ~0x80;
+
+        sib_tl_z = tile_z - 1;
+        sib_tl_x = tile_x - 1;
+        if ( sib_tl_x <= 0x7F && sib_tl_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0x70;
+        }
+        sib_tl_z = tile_z - 1;
+        if ( tile_x <= 0x7F && sib_tl_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[128 * sib_tl_z + tile_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0x50;
+        }
+        sib_tl_x = tile_x + 1;
+        sib_tl_z = tile_z - 1;
+        if ( (tile_x + 1) >= 0 && sib_tl_x <= 127 && sib_tl_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0x30;
+        }
+        sib_tl_x = tile_x + 1;
+        if ( (tile_x + 1) >= 0 && sib_tl_x <= 127 && tile_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[128 * tile_z + sib_tl_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0x10;
+        }
+        sib_tl_z = tile_z + 1;
+        sib_tl_x = tile_x + 1;
+        if ( (tile_x + 1) >= 0 && sib_tl_x <= 127 && sib_tl_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0xF0;
+        }
+        sib_tl_z = tile_z + 1;
+        if ( tile_x <= 0x7F && sib_tl_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[128 * sib_tl_z + tile_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0xD0;
+        }
+        sib_tl_z = tile_z + 1;
+        sib_tl_x = tile_x - 1;
+        if ( (tile_x - 1) >= 0 && sib_tl_x <= 127 && sib_tl_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0xB0;
+        }
+        sib_tl_x = tile_x - 1;
+        if ( sib_tl_x <= 0x7F && tile_z <= 0x7F )
+        {
+          p_mapel = &game_my_big_map[(tile_z << 7) + sib_tl_x];
+          p_mapel->Flags2 &= 0xF;
+          p_mapel->Flags2 |= 0x90;
+        }
+
+        flame_count = 43 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 6, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 43 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 6, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 43 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 6, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 43 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 7, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 43 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 7, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 43 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 7, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 53 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 8, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 53 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 8, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 53 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 8, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 53 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 9, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 53 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 9, flame_count);
+        FIRE_add_flame(firetng, fflame);
+
+        flame_count = 53 - (LbRandomAnyShort() & 3);
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 9, flame_count);
+        FIRE_add_flame(firetng, fflame);
+        break;
+    case 4u:
+        flame_count = 6;
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 30, 21, flame_count);
+        FIRE_add_flame(firetng, fflame);
+        goto LABEL_184;
+    case 5u:
+LABEL_184:
+        flame_count = 12;
+        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 30, 21, flame_count);
+        FIRE_add_flame(firetng, fflame);
+        break;
+    default:
+        break;
+    }
+    add_node_sthing(firetng);
 }
 
 void SCANNER_fill_in_a_little_bit(int x1, int y1, int x2, int y2)

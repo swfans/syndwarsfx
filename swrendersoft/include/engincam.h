@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
-/** @file enginpriobjs.h
- *     Header file for enginpriobjs.c.
+/** @file engincam.h
+ *     Header file for engincam.c.
  * @par Purpose:
- *     Primitive objects support required by the 3D engine.
+ *     Camera handling for the 3D engine.
  * @par Comment:
  *     Just a header file - #defines, typedefs, function prototypes etc.
  * @author   Tomasz Lis
- * @date     29 Sep 2023 - 02 Jan 2024
+ * @date     19 Sep 2023 - 17 Mar 2024
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef ENGINPRIOBJS_H
-#define ENGINPRIOBJS_H
+#ifndef ENGINCAM_H
+#define ENGINCAM_H
 
 #include "bftypes.h"
 
@@ -25,32 +25,23 @@
 extern "C" {
 #endif
 /******************************************************************************/
-#pragma pack(1)
 
-struct SingleObject;
-struct SinglePoint;
-struct SingleObjectFace3;
-struct SingleObjectFace4;
+#pragma pack(1)
 
 #pragma pack()
 /******************************************************************************/
-extern struct SinglePoint *prim_object_points;
-extern struct SingleObjectFace3 *prim_object_faces;
-extern struct SingleObjectFace4 *prim_object_faces4;
-extern struct SingleObject *prim_objects;
-extern ushort prim_object_points_count;
-extern ushort prim_object_faces_count;
-extern ushort prim_object_faces4_count;
-extern ushort prim_objects_count;
-extern ushort prim_unknprop01;
+extern s32 engn_xc;
+extern s32 engn_yc;
+extern s32 engn_zc;
+extern s32 engn_anglexz;
 
-extern ushort unkn2_pos_x;
-extern ushort unkn2_pos_y;
-extern ushort unkn2_pos_z;
+extern s32 engn_x_vel;
+extern s32 engn_y_vel;
+/******************************************************************************/
 
-void read_primveh_obj(const char *fname, int a2);
+void camera_setup_view(int *p_pos_beg_x, int *p_pos_beg_z,
+  int *p_rend_beg_x, int *p_rend_beg_z, int *p_tlcount_x, int *p_tlcount_z);
 
-ushort copy_prim_obj_to_game_object(short tx, short tz, short a3, short ty);
 /******************************************************************************/
 #ifdef __cplusplus
 }

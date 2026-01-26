@@ -45,14 +45,6 @@ extern ubyte game_high_resolution;
 
 extern ubyte *back_buffer;
 
-extern s32 engn_xc;
-extern s32 engn_yc;
-extern s32 engn_zc;
-extern s32 engn_anglexz;
-
-extern s32 engn_x_vel;
-extern s32 engn_y_vel;
-
 extern ushort text_window_x1;
 extern ushort text_window_y1;
 extern ushort text_window_x2;

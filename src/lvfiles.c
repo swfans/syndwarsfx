@@ -25,6 +25,7 @@
 #include "bfmemut.h"
 
 #include "drawtext.h"
+#include "engincam.h"
 #include "engincolour.h"
 #include "enginfexpl.h"
 #include "enginlights.h"
@@ -37,7 +38,6 @@
 #include "bigmap.h"
 #include "campaign.h"
 #include "command.h"
-#include "display.h"
 #include "enginpriobjs.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
@@ -301,6 +301,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
 
             if (p_thing->Type == TT_VEHICLE)
             {
+                ushort snobj;
                 if (fmtver < 17)
                     p_thing->U.UVehicle.Armour = 4;
                 p_thing->U.UVehicle.PassengerHead = 0;
@@ -319,15 +320,16 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 byte_1C83D1 = 0;
 
                 n = next_normal;
-                copy_prim_obj_to_game_object(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
+                snobj = copy_prim_obj_to_game_object(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
                   -prim_unknprop01 - p_thing->StartFrame, PRCCOORD_TO_MAPCOORD(p_thing->Y));
                 k = next_normal;
-                unkn_object_shift_03(next_object - 1);
-                unkn_object_shift_02(n, k, next_object - 1);
+                unkn_object_shift_03(snobj);
+                unkn_object_shift_02(n, k, snobj);
 
                 k = p_thing - things;
-                p_thing->U.UVehicle.Object = next_object - 1;
-                game_objects[next_object - 1].ThingNo = k;
+                p_thing->U.UVehicle.Object = snobj;
+                game_objects[snobj].ThingNo = k;
+
                 VNAV_unkn_func_207(p_thing);
                 {
                     struct M33 *p_matx;

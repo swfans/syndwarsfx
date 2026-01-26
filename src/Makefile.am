@@ -20,6 +20,8 @@ syndwarsfx_SOURCES = \
 	../swrendersoft/include/drawtext.h \
 	../swrendersoft/src/enginbckt.c \
 	../swrendersoft/include/enginbckt.h \
+	../swrendersoft/src/engincam.c \
+	../swrendersoft/include/engincam.h \
 	../swrendersoft/src/engincolour.c \
 	../swrendersoft/include/engincolour.h \
 	../swrendersoft/src/enginfloor.c \

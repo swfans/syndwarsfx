@@ -70,9 +70,6 @@ short get_overall_scale_max(void);
 short get_render_area_for_zoom(short zoom);
 short bound_render_area(short rarea);
 
-void camera_setup_view(int *p_pos_beg_x, int *p_pos_beg_z,
-  int *p_rend_beg_x, int *p_rend_beg_z, int *p_tlcount_x, int *p_tlcount_z);
-
 /******************************************************************************/
 #ifdef __cplusplus
 }

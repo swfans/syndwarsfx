@@ -40,6 +40,7 @@
 #include "bftringl.h"
 #include "bfscd.h"
 
+#include "engincam.h"
 #include "engincolour.h"
 #include "enginprops.h"
 #include "engintxtrmap.h"
@@ -2777,9 +2778,10 @@ void init_level_3d(ubyte flag)
         // Prepare objects for rockets
         for (i = 0; i < WEP_ROCKETS_FIRED_LIMIT; i++)
         {
-            copy_prim_obj_to_game_object(0, 0, -prim_unknprop01 - 20, 0);
-            unkn_object_shift_03(next_object - 1);
-            ingame.Rocket1[i] = next_object - 1;
+            ushort snobj;
+            snobj = copy_prim_obj_to_game_object(0, 0, -prim_unknprop01 - 20, 0);
+            unkn_object_shift_03(snobj);
+            ingame.Rocket1[i] = snobj;
         }
         unkn2_pos_x = 64;
         unkn2_pos_y = 64;

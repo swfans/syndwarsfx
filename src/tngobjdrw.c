@@ -22,6 +22,7 @@
 #include "bfkeybd.h"
 
 #include "enginbckt.h"
+#include "engincam.h"
 #include "engincolour.h"
 #include "enginshadws.h"
 #include "enginsngobjs.h"
@@ -31,7 +32,6 @@
 
 #include "bigmap.h"
 #include "building.h"
-#include "display.h"
 #include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "frame_sprani.h"

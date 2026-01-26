@@ -22,12 +22,12 @@
 #include "bfline.h"
 
 #include "drawtext.h"
+#include "engincam.h"
 #include "engincolour.h"
 #include "engintrns.h"
 #include "enginzoom.h"
 
 #include "bigmap.h"
-#include "display.h"
 #include "drawtext_wrp.h"
 #include "thing.h"
 /******************************************************************************/

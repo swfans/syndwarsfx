@@ -59,7 +59,7 @@ static void print_walk_items_for_face(short face)
     p_walk_head = &game_walk_headers[wh];
     for (wi = p_walk_head->StartItem;
       wi < p_walk_head->StartItem + p_walk_head->Count; wi++) {
-        LOGSYNC("face %d walkface %d", (int)face, (int)game_walk_items[wi]);
+        LOGSYNC_F("face %d walkface %d", (int)face, (int)game_walk_items[wi]);
     }
 }
 
@@ -94,7 +94,7 @@ void print_mapel_collision_columns(void)
             if (p_mapel->ColumnHead == 0) continue;
             p_ccol = &game_col_columns[p_mapel->ColumnHead];
 
-            LOGSYNC("%02d,%02d qbits %04x %04x %04x %04x", (int)tile_x, (int)tile_z,
+            LOGSYNC_F("%02d,%02d qbits %04x %04x %04x %04x", (int)tile_x, (int)tile_z,
               (int)p_ccol->QBits[0], (int)p_ccol->QBits[1],
               (int)p_ccol->QBits[2], (int)p_ccol->QBits[3]);
         }
@@ -123,7 +123,7 @@ void print_collision_vects(void)
                 p_colvect = &game_col_vects[p_cvlist->Vect];
 
 
-                LOGSYNC("%02d,%02d ColVectList Obj %d Vect %d Face %hd P1=%hd,%hd,%hd P2=%hd,%hd,%hd",
+                LOGSYNC_F("%02d,%02d ColVectList Obj %d Vect %d Face %hd P1=%hd,%hd,%hd P2=%hd,%hd,%hd",
                   (int)tile_x, (int)tile_z, (int)p_cvlist->Object,
                   (int)p_cvlist->Vect, p_colvect->Face,
                   p_colvect->X1, p_colvect->Y1, p_colvect->Z1,
@@ -152,7 +152,7 @@ void print_triangulation_trigs(void)
         p_pt1 = &triangulation[0].Points[p_tri->point[1]];
         p_pt2 = &triangulation[0].Points[p_tri->point[2]];
 
-        LOGSYNC("Tri pt0(%d,%d) pt1(%d,%d) pt2(%d,%d) jump=%d, solid=%d, enter=0x%x",
+        LOGSYNC_F("Tri pt0(%d,%d) pt1(%d,%d) pt2(%d,%d) jump=%d, solid=%d, enter=0x%x",
           (int)p_pt0->x, (int)p_pt0->y,
           (int)p_pt1->x, (int)p_pt1->y,
           (int)p_pt2->x, (int)p_pt2->y,
@@ -173,7 +173,7 @@ void print_triangulation_points(void)
             continue;
         p_pt = &triangulation[0].Points[pt];
 
-        LOGSYNC("Pt(%d,%d)",
+        LOGSYNC_F("Pt(%d,%d)",
           (int)p_pt->x, (int)p_pt->y);
     }
 }
