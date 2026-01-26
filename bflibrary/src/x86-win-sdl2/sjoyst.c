@@ -99,7 +99,7 @@ const char* joy_get_button_label(int button)
         }
     }
     else if (ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO
-#if SDL_VERSION_ATLEAST(2, 0, 14)
+#if SDL_VERSION_ATLEAST(2, 24, 0)
              || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT
              || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT
              || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR
