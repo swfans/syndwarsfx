@@ -96,11 +96,11 @@ ubyte is_joy_pressed_any(ubyte channel)
     return (joy.Buttons[channel] != 0);
 }
 
-ushort get_joy_pressed_key(ubyte channel)
+JoyButtonSet get_joy_pressed_key(ubyte channel)
 {
     uint jbtn_pressed;
     ushort jbtn, buttons_num, pressed_count;
-    ushort jskey_flags;
+    JoyButtonSet jskey_flags;
 
     jskey_flags = 0;
     buttons_num = joy.NumberOfButtons[channel];
@@ -118,14 +118,14 @@ ushort get_joy_pressed_key(ubyte channel)
     return jskey_flags;
 }
 
-void clear_joy_pressed(ushort jkeys, ubyte channel)
+void clear_joy_pressed(JoyButtonSet jkeys, ubyte channel)
 {
     if (channel >= sizeof(joy.Buttons[0])/sizeof(joy.Buttons[0]))
         return;
     joy.Buttons[channel] &= ~jkeys;
 }
 
-void sprint_joy_key(char *ostr, int buttons_num, ushort jkeys)
+void sprint_joy_key(char *ostr, int buttons_num, JoyButtonSet jkeys)
 {
     int tx_len;
     ushort jbtn, pressed_count;
@@ -188,7 +188,7 @@ ubyte is_gamekey_kbd_pressed(GameKey gkey)
 
 ubyte is_gamekey_joy_pressed(GameKey gkey, ubyte channel)
 {
-    ushort jkeys;
+    JoyButtonSet jkeys;
 
     jkeys = jskeys[gkey];
 
@@ -210,7 +210,7 @@ void clear_gamekey_kbd_pressed(GameKey gkey)
 
 void clear_gamekey_joy_pressed(GameKey gkey, ubyte channel)
 {
-    ushort jkeys;
+    JoyButtonSet jkeys;
 
     jkeys = jskeys[gkey];
     clear_joy_pressed(jkeys, channel);
@@ -233,7 +233,7 @@ void set_gamekey_kbd(GameKey gkey, TbKeyCode key)
     kbkeys[gkey] = key;
 }
 
-void set_gamekey_joy(GameKey gkey, ushort jkey)
+void set_gamekey_joy(GameKey gkey, JoyButtonSet jkey)
 {
     jskeys[gkey] = jkey;
 }
