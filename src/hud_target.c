@@ -23,6 +23,7 @@
 #include "bfgentab.h"
 #include "bfsprite.h"
 #include "insspr.h"
+#include <stdlib.h>
 
 #include "engincam.h"
 #include "engincolour.h"

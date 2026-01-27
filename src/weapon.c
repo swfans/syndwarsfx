@@ -18,8 +18,6 @@
 /******************************************************************************/
 #include "weapon.h"
 
-#include <assert.h>
-
 #include "bfmath.h"
 #include "bfmemory.h"
 #include "bfendian.h"
@@ -27,6 +25,8 @@
 #include "bfini.h"
 #include "bfutility.h"
 #include "ssampply.h"
+#include <assert.h>
+#include <stdlib.h>
 
 #include "bigmap.h"
 #include "bmbang.h"

@@ -6,7 +6,6 @@
 
 #include "bffile.h"
 #include "bfflic.h"
-#include "globals.h"
 #include "people.h"
 #include "guiboxes.h"
 

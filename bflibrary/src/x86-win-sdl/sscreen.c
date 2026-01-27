@@ -717,6 +717,7 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
         if (!secondSurfaceOk)
             reason = "cannot create second surface";
         LOGDBG("Mode %s unavailable - %s", mdinfo->Desc, reason);
+        (void) reason; // Variable unused in non-debug builds
     }
 
     return firstSurfaceOk && secondSurfaceOk;

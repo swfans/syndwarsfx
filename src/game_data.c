@@ -19,7 +19,6 @@
 #include "game_data.h"
 
 #include <assert.h>
-#include "globals.h"
 #include "bffile.h"
 #include "bfdir.h"
 #include "bffnuniq.h"

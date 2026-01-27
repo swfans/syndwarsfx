@@ -18,8 +18,9 @@
 /******************************************************************************/
 #include "tngobjdrw.h"
 
-#include <assert.h>
 #include "bfkeybd.h"
+#include <assert.h>
+#include <stdlib.h>
 
 #include "enginbckt.h"
 #include "engincam.h"

@@ -322,13 +322,13 @@ void save_triangulation_png(const char *fname)
     ubyte *pal;
     ubyte *img;
 
-    pal = malloc(256*3);
-    img = malloc(img_dim*img_dim);
+    pal = LbMemoryAlloc(256*3);
+    img = LbMemoryAlloc(img_dim*img_dim);
     draw_triangulation_palette(pal);
     draw_triangulation_debug_image(img, margin, margin, img_dim, img_dim, cor_shl);
     LbPngSave(fname, img, img_dim, img_dim, pal, true);
-    free(pal);
-    free(img);
+    LbMemoryFree(pal);
+    LbMemoryFree(img);
 }
 
 /******************************************************************************/
