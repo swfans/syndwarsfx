@@ -40,7 +40,7 @@
 
 ushort kbkeys[GKey_KEYS_COUNT];
 
-ushort jskeys[GKey_KEYS_COUNT];
+JoyButtonSet jskeys[GKey_KEYS_COUNT];
 
 ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
 ulong buffered_keys_read_index;
@@ -86,7 +86,7 @@ void simulate_key_press(TbKeyCode key)
     }
 }
 
-ubyte is_joy_pressed(ushort jkeys, ubyte channel)
+ubyte is_joy_pressed(JoyButtonSet jkeys, ubyte channel)
 {
     return (jkeys && jkeys == joy.Buttons[channel]);
 }
@@ -128,7 +128,8 @@ void clear_joy_pressed(JoyButtonSet jkeys, ubyte channel)
 void sprint_joy_key(char *ostr, int buttons_num, JoyButtonSet jkeys)
 {
     int tx_len;
-    ushort jbtn, pressed_count;
+    int jbtn;
+    ushort pressed_count;
 
     tx_len = 0;
     pressed_count = 0;
