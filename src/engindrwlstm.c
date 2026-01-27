@@ -18,10 +18,11 @@
 /******************************************************************************/
 #include "engindrwlstm.h"
 
-#include <assert.h>
 #include "bfendian.h"
 #include "bfmath.h"
 #include "bfutility.h"
+#include <assert.h>
+#include <limits.h>
 
 #include "bigmap.h"
 #include "enginbckt.h"

@@ -24,6 +24,7 @@
 #include "bfsprite.h"
 #include "insspr.h"
 #include <assert.h>
+#include <stdlib.h>
 
 #include "enginfloor.h"
 #include "enginpeff.h"

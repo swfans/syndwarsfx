@@ -18,12 +18,13 @@
 /******************************************************************************/
 #include "bat.h"
 
-#include <string.h>
 #include "bfgentab.h"
 #include "bfkeybd.h"
 #include "bfmemut.h"
 #include "bfscreen.h"
 #include "ssampply.h"
+#include <stdlib.h>
+#include <string.h>
 
 #include "engincolour.h"
 

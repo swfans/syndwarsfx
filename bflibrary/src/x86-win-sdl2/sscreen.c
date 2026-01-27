@@ -892,6 +892,7 @@ TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 
     if (!firstSurfaceOk || !secondSurfaceOk)
         LOGDBG("Mode %s unavailable - %s", mdinfo->Desc, reason);
+    (void) reason; // Variable unused in non-debug builds
 
     return firstSurfaceOk && secondSurfaceOk;
 }

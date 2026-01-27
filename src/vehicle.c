@@ -18,11 +18,12 @@
 /******************************************************************************/
 #include "vehicle.h"
 
-#include <assert.h>
 #include "bfmath.h"
 #include "bfmemut.h"
 #include "bfutility.h"
 #include "ssampply.h"
+#include <assert.h>
+#include <stdlib.h>
 
 #include "bigmap.h"
 #include "bmbang.h"

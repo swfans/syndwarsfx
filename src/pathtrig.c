@@ -18,11 +18,13 @@
 /******************************************************************************/
 #include "pathtrig.h"
 
+#include "bfmath.h"
+#include "bfmemory.h"
 #include <assert.h>
 #include <string.h>
 #include <limits.h>
-#include "bfmath.h"
-#include "bfmemory.h"
+#include <stdlib.h>
+
 #include "bigmap.h"
 #include "building.h"
 #include "enginsngobjs.h"

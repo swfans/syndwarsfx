@@ -18,13 +18,13 @@
 /******************************************************************************/
 #include "thing.h"
 
-#include <assert.h>
-
 #include "bfbox.h"
 #include "bfutility.h"
 #include "bfmemut.h"
 #include "bfscreen.h"
 #include "ssampply.h"
+#include <assert.h>
+#include <stdlib.h>
 
 #include "bigmap.h"
 #include "building.h"
@@ -964,7 +964,8 @@ void process_things(void)
         return;
     monitor_all_samples();
 
-    if (!in_network_game && (pktrec_mode == PktR_NONE) && (ingame.Flags & GamF_Unkn0004) != 0 && ((gameturn & 0xF) != 0))
+    if (!in_network_game && (pktrec_mode == PktR_NONE)
+      && ((ingame.Flags & GamF_Unkn0004) != 0) && ((gameturn & 0xF) != 0))
         return;
 
     if (execute_commands)

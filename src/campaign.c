@@ -22,6 +22,8 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 #include "bfini.h"
+#include <ctype.h>
+#include <stdlib.h>
 
 #include "cybmod.h"
 #include "weapon.h"

@@ -1,10 +1,21 @@
-#include <assert.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
+/******************************************************************************/
+// Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
+/******************************************************************************/
+/** @file game.c
+ *     Game loop and high level functions.
+ * @par Purpose:
+ *     Implement functions for high level flows of the game application.
+ * @par Comment:
+ *     None.
+ * @author   Tomasz Lis
+ * @date     22 Apr 2023 - 22 Oct 2023
+ * @par  Copying and copyrights:
+ *     This program is free software; you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation; either version 2 of the License, or
+ *     (at your option) any later version.
+ */
+/******************************************************************************/
 #include "bfconfig.h"
 #include "bfcircle.h"
 #include "bfdata.h"
@@ -39,6 +50,13 @@
 #include "bfsmack.h"
 #include "bftringl.h"
 #include "bfscd.h"
+#include <assert.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "engincam.h"
 #include "engincolour.h"
@@ -6947,3 +6965,4 @@ void game_reset(void)
     LbDataFreeAll(missionspr_load_files);
 }
 
+/******************************************************************************/

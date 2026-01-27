@@ -20,8 +20,9 @@
 /******************************************************************************/
 #include "packetfe.h"
 
-#include <string.h>
 #include "bfutility.h"
+#include <stdlib.h>
+#include <string.h>
 
 #include "fecryo.h"
 #include "fenet.h"

@@ -24,6 +24,7 @@
 #include "bfstrut.h"
 #include "poly.h"
 #include "ssampply.h"
+#include <stdlib.h>
 
 #include "display.h"
 #include "femain.h"
