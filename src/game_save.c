@@ -285,30 +285,47 @@ void read_user_settings(void)
             LbFileRead(fh, &fmtver, sizeof(u32));
         else
             fmtver = 0;
-
+        
+        int num_gkeys = 0;
         if (fmtver == 0) {
             // In original game, the last key (agent 4 select) is not saved at all
-            set_default_game_keys();
-            LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
-            LbFileRead(fh, jskeys, 23 * sizeof(ushort));
+            num_gkeys = 23;
         } else if (fmtver == 1) {
-            set_default_game_keys();
-            LbFileRead(fh, kbkeys, 29 * sizeof(ushort));
-            LbFileRead(fh, jskeys, 29 * sizeof(ushort));
+            num_gkeys = 29;
         } else if (fmtver == 2) {
-            set_default_game_keys();
-            LbFileRead(fh, kbkeys, 50 * sizeof(ushort));
-            LbFileRead(fh, jskeys, 50 * sizeof(ushort));
+            num_gkeys = 50;
         } else {
-#ifdef MORE_GAME_KEYS
-            if (fmtver != 3)
-#else
-            if (fmtver != 2)
-#endif
-                LOGWARN("Settings may be invalid, as \"%s\" has unrecognized format version %d", fname, (int)fmtver);
-            LbFileRead(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
-            LbFileRead(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
+            num_gkeys = GKey_KEYS_COUNT;
         }
+
+        set_default_game_keys();
+        LbFileRead(fh, kbkeys, num_gkeys * sizeof(ushort));
+
+//TODO ask mefisto how to handle this properly
+#define UINT32_JSKEYS 1
+
+#ifdef UINT32_JSKEYS
+    #define MY_FMTVER 4
+#elif defined MORE_GAME_KEYS
+    #define MY_FMTVER 3
+#else
+    #define MY_FMTVER 2
+#endif
+
+        if (fmtver >= 4) {
+            LbFileRead(fh, jskeys, num_gkeys * sizeof(uint32_t));
+
+        } else{
+            ushort jskeys_old[GKey_KEYS_COUNT];
+            LbFileRead(fh, jskeys_old, num_gkeys * sizeof(ushort));
+            for (i = 0; i < num_gkeys; i++)
+                jskeys[i] = jskeys_old[i];
+        }
+
+        if (fmtver != MY_FMTVER)
+            LOGWARN("Settings may be invalid, as \"%s\" has unrecognized format version '%d' expected '%d'", fname, (int)fmtver, MY_FMTVER);
+
+
 
         LbFileRead(fh, &ctl_joystick_type, sizeof(ctl_joystick_type));
         LbFileRead(fh, &players[local_player_no].DoubleMode,
@@ -365,11 +382,7 @@ TbBool save_user_settings(void)
     int i;
 
     get_user_settings_fname(fname, login_name);
-#ifdef MORE_GAME_KEYS
-    fmtver = 3;
-#else
-    fmtver = 2;
-#endif
+    fmtver = MY_FMTVER;
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
     if (fh == INVALID_FILE)
@@ -377,7 +390,11 @@ TbBool save_user_settings(void)
 
     LbFileWrite(fh, &fmtver, sizeof(fmtver));
     LbFileWrite(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
+#ifdef UINT32_JSKEYS
+    LbFileWrite(fh, jskeys, GKey_KEYS_COUNT * sizeof(uint32_t));
+#else
     LbFileWrite(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
+#endif
     LbFileWrite(fh, &ctl_joystick_type, sizeof(ctl_joystick_type));
     LbFileWrite(fh, &players[local_player_no].DoubleMode,
       sizeof(players[local_player_no].DoubleMode));

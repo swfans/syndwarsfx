@@ -79,6 +79,7 @@ enum GameKeys
 #ifdef MORE_GAME_KEYS
   GKey_SUPERSHIELD = 50,
   GKey_VIEW_THERMAL = 51,
+  //maybe we should add some padding here for future keys so config saves remain compatible?
 #endif
   GKey_KEYS_COUNT,
 };
