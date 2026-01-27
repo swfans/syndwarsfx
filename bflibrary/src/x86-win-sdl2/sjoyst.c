@@ -81,7 +81,6 @@ const char* joy_get_button_label(int button)
     SDL_GameController *controller = sdl_controllers[0];
     SDL_GameControllerType ctrl_type = SDL_GameControllerGetType(controller);
 
-    // TODO remove true condition when testing is done
     if (ctrl_type == SDL_CONTROLLER_TYPE_PS3 ||
         ctrl_type == SDL_CONTROLLER_TYPE_PS4 ||
         ctrl_type == SDL_CONTROLLER_TYPE_PS5)
