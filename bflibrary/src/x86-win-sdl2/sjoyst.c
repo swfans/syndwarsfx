@@ -84,7 +84,7 @@ const char* joy_get_button_label(int button)
     // TODO remove true condition when testing is done
     if (ctrl_type == SDL_CONTROLLER_TYPE_PS3 ||
         ctrl_type == SDL_CONTROLLER_TYPE_PS4 ||
-        ctrl_type == SDL_CONTROLLER_TYPE_PS5 || true)
+        ctrl_type == SDL_CONTROLLER_TYPE_PS5)
     {
         switch (button)
         {
