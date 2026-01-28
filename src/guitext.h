@@ -30,7 +30,6 @@ extern "C" {
 #pragma pack(1)
 
 enum GuiStrings {
-    
     GSTR_PLAYERS = 459,
     GSTR_PLAYER = 460,
     GSTR_JOYSTICK = 463,

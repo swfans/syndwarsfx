@@ -2621,7 +2621,7 @@ GLOBAL_FUNC (ASM_JoySetInterrupt) /* 0xE3A78 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_joy_func_063)	/* 0x0E3A90 */
+GLOBAL_FUNC (ASM_joy_get_device_name)	/* 0x0E3A90 */
 /*----------------------------------------------------------------*/
 		push   %edx
 		push   %esi
