@@ -67,7 +67,7 @@ struct DevInput {
         int32_t HatX[MAX_JOYSTICK_COUNT];
         int32_t HatY[MAX_JOYSTICK_COUNT];
         int32_t HatMax[MAX_JOYSTICK_COUNT];
-        int32_t Buttons[MAX_JOYSTICK_COUNT];
+        uint32_t Buttons[MAX_JOYSTICK_COUNT];
         int32_t NumberOfButtons[MAX_JOYSTICK_COUNT];
         int32_t ConfigType[MAX_JOYSTICK_COUNT];
         int32_t MenuButtons[MAX_JOYSTICK_COUNT];
@@ -110,16 +110,19 @@ typedef enum
     CONTROLLER_BUTTON_DPAD_LEFT,
     CONTROLLER_BUTTON_DPAD_RIGHT,
     CONTROLLER_BUTTON_MISC1,    /* Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button */
-    
-    /*
-    paddle support would require changing short to int32_t for jskeys in gamecode
     CONTROLLER_BUTTON_PADDLE1,  // Xbox Elite paddle P1 (upper left, facing the back)
     CONTROLLER_BUTTON_PADDLE2,  // Xbox Elite paddle P3 (upper right, facing the back)
     CONTROLLER_BUTTON_PADDLE3,  // Xbox Elite paddle P2 (lower left, facing the back)
     CONTROLLER_BUTTON_PADDLE4,  // Xbox Elite paddle P4 (lower right, facing the back)
     CONTROLLER_BUTTON_TOUCHPAD, // PS4/PS5 touchpad button
-    */
-    CONTROLLER_BUTTON_MAX
+    CONTROLLER_BUTTON_TRIGGER_LEFT,
+    CONTROLLER_BUTTON_TRIGGER_RIGHT,
+    CONTROLLER_BUTTON_RIGHT_THUMB_LEFT,
+    CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT,
+    CONTROLLER_BUTTON_RIGHT_THUMB_UP,
+    CONTROLLER_BUTTON_RIGHT_THUMB_DOWN,
+    CONTROLLER_BUTTON_MAX,
+
 } GameControllerButton;
 
 /******************************************************************************/

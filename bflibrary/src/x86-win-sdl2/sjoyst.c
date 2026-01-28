@@ -33,6 +33,9 @@
 static SDL_GameController *sdl_controllers[MAX_JOYSTICK_COUNT] = {NULL};
 static int sdl_num_controllers = 0;
 static struct DevInput *devinput;
+// Track previous digital stick states for edge detection
+static int prev_digital_z[MAX_JOYSTICK_COUNT] = {0};
+static int prev_digital_r[MAX_JOYSTICK_COUNT] = {0};
 /******************************************************************************/
 
 
@@ -76,6 +79,30 @@ const char* joy_get_button_label(int button)
             return "DPR";
         case CONTROLLER_BUTTON_MISC1:
             return "MSC";
+        case CONTROLLER_BUTTON_PADDLE1:  // Xbox Elite paddle P1 (upper left, facing the back)
+            return "P1";
+        case CONTROLLER_BUTTON_PADDLE2:  // Xbox Elite paddle P3 (upper right, facing the back)
+            return "P2";
+        case CONTROLLER_BUTTON_PADDLE3:  // Xbox Elite paddle P2 (lower left, facing the back)
+            return "P3";
+        case CONTROLLER_BUTTON_PADDLE4:  // Xbox Elite paddle P4 (lower right, facing the back)
+            return "P4";
+        case CONTROLLER_BUTTON_TOUCHPAD: // PS4/PS5 touchpad button
+            return "TPD";
+        case CONTROLLER_BUTTON_TRIGGER_LEFT:
+            return "LT";
+        case CONTROLLER_BUTTON_TRIGGER_RIGHT:
+            return "RT";
+        case CONTROLLER_BUTTON_RIGHT_THUMB_LEFT:
+            return "RTL";
+        case CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT:
+            return "RTR";
+        case CONTROLLER_BUTTON_RIGHT_THUMB_UP:
+            return "RTUP";
+        case CONTROLLER_BUTTON_RIGHT_THUMB_DOWN:
+            return "RTDN";
+        default:
+            break;
     }
 
     SDL_GameController *controller = sdl_controllers[0];
@@ -182,12 +209,70 @@ int joy_update_inputs(struct DevInput *dinp)
         dinp->AnalogueU[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERLEFT);
         dinp->AnalogueV[i] = SDL_GameControllerGetAxis(controller, SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
         
-        // Convert analog to digital
-        dinp->DigitalX[i] = (dinp->AnalogueX[i] < -16384) ? -1 : (dinp->AnalogueX[i] > 16384) ? 1 : 0;
-        dinp->DigitalY[i] = (dinp->AnalogueY[i] < -16384) ? -1 : (dinp->AnalogueY[i] > 16384) ? 1 : 0;
-        dinp->DigitalZ[i] = (dinp->AnalogueZ[i] < -16384) ? -1 : (dinp->AnalogueZ[i] > 16384) ? 1 : 0;
-        dinp->DigitalR[i] = (dinp->AnalogueR[i] < -16384) ? -1 : (dinp->AnalogueR[i] > 16384) ? 1 : 0;
+        // Convert analog to digital with proper deadzone (use 1/4 of range for better deadzone)
+        #define DEADZONE_THRESHOLD 8192
+        dinp->DigitalX[i] = (dinp->AnalogueX[i] < -DEADZONE_THRESHOLD) ? -1 : (dinp->AnalogueX[i] > DEADZONE_THRESHOLD) ? 1 : 0;
+        dinp->DigitalY[i] = (dinp->AnalogueY[i] < -DEADZONE_THRESHOLD) ? -1 : (dinp->AnalogueY[i] > DEADZONE_THRESHOLD) ? 1 : 0;
+        dinp->DigitalZ[i] = (dinp->AnalogueZ[i] < -DEADZONE_THRESHOLD) ? -1 : (dinp->AnalogueZ[i] > DEADZONE_THRESHOLD) ? 1 : 0;
+        dinp->DigitalR[i] = (dinp->AnalogueR[i] < -DEADZONE_THRESHOLD) ? -1 : (dinp->AnalogueR[i] > DEADZONE_THRESHOLD) ? 1 : 0;
+        // Triggers are 0-32767, use half range as threshold
+        dinp->DigitalU[i] = (dinp->AnalogueU[i] > 16384) ? 1 : 0;
+        dinp->DigitalV[i] = (dinp->AnalogueV[i] > 16384) ? 1 : 0;
         
+        if (dinp->DigitalU[i] > 0)
+            dinp->Buttons[i] |= (1 << CONTROLLER_BUTTON_TRIGGER_LEFT);
+        else
+            dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_TRIGGER_LEFT);
+
+        if (dinp->DigitalV[i] > 0)
+            dinp->Buttons[i] |= (1 << CONTROLLER_BUTTON_TRIGGER_RIGHT);
+        else
+            dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_TRIGGER_RIGHT);
+
+        // Right stick X-axis as buttons (edge-triggered, not continuous)
+        if (dinp->DigitalZ[i] != prev_digital_z[i])
+        {
+            // State changed
+            if (dinp->DigitalZ[i] == -1)
+            {
+                dinp->Buttons[i] |= (1 << CONTROLLER_BUTTON_RIGHT_THUMB_LEFT);
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT);
+            }
+            else if (dinp->DigitalZ[i] == 1)
+            {
+                dinp->Buttons[i] |= (1 << CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT);
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_LEFT);
+            }
+            else
+            {
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_LEFT);
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT);
+            }
+            prev_digital_z[i] = dinp->DigitalZ[i];
+        }
+
+        // Right stick Y-axis as buttons (edge-triggered, not continuous)
+        if (dinp->DigitalR[i] != prev_digital_r[i])
+        {
+            // State changed
+            if (dinp->DigitalR[i] == -1)
+            {
+                dinp->Buttons[i] |= (1 << CONTROLLER_BUTTON_RIGHT_THUMB_UP);
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_DOWN);
+            }
+            else if (dinp->DigitalR[i] == 1)
+            {
+                dinp->Buttons[i] |= (1 << CONTROLLER_BUTTON_RIGHT_THUMB_DOWN);
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_UP);
+            }
+            else
+            {
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_UP);
+                dinp->Buttons[i] &= ~(1 << CONTROLLER_BUTTON_RIGHT_THUMB_DOWN);
+            }
+            prev_digital_r[i] = dinp->DigitalR[i];
+        }
+
         // Read D-pad
         dinp->HatX[i] = 0;
         dinp->HatY[i] = 0;
@@ -263,7 +348,7 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
     // Setup basic controller parameters
     for (int i = 0; i < sdl_num_controllers; i++) {
         if (sdl_controllers[i]) {
-            dinp->NumberOfButtons[i] = SDL_CONTROLLER_BUTTON_MAX;
+            dinp->NumberOfButtons[i] = CONTROLLER_BUTTON_MAX;
             dinp->Init[i] = 1;
             dinp->ConfigType[i] = jtype;
             
