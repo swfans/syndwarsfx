@@ -284,13 +284,13 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
                     n_found++;
                 i++;
             }
-            sprintf(locstr, "%s %d", gui_strings[GSTR_JOYSTICK], i);
+            sprintf(locstr, "%s %d", gui_strings[GSTR_CONTROLS_TYPES + 2], i);
             text = loctext_to_gtext(locstr);
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         }
         else
         {
-            sprintf(locstr, "%s", gui_strings[461 + ctlmode]); // Keyboard or Mouse
+            sprintf(locstr, "%s", gui_strings[GSTR_CONTROLS_TYPES + ctlmode]); // Keyboard or Mouse
             text = loctext_to_gtext(locstr);
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         }

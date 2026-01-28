@@ -32,7 +32,7 @@ extern "C" {
 enum GuiStrings {
     GSTR_PLAYERS = 459,
     GSTR_PLAYER = 460,
-    GSTR_JOYSTICK = 463,
+    GSTR_CONTROLS_TYPES = 461,
     GSTR_CONTROLS = 486,
     GSTR_KEYS = 487,
     GSTR_JOYSTICK2 = 488,
