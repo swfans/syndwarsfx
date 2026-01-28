@@ -191,6 +191,8 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     active_rect.Width = tx_width;
     active_rect.Y = text_window_y1 + wpos_y;
     active_rect.Height = ln_height;
+#if defined(DOS) || defined(GO32)
+    // In DOS builds, allow cycling through different joystick driver types
     if (mouse_down_over_box(&active_rect))
     {
         if (lbDisplay.LeftButton)
@@ -220,6 +222,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
             }
         }
     }
+#endif
     p_locplayer = &players[local_player_no];
 
     wpos_x = 140;
