@@ -2,7 +2,7 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet or Dungeon Keeper.
 /******************************************************************************/
-/** @file bflib_joyst.c
+/** @file sjoyst.c
  *     Joystick support.
  * @par Purpose:
  *     Implement Joystick input support for games.
@@ -17,7 +17,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 
 #include <string.h>
 #include <stdarg.h>
@@ -59,6 +59,27 @@ extern int16_t word_1E607C;
 
 extern struct UnkVFXStruct1 vfxunk1;
 /******************************************************************************/
+struct TbInputHandler {
+    short InterruptNo;
+    short field_2;
+    ubyte field_4[128];
+    struct DevInput Input;
+};
+
+struct UnkVFXStruct1 {
+    short field_0;
+    short field_2;
+    short field_4;
+};
+/******************************************************************************/
+
+const char* joy_get_button_label(int button)
+{
+    static char buf[16];
+    snprintf(buf, sizeof(buf), "%d", button + 1);
+    return buf;
+}
+
 int JoySetInterrupt(short val)
 {
     if (!val)
@@ -1571,7 +1592,7 @@ int joy_spaceball_shutdown(void)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init(void)
+int joy_driver_init(struct DevInput *dinp)
 {
     int ret;
     if (!joy_grip_initialized)
@@ -1605,4 +1626,5 @@ int joy_driver_shutdown(void)
     }
     return 1;
 }
+
 /******************************************************************************/

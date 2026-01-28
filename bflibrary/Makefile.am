@@ -127,6 +127,7 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl2/sdrive.c \
   src/x86-win-sdl2/sffind.c \
   src/x86-win-sdl2/sfile.c \
+  src/x86-win-sdl2/sjoyst.c \
   src/x86-win-sdl2/skeybd.cpp \
   src/x86-win-sdl2/slog.c \
   src/x86-win-sdl2/smemory.c \
@@ -144,6 +145,7 @@ libbullfrog_a_SOURCES += \
   src/x86-win-sdl/sdrive.c \
   src/x86-win-sdl/sffind.c \
   src/x86-win-sdl/sfile.c \
+  src/x86-win-sdl/sjoyst.c \
   src/x86-win-sdl/skeybd.cpp \
   src/x86-win-sdl/slog.c \
   src/x86-win-sdl/smemory.c \

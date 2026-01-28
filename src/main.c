@@ -8,7 +8,7 @@
 #include "bfscreen.h"
 #include "bflog.h"
 #include "swlog.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "display.h"
 #include "guitext.h"
 #include "game.h"
@@ -540,7 +540,7 @@ main (int argc, char **argv)
     ingame.Flags = 0;
     setup_log();
     /* Gravis Grip joystick driver initialization */
-    joy_driver_init();
+    joy_driver_init(&joy);
 
     if (!process_options(&argc, &argv))
         return 1;

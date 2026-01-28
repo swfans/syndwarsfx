@@ -69,7 +69,7 @@
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_vidraw.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 #include "matrix.h"
 #include "dos.h"
@@ -6833,6 +6833,9 @@ void joy_input(void)
 {
     asm volatile ("call ASM_joy_input\n"
         :  :  : "eax" );
+    return;
+
+    // calls joy_update_inputs, and conditionally combines inputs from all joysticks into joy0
 }
 
 /** Orbital station explosion code.

@@ -19,7 +19,7 @@
 #include "purpldrwlst.h"
 
 #include <stdlib.h>
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "bflib_vidraw.h"
 #include "bfbox.h"
 #include "bfline.h"

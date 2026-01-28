@@ -25,7 +25,7 @@
 #include "bfsprite.h"
 #include "bftext.h"
 #include "poly.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 
 #include "display.h"

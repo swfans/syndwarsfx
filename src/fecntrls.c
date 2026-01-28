@@ -21,7 +21,7 @@
 #include "bfkeybd.h"
 #include "bftext.h"
 #include "bfutility.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 
 #include "femain.h"
@@ -326,7 +326,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     return 0;
 }
 
-void set_controls_key(ushort hlight_gkey, ushort key)
+void set_controls_key(ushort hlight_gkey, uint32_t key)
 {
     GameKey gkey;
     TbBool is_joystick;
@@ -547,7 +547,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
         {
             if (is_joy_pressed_any(0))
             {
-                ushort jskey;
+                JoyButtonSet jskey;
 
                 jskey = get_joy_pressed_key(0);
                 set_controls_key(edited_gkey, jskey);
@@ -643,7 +643,6 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0) // never set anyway
     {
         const char *text;
-
         lbFontPtr = med_font;
         text = gui_strings[GSTR_CONTROLS];
         draw_text_purple_list2(sheet_columns_x[0], 4, text, 0);
