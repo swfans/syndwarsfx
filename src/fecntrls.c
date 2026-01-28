@@ -88,9 +88,9 @@ ubyte do_controls_save(ubyte click)
 #endif
     const char *msg_str;
     if (save_user_settings())
-        msg_str = gui_strings[578];
+        msg_str = gui_strings[GSTR_CONTROLS_SAVED_FAIL];
     else
-        msg_str = gui_strings[577];
+        msg_str = gui_strings[GSTR_CONTROLS_SAVED_SUCC];
     alert_box_text_fmt("%s", msg_str);
     return 1;
 }
@@ -104,7 +104,7 @@ ubyte do_controls_calibrate(ubyte click)
     return ret;
 #endif
     net_unkn_pos_02 = 1;
-    alert_box_text_fmt("%s", gui_strings[574]);
+    alert_box_text_fmt("%s", gui_strings[GSTR_JOY_CAL_TOP_LEFT]);
     return 1;
 }
 
@@ -139,20 +139,20 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     {
         lbFontPtr = med_font;
         lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_CENTER;
-        text = gui_strings[489];
+        text = gui_strings[GSTR_JOYSTICK_TYPE];
         draw_text_purple_list2(0, 110, text, 0);
         lbDisplay.DrawFlags &= ~Lb_TEXT_HALIGN_CENTER;
 
         lbFontPtr = small_med_font;
         wpos_x = 6;
         wpos_y = 10;
-        text = gui_strings[459];
+        text = gui_strings[GSTR_PLAYERS];
         draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         wpos_y += ln_height + 8;
 
         for (i = 0; i < 4; i++)
         {
-            sprintf(locstr, "%s %d", gui_strings[460], i + 1);
+            sprintf(locstr, "%s %d", gui_strings[GSTR_PLAYER], i + 1);
             text = loctext_to_gtext(locstr);
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
             wpos_y += ln_height + 4;
@@ -282,13 +282,13 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
                     n_found++;
                 i++;
             }
-            sprintf(locstr, "%s %d", gui_strings[463], i);
+            sprintf(locstr, "%s %d", gui_strings[GSTR_JOYSTICK], i);
             text = loctext_to_gtext(locstr);
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         }
         else
         {
-            sprintf(locstr, "%s", gui_strings[461 + ctlmode]);
+            sprintf(locstr, "%s", gui_strings[461 + ctlmode]); // Keyboard or Mouse
             text = loctext_to_gtext(locstr);
             draw_text_purple_list2(wpos_x, wpos_y, text, 0);
         }
@@ -642,11 +642,11 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
         const char *text;
 
         lbFontPtr = med_font;
-        text = gui_strings[486];
+        text = gui_strings[GSTR_CONTROLS];
         draw_text_purple_list2(sheet_columns_x[0], 4, text, 0);
-        text = gui_strings[487];
+        text = gui_strings[GSTR_KEYS];
         draw_text_purple_list2(sheet_columns_x[1], 4, text, 0);
-        text = gui_strings[488];
+        text = gui_strings[GSTR_JOYSTICK2];
         draw_text_purple_list2(sheet_columns_x[2], 4, text, 0);
 
         lbDisplay.DrawFlags = 0;
@@ -788,7 +788,7 @@ ubyte update_settings_controls_alert(struct ScreenTextBox *p_box)
     case 2:
         if (joy.Buttons[0])
             break;
-        alert_box_text_fmt("%s", gui_strings[575]);
+        alert_box_text_fmt("%s", gui_strings[GSTR_JOY_CAL_BOTTOM_RIGHT]);
         net_unkn_pos_02++;
         break;
     case 3:
@@ -804,7 +804,7 @@ ubyte update_settings_controls_alert(struct ScreenTextBox *p_box)
     case 4:
         if (joy.Buttons[0])
             break;
-        alert_box_text_fmt("%s", gui_strings[576]);
+        alert_box_text_fmt("%s", gui_strings[GSTR_JOY_CAL_LEAVE_CENTRE]);
         net_unkn_pos_02++;
         break;
     case 5:

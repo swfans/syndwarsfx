@@ -30,8 +30,20 @@ extern "C" {
 #pragma pack(1)
 
 enum GuiStrings {
+    GSTR_PLAYERS = 459,
+    GSTR_PLAYER = 460,
+    GSTR_JOYSTICK = 463,
+    GSTR_CONTROLS = 486,
+    GSTR_KEYS = 487,
+    GSTR_JOYSTICK2 = 488,
+    GSTR_JOYSTICK_TYPE = 489,
     // Names for network protocols
     GSTR_NET_PROTO_NAMES = 497,
+    GSTR_JOY_CAL_TOP_LEFT = 574,
+    GSTR_JOY_CAL_BOTTOM_RIGHT = 575,
+    GSTR_JOY_CAL_LEAVE_CENTRE = 576,
+    GSTR_CONTROLS_SAVED_SUCC = 577,
+    GSTR_CONTROLS_SAVED_FAIL = 578,
     // Extra names for network protocols if modem is in use
     GSTR_NET_PROTO_MODEM_NAMES = 619,
     // Name for mission metric
