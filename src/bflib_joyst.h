@@ -93,10 +93,10 @@ struct UnkVFXStruct1 {
 extern struct DevInput joy;
 
 int JoySetInterrupt(short val);
-int joy_func_063(char *textbuf);
-int joy_func_065(struct DevInput *dinp);
-int joy_func_066(struct DevInput *dinp);
-int joy_func_067(struct DevInput *dinp, int a2);
+int joy_get_device_name(char *textbuf);
+int joy_update_inputs(struct DevInput *dinp);
+int joy_refresh_devices(struct DevInput *dinp);
+int joy_setup_device(struct DevInput *dinp, int a2);
 int joy_driver_init(void);
 int joy_driver_shutdown(void);
 
