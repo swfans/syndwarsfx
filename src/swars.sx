@@ -17062,7 +17062,7 @@ GLOBAL_FUNC (ASM_joy_input)	/* 0x3DC68 */
 		push   %ebp
 		mov    $EXPORT_SYMBOL(joy)+0,%eax # joy.Yaw
 		xor    %edx,%edx
-		call   ac_joy_func_065
+		call   ac_joy_update_inputs
 		mov    EXPORT_SYMBOL(local_player_no),%dl
 		lea    0x0(,%edx,8),%eax
 		add    %edx,%eax
@@ -115004,7 +115004,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		cmp    $0x11,%eax
 		jne    jump_9be71
 		mov    %esp,%eax
-		call   ac_joy_func_063
+		call   ac_joy_get_device_name
 		cmp    $0xffffffff,%eax
 		je     jump_9beb1
 		mov    back_buffer,%edi
@@ -115144,7 +115144,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		cmpb   $0x0,EXPORT_SYMBOL(ctl_joystick_type)
 		je     jump_9bfaa
 		mov    $EXPORT_SYMBOL(joy)+0,%eax # joy.Yaw
-		call   ac_joy_func_066
+		call   ac_joy_refresh_devices
 	jump_9bfaa:
 		xor    %cl,%cl
 		mov    %cl,EXPORT_SYMBOL(lbDisplay)+103 # lbDisplay.LeftButton
@@ -115173,7 +115173,7 @@ GLOBAL_FUNC(ASM_show_controls_joystick_box)	/* 0x09BBE4 */
 		cmpb   $0x0,unkn01_maskarr(%edx)
 		je     jump_9c00b
 		mov    %esi,%eax
-		call   ac_joy_func_067
+		call   ac_joy_setup_device
 	jump_9c00b:
 		xor    %edx,%edx
 		mov    %cl,%dl
