@@ -179,6 +179,13 @@ enum PostRenderAction {
     PRend_SaveScreenshot,
 };
 
+enum ReloadMenuFlags {
+    RelMnuF_ColorsSprites = 0x01,
+    RelMnuF_BriefScanner = 0x02,
+    RelMnuF_ScrBoxesFull = 0x04,
+};
+
+
 extern char *fadedat_fname;
 char session_name[20] = "SWARA";
 
@@ -321,7 +328,7 @@ char unk_credits_text_s[] = "";
 char unk_credits_text_z[] = "";
 char unk_credits_text_p[] = "";
 
-ubyte reload_menu_flag = false;
+ubyte reload_menu_flags = 0;
 
 void ac_purple_unkn1_data_to_screen(void);
 
@@ -2815,8 +2822,13 @@ void unkn1_handle_agent_groups(void)
 
 void init_game_controls(void)
 {
+#if 0
     asm volatile ("call ASM_init_game_controls\n"
         :  :  : "eax" );
+#endif
+    reset_user_input();
+
+    init_user_input_local_controls();
 }
 
 void simulated_level(void)
@@ -3453,7 +3465,7 @@ TbBool game_setup(void)
     }
     if (in_network_game || cmdln_param_bcg) {
         ingame.DisplayMode = DpM_PURPLEMNU;
-        reload_menu_flag = true;
+        reload_menu_flags |= RelMnuF_ColorsSprites;
     }
     debug_trace_setup(2);
     switch (cmdln_colour_tables)
@@ -3771,7 +3783,6 @@ ubyte load_game_slot(ubyte click)
     alert_box_text_fmt("%s", gui_strings[572]);
 
     // Reading the save might have caused campaign switch
-    reload_background_flag = 1;
     load_objectives_text();
     init_weapon_text();
 
@@ -3785,6 +3796,7 @@ ubyte load_game_slot(ubyte click)
     selected_agent = 0;
     screentype = SCRT_99;
     game_system_screen = SySc_NONE;
+    reload_background_flag = 1;
     if (restore_savegame) {
         restore_savegame = 0;
         sysmnu_button_enable(0, 5);
@@ -3872,38 +3884,6 @@ void srm_reset_research(void)
     research.CurrentMod = -1;
     research.Scientists = 0;
     research.NumBases = 0;
-}
-
-ubyte goto_savegame(ubyte click)
-{
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_goto_savegame\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-#endif
-    restore_savegame = 1;
-    game_system_screen = SySc_STORAGE;
-    screentype = SCRT_SYSMENU;
-    sysmnu_button_disable(0, 5);
-    update_sys_scr_shared_header(game_system_screen);
-    ingame.Flags &= ~GamF_MortalGame;
-
-    load_city_data(0);
-    init_weapon_text();
-    load_city_txt();
-    player_mission_agents_reset(local_player_no);
-    init_variables();
-    srm_reset_research();
-    init_agents();
-
-    edit_flag = 0;
-    save_slot_base = 0;
-    redraw_screen_flag = 1;
-
-    load_save_slot_names();
-
-    return 1;
 }
 
 void my_preprocess_text(char *text)
@@ -4524,7 +4504,7 @@ void mission_over(void)
     mission_over_prepare_agents();
 
     ingame.DisplayMode = DpM_PURPLEMNU;
-    reload_menu_flag = true;
+    reload_menu_flags |= RelMnuF_ColorsSprites;
 
     LbMouseChangeSprite(0);
     StopCD();
@@ -4641,6 +4621,38 @@ void campaign_new_game_prepare(void)
     edit_flag = 0;
 }
 
+ubyte goto_savegame(ubyte click)
+{
+#if 0
+    ubyte ret;
+    asm volatile ("call ASM_goto_savegame\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+#endif
+    restore_savegame = 1;
+    game_system_screen = SySc_STORAGE;
+    screentype = SCRT_SYSMENU;
+    sysmnu_button_disable(0, 5);
+    update_sys_scr_shared_header(game_system_screen);
+    ingame.Flags &= ~GamF_MortalGame;
+
+    load_city_data(0);
+    init_weapon_text();
+    load_city_txt();
+    player_mission_agents_reset(local_player_no);
+    init_variables();
+    srm_reset_research();
+    init_agents();
+
+    edit_flag = 0;
+    save_slot_base = 0;
+    redraw_screen_flag = 1;
+
+    load_save_slot_names();
+
+    return 1;
+}
+
 ubyte do_storage_NEW_MORTAL(ubyte click)
 {
     if (login_control__State != LognCt_Unkn6)
@@ -4696,14 +4708,6 @@ void init_screen_boxes(void)
     init_cryo_screen_boxes();
     init_research_screen_boxes();
     init_equip_screen_shapes();
-}
-
-void players_init_control_mode(void)
-{
-    PlayerIdx plyr;
-    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
-      players[plyr].UserInput[0].ControlMode = UInpCtr_Mouse;
-    }
 }
 
 void move_camera(int x, int y, int z)
@@ -5745,7 +5749,7 @@ void show_menu_screen_st0(void)
     lbInkeyToAscii[KC_OEM_102] = '\\';
     lbInkeyToAsciiShift[KC_OEM_102] = '|';
 
-    players_init_control_mode();
+    players_init_default_control_mode();
 
     login_control__State = LognCt_Unkn6;
     sprintf(net_unkn2_text, "01234567890");
@@ -5786,16 +5790,9 @@ void show_menu_screen_st0(void)
         screentype = SCRT_LOGIN;
     else
         screentype = SCRT_MAINMENU;
+    reload_menu_flags |= RelMnuF_ColorsSprites | RelMnuF_ScrBoxesFull | RelMnuF_BriefScanner;
 
     debug_trace_place(18);
-    reload_menu_flag = 0;
-    init_purple_mode_colors_and_sprites();
-
-    debug_trace_place(19);
-    init_screen_boxes();
-
-    init_brief_screen_scanner();
-
     save_game_buffer = vec_tmap[5];
 
     net_system_init0();
@@ -5847,11 +5844,12 @@ void show_menu_screen_st2(void)
         local_player_no = 0;
         net_new_game_prepare();
         net_sessionlist_clear();
-        selected_mod = -1;
-        selected_weapon = -1;
         scientists_lost = 0;
         update_mission_time(0);
         in_network_game = 0;
+
+        reset_cryo_screen_player_state();
+        reset_equip_screen_player_state();
         screentype = SCRT_NETDEBRF;
         redraw_screen_flag = 1;
         set_heading_box_text(gui_strings[374]);
@@ -5900,11 +5898,9 @@ void show_menu_screen_st2(void)
     init_weapon_text();
     load_city_txt();
 
-    reload_menu_flag = 0;
-    init_purple_mode_colors_and_sprites();
-
     update_options_screen_state();
-    init_brief_screen_scanner();
+
+    reload_menu_flags |= RelMnuF_ColorsSprites | RelMnuF_BriefScanner;
 
     if ((new_mail != 0) && (screentype != SCRT_MAINMENU))
         play_sample_using_heap(0, 119 + (LbRandomAnyShort() % 3), FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3u);
@@ -6197,6 +6193,78 @@ void input_processing_end(void)
 #endif
 }
 
+void apply_change_screen(void)
+{
+    if (change_screen == ChSCRT_SYSMENU)
+    {
+        screentype = SCRT_SYSMENU;
+        redraw_screen_flag = 1;
+        set_heading_box_text("");
+        edit_flag = 0;
+        change_screen = ChSCRT_NONE;
+    }
+    if (change_screen == ChSCRT_PANET)
+    {
+        screentype = SCRT_PANET;
+        redraw_screen_flag = 1;
+        set_heading_box_text(gui_strings[367]);
+        edit_flag = 0;
+        change_screen = ChSCRT_NONE;
+    }
+    if (change_screen == ChSCRT_WORLDMAP)
+    {
+        set_heading_box_text(gui_strings[368]);
+        redraw_screen_flag = 1;
+        edit_flag = 0;
+        change_screen = ChSCRT_NONE;
+        screentype = SCRT_WORLDMAP;
+        if (selected_city_id != -1)
+          unkn_city_no = selected_city_id;
+    }
+    if (change_screen == ChSCRT_CRYO)
+    {
+        screentype = SCRT_CRYO;
+        switch_shared_equip_screen_buttons_to_cybmod();
+
+        update_cybmod_cost_text();
+        redraw_screen_flag = 1;
+        reset_mod_draw_states_flag08();
+        current_drawing_mod = 0;
+        new_current_drawing_mod = 0;
+        edit_flag = 0;
+        change_screen = ChSCRT_NONE;
+    }
+    if (change_screen == ChSCRT_EQUIP)
+    {
+        screentype = SCRT_EQUIP;
+        switch_shared_equip_screen_buttons_to_equip();
+        update_equip_cost_text();
+        redraw_screen_flag = 1;
+        edit_flag = 0;
+        change_screen = ChSCRT_NONE;
+    }
+    if (change_screen == ChSCRT_RESEARCH)
+    {
+        screentype = SCRT_RESEARCH;
+        set_heading_box_text(gui_strings[371]);
+        clear_research_screen();
+        edit_flag = 0;
+        change_screen = ChSCRT_NONE;
+        redraw_screen_flag = 1;
+    }
+    if (change_screen == ChSCRT_MISBRIEF)
+    {
+        selected_city_id = -1;
+        screentype = SCRT_MISSION;
+        brief_load_mission_info();
+        redraw_screen_flag = 1;
+        edit_flag = 0;
+        change_screen = ChSCRT_NONE;
+    }
+
+    assert(change_screen == 0);
+}
+
 void show_menu_screen(void)
 {
     switch (data_1c498d)
@@ -6220,14 +6288,26 @@ void show_menu_screen(void)
         LbMouseReset();
         LbScreenClear(0);
         setup_screen_mode(screen_mode_menu);
-        reload_menu_flag = 1;
+        reload_menu_flags |= RelMnuF_ColorsSprites;
     }
 
-    if (reload_menu_flag)
+    if ((reload_menu_flags & RelMnuF_ColorsSprites) != 0)
     {
-        reload_menu_flag = 0;
+        reload_menu_flags &= ~RelMnuF_ColorsSprites;
         init_purple_mode_colors_and_sprites();
         my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
+    }
+
+    if ((reload_menu_flags & RelMnuF_ScrBoxesFull) != 0)
+    {
+        reload_menu_flags &= ~RelMnuF_ScrBoxesFull;
+        init_screen_boxes();
+    }
+
+    if ((reload_menu_flags & RelMnuF_BriefScanner) != 0)
+    {
+        reload_menu_flags &= ~RelMnuF_BriefScanner;
+        init_brief_screen_scanner();
     }
 
     if (screentype == SCRT_MAINMENU)
@@ -6254,11 +6334,8 @@ void show_menu_screen(void)
 
     if ((screentype == SCRT_DEBRIEF || screentype == SCRT_NETDEBRF) && change_screen == ChSCRT_MISBRIEF)
     {
-        screentype = SCRT_MISSION;
-        brief_load_mission_info();
-        redraw_screen_flag = 1;
-        edit_flag = 0;
-        change_screen = ChSCRT_NONE;
+        change_screen = ChSCRT_MISBRIEF;
+        apply_change_screen();
     }
 
     input_processing_beg();
@@ -6346,72 +6423,8 @@ void show_menu_screen(void)
 
     update_date_time();
 
-    if (change_screen == ChSCRT_SYSMENU)
-    {
-        screentype = SCRT_SYSMENU;
-        redraw_screen_flag = 1;
-        set_heading_box_text("");
-        edit_flag = 0;
-        change_screen = 0;
-    }
-    if (change_screen == ChSCRT_PANET)
-    {
-        screentype = SCRT_PANET;
-        redraw_screen_flag = 1;
-        set_heading_box_text(gui_strings[367]);
-        edit_flag = 0;
-        change_screen = 0;
-    }
-    if (change_screen == ChSCRT_WORLDMAP)
-    {
-        set_heading_box_text(gui_strings[368]);
-        redraw_screen_flag = 1;
-        edit_flag = 0;
-        change_screen = 0;
-        screentype = SCRT_WORLDMAP;
-        if (selected_city_id != -1)
-          unkn_city_no = selected_city_id;
-    }
-    if (change_screen == ChSCRT_CRYO)
-    {
-        screentype = SCRT_CRYO;
-        switch_shared_equip_screen_buttons_to_cybmod();
+    apply_change_screen();
 
-        update_cybmod_cost_text();
-        redraw_screen_flag = 1;
-        reset_mod_draw_states_flag08();
-        current_drawing_mod = 0;
-        new_current_drawing_mod = 0;
-        edit_flag = 0;
-        change_screen = 0;
-    }
-    if (change_screen == ChSCRT_EQUIP)
-    {
-        screentype = SCRT_EQUIP;
-        switch_shared_equip_screen_buttons_to_equip();
-        update_equip_cost_text();
-        redraw_screen_flag = 1;
-        edit_flag = 0;
-        change_screen = 0;
-    }
-    if (change_screen == ChSCRT_RESEARCH)
-    {
-        screentype = SCRT_RESEARCH;
-        set_heading_box_text(gui_strings[371]);
-        clear_research_screen();
-        edit_flag = 0;
-        change_screen = 0;
-        redraw_screen_flag = 1;
-    }
-    if (change_screen == ChSCRT_MISBRIEF)
-    {
-        selected_city_id = -1;
-        screentype = SCRT_MISSION;
-        brief_load_mission_info();
-        redraw_screen_flag = 1;
-        edit_flag = 0;
-        change_screen = 0;
-    }
     if (show_alert)
     {
         reset_alert_screen_boxes_flags();

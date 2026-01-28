@@ -105,6 +105,16 @@ short get_agent_move_direction_delta_x(const struct SpecialUserInput *p_usrinp);
 short get_agent_move_direction_delta_z(const struct SpecialUserInput *p_usrinp);
 void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp);
 
+/** Clear state of user inputs to allow for clean missison start.
+ */
+void reset_user_input(void);
+
+/** Initialize selected control scheme for local users.
+ *
+ * Finds and setups mouse user, resets controls state for mission start.
+ */
+void init_user_input_local_controls(void);
+
 void do_user_input_bits_actions_from_kbd(struct SpecialUserInput *p_usrinp);
 void do_user_input_bits_actions_from_joy(struct SpecialUserInput *p_usrinp, ubyte channel);
 

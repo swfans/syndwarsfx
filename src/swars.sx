@@ -14144,7 +14144,7 @@ GLOBAL_FUNC(ASM_unkn_player_group_add)	/* 0x36270 */
 		imul   $0x15,%edi,%edi
 		mov    EXPORT_SYMBOL(players)+0x09C(%ecx,%eax,1),%eax # players[0].MyAgent[0]
 		mov    0x99(%eax),%bl
-		mov    %bl,data_17713c(%edx,%edi,1)
+		mov    %bl,EXPORT_SYMBOL(unkn_player_groups)(%edx,%edi,1)
 		lea    (%edi,%esi,1),%ebx
 		mov    0x72(%eax),%di
 		mov    %di,data_177148(%ebx)
@@ -14245,7 +14245,7 @@ GLOBAL_FUNC(ASM_unkn_player_group_prot)	/* 0x3631C */
 		mov    0x4(%esp),%al
 		imul   $0x15,%eax,%eax
 		lea    (%eax,%edi,1),%edx
-		mov    data_17713c(%edx),%bh
+		mov    EXPORT_SYMBOL(unkn_player_groups)(%edx),%bh
 		test   %bh,%bh
 		jne    jump_36363
 		mov    $0x2,%ebx
@@ -15861,7 +15861,7 @@ GLOBAL_FUNC(ASM_init_game_controls)	/* 0x03BAE4 */
 	jump_3baf5:
 		add    $0x15,%eax
 		xor    %dl,%dl
-		mov    %dl,data_17713b(%eax)
+		mov    %dl,unkn_player_groups_m1_GroupActive(%eax)
 		cmp    $0xd2,%eax
 		jne    jump_3baf5
 		xor    %edx,%edx
@@ -180711,9 +180711,10 @@ GLOBAL (mission_result)	/* 0x17712D */
 
 GLOBAL (mouser)	/* 0x177138 */
 		.ascii  "\x00\x00\x00"
-data_17713b:
+
+unkn_player_groups_m1_GroupActive:
 		.byte	0x0
-data_17713c:
+GLOBAL (unkn_player_groups)	/* 0x17713C */
 		.long	0x0
 data_177140:
 		.fill   0x8
@@ -180721,6 +180722,7 @@ data_177148:
 		.fill   0x8
 data_177150:
 		.fill   0x334
+
 GLOBAL (unknmsg_str)	/* 0x177484 */
 		.fill   0x64
 GLOBAL (word_1774E8)	/* 0x1774E8 */

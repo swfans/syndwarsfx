@@ -138,6 +138,14 @@ struct LevelDef {
   ubyte field_2B;
 };
 
+struct UnkPlayerGroup {
+    ubyte AgentWeapons[4];
+    short AgentOwners[4];
+    short AgentMoods[4];
+    ubyte GroupActive;
+};
+
+
 #pragma pack()
 
 extern char session_name[20];

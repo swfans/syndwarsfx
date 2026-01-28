@@ -115,6 +115,9 @@ void update_netscan_cost_button(ubyte city_id)
     k = max(k, 213);
     brief_NETSCAN_COST_box.Width = min(k, max_width);
     brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0001;
+
+    if (game_projector_speed)
+        brief_NETSCAN_COST_box.Flags |= GBxFlg_Unkn0002;
 }
 
 void reveal_netscan_objective(short nsobv)

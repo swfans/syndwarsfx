@@ -36,7 +36,7 @@
 #pragma pack(1)
 
 struct PacketFileHead {
-    ulong magic;
+    u32 magic;
     ushort campgn;
     ushort missi;
     ushort mapno;
@@ -126,7 +126,7 @@ const char *packet_action_name[] = {
     "CHEAT_ALL_AGENTS",
 };
 
-void (*my_build_packet)(struct Packet *packet, ushort action, ulong param1, long x, long y, long z);
+void (*my_build_packet)(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z);
 
 /******************************************************************************/
 
@@ -251,7 +251,7 @@ ubyte packet_action_params_count(ushort action)
     }
 }
 
-void build_packet(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
+void build_packet(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z)
 {
 #if 0
     asm volatile (
@@ -294,7 +294,7 @@ void build_packet(struct Packet *packet, ushort action, ulong param1, long x, lo
     }
 }
 
-void build_packet2(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
+void build_packet2(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z)
 {
 #if 0
     asm volatile (
@@ -337,7 +337,7 @@ void build_packet2(struct Packet *packet, ushort action, ulong param1, long x, l
     }
 }
 
-void build_packet3(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
+void build_packet3(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z)
 {
 #if 0
     asm volatile (
@@ -380,7 +380,7 @@ void build_packet3(struct Packet *packet, ushort action, ulong param1, long x, l
     }
 }
 
-void build_packet4(struct Packet *packet, ushort action, ulong param1, long x, long y, long z)
+void build_packet4(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z)
 {
 #if 0
     asm volatile (

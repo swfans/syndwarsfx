@@ -161,6 +161,7 @@ TbBool player_agent_is_alive(PlayerIdx plyr, ushort plagent);
 TbBool player_agent_is_executing_commands(PlayerIdx plyr, ushort plagent);
 ThingIdx direct_control_thing_for_player(PlayerIdx plyr);
 void set_default_player_control(void);
+void players_init_default_control_mode(void);
 void player_target_clear(PlayerIdx plyr);
 void kill_my_players(PlayerIdx plyr);
 /******************************************************************************/

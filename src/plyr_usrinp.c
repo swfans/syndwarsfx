@@ -39,6 +39,9 @@
 #include "vehicle.h"
 /******************************************************************************/
 
+extern struct UnkPlayerGroup unkn_player_groups[8][5];
+
+/******************************************************************************/
 short get_agent_move_direction_delta_x(const struct SpecialUserInput *p_usrinp)
 {
     return (sbyte)(p_usrinp->Bits >> 0);
@@ -83,6 +86,86 @@ void do_user_input_bits_control_clear_all(struct SpecialUserInput *p_usrinp)
 void do_user_input_bits_control_clear_nonmove(struct SpecialUserInput *p_usrinp)
 {
     p_usrinp->Bits &= ~SpUIn_AllNonMoveBits;
+}
+
+void reset_user_input(void)
+{
+    PlayerIdx plyr;
+
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        ushort plgroup;
+
+        for (plgroup = 0; plgroup < 5; plgroup++) {
+            unkn_player_groups[plyr][plgroup].GroupActive = 0;
+        }
+    }
+
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        PlayerInfo *p_player;
+        struct SpecialUserInput *p_usrinp;
+        ushort dmuser;
+
+        p_player = &players[plyr];
+
+        for (dmuser = 0; dmuser < LOCAL_USERS_MAX_COUNT; dmuser++) {
+            p_player->State[dmuser] = 0;
+            p_player->SubState[dmuser] = 0;
+
+            p_usrinp = &p_player->UserInput[dmuser];
+            do_user_input_bits_control_clear_all(p_usrinp);
+        }
+    }
+}
+
+void init_user_input_local_controls(void)
+{
+    PlayerInfo *p_locplayer;
+    struct SpecialUserInput *p_usrinp;
+    ushort ctlmode;
+
+    p_locplayer = &players[local_player_no];
+
+    if (p_locplayer->DoubleMode == 0) {
+        my_build_packet = build_packet;
+        mouser = 0;
+        return;
+    }
+
+    p_usrinp = &p_locplayer->UserInput[0];
+    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    if (ctlmode == UInpCtr_Mouse) {
+        mouser = 0;
+        my_build_packet = build_packet;
+        return;
+    }
+
+    p_usrinp = &p_locplayer->UserInput[1];
+    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    if (ctlmode == UInpCtr_Mouse) {
+        mouser = 1;
+        my_build_packet = build_packet2;
+        return;
+    }
+
+    p_usrinp = &p_locplayer->UserInput[2];
+    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    if (ctlmode == UInpCtr_Mouse) {
+        mouser = 2;
+        my_build_packet = build_packet3;
+        return;
+    }
+
+    p_usrinp = &p_locplayer->UserInput[3];
+    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    if (ctlmode == UInpCtr_Mouse) {
+        mouser = 3;
+        my_build_packet = build_packet4;
+        return;
+    }
+
+    LOGWARN("Unusual control mode - no user with mouse control");
 }
 
 void do_user_input_bits_direction_from_kbd(struct SpecialUserInput *p_usrinp)
@@ -238,7 +321,7 @@ ubyte input_user_control_agent(ushort plyr, short dmuser)
 {
     PlayerInfo *p_player;
     struct Packet *p_pckt;
-    void (*loc_build_packet)(struct Packet *, ushort, ulong, long, long, long);
+    void (*loc_build_packet)(struct Packet *, ushort, u32, s32, s32, s32);
     struct Thing *p_dcthing;
     int dx, dy, dz;
     ThingIdx dcthing;

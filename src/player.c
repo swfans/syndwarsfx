@@ -439,6 +439,17 @@ ThingIdx direct_control_thing_for_player(PlayerIdx plyr)
     return dcthing;
 }
 
+void players_init_default_control_mode(void)
+{
+    PlayerIdx plyr;
+
+    reset_user_input();
+
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
+      players[plyr].UserInput[0].ControlMode = UInpCtr_Mouse;
+    }
+}
+
 void set_default_player_control(void)
 {
     PlayerInfo *p_locplayer;
@@ -446,8 +457,9 @@ void set_default_player_control(void)
 
     p_locplayer = &players[local_player_no];
     p_locplayer->DoubleMode = 0;
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; i++) {
         p_locplayer->UserInput[i].ControlMode = UInpCtr_Mouse;
+    }
 }
 
 void player_target_clear(PlayerIdx plyr)
