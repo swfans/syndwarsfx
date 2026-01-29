@@ -24,7 +24,7 @@
 
 #include "bfmemut.h"
 #include "bfkeybd.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include <stdio.h>
 
 #include "game.h"

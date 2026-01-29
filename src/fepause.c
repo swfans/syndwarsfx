@@ -32,7 +32,7 @@
 
 #include "engincolour.h"
 
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "campaign.h"
 #include "display.h"
 #include "game_data.h"

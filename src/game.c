@@ -69,7 +69,7 @@
 #include "svesa.h"
 #include "swlog.h"
 #include "bflib_vidraw.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "ssampply.h"
 #include "matrix.h"
 #include "dos.h"

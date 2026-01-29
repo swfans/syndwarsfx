@@ -2,8 +2,8 @@
 // Bullfrog Engine Emulation Library - for use to remake classic games like
 // Syndicate Wars, Magic Carpet or Dungeon Keeper.
 /******************************************************************************/
-/** @file bflib_joyst.h
- *     Header file for bflib_joyst.c.
+/** @file bfjoyst.h
+ *     Header file for sjoyst.c.
  * @par Purpose:
  *     Joystick support.
  * @par Comment:
