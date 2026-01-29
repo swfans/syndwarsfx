@@ -24,7 +24,7 @@
 #include "bftext.h"
 #include "bfutility.h"
 #include "ssampply.h"
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 
 #include "campaign.h"
 #include "display.h"

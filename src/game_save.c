@@ -22,7 +22,7 @@
 #include "bfstrut.h"
 #include <assert.h>
 
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 
 #include "campaign.h"
 #include "display.h"

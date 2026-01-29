@@ -26,7 +26,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "bflib_joyst.h"
+#include "bfjoyst.h"
 #include "engindrwlstm.h"
 #include "femain.h"
 #include "feshared.h"
