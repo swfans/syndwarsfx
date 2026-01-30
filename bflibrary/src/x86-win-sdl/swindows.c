@@ -44,7 +44,6 @@ TbIdleControl lbIdleHandlers[LB_IDLE_HANDLERS_MAX] = {0};
 void LbRegisterStandardVideoModes(void);
 TbResult MEvent(const SDL_Event *ev);
 TbResult KEvent(const SDL_Event *ev);
-TbResult JEvent(const SDL_Event *ev);
 TbResult LbIPaletteRestoreLost(void);
 
 TbResult LbBaseInitialise(void)
@@ -156,7 +155,8 @@ static void LbI_ProcessEvent(const SDL_Event *ev)
     case SDL_JOYHATMOTION:
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP:
-        JEvent(ev);
+        //TODO INPUT make joypad support
+        //JEvent(ev);
         break;
 
     case SDL_VIDEORESIZE:
