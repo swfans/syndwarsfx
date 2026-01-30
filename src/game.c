@@ -4959,7 +4959,6 @@ ubyte weapon_select_input(void)
         }
     }
 
-#ifdef MORE_GAME_KEYS
     if (is_gamekey_pressed(GKey_SUPERSHIELD))
     {
         clear_gamekey_pressed(GKey_SUPERSHIELD);
@@ -4979,7 +4978,6 @@ ubyte weapon_select_input(void)
             return GINPUT_PACKET;
         }
     }
-#endif
 
     assert(sizeof(sel_weapon_gkeys)/sizeof(sel_weapon_gkeys[0]) <= WEAPONS_CARRIED_MAX_COUNT);
 

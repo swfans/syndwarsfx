@@ -60,6 +60,11 @@ typedef short ScrCoord;
  */
 typedef ushort GameKey;
 
+/**
+ *  store a set of joystick buttons pressed.
+ */
+typedef uint32_t JoyButtonSet;
+
 /** Type which stores coordinate on the ingame map.
  *
  * Can be separated into a tile and position within.
