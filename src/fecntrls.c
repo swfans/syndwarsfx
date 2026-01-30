@@ -326,7 +326,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     return 0;
 }
 
-void set_controls_key(ushort hlight_gkey, ushort key)
+void set_controls_key(ushort hlight_gkey, uint32_t key)
 {
     GameKey gkey;
     TbBool is_joystick;
@@ -547,7 +547,7 @@ ubyte menu_controls_inputs(struct ScreenTextBox *p_box, short *p_tx_kbd_width, s
         {
             if (is_joy_pressed_any(0))
             {
-                ushort jskey;
+                JoyButtonSet jskey;
 
                 jskey = get_joy_pressed_key(0);
                 set_controls_key(edited_gkey, jskey);
