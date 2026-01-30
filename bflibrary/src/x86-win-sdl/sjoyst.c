@@ -26,8 +26,6 @@
 #include <stdio.h>
 
 #include "privbflog.h"
-#include <SDL.h>
-
 
 /******************************************************************************/
 
@@ -58,7 +56,7 @@ int joy_get_device_name(char *textbuf)
 
 int joy_update_inputs(struct DevInput *dinp)
 {
-    return 0; 
+    return 0;
 }
 
 int joy_refresh_devices(struct DevInput *dinp)
@@ -91,14 +89,9 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
     return 1;
 }
 
-TbResult JEvent(const SDL_Event *ev)
-{   
-    return Lb_OK;
-}
-
 /** Joystick drivers initialization.
  */
-int joy_driver_init(struct DevInput *dinp)
+int joy_driver_init()
 {
     return 1;
 }
