@@ -35,7 +35,6 @@ struct DevInput joy;
 /******************************************************************************/
 static SDL_GameController *sdl_controllers[MAX_JOYSTICK_COUNT] = {NULL};
 static int sdl_num_controllers = 0;
-static struct DevInput *devinput;
 // Track previous digital stick states for edge detection
 static int prev_digital_z[MAX_JOYSTICK_COUNT] = {0};
 static int prev_digital_r[MAX_JOYSTICK_COUNT] = {0};
@@ -422,27 +421,27 @@ TbResult JEvent(const SDL_Event *ev)
     case SDL_CONTROLLERBUTTONDOWN:
         i = get_JoyId_by_instanceId(ev->cbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            devinput->Buttons[i] |= (1 << ev->cbutton.button);
+            joy->Buttons[i] |= (1 << ev->cbutton.button);
         break;
     case SDL_CONTROLLERBUTTONUP:
         i = get_JoyId_by_instanceId(ev->cbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            devinput->Buttons[i] &= ~(1 << ev->cbutton.button);
+            joy->Buttons[i] &= ~(1 << ev->cbutton.button);
         break;
     case SDL_JOYBUTTONDOWN:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            devinput->Buttons[i] |= (1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
+            joy->Buttons[i] |= (1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
         break;
     case SDL_JOYBUTTONUP:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            devinput->Buttons[i] &= ~(1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
+            joy->Buttons[i] &= ~(1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
         break;
 
     case SDL_CONTROLLERDEVICEADDED:
     case SDL_CONTROLLERDEVICEREMOVED:
-        joy_refresh_devices(devinput);
+        joy_refresh_devices(&joy);
         break;
     }
         
