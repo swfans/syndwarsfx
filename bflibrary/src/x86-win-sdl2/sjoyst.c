@@ -421,22 +421,22 @@ TbResult JEvent(const SDL_Event *ev)
     case SDL_CONTROLLERBUTTONDOWN:
         i = get_JoyId_by_instanceId(ev->cbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            joy->Buttons[i] |= (1 << ev->cbutton.button);
+            joy.Buttons[i] |= (1 << ev->cbutton.button);
         break;
     case SDL_CONTROLLERBUTTONUP:
         i = get_JoyId_by_instanceId(ev->cbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            joy->Buttons[i] &= ~(1 << ev->cbutton.button);
+            joy.Buttons[i] &= ~(1 << ev->cbutton.button);
         break;
     case SDL_JOYBUTTONDOWN:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            joy->Buttons[i] |= (1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
+            joy.Buttons[i] |= (1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
         break;
     case SDL_JOYBUTTONUP:
         i = get_JoyId_by_instanceId(ev->jbutton.which);
         if (i >= 0 && i < MAX_JOYSTICK_COUNT)
-            joy->Buttons[i] &= ~(1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
+            joy.Buttons[i] &= ~(1 << joystickbutton_to_gamepadbutton(ev->jbutton.button,sdl_controllers[i]));
         break;
 
     case SDL_CONTROLLERDEVICEADDED:
