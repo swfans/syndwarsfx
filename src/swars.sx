@@ -14367,7 +14367,7 @@ GLOBAL_FUNC (ASM_do_rotate_map)	/* 0x036480 */
 		xor    %edi,%edi
 		test   %edx,%edx
 		jne    jump_365ff
-		mov    EXPORT_SYMBOL(jskeys)+6,%dx
+		mov    EXPORT_SYMBOL(jskeys)+12,%edx
 		mov    EXPORT_SYMBOL(joy)+0x900,%esi # joy.Buttons
 		and    %edx,%esi
 		cmp    %edx,%esi
@@ -14376,7 +14376,7 @@ GLOBAL_FUNC (ASM_do_rotate_map)	/* 0x036480 */
 	jump_365e9:
 		xor    %edx,%edx
 		mov    EXPORT_SYMBOL(joy)+0x900,%esi # joy.Buttons
-		mov    EXPORT_SYMBOL(jskeys)+8,%dx
+		mov    EXPORT_SYMBOL(jskeys)+16,%edx
 		and    %edx,%esi
 		cmp    %edx,%esi
 		jne    jump_365ff
@@ -17121,8 +17121,8 @@ GLOBAL_FUNC (ASM_joy_input)	/* 0x3DC68 */
 		je     jump_3dd5e
 		xor    %esi,%esi
 		xor    %ecx,%ecx
-		mov    EXPORT_SYMBOL(jskeys)+6,%si
-		mov    EXPORT_SYMBOL(jskeys)+8,%cx
+		mov    EXPORT_SYMBOL(jskeys)+12,%esi
+		mov    EXPORT_SYMBOL(jskeys)+16,%ecx
 		mov    EXPORT_SYMBOL(joy)+0x900(%ebx),%edi # joy.Buttons
 		or     %esi,%ecx
 		mov    EXPORT_SYMBOL(joy)+0x900,%ebp # joy.Buttons
