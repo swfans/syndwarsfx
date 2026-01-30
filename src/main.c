@@ -540,7 +540,7 @@ main (int argc, char **argv)
     ingame.Flags = 0;
     setup_log();
     /* Gravis Grip joystick driver initialization */
-    joy_driver_init(&joy);
+    joy_driver_init();
 
     if (!process_options(&argc, &argv))
         return 1;

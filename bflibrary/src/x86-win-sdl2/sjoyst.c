@@ -29,6 +29,9 @@
 
 #include <SDL.h>
 
+
+/******************************************************************************/
+struct DevInput joy;
 /******************************************************************************/
 static SDL_GameController *sdl_controllers[MAX_JOYSTICK_COUNT] = {NULL};
 static int sdl_num_controllers = 0;
@@ -450,10 +453,8 @@ TbResult JEvent(const SDL_Event *ev)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init(struct DevInput *dinp)
-{
-    devinput = dinp;
-    
+int joy_driver_init()
+{    
     if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
         LOGERR("Failed to initialize SDL game controller subsystem: %s", SDL_GetError());
         return 0;

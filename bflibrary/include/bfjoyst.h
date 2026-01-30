@@ -86,7 +86,7 @@ int joy_get_device_name(char *textbuf);
 int joy_update_inputs(struct DevInput *dinp);
 int joy_refresh_devices(struct DevInput *dinp);
 int joy_setup_device(struct DevInput *dinp, int jtype);
-int joy_driver_init(struct DevInput *dinp);
+int joy_driver_init();
 int joy_driver_shutdown(void);
 const char* joy_get_button_label(int button);
 

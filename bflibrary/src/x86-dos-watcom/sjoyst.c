@@ -35,6 +35,8 @@
 #endif
 
 /******************************************************************************/
+struct DevInput joy;
+/******************************************************************************/
 extern struct TbInputHandler *InputHandler;
 extern uint8_t joy_grip_initialized;
 extern uint8_t joy_spbal_initialized;
@@ -1592,7 +1594,7 @@ int joy_spaceball_shutdown(void)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init(struct DevInput *dinp)
+int joy_driver_init(void)
 {
     int ret;
     if (!joy_grip_initialized)
@@ -1626,5 +1628,4 @@ int joy_driver_shutdown(void)
     }
     return 1;
 }
-
 /******************************************************************************/
