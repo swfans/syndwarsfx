@@ -3629,7 +3629,7 @@ void gproc3_unknsub2(void)
     int bkp_ingame_flags;
     int long bkp_engn_anglexz;
     ushort bkp_render_area_a, bkp_render_area_b;
-    long bkp_dword_152EEC;
+    long bkp_cam_tilt;
     ubyte bkp_unkn_flags_01;
     ushort bkp_overall_scale;
     s32 bkp_engn_xc, bkp_engn_yc, bkp_engn_zc;
@@ -3652,7 +3652,7 @@ void gproc3_unknsub2(void)
     bkp_engn_zc = engn_zc;
     bkp_engn_anglexz = engn_anglexz;
     bkp_ingame_flags = ingame.Flags;
-    bkp_dword_152EEC = dword_152EEC;
+    bkp_cam_tilt = cam_tilt;
     bkp_unkn_flags_01 = unkn_flags_01;
 
     render_area_a = 24;
@@ -3697,7 +3697,7 @@ void gproc3_unknsub2(void)
     if (dword_155014 > 0x8000)
         dword_155014 = 0;
 
-    dword_152EEC = dword_1AAB78;
+    cam_tilt = dword_1AAB78;
     engn_xc = dword_155010;
     engn_yc = dword_155018;
     engn_zc = dword_155014;
@@ -3728,7 +3728,7 @@ void gproc3_unknsub2(void)
     engn_zc = bkp_engn_zc;
     engn_anglexz = bkp_engn_anglexz;
     ingame.Flags = bkp_ingame_flags;
-    dword_152EEC = bkp_dword_152EEC;
+    cam_tilt = bkp_cam_tilt;
     unkn_flags_01 = bkp_unkn_flags_01;
 
     process_engine_unk1();
@@ -5017,8 +5017,68 @@ ubyte weapon_select_input(void)
 
 void do_rotate_map(void)
 {
+#if 0
     asm volatile ("call ASM_do_rotate_map\n"
         :  :  : "eax" );
+#endif
+    #define TILT_MIN -192
+    #define TILT_MAX -152
+    #define ZOOM_MIN 120
+    #define ZOOM_MAX 256
+    
+    short rotate_input = 0;
+    rotate_input += is_key_pressed(GKey_VIEW_SPIN_R, KMod_DONTCARE);
+    rotate_input -= is_key_pressed(GKey_VIEW_SPIN_L, KMod_DONTCARE);
+    
+    if ((rotate_input == 0)) {
+        rotate_input += is_key_pressed(GKey_LEFT, KMod_SHIFT);
+        rotate_input -= is_key_pressed(GKey_RIGHT, KMod_SHIFT);
+    }
+
+    short zoom_input = 0;
+    zoom_input += is_key_pressed(GKey_ZOOM_IN, KMod_DONTCARE);
+    zoom_input -= is_key_pressed(GKey_ZOOM_OUT, KMod_DONTCARE);
+
+    // Update zoom level
+    if (zoom_input != 0) {
+        short new_zoom = ingame.UserZoom + (zoom_input * 8);
+        ingame.UserZoom = new_zoom;
+        
+        if (new_zoom < ZOOM_MIN) {
+            if (pktrec_mode != PktR_PLAYBACK) {
+                ingame.UserZoom = ZOOM_MIN;
+            }
+        }
+        else if (new_zoom >= ZOOM_MAX) {
+            ingame.UserZoom = ZOOM_MAX;
+        }
+    }
+
+    short tilt_input = 0;
+    tilt_input += is_key_pressed(GKey_VIEW_TILT_U, KMod_DONTCARE);
+    tilt_input -= is_key_pressed(GKey_VIEW_TILT_D, KMod_DONTCARE);
+
+    if (tilt_input != 0) {
+        cam_tilt = cam_tilt + (tilt_input * 4);
+        if (cam_tilt < TILT_MIN) {
+            cam_tilt = TILT_MIN;
+        }
+        else if (cam_tilt > TILT_MAX) {
+            cam_tilt = TILT_MAX;
+        }
+    }
+
+    if (rotate_input == 0) {
+        if (is_gamekey_joy_pressed(GKey_VIEW_SPIN_R, 0)) {
+            rotate_input++;
+        }
+        if (is_gamekey_joy_pressed(GKey_VIEW_SPIN_L, 0)) {
+            rotate_input--;
+        }
+    }
+
+    cam_rotation_velocity = cam_rotation_velocity + (rotate_input * 256);
+    cam_rotation_velocity = (3 * cam_rotation_velocity) / 4;
 }
 
 ubyte process_mouse_inputs(void)
