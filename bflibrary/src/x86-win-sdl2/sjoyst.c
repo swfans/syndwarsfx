@@ -39,6 +39,13 @@ static int sdl_num_controllers = 0;
 static int prev_digital_z[MAX_JOYSTICK_COUNT] = {0};
 static int prev_digital_r[MAX_JOYSTICK_COUNT] = {0};
 /******************************************************************************/
+typedef enum {
+    LAYOUT_XBOX,
+    LAYOUT_NINTENDO,
+    LAYOUT_PLAYSTATION,
+} ControllerLayout;
+/******************************************************************************/
+
 
 
 static void devinput_clear(struct DevInput *dinp);
@@ -49,28 +56,116 @@ int JoySetInterrupt(short val)
     return -1;
 }
 
+
+static ControllerLayout detect_controller_layout(SDL_GameController *controller)
+{
+    if (!controller)
+        return LAYOUT_XBOX;
+    
+    SDL_GameControllerType ctrl_type = SDL_GameControllerGetType(controller);
+
+    if (ctrl_type == SDL_CONTROLLER_TYPE_PS3 ||
+        ctrl_type == SDL_CONTROLLER_TYPE_PS4 ||
+        ctrl_type == SDL_CONTROLLER_TYPE_PS5)
+    {
+        return LAYOUT_PLAYSTATION;
+    }
+    else if (ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO
+#if SDL_VERSION_ATLEAST(2, 24, 0)
+             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT
+             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT
+             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR
+#endif
+             )
+    {
+        return LAYOUT_NINTENDO;
+    }
+
+    return LAYOUT_XBOX;
+}
+
 const char* joy_get_button_label(int button)
 {
-    //even though with sdl we can mix controllers we'll return labels of the first one
-    // needs to distinguish between nintendo XYAB, xbox YXBA, symbols on playstation, etc.
-    //SDL3 could use SDL_GamepadButtonLabel but SDL2 does not have it
+
+    SDL_GameController *controller = sdl_controllers[0];    
+    ControllerLayout layout = detect_controller_layout(controller);
 
     switch (button)
     {
+        case CONTROLLER_BUTTON_A:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "X";
+            else if (layout == LAYOUT_NINTENDO)
+                return "B";
+            else
+                return "A";
+        
+        case CONTROLLER_BUTTON_B:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "O";
+            else if (layout == LAYOUT_NINTENDO)
+                return "A";
+            else
+                return "B";
+        
+        case CONTROLLER_BUTTON_X:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "[]"; // no real square symbol in font so using brackets
+            else if (layout == LAYOUT_NINTENDO)
+                return "Y";
+            else
+                return "X";
+        
+        case CONTROLLER_BUTTON_Y:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "A"; // A looks like triangle already in the font used
+            else if (layout == LAYOUT_NINTENDO)
+                return "X";
+            else
+                return "Y";
+        
+        case CONTROLLER_BUTTON_LEFTSHOULDER:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "L1";
+            else if (layout == LAYOUT_NINTENDO)
+                return "L";
+            else
+                return "LB";
+        
+        case CONTROLLER_BUTTON_RIGHTSHOULDER:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "R1";
+            else if (layout == LAYOUT_NINTENDO)
+                return "R";
+            else
+                return "RB";
+        
+        case CONTROLLER_BUTTON_TRIGGER_LEFT:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "L2";
+            else if (layout == LAYOUT_NINTENDO)
+                return "ZL";
+            else
+                return "LT";
+        
+        case CONTROLLER_BUTTON_TRIGGER_RIGHT:
+            if (layout == LAYOUT_PLAYSTATION)
+                return "R2";
+            else if (layout == LAYOUT_NINTENDO)
+                return "ZR";
+            else
+                return "RT";
+        
+        case CONTROLLER_BUTTON_START:
+            return "STRT";
         case CONTROLLER_BUTTON_BACK:
             return "BCK";
         case CONTROLLER_BUTTON_SELECT:
-            return "SEL";
-        case CONTROLLER_BUTTON_START:
-            return "STRT";
+            return "SEL";          
         case CONTROLLER_BUTTON_LEFTSTICK:
             return "L3";
         case CONTROLLER_BUTTON_RIGHTSTICK:
             return "R3";
-        case CONTROLLER_BUTTON_LEFTSHOULDER:
-            return "LB";
-        case CONTROLLER_BUTTON_RIGHTSHOULDER:
-            return "RB";
         case CONTROLLER_BUTTON_DPAD_UP:
             return "DPU";
         case CONTROLLER_BUTTON_DPAD_DOWN:
@@ -81,20 +176,16 @@ const char* joy_get_button_label(int button)
             return "DPR";
         case CONTROLLER_BUTTON_MISC1:
             return "MSC";
-        case CONTROLLER_BUTTON_PADDLE1:  // Xbox Elite paddle P1 (upper left, facing the back)
+        case CONTROLLER_BUTTON_PADDLE1:
             return "P1";
-        case CONTROLLER_BUTTON_PADDLE2:  // Xbox Elite paddle P3 (upper right, facing the back)
+        case CONTROLLER_BUTTON_PADDLE2:
             return "P2";
-        case CONTROLLER_BUTTON_PADDLE3:  // Xbox Elite paddle P2 (lower left, facing the back)
+        case CONTROLLER_BUTTON_PADDLE3:
             return "P3";
-        case CONTROLLER_BUTTON_PADDLE4:  // Xbox Elite paddle P4 (lower right, facing the back)
+        case CONTROLLER_BUTTON_PADDLE4:
             return "P4";
-        case CONTROLLER_BUTTON_TOUCHPAD: // PS4/PS5 touchpad button
+        case CONTROLLER_BUTTON_TOUCHPAD:
             return "TPD";
-        case CONTROLLER_BUTTON_TRIGGER_LEFT:
-            return "LT";
-        case CONTROLLER_BUTTON_TRIGGER_RIGHT:
-            return "RT";
         case CONTROLLER_BUTTON_RIGHT_THUMB_LEFT:
             return "RSL";
         case CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT:
@@ -104,63 +195,8 @@ const char* joy_get_button_label(int button)
         case CONTROLLER_BUTTON_RIGHT_THUMB_DOWN:
             return "RSD";
         default:
-            break;
+            return "UNK";
     }
-
-    SDL_GameController *controller = sdl_controllers[0];
-    SDL_GameControllerType ctrl_type = SDL_GameControllerGetType(controller);
-
-    if (ctrl_type == SDL_CONTROLLER_TYPE_PS3 ||
-        ctrl_type == SDL_CONTROLLER_TYPE_PS4 ||
-        ctrl_type == SDL_CONTROLLER_TYPE_PS5)
-    {
-        switch (button)
-        {
-            case CONTROLLER_BUTTON_A:
-                return "X";
-            case CONTROLLER_BUTTON_B:
-                return "O";
-            case CONTROLLER_BUTTON_X:
-                return "[]"; // no real square symbol in font so using brackets
-            case CONTROLLER_BUTTON_Y:
-                return "A"; // A looks like triangle already in the font used
-        }
-    }
-    else if (ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_PRO
-#if SDL_VERSION_ATLEAST(2, 24, 0)
-             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_LEFT
-             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_RIGHT
-             || ctrl_type == SDL_CONTROLLER_TYPE_NINTENDO_SWITCH_JOYCON_PAIR
-#endif
-             )
-    {
-        switch (button)
-        {
-            case CONTROLLER_BUTTON_A:
-                return "B";
-            case CONTROLLER_BUTTON_B:
-                return "A";
-            case CONTROLLER_BUTTON_X:
-                return "Y";
-            case CONTROLLER_BUTTON_Y:
-                return "X";
-        }
-    }
-    else //Xbox and others
-    {
-        switch (button)
-        {
-            case CONTROLLER_BUTTON_A:
-                return "A";
-            case CONTROLLER_BUTTON_B:
-                return "B";
-            case CONTROLLER_BUTTON_X:
-                return "X";
-            case CONTROLLER_BUTTON_Y:
-                return "Y";
-        }
-    }
-    return "UNK";
 }
 
 int joy_get_device_name(char *textbuf)
