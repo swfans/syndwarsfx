@@ -439,8 +439,8 @@ void set_default_game_keys(void)
     jskeys[GKey_DROP_WEAPON] = 0x10;
     ctl_joystick_type = JTyp_GRAVIS_GRIP;
     #else
-    jskeys[GKey_VIEW_SPIN_L]   = 1 << CONTROLLER_BUTTON_LEFTSHOULDER;
-    jskeys[GKey_VIEW_SPIN_R]   = 1 << CONTROLLER_BUTTON_RIGHTSHOULDER;
+    jskeys[GKey_VIEW_SPIN_L]   = 1 << CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT;
+    jskeys[GKey_VIEW_SPIN_R]   = 1 << CONTROLLER_BUTTON_RIGHT_THUMB_LEFT;
     jskeys[GKey_FIRE]          = 1 << CONTROLLER_BUTTON_A;
     jskeys[GKey_CHANGE_MD_WP]  = 1 << CONTROLLER_BUTTON_B;
     jskeys[GKey_CHANGE_AGENT]  = 1 << CONTROLLER_BUTTON_X;
@@ -448,7 +448,6 @@ void set_default_game_keys(void)
     jskeys[GKey_GROUP]         = 1 << CONTROLLER_BUTTON_SELECT;
     jskeys[GKey_GOTO_POINT]    = 1 << CONTROLLER_BUTTON_Y;
     jskeys[GKey_DROP_WEAPON]   = (1 << CONTROLLER_BUTTON_A | 1 << CONTROLLER_BUTTON_DPAD_LEFT);
-
     jskeys[GKey_SEL_AGENT_1] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_UP);
     jskeys[GKey_SEL_AGENT_2] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_DOWN);
     jskeys[GKey_SEL_AGENT_4] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_RIGHT);
