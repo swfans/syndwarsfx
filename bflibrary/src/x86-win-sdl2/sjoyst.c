@@ -64,9 +64,9 @@ const char* joy_get_button_label(int button)
         case CONTROLLER_BUTTON_START:
             return "STRT";
         case CONTROLLER_BUTTON_LEFTSTICK:
-            return "LSTK";
+            return "L3";
         case CONTROLLER_BUTTON_RIGHTSTICK:
-            return "RSTK";
+            return "R3";
         case CONTROLLER_BUTTON_LEFTSHOULDER:
             return "LB";
         case CONTROLLER_BUTTON_RIGHTSHOULDER:
@@ -96,13 +96,13 @@ const char* joy_get_button_label(int button)
         case CONTROLLER_BUTTON_TRIGGER_RIGHT:
             return "RT";
         case CONTROLLER_BUTTON_RIGHT_THUMB_LEFT:
-            return "RTL";
+            return "RSL";
         case CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT:
-            return "RTR";
+            return "RSR";
         case CONTROLLER_BUTTON_RIGHT_THUMB_UP:
-            return "RTUP";
+            return "RSU";
         case CONTROLLER_BUTTON_RIGHT_THUMB_DOWN:
-            return "RTDN";
+            return "RSD";
         default:
             break;
     }
