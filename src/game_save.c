@@ -289,13 +289,32 @@ void read_user_settings(void)
         int num_gkeys = 0;
         if (fmtver == 0) {
             // In original game, the last key (agent 4 select) is not saved at all
-            num_gkeys = 23;
+            set_default_game_keys();
+            ushort jskeys_old[23];
+            LbFileRead(fh, kbkeys, 23 * sizeof(ushort));
+            LbFileRead(fh, jskeys_old, 23 * sizeof(ushort));
+            for (i = 0; i < 23; i++)
+                jskeys[i] = jskeys_old[i];
         } else if (fmtver == 1) {
-            num_gkeys = 29;
+            set_default_game_keys();
+            ushort jskeys_old[29];
+            LbFileRead(fh, kbkeys, 29 * sizeof(ushort));
+            LbFileRead(fh, jskeys_old, 29 * sizeof(ushort));
+            for (i = 0; i < 29; i++)
+                jskeys[i] = jskeys_old[i];
         } else if (fmtver == 2) {
-            num_gkeys = 50;
+            set_default_game_keys();
+            ushort jskeys_old[50];
+            LbFileRead(fh, kbkeys, 50 * sizeof(ushort));
+            LbFileRead(fh, jskeys_old, 50 * sizeof(ushort));
+            for (i = 0; i < 50; i++)
+                jskeys[i] = jskeys_old[i];
         } else {
-            num_gkeys = GKey_KEYS_COUNT;
+            assert(sizeof(JoyButtonSet) == 4);
+            if (fmtver != 3)
+                LOGWARN("Settings may be invalid, as \"%s\" has unrecognized format version %d", fname, (int)fmtver);
+            LbFileRead(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
+            LbFileRead(fh, jskeys, GKey_KEYS_COUNT * sizeof(JoyButtonSet));
         }
 
         set_default_game_keys();
@@ -382,7 +401,7 @@ TbBool save_user_settings(void)
     int i;
 
     get_user_settings_fname(fname, login_name);
-    fmtver = MY_FMTVER;
+    fmtver = 3;
 
     fh = LbFileOpen(fname, Lb_FILE_MODE_NEW);
     if (fh == INVALID_FILE)
@@ -390,11 +409,7 @@ TbBool save_user_settings(void)
 
     LbFileWrite(fh, &fmtver, sizeof(fmtver));
     LbFileWrite(fh, kbkeys, GKey_KEYS_COUNT * sizeof(ushort));
-#ifdef UINT32_JSKEYS
-    LbFileWrite(fh, jskeys, GKey_KEYS_COUNT * sizeof(uint32_t));
-#else
-    LbFileWrite(fh, jskeys, GKey_KEYS_COUNT * sizeof(ushort));
-#endif
+    LbFileWrite(fh, jskeys, GKey_KEYS_COUNT * sizeof(JoyButtonSet));
     LbFileWrite(fh, &ctl_joystick_type, sizeof(ctl_joystick_type));
     LbFileWrite(fh, &players[local_player_no].DoubleMode,
       sizeof(players[local_player_no].DoubleMode));
@@ -535,7 +550,7 @@ int save_game_write(ubyte slot, char *desc)
           global_date.Day, global_date.Month, global_date.Year);
         LbStringToUpper(desc);
     }
-  
+
     while ((gblen & 7) != 0)
     {
         save_game_buffer[gblen] = 0;

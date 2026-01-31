@@ -63,7 +63,7 @@ typedef ushort GameKey;
 /**
  *  store a set of joystick buttons pressed.
  */
-typedef uint32_t JoyButtonSet;
+typedef u32 JoyButtonSet;
 
 /** Type which stores coordinate on the ingame map.
  *
