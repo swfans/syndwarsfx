@@ -6831,6 +6831,9 @@ void joy_input(void)
 {
     asm volatile ("call ASM_joy_input\n"
         :  :  : "eax" );
+    return;
+
+    // calls joy_update_inputs, and conditionally combines inputs from all joysticks into joy0
 }
 
 /** Orbital station explosion code.

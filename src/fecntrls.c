@@ -643,7 +643,6 @@ ubyte show_menu_controls_list_box(struct ScreenTextBox *p_box)
     if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0) // never set anyway
     {
         const char *text;
-
         lbFontPtr = med_font;
         text = gui_strings[GSTR_CONTROLS];
         draw_text_purple_list2(sheet_columns_x[0], 4, text, 0);

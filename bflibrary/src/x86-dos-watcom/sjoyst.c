@@ -35,6 +35,8 @@
 #endif
 
 /******************************************************************************/
+struct DevInput joy;
+/******************************************************************************/
 extern struct TbInputHandler *InputHandler;
 extern uint8_t joy_grip_initialized;
 extern uint8_t joy_spbal_initialized;
@@ -59,6 +61,27 @@ extern int16_t word_1E607C;
 
 extern struct UnkVFXStruct1 vfxunk1;
 /******************************************************************************/
+struct TbInputHandler {
+    short InterruptNo;
+    short field_2;
+    ubyte field_4[128];
+    struct DevInput Input;
+};
+
+struct UnkVFXStruct1 {
+    short field_0;
+    short field_2;
+    short field_4;
+};
+/******************************************************************************/
+
+const char* joy_get_button_label(int button)
+{
+    static char buf[16];
+    snprintf(buf, sizeof(buf), "%d", button + 1);
+    return buf;
+}
+
 int JoySetInterrupt(short val)
 {
     if (!val)

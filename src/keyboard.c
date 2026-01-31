@@ -128,7 +128,8 @@ void clear_joy_pressed(JoyButtonSet jkeys, ubyte channel)
 void sprint_joy_key(char *ostr, int buttons_num, JoyButtonSet jkeys)
 {
     int tx_len;
-    ushort jbtn, pressed_count;
+    int jbtn;
+    ushort pressed_count;
 
     tx_len = 0;
     pressed_count = 0;
@@ -140,18 +141,9 @@ void sprint_joy_key(char *ostr, int buttons_num, JoyButtonSet jkeys)
         {
             if (tx_len > 0)
                 ostr[tx_len++] = '+';
-            if (jbtn >= 9)
-            {
-                uint n;
-                n = jbtn + 1;
-                ostr[tx_len++] = '0' + (n / 10);
-                ostr[tx_len++] = '0' + (n % 10);
-            }
-            else
-            {
-                char c;
-                c = '1' + jbtn;
-                ostr[tx_len++] = c;
+            const char *label = joy_get_button_label(jbtn);
+            while (*label && tx_len < 50) {
+                ostr[tx_len++] = *label++;
             }
             ++pressed_count;
         }
@@ -435,6 +427,7 @@ void input(void)
 void set_default_game_keys(void)
 {
     LbMemorySet(jskeys, 0, sizeof(jskeys));
+    #if defined(DOS)||defined(GO32)
     jskeys[GKey_VIEW_SPIN_L] = 0x40;
     jskeys[GKey_VIEW_SPIN_R] = 0x80;
     jskeys[GKey_FIRE] = 0x01;
@@ -445,6 +438,23 @@ void set_default_game_keys(void)
     jskeys[GKey_GOTO_POINT] = 0x08;
     jskeys[GKey_DROP_WEAPON] = 0x10;
     ctl_joystick_type = JTyp_GRAVIS_GRIP;
+    #else
+    jskeys[GKey_VIEW_SPIN_L]   = 1 << CONTROLLER_BUTTON_RIGHT_THUMB_RIGHT;
+    jskeys[GKey_VIEW_SPIN_R]   = 1 << CONTROLLER_BUTTON_RIGHT_THUMB_LEFT;
+    jskeys[GKey_FIRE]          = 1 << CONTROLLER_BUTTON_A;
+    jskeys[GKey_CHANGE_MD_WP]  = 1 << CONTROLLER_BUTTON_B;
+    jskeys[GKey_CHANGE_AGENT]  = 1 << CONTROLLER_BUTTON_X;
+    jskeys[GKey_SELF_DESTRUCT] = (1 << CONTROLLER_BUTTON_A | 1 << CONTROLLER_BUTTON_B | 1 << CONTROLLER_BUTTON_X | 1 << CONTROLLER_BUTTON_Y);
+    jskeys[GKey_GROUP]         = 1 << CONTROLLER_BUTTON_SELECT;
+    jskeys[GKey_GOTO_POINT]    = 1 << CONTROLLER_BUTTON_Y;
+    jskeys[GKey_DROP_WEAPON]   = (1 << CONTROLLER_BUTTON_A | 1 << CONTROLLER_BUTTON_DPAD_LEFT);
+    jskeys[GKey_SEL_AGENT_1] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_UP);
+    jskeys[GKey_SEL_AGENT_2] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_DOWN);
+    jskeys[GKey_SEL_AGENT_4] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_RIGHT);
+    jskeys[GKey_SEL_AGENT_3] = (1 << CONTROLLER_BUTTON_LEFTSHOULDER | 1 << CONTROLLER_BUTTON_DPAD_LEFT);
+    jskeys[GKey_PAUSE] = 1 << CONTROLLER_BUTTON_START;
+    ctl_joystick_type = JTyp_EXT_DRIVER;
+    #endif
 
     LbMemorySet(kbkeys, 0, sizeof(kbkeys));
     kbkeys[GKey_NONE] = KC_UNASSIGNED;

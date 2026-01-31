@@ -191,7 +191,7 @@ void do_user_input_bits_direction_from_joy(struct SpecialUserInput *p_usrinp, ub
         set_agent_move_direction_delta_x(p_usrinp, dt);
     }
     if (get_agent_move_direction_delta_z(p_usrinp) == 0) {
-        dt = joy.DigitalY[channel];
+        dt = -joy.DigitalY[channel];
         set_agent_move_direction_delta_z(p_usrinp, dt);
     }
 }
