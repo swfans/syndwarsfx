@@ -5032,17 +5032,29 @@ void do_rotate_map(void)
 #endif
     
     short rotate_input = 0;
-    rotate_input += is_key_pressed(GKey_VIEW_SPIN_R, KMod_DONTCARE);
-    rotate_input -= is_key_pressed(GKey_VIEW_SPIN_L, KMod_DONTCARE);
+    if  (is_key_pressed(GKey_VIEW_SPIN_R, KMod_DONTCARE)){
+        rotate_input++;
+    }
+    if (is_key_pressed(GKey_VIEW_SPIN_L, KMod_DONTCARE)){
+        rotate_input--;
+    }
     
     if ((rotate_input == 0)) {
-        rotate_input += is_key_pressed(GKey_LEFT, KMod_SHIFT);
-        rotate_input -= is_key_pressed(GKey_RIGHT, KMod_SHIFT);
+        if  (is_key_pressed(GKey_LEFT, KMod_SHIFT)){
+            rotate_input++;
+        }
+        if (is_key_pressed(GKey_RIGHT, KMod_SHIFT)){
+            rotate_input--;
+        }
     }
 
     short zoom_input = 0;
-    zoom_input += is_key_pressed(GKey_ZOOM_IN, KMod_DONTCARE);
-    zoom_input -= is_key_pressed(GKey_ZOOM_OUT, KMod_DONTCARE);
+    if (is_key_pressed(GKey_ZOOM_IN, KMod_DONTCARE)){
+        zoom_input++;
+    }
+    if (is_key_pressed(GKey_ZOOM_OUT, KMod_DONTCARE)){
+        zoom_input--;
+    }
 
     // Update zoom level
     if (zoom_input != 0) {
@@ -5060,8 +5072,12 @@ void do_rotate_map(void)
     }
 
     short tilt_input = 0;
-    tilt_input += is_key_pressed(GKey_VIEW_TILT_U, KMod_DONTCARE);
-    tilt_input -= is_key_pressed(GKey_VIEW_TILT_D, KMod_DONTCARE);
+    if (is_key_pressed(GKey_VIEW_TILT_U, KMod_DONTCARE)){
+        tilt_input++;
+    }
+    if (is_key_pressed(GKey_VIEW_TILT_D, KMod_DONTCARE)){
+        tilt_input--;
+    }
 
     if (tilt_input != 0) {
         cam_tilt = cam_tilt + (tilt_input * CAMERA_TILT_INPUT_MULTIPLIER);
