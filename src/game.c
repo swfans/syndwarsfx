@@ -5101,7 +5101,7 @@ void do_rotate_map(void)
     }
 
     long new_cam_rotation_velocity = cam_rotation_velocity + (rotate_input * CAMERA_ROTATION_INPUT_MULTIPLIER);
-    new_cam_rotation_velocity = (3 * cam_rotation_velocity) / 4;
+    new_cam_rotation_velocity = (3 * new_cam_rotation_velocity) / 4;
     cam_rotation_velocity = new_cam_rotation_velocity;
 }
 
