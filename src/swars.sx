@@ -14271,8 +14271,8 @@ GLOBAL_FUNC (ASM_do_rotate_map)	/* 0x036480 */
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    EXPORT_SYMBOL(dword_152EEC),%ebx
-		mov    EXPORT_SYMBOL(dword_176D54),%ecx
+		mov    EXPORT_SYMBOL(cam_tilt),%ebx
+		mov    EXPORT_SYMBOL(cam_rotation_velocity),%ecx
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(kbkeys)+8,%ax
 		mov    EXPORT_SYMBOL(lbKeyOn)(%eax),%al
@@ -14393,11 +14393,11 @@ GLOBAL_FUNC (ASM_do_rotate_map)	/* 0x036480 */
 		sbb    %edx,%eax
 		sar    $0x2,%eax
 		mov    %eax,%ecx
-		mov    %eax,EXPORT_SYMBOL(dword_176D54)
+		mov    %eax,EXPORT_SYMBOL(cam_rotation_velocity)
 		movswl %di,%eax
 		shl    $0x3,%eax
 		add    %eax,%ebx
-		mov    %ebx,EXPORT_SYMBOL(dword_152EEC)
+		mov    %ebx,EXPORT_SYMBOL(cam_tilt)
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -75546,7 +75546,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    EXPORT_SYMBOL(engn_zc),%eax
 		mov    EXPORT_SYMBOL(engn_anglexz),%edi
 		mov    %eax,0x14(%esp)
-		mov    EXPORT_SYMBOL(dword_152EEC),%eax
+		mov    EXPORT_SYMBOL(cam_tilt),%eax
 		xor    %esi,%esi
 		mov    %eax,0x4(%esp)
 		xor    %eax,%eax
@@ -75706,7 +75706,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    %ebx,EXPORT_SYMBOL(dword_155014)
 	jump_73a5a:
 		mov    EXPORT_SYMBOL(dword_1AAB78),%eax
-		mov    %eax,EXPORT_SYMBOL(dword_152EEC)
+		mov    %eax,EXPORT_SYMBOL(cam_tilt)
 		mov    EXPORT_SYMBOL(dword_155010),%eax
 		mov    %eax,EXPORT_SYMBOL(engn_xc)
 		mov    EXPORT_SYMBOL(dword_155018),%eax
@@ -75763,7 +75763,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    %eax,EXPORT_SYMBOL(engn_zc)
 		mov    0x4(%esp),%eax
 		mov    %ebp,EXPORT_SYMBOL(ingame)+0x92F # ingame.Flags+0
-		mov    %eax,EXPORT_SYMBOL(dword_152EEC)
+		mov    %eax,EXPORT_SYMBOL(cam_tilt)
 		mov    0x18(%esp),%eax
 		mov    %si,EXPORT_SYMBOL(render_area_a)
 		mov    %eax,EXPORT_SYMBOL(engn_yc)
@@ -160890,7 +160890,7 @@ GLOBAL_FUNC (ASM_traffic_unkn_func_01)	/* 0x0CB738 */
 		and    $0x7ff,%esi
 		mov    %ebx,data_1dd914
 		mov    %esi,data_1dd90c
-		mov    %esi,EXPORT_SYMBOL(dword_152EEC)
+		mov    %esi,EXPORT_SYMBOL(cam_tilt)
 		add    $0x7c,%esp
 		pop    %ebp
 		pop    %edi
@@ -179653,7 +179653,7 @@ GLOBAL (engn_zc)	/* 0x152EE8 */
 		.ascii  "\x80\x32"
 		.short  0x0
 
-GLOBAL (dword_152EEC)	/* 0x152EEC */
+GLOBAL (cam_tilt)	/* 0x152EEC */
 		.ascii  "\x54\xff\xff\xff"
 
 GLOBAL (female_peep)	/* 0x1531A4 */
@@ -180627,7 +180627,7 @@ GLOBAL (dword_176D4C)	/* 0x176D4C */
 		.long	0x0
 GLOBAL (engn_yc)
 		.long	0x0
-GLOBAL (dword_176D54)	/* 0x176D54 */
+GLOBAL (cam_rotation_velocity)	/* 0x176D54 */
 		.long	0x0
 GLOBAL (engn_anglexz)	/* 0x176D58 */
 		.fill   0xc
