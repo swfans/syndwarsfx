@@ -6833,6 +6833,38 @@ void joy_input(void)
 #if 0
     asm volatile ("call ASM_joy_input\n"
         :  :  : "eax" );
+    return;
+#endif
+    joy_update_inputs(&joy);
+
+    PlayerInfo *p_locplayer = &players[local_player_no];
+
+    if (p_locplayer->DoubleMode && ingame.DisplayMode != DpM_PURPLEMNU)
+    {
+        if (ingame.DisplayMode == DpM_ENGINEPLY)
+        {
+            for (int i = 0; i < joy.NumberOfDevices; i++)
+            {
+                if (!joy.Init[i])
+                    continue;
+
+                JoyButtonSet rotate_btns = jskeys[GKey_VIEW_SPIN_R] | jskeys[GKey_VIEW_SPIN_L];
+                joy.Buttons[0] |= (joy.Buttons[i] & rotate_btns);
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < joy.NumberOfDevices; i++)
+        {
+            if (!joy.Init[i])
+                continue;
+
+            joy.Buttons[0] |= joy.Buttons[i];
+            joy.DigitalX[0] |= joy.DigitalX[i];
+            joy.DigitalY[0] |= joy.DigitalY[i];
+        }
+    }
 }
 
 /** Orbital station explosion code.
