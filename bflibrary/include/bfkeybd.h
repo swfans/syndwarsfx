@@ -207,18 +207,18 @@ extern char lbInkeyToAsciiShift[];
 extern const ubyte lbAsciiToInkey[];
 extern const char *lbKeyNames[];
 
-extern unsigned char lbExtendedKeyPress;
-extern unsigned char lbKeyOn[256];
+extern ubyte lbExtendedKeyPress;
+extern ubyte lbKeyOn[256];
 
-extern unsigned char lbInkey;
-extern unsigned char lbInkeyFlags;
+extern ubyte lbInkey;
+extern ubyte lbInkeyFlags;
 extern ulong lbInkey_prefixed;
 
 /** Key modifier flags for lbInkey. */
-extern unsigned char lbShift;
+extern ubyte lbShift;
 
-extern unsigned char lbIInkey;
-extern unsigned char lbIInkeyFlags;
+extern ubyte lbIInkey;
+extern ubyte lbIInkeyFlags;
 
 void LbKeyboardSetLanguage(int lngnum);
 

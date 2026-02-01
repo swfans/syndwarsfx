@@ -469,7 +469,7 @@ void reset_default_player_agent(PlayerIdx plyr, short plagent, struct Thing *p_a
     {
         p_player->DirectControl[plagent] = p_agent->ThingOffset;
         p_agent->Flag |= TngF_Unkn1000;
-        if ((local_player_no == plyr) && (plagent == 0)) {
+        if ((plyr == local_player_no) && (plagent == 0)) {
             game_set_cam_track_thing_xz(p_agent->ThingOffset);
         }
     }

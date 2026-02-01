@@ -443,6 +443,7 @@ void players_init_default_control_mode(void)
 {
     PlayerIdx plyr;
 
+    reset_user_groups();
     reset_user_input();
 
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
@@ -473,8 +474,28 @@ void player_target_clear(PlayerIdx plyr)
 
 void kill_my_players(PlayerIdx plyr)
 {
+#if 0
     asm volatile ("call ASM_kill_my_players\n"
         : : "a" (plyr));
+#endif
+    PlayerInfo *p_player;
+    ushort plagent;
+
+    p_player = &players[plyr];
+    for (plagent = 0; plagent < AGENTS_SQUAD_MAX_COUNT; plagent++)
+    {
+        struct Thing *p_agent;
+
+        p_agent = p_player->MyAgent[plagent];
+        if ((p_agent->Flag & TngF_Destroyed) == 0)
+        {
+            if ((p_agent->Flag & TngF_InVehicle) != 0)
+                person_self_destruct(p_agent);
+            else
+                set_person_dead(p_agent, ANIM_PERS_Unkn12);
+        }
+        p_agent->Flag &= ~(TngF_Unkn1000|TngF_PlayerAgent);
+    }
 }
 
 TbBool player_can_toggle_thermal(PlayerIdx plyr)

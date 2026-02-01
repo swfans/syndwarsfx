@@ -2826,6 +2826,7 @@ void init_game_controls(void)
     asm volatile ("call ASM_init_game_controls\n"
         :  :  : "eax" );
 #endif
+    reset_user_groups();
     reset_user_input();
 
     init_user_input_local_controls();
@@ -6829,11 +6830,9 @@ void load_packet(void)
 
 void joy_input(void)
 {
+#if 0
     asm volatile ("call ASM_joy_input\n"
         :  :  : "eax" );
-    return;
-
-    // calls joy_update_inputs, and conditionally combines inputs from all joysticks into joy0
 }
 
 /** Orbital station explosion code.

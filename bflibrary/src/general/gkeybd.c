@@ -91,23 +91,27 @@ const char *lbKeyNames[] = {
            NULL,         NULL,         NULL,         NULL,         NULL,         NULL,         NULL,         NULL,
 };
 
-unsigned char lbExtendedKeyPress;
+ubyte lbExtendedKeyPress;
 
-unsigned char lbKeyOn[256];
+ubyte lbKeyOn[256];
 
 TbKeyCode lbInkey;
 
-unsigned char lbInkeyFlags;
+ubyte lbInkeyFlags;
 
-unsigned char lbShift;
+ubyte lbShift;
 
-unsigned char lbIInkey;
+ubyte lbIInkey;
 
-unsigned char lbIInkeyFlags;
+ubyte lbIInkeyFlags;
 
 ulong lbInkey_prefixed;
 
 KeyboardEventHandler lbKEventCustomHandler = NULL;
+
+ubyte lbILastShift = KC_LSHIFT;
+ubyte lbILastCtrl = KC_LCONTROL;
+ubyte lbILastAlt = KC_LALT;
 
 int lbKeyboardLang;
 
@@ -166,7 +170,7 @@ static inline TbResult KEventModsCheck(TbKeyAction action, TbKeyMods modifiers)
     if (modifiers & KMod_SHIFT)
     {
         if (!lbKeyOn[KC_RSHIFT] && !lbKeyOn[KC_LSHIFT])
-            lbKeyOn[KC_LSHIFT] = 1;
+            lbKeyOn[lbILastShift] = 1;
     } else
     {
         lbKeyOn[KC_LSHIFT] = 0;
@@ -175,7 +179,7 @@ static inline TbResult KEventModsCheck(TbKeyAction action, TbKeyMods modifiers)
     if (modifiers & KMod_CONTROL)
     {
         if (!lbKeyOn[KC_RCONTROL] && !lbKeyOn[KC_LCONTROL])
-            lbKeyOn[KC_LCONTROL] = 1;
+            lbKeyOn[lbILastCtrl] = 1;
     } else
     {
         lbKeyOn[KC_LCONTROL] = 0;
@@ -184,7 +188,7 @@ static inline TbResult KEventModsCheck(TbKeyAction action, TbKeyMods modifiers)
     if (modifiers & KMod_ALT)
     {
         if (!lbKeyOn[KC_RALT] && !lbKeyOn[KC_LALT])
-            lbKeyOn[KC_LALT] = 1;
+            lbKeyOn[lbILastAlt] = 1;
     } else
     {
         lbKeyOn[KC_LALT] = 0;
@@ -207,6 +211,16 @@ static inline TbResult KEventModsUpdate(TbKeyAction action, TbKeyCode code)
         lbInkeyFlags |= KMod_ALT;
     if (lbKeyOn[code] != 0)
         lbKeyOn[code] |= lbInkeyFlags;
+    // Remember which of the doubled modifier keys was last touched
+    // This will allow us so set the proper key if we know there was
+    // modifier used, but keystroke for it is not marked
+    if (code == KC_RSHIFT || code == KC_LSHIFT)
+        lbILastShift = code;
+    if (code == KC_RCONTROL || code == KC_LCONTROL)
+        lbILastCtrl = code;
+    if (code == KC_RALT || code == KC_LALT)
+        lbILastAlt = code;
+
     return Lb_OK;
 }
 

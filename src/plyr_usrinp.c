@@ -88,7 +88,7 @@ void do_user_input_bits_control_clear_nonmove(struct SpecialUserInput *p_usrinp)
     p_usrinp->Bits &= ~SpUIn_AllNonMoveBits;
 }
 
-void reset_user_input(void)
+void reset_user_groups(void)
 {
     PlayerIdx plyr;
 
@@ -100,6 +100,11 @@ void reset_user_input(void)
             unkn_player_groups[plyr][plgroup].GroupActive = 0;
         }
     }
+}
+
+void reset_user_input(void)
+{
+    PlayerIdx plyr;
 
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {

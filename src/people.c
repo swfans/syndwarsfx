@@ -2514,10 +2514,14 @@ StateChRes person_cmd_play_sample(struct Thing *p_person, short smptbl_id,
 
 void camera_track_thing(short thing, TbBool revert)
 {
+    PlayerInfo *p_locplayer;
+
+    p_locplayer = &players[local_player_no];
+
     if (revert)
     {
         ThingIdx dcthing;
-        dcthing = players[local_player_no].DirectControl[0];
+        dcthing = p_locplayer->DirectControl[0];
         LOGDBG("Revert track to dcthing offs=%d", (int)dcthing);
         ingame.TrackThing = 0;
         game_set_cam_track_thing_xz(dcthing);
@@ -2525,6 +2529,8 @@ void camera_track_thing(short thing, TbBool revert)
     }
     LOGDBG("Begin track thing offs=%d", (int)thing);
     ingame.TrackThing = thing;
+    // Disallow camera movement being blocked by user modes like goto point
+    reset_user_input();
 }
 
 void camera_rotate_view(short ang1, short ang2, TbBool revert)
