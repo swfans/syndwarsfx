@@ -61,7 +61,7 @@ struct ShEnginePoint {
 
 #pragma pack()
 /******************************************************************************/
-extern long dword_152EEC;
+extern long cam_tilt;
 
 extern long dword_176D0C;
 extern long dword_176D10;
@@ -72,7 +72,7 @@ extern long dword_176D3C;
 extern long dword_176D40;
 extern long dword_176D44;
 extern long dword_176D4C;
-extern long dword_176D54;
+extern long cam_rotation_velocity;
 extern long dword_176D64;
 
 short angle_between_points(int x1, int z1, int x2, int z2);
