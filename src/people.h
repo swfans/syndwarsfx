@@ -418,6 +418,7 @@ void person_init_get_item(struct Thing *p_person, short item, ushort plyr);
 void person_init_get_item_fast(struct Thing *p_person, short item, ushort plyr);
 void person_init_plant_mine_fast(struct Thing *p_thing, short x, short y, short z, int face);
 void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, int face);
+void set_person_dead(struct Thing *p_person, ushort anim_mode);
 
 /** Selects a wielded weapon for the thing, or hides the weapon currently in hands.
  *
