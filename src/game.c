@@ -5059,16 +5059,17 @@ void do_rotate_map(void)
     // Update zoom level
     if (zoom_input != 0) {
         short new_zoom = ingame.UserZoom + (zoom_input * 8);
-        ingame.UserZoom = new_zoom;
         
         if (new_zoom < CAMERA_ZOOM_MIN) {
             if (pktrec_mode != PktR_PLAYBACK) {
-                ingame.UserZoom = CAMERA_ZOOM_MIN;
+                new_zoom = CAMERA_ZOOM_MIN;
             }
         }
         else if (new_zoom >= CAMERA_ZOOM_MAX) {
-            ingame.UserZoom = CAMERA_ZOOM_MAX;
+            new_zoom = CAMERA_ZOOM_MAX;
         }
+
+        ingame.UserZoom = new_zoom;
     }
 
     short tilt_input = 0;
@@ -5080,13 +5081,14 @@ void do_rotate_map(void)
     }
 
     if (tilt_input != 0) {
-        cam_tilt = cam_tilt + (tilt_input * CAMERA_TILT_INPUT_MULTIPLIER);
-        if (cam_tilt < CAMERA_TILT_MIN) {
-            cam_tilt = CAMERA_TILT_MIN;
+        long new_cam_tilt = cam_tilt + (tilt_input * CAMERA_TILT_INPUT_MULTIPLIER);
+        if (new_cam_tilt < CAMERA_TILT_MIN) {
+            new_cam_tilt = CAMERA_TILT_MIN;
         }
-        else if (cam_tilt > CAMERA_TILT_MAX) {
-            cam_tilt = CAMERA_TILT_MAX;
+        else if (new_cam_tilt > CAMERA_TILT_MAX) {
+            new_cam_tilt = CAMERA_TILT_MAX;
         }
+        cam_tilt = new_cam_tilt;
     }
 
     if (rotate_input == 0) {
@@ -5098,8 +5100,9 @@ void do_rotate_map(void)
         }
     }
 
-    cam_rotation_velocity = cam_rotation_velocity + (rotate_input * CAMERA_ROTATION_INPUT_MULTIPLIER);
-    cam_rotation_velocity = (3 * cam_rotation_velocity) / 4;
+    long new_cam_rotation_velocity = cam_rotation_velocity + (rotate_input * CAMERA_ROTATION_INPUT_MULTIPLIER);
+    new_cam_rotation_velocity = (3 * cam_rotation_velocity) / 4;
+    cam_rotation_velocity = new_cam_rotation_velocity;
 }
 
 ubyte process_mouse_inputs(void)
