@@ -2826,6 +2826,7 @@ void init_game_controls(void)
     asm volatile ("call ASM_init_game_controls\n"
         :  :  : "eax" );
 #endif
+    reset_user_groups();
     reset_user_input();
 
     init_user_input_local_controls();

@@ -443,6 +443,7 @@ void players_init_default_control_mode(void)
 {
     PlayerIdx plyr;
 
+    reset_user_groups();
     reset_user_input();
 
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {

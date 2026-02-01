@@ -105,7 +105,11 @@ short get_agent_move_direction_delta_x(const struct SpecialUserInput *p_usrinp);
 short get_agent_move_direction_delta_z(const struct SpecialUserInput *p_usrinp);
 void update_agent_move_direction_deltas(struct SpecialUserInput *p_usrinp);
 
-/** Clear state of user inputs to allow for clean missison start.
+/** Clear state of user groups of agents to allow for clean missison start.
+ */
+void reset_user_groups(void);
+
+/** Clear state of user inputs to get rid of half-finished operations.
  */
 void reset_user_input(void);
 
