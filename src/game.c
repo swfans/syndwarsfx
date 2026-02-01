@@ -174,6 +174,15 @@
  */
 #define INTRO_REPLAY_TURNS 1100
 
+/** details on how much and how fast to rotate/tilt/zoom the camera.
+ */
+#define CAMERA_TILT_MIN -192
+#define CAMERA_TILT_MAX -152
+#define CAMERA_ZOOM_MIN 120
+#define CAMERA_ZOOM_MAX 256
+#define CAMERA_ROTATION_INPUT_MULTIPLIER 256
+#define CAMERA_TILT_INPUT_MULTIPLIER 4
+
 enum PostRenderAction {
     PRend_NONE = 0,
     PRend_SaveScreenshot,
@@ -5021,10 +5030,6 @@ void do_rotate_map(void)
     asm volatile ("call ASM_do_rotate_map\n"
         :  :  : "eax" );
 #endif
-    #define TILT_MIN -192
-    #define TILT_MAX -152
-    #define ZOOM_MIN 120
-    #define ZOOM_MAX 256
     
     short rotate_input = 0;
     rotate_input += is_key_pressed(GKey_VIEW_SPIN_R, KMod_DONTCARE);
@@ -5044,13 +5049,13 @@ void do_rotate_map(void)
         short new_zoom = ingame.UserZoom + (zoom_input * 8);
         ingame.UserZoom = new_zoom;
         
-        if (new_zoom < ZOOM_MIN) {
+        if (new_zoom < CAMERA_ZOOM_MIN) {
             if (pktrec_mode != PktR_PLAYBACK) {
-                ingame.UserZoom = ZOOM_MIN;
+                ingame.UserZoom = CAMERA_ZOOM_MIN;
             }
         }
-        else if (new_zoom >= ZOOM_MAX) {
-            ingame.UserZoom = ZOOM_MAX;
+        else if (new_zoom >= CAMERA_ZOOM_MAX) {
+            ingame.UserZoom = CAMERA_ZOOM_MAX;
         }
     }
 
@@ -5059,12 +5064,12 @@ void do_rotate_map(void)
     tilt_input -= is_key_pressed(GKey_VIEW_TILT_D, KMod_DONTCARE);
 
     if (tilt_input != 0) {
-        cam_tilt = cam_tilt + (tilt_input * 4);
-        if (cam_tilt < TILT_MIN) {
-            cam_tilt = TILT_MIN;
+        cam_tilt = cam_tilt + (tilt_input * CAMERA_TILT_INPUT_MULTIPLIER);
+        if (cam_tilt < CAMERA_TILT_MIN) {
+            cam_tilt = CAMERA_TILT_MIN;
         }
-        else if (cam_tilt > TILT_MAX) {
-            cam_tilt = TILT_MAX;
+        else if (cam_tilt > CAMERA_TILT_MAX) {
+            cam_tilt = CAMERA_TILT_MAX;
         }
     }
 
@@ -5077,7 +5082,7 @@ void do_rotate_map(void)
         }
     }
 
-    cam_rotation_velocity = cam_rotation_velocity + (rotate_input * 256);
+    cam_rotation_velocity = cam_rotation_velocity + (rotate_input * CAMERA_ROTATION_INPUT_MULTIPLIER);
     cam_rotation_velocity = (3 * cam_rotation_velocity) / 4;
 }
 
