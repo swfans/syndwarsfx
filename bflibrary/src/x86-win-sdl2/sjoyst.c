@@ -159,9 +159,9 @@ const char* joy_get_button_label(int button)
         case CONTROLLER_BUTTON_START:
             return "STRT";
         case CONTROLLER_BUTTON_BACK:
-            return "BCK";
-        case CONTROLLER_BUTTON_SELECT:
-            return "SEL";          
+            return "SEL";
+        case CONTROLLER_BUTTON_GUIDE:
+            return "GUIDE";
         case CONTROLLER_BUTTON_LEFTSTICK:
             return "L3";
         case CONTROLLER_BUTTON_RIGHTSTICK:
