@@ -31,7 +31,9 @@
 
 //SDL1 joysticks are stubbed out, as we use SDL2 GameControllers instead
 //SDL1 technically supports joysticks, but they are hard to map to modern controllers
+/******************************************************************************/
 
+struct DevInput joy;
 /******************************************************************************/
 
 const char* joy_get_button_label(int button)
