@@ -610,11 +610,106 @@ void process_intelligent_door(struct SimpleThing *p_sthing)
         : : "a" (p_sthing));
 }
 
-void process_scale_effect(struct SimpleThing *p_sthing, ThingIdx thing)
+void process_unkn58(struct SimpleThing *p_sthing)
+{
+    ushort frm;
+
+    frm = frame[p_sthing->Frame].Next;
+
+    if ((frame[frm].Flags & 0x01) != 0) {
+        remove_sthing(p_sthing->ThingOffset);
+        delete_snode(p_sthing);
+        return;
+    }
+
+    p_sthing->Frame = frm;
+}
+
+void process_drift_smoke(struct SimpleThing *p_sthing, ThingIdx thing_item)
 {
     asm volatile (
+      "call ASM_process_drift_smoke\n"
+        : : "a" (p_sthing), "d" (thing_item));
+}
+
+void process_mushroom(struct SimpleThing *p_sthing, ThingIdx thing_item)
+{
+    asm volatile (
+      "call ASM_process_mushroom\n"
+        : : "a" (p_sthing), "d" (thing_item));
+}
+
+void process_special_drift_smoke(struct SimpleThing *p_sthing, ThingIdx thing_item)
+{
+    asm volatile (
+      "call ASM_process_special_drift_smoke\n"
+        : : "a" (p_sthing), "d" (thing_item));
+}
+
+void process_napalm_flame(struct SimpleThing *p_sthing, ThingIdx thing_item)
+{
+    asm volatile (
+      "call ASM_process_napalm_flame\n"
+        : : "a" (p_sthing), "d" (thing_item));
+}
+
+void process_flame1(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_flame1\n"
+        : : "a" (p_sthing));
+}
+
+void process_splash(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_process_splash\n"
+        : : "a" (p_sthing));
+}
+
+void process_scale_effect(struct SimpleThing *p_sthing, ThingIdx thing_item)
+{
+#if 0
+    asm volatile (
       "call ASM_process_scale_effect\n"
-        : : "a" (p_sthing), "d" (thing));
+        : : "a" (p_sthing), "d" (thing_item));
+#endif
+    switch (p_sthing->SubType)
+    {
+    case 30:
+        process_drift_smoke(p_sthing, thing_item);
+        break;
+    case 31:
+        process_mushroom(p_sthing, thing_item);
+        break;
+    case 44:
+        process_special_drift_smoke(p_sthing, thing_item);
+        break;
+    case 45:
+        process_drift_smoke(p_sthing, thing_item);
+        break;
+    case 46:
+        process_napalm_flame(p_sthing, thing_item);
+        break;
+    case 49:
+        if (p_sthing->Timer1 == 4)
+            p_sthing->Frame = nstart_ani[1104];
+        process_drift_smoke(p_sthing, thing_item);
+        break;
+    case 52:
+        process_flame1(p_sthing);
+        break;
+    case 56:
+    case 57:
+        process_flame1(p_sthing);
+        break;
+    case 58:
+        process_unkn58(p_sthing);
+        break;
+    case 60:
+        process_splash(p_sthing);
+        break;
+    }
 }
 
 void process_nuclear_bomb(struct SimpleThing *p_sthing, ThingIdx thing_item)

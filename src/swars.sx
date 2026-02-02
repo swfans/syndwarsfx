@@ -153349,7 +153349,7 @@ GLOBAL_FUNC(ASM_process_mech_weapon)	/* 0x0C63AC */
 
 
 /*----------------------------------------------------------------*/
-process_mushroom:	/* 0x0C65E0 */
+GLOBAL_FUNC(ASM_process_mushroom)	/* 0x0C65E0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -154083,7 +154083,7 @@ GLOBAL_FUNC(ASM_process_smoke_generator)	/* 0x0C6D4C */
 
 
 /*----------------------------------------------------------------*/
-process_special_drift_smoke:	/* 0x0C6E5C */
+GLOBAL_FUNC(ASM_process_special_drift_smoke)	/* 0x0C6E5C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -154378,7 +154378,7 @@ vtable_c7194:
 
 
 /*----------------------------------------------------------------*/
-process_drift_smoke:	/* 0x0C71CC */
+GLOBAL_FUNC(ASM_process_drift_smoke)	/* 0x0C71CC */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -154790,7 +154790,7 @@ vtable_c7640:
 
 
 /*----------------------------------------------------------------*/
-process_napalm_flame:	/* 0x0C7678 */
+GLOBAL_FUNC(ASM_process_napalm_flame)	/* 0x0C7678 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -155139,7 +155139,7 @@ vtable_c7a48:
 
 
 /*----------------------------------------------------------------*/
-process_flame1:	/* 0x0C7A80 */
+GLOBAL_FUNC(ASM_process_flame1)	/* 0x0C7A80 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -155363,7 +155363,7 @@ func_c7c56:
 
 
 /*----------------------------------------------------------------*/
-process_splash:	/* 0x0C7D44 */
+GLOBAL_FUNC(ASM_process_splash)	/* 0x0C7D44 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -155463,7 +155463,7 @@ GLOBAL_FUNC(ASM_process_scale_effect)	/* 0x0C7E1C */
 	jump_c7e46:
 		movswl %dx,%edx
 		mov    %ebx,%eax
-		call   process_special_drift_smoke
+		call   ac_process_special_drift_smoke
 		pop    %ebx
 		ret
 	jump_c7e52:
@@ -155477,24 +155477,24 @@ GLOBAL_FUNC(ASM_process_scale_effect)	/* 0x0C7E1C */
 	jump_c7e6d:
 		movswl %dx,%edx
 		mov    %ebx,%eax
-		call   process_drift_smoke
+		call   ac_process_drift_smoke
 		pop    %ebx
 		ret
 	jump_c7e79:
 		movswl %dx,%edx
 		mov    %ebx,%eax
-		call   process_napalm_flame
+		call   ac_process_napalm_flame
 		pop    %ebx
 		ret
 	jump_c7e85:
 		movswl %dx,%edx
 		mov    %ebx,%eax
-		call   process_mushroom
+		call   ac_process_mushroom
 		pop    %ebx
 		ret
 	jump_c7e91:
 		mov    %ebx,%eax
-		call   process_flame1
+		call   ac_process_flame1
 		pop    %ebx
 		ret
 	jump_c7e9a:
@@ -155518,7 +155518,7 @@ GLOBAL_FUNC(ASM_process_scale_effect)	/* 0x0C7E1C */
 		ret
 	jump_c7ed1:
 		mov    %ebx,%eax
-		call   process_splash
+		call   ac_process_splash
 		pop    %ebx
 		ret
 	jump_c7eda:
@@ -155538,7 +155538,7 @@ GLOBAL_FUNC(ASM_process_scale_effect)	/* 0x0C7E1C */
 		jbe    jump_c7e46
 		movswl %dx,%edx
 		mov    %ebx,%eax
-		call   process_drift_smoke
+		call   ac_process_drift_smoke
 		pop    %ebx
 		ret
 	jump_c7f06:
