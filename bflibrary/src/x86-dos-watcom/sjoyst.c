@@ -35,7 +35,6 @@
 #endif
 
 /******************************************************************************/
-struct DevInput joy;
 
 struct TbInputHandler {
     short InterruptNo;
@@ -74,6 +73,8 @@ extern int16_t word_1E607A;
 extern int16_t word_1E607C;
 
 extern struct UnkVFXStruct1 vfxunk1;
+/******************************************************************************/
+struct DevInput joy;
 /******************************************************************************/
 
 const char* joy_get_button_label(int button)
