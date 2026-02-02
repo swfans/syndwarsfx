@@ -75,19 +75,6 @@ struct DevInput {
         unsigned char Init[16];
 };
 
-struct TbInputHandler {
-    short InterruptNo;
-    short field_2;
-    ubyte field_4[128];
-    struct DevInput Input;
-};
-
-struct UnkVFXStruct1 {
-    short field_0;
-    short field_2;
-    short field_4;
-};
-
 #pragma pack()
 /******************************************************************************/
 extern struct DevInput joy;
