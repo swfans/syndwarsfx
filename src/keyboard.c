@@ -120,7 +120,7 @@ JoyButtonSet get_joy_pressed_key(ubyte channel)
 
 void clear_joy_pressed(JoyButtonSet jkeys, ubyte channel)
 {
-    if (channel >= sizeof(joy.Buttons[0])/sizeof(joy.Buttons[0]))
+    if (channel >= MAX_JOYSTICK_COUNT)
         return;
     joy.Buttons[channel] &= ~jkeys;
 }
@@ -128,8 +128,7 @@ void clear_joy_pressed(JoyButtonSet jkeys, ubyte channel)
 void sprint_joy_key(char *ostr, int buttons_num, JoyButtonSet jkeys)
 {
     int tx_len;
-    int jbtn;
-    ushort pressed_count;
+    ushort jbtn, pressed_count;
 
     tx_len = 0;
     pressed_count = 0;
