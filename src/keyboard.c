@@ -177,6 +177,12 @@ TbKeyMods get_gamekey_modifier(GameKey gkey)
     case GKey_CAMERA_PERSPECTV:
         kmodif = KMod_NONE;
         break;
+#ifdef MORE_GAME_KEYS
+    case GKey_VIEW_PAN_L:
+    case GKey_VIEW_PAN_R:
+        kmodif = KMod_SHIFT;
+        break;
+#endif
     default:
         kmodif = KMod_DONTCARE;
         break;
@@ -237,9 +243,20 @@ void clear_gamekey_pressed(GameKey gkey)
     }
 }
 
+/** Update hard-coded keys, either to const values or to values which depend on other keys.
+ */
+static void reset_hardcoded_kbd_gamekeys(void)
+{
+#ifdef MORE_GAME_KEYS
+    kbkeys[GKey_VIEW_PAN_L] = kbkeys[GKey_LEFT];
+    kbkeys[GKey_VIEW_PAN_R] = kbkeys[GKey_RIGHT];
+#endif
+}
+
 void set_gamekey_kbd(GameKey gkey, TbKeyCode key)
 {
     kbkeys[gkey] = key;
+    reset_hardcoded_kbd_gamekeys();
 }
 
 void set_gamekey_joy(GameKey gkey, JoyButtonSet jkey)
@@ -323,11 +340,14 @@ void sprint_gamekey_combination_kbd(char *ostr, GameKey gkey)
 
     switch (kmodif)
     {
-    case KMod_ALT:
-        sprintf(ostr, "ALT+%s", lbKeyNames[keyno]);
+    case KMod_SHIFT:
+        sprintf(ostr, "SHFT+%s", lbKeyNames[keyno]);
         break;
     case KMod_CONTROL:
         sprintf(ostr, "CTRL+%s", lbKeyNames[keyno]);
+        break;
+    case KMod_ALT:
+        sprintf(ostr, "ALT+%s", lbKeyNames[keyno]);
         break;
     default:
         sprintf(ostr, "%s", lbKeyNames[keyno]);
@@ -499,6 +519,7 @@ void set_default_game_keys(void)
     kbkeys[GKey_USE_MEDIKIT] = KC_UNASSIGNED;
     kbkeys[GKey_SUPERSHIELD] = KC_UNASSIGNED;
     kbkeys[GKey_VIEW_THERMAL] = KC_UNASSIGNED;
+    reset_hardcoded_kbd_gamekeys();
 }
 
 /******************************************************************************/

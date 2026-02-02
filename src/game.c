@@ -5040,11 +5040,20 @@ void do_rotate_map(void)
         rotate_input--;
 
     if (rotate_input == 0) {
-        //TODO by both moving and rotating, these became panning keys; add to the game keys as hard-coded?
-        if (is_key_pressed(kbkeys[GKey_LEFT], KMod_SHIFT))
+#ifdef MORE_GAME_KEYS
+        // these keys are used for rotation only here, but since
+        // at the same time they are also used for moving the
+        // viewport (GKey_LEFT/GKey_LEFT), the result is panning
+        if (is_gamekey_pressed(GKey_VIEW_PAN_R))
             rotate_input++;
-        if (is_key_pressed(kbkeys[GKey_RIGHT], KMod_SHIFT))
+        if (is_gamekey_pressed(GKey_VIEW_PAN_L))
             rotate_input--;
+#else
+        if (is_key_pressed(kbkeys[GKey_RIGHT], KMod_SHIFT))
+            rotate_input++;
+        if (is_key_pressed(kbkeys[GKey_LEFT], KMod_SHIFT))
+            rotate_input--;
+#endif
     }
 
     short zoom_input = 0;
