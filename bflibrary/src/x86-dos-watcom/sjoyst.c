@@ -59,6 +59,9 @@ extern int16_t word_1E607C;
 
 extern struct UnkVFXStruct1 vfxunk1;
 /******************************************************************************/
+
+struct DevInput joy;
+/******************************************************************************/
 int JoySetInterrupt(short val)
 {
     if (!val)
