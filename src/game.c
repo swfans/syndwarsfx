@@ -5097,15 +5097,6 @@ void do_rotate_map(void)
         cam_tilt = new_cam_tilt;
     }
 
-    if (rotate_input == 0) {
-        if (is_gamekey_joy_pressed(GKey_VIEW_SPIN_R, 0)) {
-            rotate_input++;
-        }
-        if (is_gamekey_joy_pressed(GKey_VIEW_SPIN_L, 0)) {
-            rotate_input--;
-        }
-    }
-
     long new_cam_rotation_velocity = cam_rotation_velocity + (rotate_input * CAMERA_ROTATION_INPUT_MULTIPLIER);
     new_cam_rotation_velocity = (3 * new_cam_rotation_velocity) / 4;
     cam_rotation_velocity = new_cam_rotation_velocity;
