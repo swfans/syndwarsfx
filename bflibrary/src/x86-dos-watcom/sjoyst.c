@@ -77,6 +77,14 @@ extern struct UnkVFXStruct1 vfxunk1;
 
 struct DevInput joy;
 /******************************************************************************/
+
+const char* joy_get_button_label(int button)
+{
+    static char buf[16];
+    snprintf(buf, sizeof(buf), "%d", button + 1);
+    return buf;
+}
+
 int JoySetInterrupt(short val)
 {
     if (!val)
