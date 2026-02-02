@@ -180831,10 +180831,6 @@ data_17fa52:
 
 GLOBAL (word_17FA58)	/* 0x17FA58 */
 		.fill   0x320
-/* struct DevInput joy; */
-GLOBAL (joy)	/* 0x17FD78 */
-		.fill   0x0a5C
-
 
 GLOBAL (ingame)	/* 0x1807D4 */
 		.fill   0x9A5
