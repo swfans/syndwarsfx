@@ -5030,43 +5030,49 @@ void do_rotate_map(void)
 #if 0
     asm volatile ("call ASM_do_rotate_map\n"
         :  :  : "eax" );
+    return;
 #endif
-    
+
     short rotate_input = 0;
-    if  (is_key_pressed(GKey_VIEW_SPIN_R, KMod_DONTCARE)){
+    if (is_gamekey_pressed(GKey_VIEW_SPIN_R))
         rotate_input++;
-    }
-    if (is_key_pressed(GKey_VIEW_SPIN_L, KMod_DONTCARE)){
+    if (is_gamekey_pressed(GKey_VIEW_SPIN_L))
         rotate_input--;
-    }
-    
-    if ((rotate_input == 0)) {
-        if  (is_key_pressed(GKey_LEFT, KMod_SHIFT)){
+
+    if (rotate_input == 0) {
+#ifdef MORE_GAME_KEYS
+        // these keys are used for rotation only here, but since
+        // at the same time they are also used for moving the
+        // viewport (GKey_LEFT/GKey_LEFT), the result is panning
+        if (is_gamekey_pressed(GKey_VIEW_PAN_R))
             rotate_input++;
-        }
-        if (is_key_pressed(GKey_RIGHT, KMod_SHIFT)){
+        if (is_gamekey_pressed(GKey_VIEW_PAN_L))
             rotate_input--;
-        }
+#else
+        if (is_key_pressed(kbkeys[GKey_RIGHT], KMod_SHIFT))
+            rotate_input++;
+        if (is_key_pressed(kbkeys[GKey_LEFT], KMod_SHIFT))
+            rotate_input--;
+#endif
     }
 
     short zoom_input = 0;
-    if (is_key_pressed(GKey_ZOOM_IN, KMod_DONTCARE)){
+    if (is_gamekey_pressed(GKey_ZOOM_IN))
         zoom_input++;
-    }
-    if (is_key_pressed(GKey_ZOOM_OUT, KMod_DONTCARE)){
+    if (is_gamekey_pressed(GKey_ZOOM_OUT))
         zoom_input--;
-    }
 
     // Update zoom level
-    if (zoom_input != 0) {
+    if (zoom_input != 0)
+    {
         short new_zoom = ingame.UserZoom + (zoom_input * 8);
-        
+
         if (new_zoom < CAMERA_ZOOM_MIN) {
             if (pktrec_mode != PktR_PLAYBACK) {
                 new_zoom = CAMERA_ZOOM_MIN;
             }
         }
-        else if (new_zoom >= CAMERA_ZOOM_MAX) {
+        else if (new_zoom > CAMERA_ZOOM_MAX) {
             new_zoom = CAMERA_ZOOM_MAX;
         }
 
@@ -5074,14 +5080,13 @@ void do_rotate_map(void)
     }
 
     short tilt_input = 0;
-    if (is_key_pressed(GKey_VIEW_TILT_U, KMod_DONTCARE)){
+    if (is_gamekey_pressed(GKey_VIEW_TILT_U))
         tilt_input++;
-    }
-    if (is_key_pressed(GKey_VIEW_TILT_D, KMod_DONTCARE)){
+    if (is_gamekey_pressed(GKey_VIEW_TILT_D))
         tilt_input--;
-    }
 
-    if (tilt_input != 0) {
+    if (tilt_input != 0)
+    {
         long new_cam_tilt = cam_tilt + (tilt_input * CAMERA_TILT_INPUT_MULTIPLIER);
         if (new_cam_tilt < CAMERA_TILT_MIN) {
             new_cam_tilt = CAMERA_TILT_MIN;

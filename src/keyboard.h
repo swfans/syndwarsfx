@@ -78,6 +78,10 @@ enum GameKeys
   GKey_USE_MEDIKIT = 49,
   GKey_SUPERSHIELD = 50,
   GKey_VIEW_THERMAL = 51,
+#ifdef MORE_GAME_KEYS
+  GKey_VIEW_PAN_L = 52,
+  GKey_VIEW_PAN_R = 53,
+#endif
   GKey_KEYS_COUNT,
 };
 
