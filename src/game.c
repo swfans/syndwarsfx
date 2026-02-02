@@ -6928,9 +6928,13 @@ void joy_input(void)
                 if (!joy.Init[i])
                     continue;
 
-                JoyButtonSet rotate_btns = jskeys[GKey_VIEW_SPIN_R] | jskeys[GKey_VIEW_SPIN_L] |
-                                           jskeys[GKey_VIEW_TILT_U] | jskeys[GKey_VIEW_TILT_D] |
-                                           jskeys[GKey_ZOOM_IN]     | jskeys[GKey_ZOOM_OUT];
+                JoyButtonSet rotate_btns = jskeys[GKey_VIEW_SPIN_R] | jskeys[GKey_VIEW_SPIN_L]
+                                        | jskeys[GKey_VIEW_TILT_U] | jskeys[GKey_VIEW_TILT_D] 
+                                        | jskeys[GKey_ZOOM_IN] | jskeys[GKey_ZOOM_OUT]
+                                        #if defined MORE_GAME_KEYS
+                                        | jskeys[GKey_VIEW_PAN_R] | jskeys[GKey_VIEW_PAN_L]
+                                        #endif
+                                           ;
                 joy.Buttons[0] |= (joy.Buttons[i] & rotate_btns);
             }
         }
