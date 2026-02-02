@@ -75,19 +75,6 @@ extern int16_t word_1E607C;
 
 extern struct UnkVFXStruct1 vfxunk1;
 /******************************************************************************/
-struct TbInputHandler {
-    short InterruptNo;
-    short field_2;
-    ubyte field_4[128];
-    struct DevInput Input;
-};
-
-struct UnkVFXStruct1 {
-    short field_0;
-    short field_2;
-    short field_4;
-};
-/******************************************************************************/
 
 const char* joy_get_button_label(int button)
 {
