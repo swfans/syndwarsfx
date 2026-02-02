@@ -31,8 +31,6 @@
 
 struct DevInput joy;
 /******************************************************************************/
-struct DevInput joy;
-/******************************************************************************/
 static SDL_GameController *sdl_controllers[MAX_JOYSTICK_COUNT] = {NULL};
 static int sdl_num_controllers = 0;
 // Track previous digital stick states for edge detection
