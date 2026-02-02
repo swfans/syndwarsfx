@@ -35,6 +35,21 @@
 #endif
 
 /******************************************************************************/
+
+struct TbInputHandler {
+    short InterruptNo;
+    short field_2;
+    ubyte field_4[128];
+    struct DevInput Input;
+};
+
+struct UnkVFXStruct1 {
+    short field_0;
+    short field_2;
+    short field_4;
+};
+
+/******************************************************************************/
 extern struct TbInputHandler *InputHandler;
 extern uint8_t joy_grip_initialized;
 extern uint8_t joy_spbal_initialized;
