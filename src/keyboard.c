@@ -120,7 +120,7 @@ JoyButtonSet get_joy_pressed_key(ubyte channel)
 
 void clear_joy_pressed(JoyButtonSet jkeys, ubyte channel)
 {
-    if (channel >= sizeof(joy.Buttons[0])/sizeof(joy.Buttons[0]))
+    if (channel >= MAX_JOYSTICK_COUNT)
         return;
     joy.Buttons[channel] &= ~jkeys;
 }
