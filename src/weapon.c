@@ -1971,6 +1971,7 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
         p_shot->VX = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]) + (range * angle_direction[angl].DiX);
         p_shot->VY = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
         p_shot->VZ = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]) + (range * angle_direction[angl].DiY);
+        allow_gnd_hit_eff = true;
     }
     else
     {
@@ -2114,6 +2115,7 @@ void init_uzi(struct Thing *p_owner)
         cor_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]) + wdef->RangeBlocks * angle_direction[angl].DiX;
         cor_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
         cor_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]) + wdef->RangeBlocks * angle_direction[angl].DiY;
+        allow_gnd_hit_eff = true;
     }
     cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
     cor_beg_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
