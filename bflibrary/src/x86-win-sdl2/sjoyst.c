@@ -418,7 +418,6 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
     return 1;
 }
 
-
 static int get_JoyId_by_instanceId(SDL_JoystickID instance_id)
 {
     for (int i = 0; i < sdl_num_controllers; i++) {
@@ -489,7 +488,7 @@ TbResult JEvent(const SDL_Event *ev)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init()
+int joy_driver_init(void)
 {    
     if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) < 0) {
         LOGERR("Failed to initialize SDL game controller subsystem: %s", SDL_GetError());
