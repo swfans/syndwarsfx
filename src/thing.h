@@ -557,6 +557,8 @@ struct SimpleThing
     short State;
     ulong Flag;
     short LinkSame;
+    /** Object index, or range.
+     */
     short Object;
     short Radius;
     ThingIdx ThingOffset;

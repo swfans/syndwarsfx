@@ -34,6 +34,8 @@ struct MapCreater {
     short Iterations;
 };
 
+struct Thing;
+
 #pragma pack()
 /******************************************************************************/
 
@@ -43,6 +45,8 @@ void bang_new4(int x, int y, int z, int type);
 
 void unused_func_025(short a1, short a2, short a3);
 ubyte unused_func_026(ubyte a1);
+
+void do_shockwave(int x, int y, int z, int radius, int intensity, struct Thing *p_owner);
 
 /******************************************************************************/
 #ifdef __cplusplus

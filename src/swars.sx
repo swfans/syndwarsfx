@@ -28138,7 +28138,7 @@ GLOBAL_FUNC(ASM_person_hit_razor_wire)	/* 0x049294 */
 		mov    0x18(%edi),%eax
 		sar    $0x8,%ebx
 		sar    $0x8,%eax
-		call   init_spark
+		call   ac_init_spark
 		test   %eax,%eax
 		je     jump_4965b
 		mov    0x2c(%eax),%dx
@@ -53794,7 +53794,7 @@ do_fvect_colide:	/* 0x05C054 */
 
 
 /*----------------------------------------------------------------*/
-bul_path_end:	/* 0x05C1C0 */
+GLOBAL_FUNC(ASM_bul_path_end)	/* 0x05C1C0 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -147223,7 +147223,7 @@ GLOBAL_FUNC(ASM_init_uzi)	/* 0x0C1C0C */
 		push   %eax
 		mov    %ebp,%edx
 		mov    %edi,%eax
-		call   bul_path_end
+		call   ac_bul_path_end
 		mov    (%esp),%edx
 		mov    0x4(%esp),%ebx
 		mov    0x8(%esp),%ecx
@@ -147466,7 +147466,7 @@ GLOBAL_FUNC(ASM_init_uzi)	/* 0x0C1C0C */
 		mov    0x8(%esp),%ebx
 		mov    0x4(%esp),%edx
 		mov    (%esp),%eax
-		call   init_spark
+		call   ac_init_spark
 		test   %eax,%eax
 		jne    jump_c2028
 	jump_c206d:
@@ -147585,7 +147585,7 @@ GLOBAL_FUNC(ASM_init_long_range)	/* 0x0C2078 */
 		mov    %eax,0x28(%esp)
 		mov    %eax,%edx
 		mov    %ebp,%eax
-		call   bul_path_end
+		call   ac_bul_path_end
 		mov    (%esp),%ebx
 		mov    0x4(%esp),%ecx
 		sub    %ebp,%ebx
@@ -147831,7 +147831,7 @@ GLOBAL_FUNC(ASM_init_long_range)	/* 0x0C2078 */
 		mov    0x8(%esp),%ebx
 		mov    0x4(%esp),%edx
 		mov    (%esp),%eax
-		call   init_spark
+		call   ac_init_spark
 		test   %eax,%eax
 		jne    jump_c2472
 	jump_c24b7:
@@ -147954,7 +147954,7 @@ GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 		sar    $0x8,%eax
 		mov    %ebp,%edx
 		mov    %eax,0x24(%esp)
-		call   bul_path_end
+		call   ac_bul_path_end
 		mov    (%esp),%ecx
 		mov    0x10(%esp),%edx
 		mov    0x4(%esp),%ebx
@@ -148206,7 +148206,7 @@ GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 		mov    0x8(%esp),%ebx
 		mov    0x4(%esp),%edx
 		mov    (%esp),%eax
-		call   init_spark
+		call   ac_init_spark
 		test   %eax,%eax
 		jne    jump_c28e3
 	jump_c2928:
@@ -148486,7 +148486,7 @@ GLOBAL_FUNC(ASM_init_time_gun)	/* 0x0C2AE0 */
 		mov    %edi,%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   bul_path_end
+		call   ac_bul_path_end
 		mov    0x6(%esp),%ebx
 		mov    0x4(%esp),%edx
 		mov    -0x2(%esp),%eax
@@ -148675,7 +148675,7 @@ GLOBAL_FUNC(ASM_init_stasis_gun)	/* 0x0C2C6C */
 		mov    %ecx,0x18(%esp)
 		mov    %edi,%eax
 		lea    0x14(%esp),%ecx
-		call   bul_path_end
+		call   ac_bul_path_end
 		mov    0x6(%esp),%ebx
 		mov    0x4(%esp),%edi
 		mov    -0x2(%esp),%eax
@@ -156198,7 +156198,7 @@ GLOBAL_FUNC(ASM_init_grenade)	/* 0x0C84D0 */
 
 
 /*----------------------------------------------------------------*/
-init_spark:	/* 0x0C867C */
+GLOBAL_FUNC(ASM_init_spark)	/* 0x0C867C */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -156780,7 +156780,7 @@ GLOBAL_FUNC(ASM_process_laser)	/* 0x0C8D2C */
 		mov    0x2c(%ebx),%ecx
 		mov    %eax,%ebx
 		mov    %ecx,%eax
-		call   init_spark
+		call   ac_init_spark
 		pop    %edx
 		pop    %ecx
 		pop    %ebx
@@ -156977,7 +156977,7 @@ GLOBAL_FUNC(ASM_process_laser_elec)	/* 0x0C8F78 */
 		mov    0x34(%ecx),%ebx
 		mov    0x30(%ecx),%edx
 		mov    0x2c(%ecx),%eax
-		call   init_spark
+		call   ac_init_spark
 		test   %eax,%eax
 		je     jump_c8fe9
 		xor    %dh,%dh

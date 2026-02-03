@@ -31,6 +31,7 @@
 #include "bigmap.h"
 #include "bmbang.h"
 #include "building.h"
+#include "engincolour.h"
 #include "enginsngtxtr.h"
 #include "enginzoom.h"
 #include "frame_sprani.h"
@@ -1073,6 +1074,14 @@ void player_agent_set_weapon_quantities_proper(struct Thing *p_person)
     }
 }
 
+struct SimpleThing *init_spark(int x, int y, int z)
+{
+    struct SimpleThing * ret;
+    asm volatile ("call ASM_init_spark\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z));
+    return ret;
+}
+
 void elec_hit_building(int x, int y, int z, short col)
 {
     asm volatile ("call ASM_elec_hit_building\n"
@@ -1200,6 +1209,21 @@ void thing_fire_shot_finish_position_straight_forward(struct M31 *prc_fin_pt, co
     prc_fin_pt->R[0] = prc_beg_pt->R[0] + MAPCOORD_TO_PRCCOORD(range * angle_direction[angl].DiX, 0);
     prc_fin_pt->R[1] = prc_beg_pt->R[1];
     prc_fin_pt->R[2] = prc_beg_pt->R[2] + MAPCOORD_TO_PRCCOORD(range * angle_direction[angl].DiY, 0);
+}
+
+int bul_path_end(int x1, int y1, int z1, int *x2, int *y2, int *z2,
+  int radius, struct Thing *p_owner, ubyte *status)
+{
+    int ret;
+    asm volatile (
+      "push %9\n"
+      "push %8\n"
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_play_sample_using_heap\n"
+        : "=r" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "g" (y2), "g" (z2), "g" (radius), "g" (p_owner), "g" (status));
+    return ret;
 }
 
 void init_laser(struct Thing *p_owner, ushort start_age)
@@ -1828,14 +1852,14 @@ void init_laser_guided(struct Thing *p_owner, ushort start_age)
         : : "a" (p_owner), "d" (start_age));
 }
 
-void weapon_shooting_floor_creates_smoke(MapCoord cor_x, MapCoord cor_z)
+TbBool weapon_shooting_floor_creates_smoke(MapCoord cor_x, MapCoord cor_z)
 {
     struct SimpleThing *p_sthing;
     MapCoord cor_y;
     ushort textr;
 
     textr = floor_texture_at_point(cor_x, cor_z);
-    if ((get_my_texture_bits(textr) & 2) != 0)
+    if ((get_my_texture_bits(textr) & 0x02) != 0)
     {
         // Create small smoke effect for weapon discharge into water
         cor_y = alt_at_point(cor_x, cor_z) >> 8;
@@ -1843,6 +1867,46 @@ void weapon_shooting_floor_creates_smoke(MapCoord cor_x, MapCoord cor_z)
         if (p_sthing != NULL) {
             p_sthing->SubType = 58;
         }
+        return true;
+    }
+    return false;
+}
+
+TbBool weapon_shooting_floor_creates_unkn1(MapCoord cor_x, MapCoord cor_z)
+{
+    struct SimpleThing *p_sthing;
+    MapCoord cor_y;
+    ushort textr;
+
+    textr = floor_texture_at_point(cor_x, cor_z);
+    if ((get_my_texture_bits(textr) & 0x02) != 0)
+    {
+        // Create small smoke effect for weapon discharge into water
+        cor_y = alt_at_point(cor_x, cor_z) >> 8;
+        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1087, 8);
+        if (p_sthing != NULL) {
+            p_sthing->Object = (LbRandomAnyShort() & 0x7F) + 62;
+            p_sthing->SubType = 60;
+            play_dist_ssample(p_sthing, 3u, 0x7Fu, 0x40u, 100, 0, 3);
+        }
+        return true;
+    }
+    return false;
+}
+
+void weapon_shooting_creates_unkn2(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z)
+{
+    struct SimpleThing *p_sthing;
+    short dx, dz;
+
+    dz = (LbRandomAnyShort() & 0x3F) - 32;
+    dx = (LbRandomAnyShort() & 0x3F) - 32;
+    p_sthing = create_scale_effect(cor_x + dx, cor_y, cor_z + dz, 1054, 40);
+    if (p_sthing != NULL)
+    {
+        p_sthing->SubType = 58;
+        p_sthing->Object = 256;
+        play_dist_ssample(p_sthing, 0x44u, 0x7Fu, 0x40u, 100, 0, 1);
     }
 }
 
@@ -2004,8 +2068,10 @@ void init_laser_q_sep(struct Thing *p_owner, ushort start_age)
 
 void init_uzi(struct Thing *p_owner)
 {
+#if 1
     asm volatile ("call ASM_init_uzi\n"
         : : "a" (p_owner));
+#endif
 }
 
 void init_minigun(struct Thing *p_owner)
