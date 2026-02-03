@@ -883,6 +883,40 @@ short get_hand_weapon_range(struct Thing *p_person, WeaponType wtype)
     return range;
 }
 
+short get_vehicle_weapon_range(struct Thing *p_person, WeaponType wtype)
+{
+    struct WeaponDef *wdef;
+    struct Thing *p_veh;
+    short range;
+
+    if (wtype >= WEP_TYPES_COUNT)
+        return 0;
+
+    wdef = &weapon_defs[wtype];
+
+    p_veh = &things[p_person->U.UPerson.Vehicle];
+    if (p_veh->SubType == SubTT_VEH_TANK)
+    {
+        if (wtype == WEP_RAP)
+            range = TILE_TO_MAPCOORD(wdef->RangeBlocks * 2, 0);
+        else
+            range = 0;
+    }
+    else if (p_veh->SubType == SubTT_VEH_MECH)
+    {
+        if (wtype == WEP_RAP)
+            range = TILE_TO_MAPCOORD(wdef->RangeBlocks * 2, 0);
+        else
+            range = 0;
+    }
+    else
+    {
+        range = get_hand_weapon_range(p_person, wtype);
+    }
+
+    return range;
+}
+
 int get_weapon_zoom_min(WeaponType wtype)
 {
     struct WeaponDef *wdef;
@@ -906,27 +940,12 @@ short current_hand_weapon_range(struct Thing *p_person)
 
 int get_persons_weapon_range(struct Thing *p_person, WeaponType wtype)
 {
-    struct WeaponDef *wdef;
-
-    wdef = &weapon_defs[wtype];
-
     if ((p_person->Flag & TngF_InVehicle) != 0)
     {
-        struct Thing *p_veh;
-        p_veh = &things[p_person->U.UPerson.Vehicle];
-        if ((p_veh->SubType == SubTT_VEH_TANK) && (wtype == WEP_RAP)) {
-            return TILE_TO_MAPCOORD(wdef->RangeBlocks * 2, 0);
-        }
-        if ((p_veh->SubType == SubTT_VEH_MECH) && (wtype == WEP_RAP)) {
-            return TILE_TO_MAPCOORD(wdef->RangeBlocks * 2, 0);
-        }
+        return get_vehicle_weapon_range(p_person, wtype);
     }
 
-    if ((wtype == WEP_NUCLGREN) || (wtype == WEP_CRAZYGAS) || (wtype == WEP_KOGAS)) {
-        // Range of throwing weapons depend on arms mod level
-        return (TILE_TO_MAPCOORD(wdef->RangeBlocks, 0) * 85 * (3 + person_mod_arms_level(p_person))) >> 8;
-    }
-    return wdef->RangeBlocks << 8;
+    return get_hand_weapon_range(p_person, wtype);
 }
 
 int get_weapon_range(struct Thing *p_person)
@@ -937,15 +956,18 @@ int get_weapon_range(struct Thing *p_person)
         : "=r" (ret) : "a" (p_person));
     return ret;
 #endif
+    WeaponType wtype;
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
     if ((p_person->Flag & TngF_InVehicle) != 0)
     {
         struct Thing *p_veh;
         p_veh = &things[p_person->U.UPerson.Vehicle];
         if ((p_veh->SubType == SubTT_VEH_TANK) || (p_veh->SubType == SubTT_VEH_MECH)) {
-            return get_persons_weapon_range(p_person, WEP_RAP);
+            wtype = WEP_RAP;
         }
     }
-    return get_persons_weapon_range(p_person, p_person->U.UPerson.CurrentWeapon);
+    return get_persons_weapon_range(p_person, wtype);
 }
 
 TbBool current_weapon_has_targetting(struct Thing *p_person)
