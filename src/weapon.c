@@ -904,12 +904,48 @@ short current_hand_weapon_range(struct Thing *p_person)
     return get_hand_weapon_range(p_person, p_person->U.UPerson.CurrentWeapon);
 }
 
+int get_persons_weapon_range(struct Thing *p_person, WeaponType wtype)
+{
+    struct WeaponDef *wdef;
+
+    wdef = &weapon_defs[wtype];
+
+    if ((p_person->Flag & TngF_InVehicle) != 0)
+    {
+        struct Thing *p_veh;
+        p_veh = &things[p_person->U.UPerson.Vehicle];
+        if ((p_veh->SubType == SubTT_VEH_TANK) && (wtype == WEP_RAP)) {
+            return TILE_TO_MAPCOORD(wdef->RangeBlocks * 2, 0);
+        }
+        if ((p_veh->SubType == SubTT_VEH_MECH) && (wtype == WEP_RAP)) {
+            return TILE_TO_MAPCOORD(wdef->RangeBlocks * 2, 0);
+        }
+    }
+
+    if ((wtype == WEP_NUCLGREN) || (wtype == WEP_CRAZYGAS) || (wtype == WEP_KOGAS)) {
+        // Range of throwing weapons depend on arms mod level
+        return (TILE_TO_MAPCOORD(wdef->RangeBlocks, 0) * 85 * (3 + person_mod_arms_level(p_person))) >> 8;
+    }
+    return wdef->RangeBlocks << 8;
+}
+
 int get_weapon_range(struct Thing *p_person)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_get_weapon_range\n"
         : "=r" (ret) : "a" (p_person));
     return ret;
+#endif
+    if ((p_person->Flag & TngF_InVehicle) != 0)
+    {
+        struct Thing *p_veh;
+        p_veh = &things[p_person->U.UPerson.Vehicle];
+        if ((p_veh->SubType == SubTT_VEH_TANK) || (p_veh->SubType == SubTT_VEH_MECH)) {
+            return get_persons_weapon_range(p_person, WEP_RAP);
+        }
+    }
+    return get_persons_weapon_range(p_person, p_person->U.UPerson.CurrentWeapon);
 }
 
 TbBool current_weapon_has_targetting(struct Thing *p_person)
