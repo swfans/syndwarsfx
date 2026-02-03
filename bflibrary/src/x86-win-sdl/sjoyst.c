@@ -93,7 +93,7 @@ int joy_setup_device(struct DevInput *dinp, int jtype)
 
 /** Joystick drivers initialization.
  */
-int joy_driver_init()
+int joy_driver_init(void)
 {
     return 1;
 }
