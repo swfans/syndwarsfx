@@ -146984,7 +146984,7 @@ GLOBAL_FUNC(ASM_init_shoot_recoil)	/* 0x0C19F0 */
 
 
 /*----------------------------------------------------------------*/
-weapon_sweep:	/* 0x0C1AC8 */
+GLOBAL_FUNC(ASM_weapon_sweep)	/* 0x0C1AC8 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -147935,7 +147935,7 @@ GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 		lea    0x4(%esp),%ebx
 		mov    %esp,%edx
 		mov    %esi,%eax
-		call   weapon_sweep
+		call   ac_weapon_sweep
 		lea    0x28(%esp),%eax
 		push   %eax
 		sar    $0x8,%ebp
