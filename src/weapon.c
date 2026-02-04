@@ -2587,12 +2587,91 @@ void init_v_rocket(struct Thing *p_owner)
 
 void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y, int z)
 {
-#if 1
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_init_mech_rocket\n"
         : : "a" (p_owner), "d" (p_mech), "b" (x), "c" (y), "g" (z));
 #endif
+    ThingIdx shottng;
+    struct Thing *p_shot;
+    struct Thing *p_target;
+    int pos_dt_x, pos_dt_z, pos_dt_y;
+    int dist;
+
+    if (((p_mech->Flag & TngF_Unkn20000000) == 0) && (p_mech->PTarget == NULL)) {
+        return;
+    }
+
+    LOGSYNC("Shot fired by %s offs=%d", thing_type_name(p_owner->Type, p_owner->SubType),
+      (int)p_owner->ThingOffset);
+
+    shottng = get_new_thing();
+    if (shottng == 0) {
+        LOGERR("No thing slots for a shot");
+        return;
+    }
+
+    p_shot = &things[shottng];
+
+    p_shot->X = MAPCOORD_TO_PRCCOORD(x, 0);
+    p_shot->Y = MAPCOORD_TO_PRCCOORD(y >> 3, 0);
+    p_shot->Z = MAPCOORD_TO_PRCCOORD(z, 0);
+    p_shot->Type = TT_ROCKET;
+    p_shot->Radius = 50;
+    p_shot->Owner = p_owner->ThingOffset;
+    p_shot->StartTimer1 = 20;
+    p_shot->Timer1 = 60;
+    p_shot->Speed = 700;
+    p_shot->Frame = 0;
+    p_shot->StartFrame = 0;
+    p_shot->U.UEffect.Object = 0;
+    p_shot->Parent = 0;
+    p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
+    p_shot->Flag |= 0x0004;
+
+    p_target = p_mech->PTarget;
+
+    if ((p_mech->Flag & TngF_Unkn20000000) != 0)
+    {
+        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_shot->U.UEffect.GotoX = p_mech->U.UVehicle.TargetDX;
+        p_shot->U.UEffect.GotoY = p_mech->U.UVehicle.TargetDY;
+        p_shot->U.UEffect.GotoZ = p_mech->U.UVehicle.TargetDZ;
+        p_shot->PTarget = NULL;
+        p_shot->Flag |= TngF_Unkn20000000;
+    }
+    else if (p_target != NULL)
+    {
+        p_shot->PTarget = p_target;
+        p_shot->Flag &= ~TngF_Unkn20000000;
+        p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(p_target->X);
+        p_shot->U.UEffect.GotoY = PRCCOORD_TO_MAPCOORD(p_target->Y);
+        p_shot->U.UEffect.GotoZ = PRCCOORD_TO_MAPCOORD(p_target->Z);
+    }
+    else
+    {
+        // The function should be only called if the vehicle has a target set,
+        // so this should be safe
+        p_shot->U.UEffect.GotoX = p_mech->U.UVehicle.TargetDX;
+        p_shot->U.UEffect.GotoY = p_mech->U.UVehicle.TargetDY;
+        p_shot->U.UEffect.GotoZ = p_mech->U.UVehicle.TargetDZ;
+    }
+
+    pos_dt_x = p_shot->U.UEffect.GotoX - x;
+    pos_dt_y = p_shot->U.UEffect.GotoY - (y >> 3);
+    pos_dt_z = p_shot->U.UEffect.GotoZ - z;
+
+    dist = map_distance_deltas_fast(pos_dt_x, pos_dt_y, pos_dt_z);
+    if (dist == 0)
+        dist = 1;
+
+    p_shot->VZ = (pos_dt_z << 8) / dist;
+    p_shot->VX = (pos_dt_x << 8) / dist;
+    p_shot->VY = (pos_dt_y << 8) / dist;
+    add_node_thing(p_shot->ThingOffset);
+
+    play_dist_sample(p_shot, 24, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
 }
 
 void give_take_me_weapon(struct Thing *p_person, int item, int giveortake, short id)
