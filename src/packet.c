@@ -23,6 +23,7 @@
 #include "bffile.h"
 #include "bfmemut.h"
 #include "bfutility.h"
+#include <assert.h>
 
 #include "campaign.h"
 #include "game_data.h"
@@ -497,7 +498,7 @@ void PacketRecord_OpenRead(void)
     }
 }
 
-TbResult PacketRecord_Read(struct Packet *p_pckt)
+TbResult PacketRecord_Read(struct Packet *p_pckt, ushort dblmode)
 {
 #if 0
     asm volatile (
@@ -507,20 +508,19 @@ TbResult PacketRecord_Read(struct Packet *p_pckt)
     ushort locbuf[5];
     struct Packet *p_subpckt;
     int nread, len;
-    short pluser;
+    ushort dmuser;
 
     if (packet_rec_fh == INVALID_FILE) {
         return Lb_FAIL;
     }
 
+    assert(dblmode < LOCAL_USERS_MAX_COUNT);
+
     len = 0;
     nread = 0;
     p_subpckt = p_pckt;
-    for (pluser = 0; pluser < LOCAL_USERS_MAX_COUNT; pluser++)
+    for (dmuser = 0; dmuser < dblmode + 1; dmuser++)
     {
-        if (((1 << pluser) & ingame.InNetGame_UNSURE) == 0)
-            continue;
-
         nread += LbFileRead(packet_rec_fh, &locbuf[0], 1 * sizeof(ushort));
         len += 1;
         locbuf[1] = 0;
@@ -553,7 +553,7 @@ TbResult PacketRecord_Read(struct Packet *p_pckt)
     return (nread == len * (int)sizeof(ushort)) ? Lb_SUCCESS : Lb_FAIL;
 }
 
-void PacketRecord_Write(struct Packet *p_pckt)
+void PacketRecord_Write(struct Packet *p_pckt, ushort dblmode)
 {
 #if 0
     asm volatile (
@@ -563,7 +563,7 @@ void PacketRecord_Write(struct Packet *p_pckt)
     ushort locbuf[5 * LOCAL_USERS_MAX_COUNT + 1];
     struct Packet *p_subpckt;
     uint len;
-    short pluser;
+    ushort dmuser;
 
     if (in_network_game) {
         return;
@@ -572,13 +572,12 @@ void PacketRecord_Write(struct Packet *p_pckt)
         return;
     }
 
+    assert(dblmode < LOCAL_USERS_MAX_COUNT);
+
     len = 0;
     p_subpckt = p_pckt;
-    for (pluser = 0; pluser < LOCAL_USERS_MAX_COUNT; pluser++)
+    for (dmuser = 0; dmuser < dblmode + 1; dmuser++)
     {
-        if (((1 << pluser) & ingame.InNetGame_UNSURE) == 0)
-            continue;
-
         locbuf[len+0] = p_subpckt->Action;
         locbuf[len+1] = p_subpckt->Data;
         locbuf[len+2] = p_subpckt->X;

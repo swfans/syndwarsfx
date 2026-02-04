@@ -6796,7 +6796,7 @@ void load_packet(void)
     if (PacketRecord_IsPlayback()) // packet replay controls
     {
         if (!in_network_game)
-            PacketRecord_Read(p_pckt);
+            PacketRecord_Read(p_pckt, p_locplayer->DoubleMode);
         input_packet_playback();
         ingame.MissionStatus = test_missions(0);
         return;
@@ -6903,7 +6903,7 @@ void load_packet(void)
 
         if (PacketRecord_IsRecord() && !in_network_game)
         {
-            PacketRecord_Write(p_pckt);
+            PacketRecord_Write(p_pckt, p_locplayer->DoubleMode);
         }
     }
 }

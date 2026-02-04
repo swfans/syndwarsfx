@@ -439,10 +439,10 @@ void net_unkn_check_1(void)
     LbMemorySet(recvd, 0, 8);
     if ((PacketRecord_IsPlayback()) && in_network_game)
     {
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < PLAYERS_LIMIT; i++)
         {
             if (((1 << i) & ingame.InNetGame_UNSURE) != 0) {
-                PacketRecord_Read(&packets[i]);
+                PacketRecord_Read(&packets[i], players[i].DoubleMode);
             }
         }
     }
@@ -462,7 +462,7 @@ void net_unkn_check_1(void)
         if (ret == -1)
         {
             net_unkn_func_12(recvd3);
-            for (i = 0; i < 8; i++)
+            for (i = 0; i < PLAYERS_LIMIT; i++)
             {
                 if (((1 << i) & ingame.InNetGame_UNSURE) == 0)
                     continue;
@@ -507,7 +507,7 @@ void net_unkn_check_1(void)
 
         LbNetworkExchange(shpackets, sizeof(struct ShortPacket));
 
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < PLAYERS_LIMIT; i++)
         {
             struct Packet *p_pckt;
             struct ShortPacket *p_shpckt;
@@ -553,7 +553,7 @@ void net_unkn_check_1(void)
             continue;
 
         if (PacketRecord_IsRecord() && in_network_game && (net_host_player_no == local_player_no))
-            PacketRecord_Write(&packets[i]);
+            PacketRecord_Write(&packets[i], players[i].DoubleMode);
 
         if ((nsvc.I.Type == NetSvc_IPX) && (recvd[i] == 1) && (net_players_num > 2))
         {

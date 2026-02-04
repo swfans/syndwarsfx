@@ -1389,7 +1389,7 @@ void number_player(struct Thing *p_person, ubyte n)
     {
         PlayerInfo *p_locplayer;
         p_locplayer = &players[local_player_no];
-        if (!p_locplayer->DoubleMode)
+        if (p_locplayer->DoubleMode == 0)
         {
             if ((p_person->ThingOffset != (ThingIdx)p_locplayer->DirectControl[0]) || ((render_anim_turn & 4) != 0))
             {

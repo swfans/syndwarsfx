@@ -247,7 +247,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
             if (login_control__State != LognCt_Unkn5 || nsvc.I.Type == NetSvc_IPX)
             {
                 p_locplayer->DoubleMode++;
-                if (p_locplayer->DoubleMode > 3)
+                if (p_locplayer->DoubleMode >= LOCAL_USERS_MAX_COUNT)
                     p_locplayer->DoubleMode = 0;
             }
             else
@@ -255,7 +255,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
                 p_locplayer->DoubleMode = 0;
             }
 
-            for (dmuser = p_locplayer->DoubleMode + 1; dmuser < 4; dmuser++)
+            for (dmuser = p_locplayer->DoubleMode + 1; dmuser < LOCAL_USERS_MAX_COUNT; dmuser++)
             {
                 p_locplayer->UserInput[dmuser].ControlMode = UInpCtr_Mouse;
             }

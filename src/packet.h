@@ -199,8 +199,8 @@ void build_packet4(struct Packet *packet, ushort action, u32 param1, s32 x, s32 
 void PacketRecord_Close(void);
 void PacketRecord_OpenWrite(void);
 void PacketRecord_OpenRead(void);
-TbResult PacketRecord_Read(struct Packet *p_pckt);
-void PacketRecord_Write(struct Packet *p_pckt);
+TbResult PacketRecord_Read(struct Packet *p_pckt, ushort dblmode);
+void PacketRecord_Write(struct Packet *p_pckt, ushort dblmode);
 TbResult PacketRecord_ReadNP(struct NetworkPlayer *p_netplyr);
 void PacketRecord_WriteNP(struct NetworkPlayer *p_netplyr);
 TbBool PacketRecord_IsPlayback(void);
