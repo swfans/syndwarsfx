@@ -2723,7 +2723,7 @@ void init_level(void)
     set_user_selected_brightness();
     ingame.Flags &= ~TngF_Unkn8000;
     if (!in_network_game)
-        ingame.InNetGame_UNSURE = 1;
+        ingame.InNetGame_UNSURE = (1 << 0);
     word_1531DA = 1;
     shield_frames_init();
     ingame.fld_unkCB7 = 0;

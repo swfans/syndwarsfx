@@ -533,11 +533,11 @@ void net_unkn_check_1(void)
         check_val = (ubyte)ingame.fld_unkC4B;
     if (nsvc.I.Type == NetSvc_IPX)
     {
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < PLAYERS_LIMIT; i++)
         {
             if (((1 << i) & ingame.InNetGame_UNSURE) == 0)
                 continue;
-            for (m = 0; m < 8; m++)
+            for (m = 0; m < PLAYERS_LIMIT; m++)
             {
                 if ( ((1 << m) & ingame.InNetGame_UNSURE) == 0)
                     continue;
@@ -547,12 +547,12 @@ void net_unkn_check_1(void)
         }
     }
 
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < PLAYERS_LIMIT; i++)
     {
         if (((1 << i) & ingame.InNetGame_UNSURE) == 0)
             continue;
 
-        if ((pktrec_mode == 1) && in_network_game && (net_host_player_no == local_player_no))
+        if (PacketRecord_IsRecord() && in_network_game && (net_host_player_no == local_player_no))
             PacketRecord_Write(&packets[i]);
 
         if ((nsvc.I.Type == NetSvc_IPX) && (recvd[i] == 1) && (net_players_num > 2))
@@ -1398,13 +1398,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
 
 void process_packets(void)
 {
-    ushort v53;
     PlayerIdx plyr;
-
-    if (pktrec_mode == PktR_NONE)
-        v53 = 4;
-    else if (pktrec_mode <= PktR_PLAYBACK)
-        v53 = 1;
 
     if (in_network_game && (net_players_num > 1))
         net_unkn_check_1();
@@ -1417,7 +1411,7 @@ void process_packets(void)
         if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
             continue;
         packet = &packets[plyr];
-        for (i = 0; i < v53; i++)
+        for (i = 0; i < LOCAL_USERS_MAX_COUNT; i++)
         {
             struct Thing *p_thing;
 
@@ -1437,7 +1431,7 @@ void process_packets(void)
             process_packet(plyr, packet, i);
 
             packet->Action = PAct_NONE;
-            packet = (struct Packet *)((char *)packet + 10);
+            packet = (struct Packet *)((ubyte *)packet + 10);
         }
     }
 }

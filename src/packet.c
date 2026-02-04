@@ -504,29 +504,53 @@ TbResult PacketRecord_Read(struct Packet *p_pckt)
       "call ASM_PacketRecord_Read\n"
         : : "a" (p_pckt));
 #endif
-    ushort locbuf[6];
+    ushort locbuf[5];
+    struct Packet *p_subpckt;
     int nread, len;
+    short pluser;
 
     if (packet_rec_fh == INVALID_FILE) {
         return Lb_FAIL;
     }
 
-    len = 2 * sizeof(ushort);
-    nread = LbFileRead(packet_rec_fh, locbuf, len);
-    locbuf[2] = 0;
-    locbuf[3] = 0;
-    locbuf[4] = 0;
-    if (locbuf[0] & 0xFF) {
-        len = 4 * sizeof(ushort);
-        nread += LbFileRead(packet_rec_fh, &locbuf[2], len);
-        len += 2 * sizeof(ushort);
+    len = 0;
+    nread = 0;
+    p_subpckt = p_pckt;
+    for (pluser = 0; pluser < LOCAL_USERS_MAX_COUNT; pluser++)
+    {
+        if (((1 << pluser) & ingame.InNetGame_UNSURE) == 0)
+            continue;
+
+        nread += LbFileRead(packet_rec_fh, &locbuf[0], 1 * sizeof(ushort));
+        len += 1;
+        locbuf[1] = 0;
+        locbuf[2] = 0;
+        locbuf[3] = 0;
+        locbuf[4] = 0;
+
+        if (locbuf[0] & 0xFF) {
+            nread += LbFileRead(packet_rec_fh, &locbuf[1], 4 * sizeof(ushort));
+            len += 4;
+        }
+
+        p_subpckt->Action = locbuf[0];
+        p_subpckt->Data = locbuf[1];
+        p_subpckt->X = locbuf[2];
+        p_subpckt->Y = locbuf[3];
+        p_subpckt->Z = locbuf[4];
+
+        p_subpckt = (struct Packet *)((ubyte *)p_subpckt + 10);
     }
-    p_pckt->Action = locbuf[0];
-    p_pckt->Data = locbuf[1];
-    p_pckt->X = locbuf[2];
-    p_pckt->Y = locbuf[3];
-    p_pckt->Z = locbuf[4];
-    return (nread == len) ? Lb_SUCCESS : Lb_FAIL;
+
+    nread += LbFileRead(packet_rec_fh, &locbuf[0], 1 * sizeof(ushort));
+    len++;
+#if 0 //TODO fix the check
+    if (locbuf[0] != lbSeed) {
+        LOGSYNC("Packet desync - seed mismatch");
+    }
+#endif
+
+    return (nread == len * (int)sizeof(ushort)) ? Lb_SUCCESS : Lb_FAIL;
 }
 
 void PacketRecord_Write(struct Packet *p_pckt)
@@ -536,8 +560,10 @@ void PacketRecord_Write(struct Packet *p_pckt)
       "call ASM_PacketRecord_Write\n"
         : : "a" (p_pckt));
 #endif
-    ushort locbuf[6];
+    ushort locbuf[5 * LOCAL_USERS_MAX_COUNT + 1];
+    struct Packet *p_subpckt;
     uint len;
+    short pluser;
 
     if (in_network_game) {
         return;
@@ -546,17 +572,30 @@ void PacketRecord_Write(struct Packet *p_pckt)
         return;
     }
 
-    locbuf[0] = p_pckt->Action;
-    locbuf[1] = p_pckt->Data;
-    locbuf[2] = p_pckt->X;
-    locbuf[3] = p_pckt->Y;
-    locbuf[4] = p_pckt->Z;
-    locbuf[5] = lbSeed;
-    if (p_pckt->Action & 0xFF)
-        len = 6 * sizeof(ushort);
-    else
-        len = 2 * sizeof(ushort);
-    LbFileWrite(packet_rec_fh, locbuf, len);
+    len = 0;
+    p_subpckt = p_pckt;
+    for (pluser = 0; pluser < LOCAL_USERS_MAX_COUNT; pluser++)
+    {
+        if (((1 << pluser) & ingame.InNetGame_UNSURE) == 0)
+            continue;
+
+        locbuf[len+0] = p_subpckt->Action;
+        locbuf[len+1] = p_subpckt->Data;
+        locbuf[len+2] = p_subpckt->X;
+        locbuf[len+3] = p_subpckt->Y;
+        locbuf[len+4] = p_subpckt->Z;
+
+        if (p_subpckt->Action & 0xFF)
+            len += 5;
+        else
+            len += 1;
+        p_subpckt = (struct Packet *)((ubyte *)p_subpckt + 10);
+    }
+
+    locbuf[len] = lbSeed;
+    len++;
+
+    LbFileWrite(packet_rec_fh, locbuf, len * sizeof(ushort));
 }
 
 TbResult PacketRecord_ReadNP(struct NetworkPlayer *p_netplyr)
