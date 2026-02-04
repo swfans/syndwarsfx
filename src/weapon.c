@@ -1269,9 +1269,9 @@ void thing_fire_shot_finish_position_straight_forward(struct M31 *prc_fin_pt,
 
     range = get_persons_weapon_range(p_owner, wtype);
     angl = p_owner->U.UPerson.Angle;
-    prc_fin_pt->R[0] = prc_beg_pt->R[0] + MAPCOORD_TO_PRCCOORD(range * angle_direction[angl].DiX, 0);
+    prc_fin_pt->R[0] = prc_beg_pt->R[0] + range * angle_direction[angl].DiX;
     prc_fin_pt->R[1] = prc_beg_pt->R[1];
-    prc_fin_pt->R[2] = prc_beg_pt->R[2] + MAPCOORD_TO_PRCCOORD(range * angle_direction[angl].DiY, 0);
+    prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * angle_direction[angl].DiY;
 }
 
 int bul_path_end(int x1, int y1, int z1, int *x2, int *y2, int *z2,
@@ -1761,9 +1761,9 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
         ubyte angl;
         range = get_persons_weapon_range(p_owner, WEP_BEAM);
         angl = p_owner->U.UObject.Angle;
-        p_shot->VX = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]) + (range * angle_direction[angl].DiX);
+        p_shot->VX = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0] + range * angle_direction[angl].DiX);
         p_shot->VY = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
-        p_shot->VZ = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]) + (range * angle_direction[angl].DiY);
+        p_shot->VZ = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2] + range * angle_direction[angl].DiY);
     }
     else
     {
@@ -2030,9 +2030,9 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
         ubyte angl;
         range = get_persons_weapon_range(p_owner, WEP_ELLASER);
         angl = p_owner->U.UObject.Angle;
-        p_shot->VX = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]) + (range * angle_direction[angl].DiX);
+        p_shot->VX = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0] + range * angle_direction[angl].DiX);
         p_shot->VY = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
-        p_shot->VZ = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]) + (range * angle_direction[angl].DiY);
+        p_shot->VZ = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2] + range * angle_direction[angl].DiY);
         allow_gnd_hit_eff = true;
     }
     else
@@ -2178,9 +2178,9 @@ void init_uzi(struct Thing *p_owner)
     {
         int range;
         range = get_persons_weapon_range(p_owner, WEP_UZI);
-        cor_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]) + range * angle_direction[angl].DiX;
+        cor_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0] + range * angle_direction[angl].DiX);
         cor_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
-        cor_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]) + range * angle_direction[angl].DiY;
+        cor_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2] + range * angle_direction[angl].DiY);
         allow_gnd_hit_eff = true;
     }
     cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
@@ -2322,9 +2322,9 @@ void init_minigun(struct Thing *p_owner)
     {
         int range;
         range = get_persons_weapon_range(p_owner, WEP_MINIGUN);
-        cor_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]) + range * angle_direction[angl].DiX;
+        cor_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0] + range * angle_direction[angl].DiX);
         cor_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
-        cor_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]) + range * angle_direction[angl].DiY;
+        cor_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2] + range * angle_direction[angl].DiY);
         allow_gnd_hit_eff = true;
     }
     weapon_sweep(p_owner, &cor_x, &cor_y, &cor_z);
