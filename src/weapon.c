@@ -2599,10 +2599,6 @@ void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y,
     int pos_dt_x, pos_dt_z, pos_dt_y;
     int dist;
 
-    if (((p_mech->Flag & TngF_Unkn20000000) == 0) && (p_mech->PTarget == NULL)) {
-        return;
-    }
-
     LOGSYNC("Shot fired by %s offs=%d", thing_type_name(p_owner->Type, p_owner->SubType),
       (int)p_owner->ThingOffset);
 
