@@ -3737,14 +3737,14 @@ void process_energy_alarm(struct Thing *p_person)
 void process_move_while_firing(struct Thing *p_person)
 {
     struct Thing *p_vehicle;
-    ubyte currWeapon;
+    WeaponType wtype;
 
     if ((p_person->Flag & TngF_TriggerUse) == 0)
         return;
 
-    currWeapon = p_person->U.UPerson.CurrentWeapon;
-    if (currWeapon != 0 && currWeapon != WEP_RAZORWIRE
-        && currWeapon != WEP_EXPLWIRE && (p_person->Flag2 & TgF2_Unkn00080000) != 0)
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    if (wtype != WEP_NULL && !weapon_is_for_spreading_on_ground(wtype)
+      && (p_person->Flag2 & TgF2_Unkn00080000) != 0)
     {
         p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
         reset_person_frame(p_person);

@@ -256,7 +256,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                 p_thing->Z += (256 << 8);
             if ((p_thing->X >> 16) >= 128)
                 p_thing->X = (64 << 16);
-            p_thing->PTarget = 0;
+            p_thing->PTarget = NULL;
             p_thing->LinkParent = loc_thing.LinkParent;
             p_thing->LinkChild = loc_thing.LinkChild;
             // We have limited amount of group definitions
