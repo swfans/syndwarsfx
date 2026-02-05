@@ -25,7 +25,7 @@
 #include "enginprops.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
-#include "swlog.h"
+#include "privrdlog.h"
 /******************************************************************************/
 
 ushort prim_object_points_count = 1;
