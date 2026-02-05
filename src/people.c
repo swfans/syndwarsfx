@@ -1373,8 +1373,8 @@ void check_persons_target(struct Thing *p_person)
     struct Thing *p_target;
     int dist, range;
 
-    range = get_weapon_range(p_person) + 256;
-    if (range < 1024) {
+    range = get_weapon_range(p_person);
+    if (range < 768) {
         return;
     }
 
@@ -1398,7 +1398,7 @@ void check_persons_target(struct Thing *p_person)
 
     dist = get_things_distance_mapcoords_fast(p_person->ThingOffset, p_target->ThingOffset);
 
-    if (dist > range)
+    if (dist > range + p_target->Radius + TILE_TO_MAPCOORD(1, 0))
     {
         if (p_person->Type == TT_MINE)
             p_person->PTarget = NULL;
