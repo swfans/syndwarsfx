@@ -564,6 +564,23 @@ TbResult propagate_memory_sizes(void)
     assert(game_textures_limit > 0);
     face_textures_limit = get_memory_ptr_allocated_count((void **)&game_face_textures);
     assert(face_textures_limit > 0);
+    game_anim_tmaps_limit = get_memory_ptr_allocated_count((void **)&game_anim_tmaps);
+    assert(game_anim_tmaps_limit > 0);
+    game_object_points_limit = get_memory_ptr_allocated_count((void **)&game_object_points);
+    assert(game_object_points_limit > 0);
+    game_object_faces_limit = get_memory_ptr_allocated_count((void **)&game_object_faces);
+    assert(game_object_faces_limit > 0);
+    game_object_faces4_limit = get_memory_ptr_allocated_count((void **)&game_object_faces4);
+    assert(game_object_faces4_limit > 0);
+    game_normals_limit = get_memory_ptr_allocated_count((void **)&game_normals);
+    assert(game_normals_limit > 0);
+    game_objects_limit = get_memory_ptr_allocated_count((void **)&game_objects);
+    assert(game_objects_limit > 0);
+
+    prim_object_faces_limit = get_memory_ptr_allocated_count((void **)&prim_object_faces);
+    assert(prim_object_faces_limit > 0);
+    prim_object_faces4_limit = get_memory_ptr_allocated_count((void **)&prim_object_faces4);
+    assert(prim_object_faces4_limit > 0);
 
     return ret;
 }

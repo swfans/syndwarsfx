@@ -83,6 +83,62 @@ extern s32 game_textures_limit;
  */
 extern s32 face_textures_limit;
 
+/** Amount of available animated texture maps.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 game_anim_tmaps_limit;
+
+/** Amount of available points/vertices for game objects, making up faces.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 game_object_points_limit;
+
+/** Amount of available triangular faces for game objects.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 game_object_faces_limit;
+
+/** Amount of available quadrangular faces for game objects.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 game_object_faces4_limit;
+
+/** Amount of available normal vectors, to be linked to both tri and quad faces.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 game_normals_limit;
+
+/** Amount of available game objects, representing the whole 3D primitives.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 game_objects_limit;
+
+/** Amount of available triangular faces for primitives objects.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 prim_object_faces_limit;
+
+/** Amount of available quadrangular faces for primitives objects.
+ *
+ * This variable is used while creating, altering or making a copy of 3D primitive.
+ * It needs to be set by the app based on memory allocation.
+ */
+extern s32 prim_object_faces4_limit;
+
 /** Extra buffer, used as texture or mapping data if flags demand.
  * Declared and controlled by the app.
  */

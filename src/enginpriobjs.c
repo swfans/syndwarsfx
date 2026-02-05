@@ -25,7 +25,6 @@
 #include "enginprops.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
-#include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -188,7 +187,7 @@ ushort obj_face3_create_normal(short face)
     {
         ushort nrml;
 
-        if (next_normal + 1 >= mem_game[8].N) {
+        if (next_normal + 1 >= game_normals_limit) {
             return 0;
         }
         nrml = next_normal++;
@@ -220,7 +219,7 @@ ushort obj_face4_create_normal(short face)
     {
         ushort nrml;
 
-        if (next_normal + 1 > mem_game[8].N) {
+        if (next_normal + 1 > game_normals_limit) {
             return 0;
         }
         nrml = next_normal++;
@@ -301,7 +300,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
     pt_beg = p_psngobj->StartPoint;
     pt_end = p_psngobj->EndPoint;
 
-    if (next_object > mem_game[5].N)
+    if (next_object > game_objects_limit)
         return 0;
     new_obj = next_object++;
     p_nsngobj = &game_objects[new_obj];
@@ -314,7 +313,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
     p_nsngobj->NumbFaces = 0;
     p_nsngobj->NumbFaces4 = 0;
 
-    if (next_object_point + (pt_end - pt_beg) > mem_game[3].N)
+    if (next_object_point + (pt_end - pt_beg) > game_object_points_limit)
         return new_obj;
 
     // All points/vertices (for all faces) used by the primitive
@@ -348,7 +347,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             prim_obj_mem_debug(PriEl_PRIM_FACE3, face_beg + face_dt, face_beg + face_dt + 1);
 
         p_pface = &prim_object_faces[face_beg + face_dt];
-        if (next_object_face + 3 > mem_game[4].N) {
+        if (next_object_face + 3 > game_object_faces_limit) {
             p_nsngobj->NumbFaces = face_dt;
             return new_obj;
         }
@@ -370,7 +369,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             }
             if (new_txtr == 0)
             {
-                if (next_face_texture + 2 > mem_game[2].N) {
+                if (next_face_texture + 2 > face_textures_limit) {
                     p_nsngobj->NumbFaces = face_dt;
                     return new_obj;
                 }
@@ -400,7 +399,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
     p_psngobj = &prim_objects[prim_obj];
     face_num = p_psngobj->NumbFaces4;
     face_beg = p_psngobj->StartFace4;
-    if (face_beg > mem_game[22].N)
+    if (face_beg > prim_object_faces4_limit)
         return new_obj;
 
     p_nsngobj->StartFace4 = next_object_face4;
@@ -420,7 +419,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             prim_obj_mem_debug(PriEl_PRIM_FACE4, face_beg, face_beg + face_dt);
 
         p_pface = &prim_object_faces4[face_beg + face_dt];
-        if (next_object_face4 + 2 > mem_game[9].N)
+        if (next_object_face4 + 2 > game_object_faces4_limit)
             return new_obj;
         new_face = next_object_face4++;
         p_nface = &game_object_faces4[new_face];
@@ -436,7 +435,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
                 struct AnimTmap *p_panitmap;
                 ushort new_anitmap;
 
-                if (next_anim_tmap > mem_game[10].N) {
+                if (next_anim_tmap > game_anim_tmaps_limit) {
                     p_nsngobj->NumbFaces4 = face_dt;
                     return new_obj;
                 }
@@ -446,7 +445,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
                 LbMemoryCopy(p_nanitmap, p_panitmap, sizeof(struct AnimTmap));
                 update_texture_from_anim_tmap(new_anitmap);
 
-                if (next_floor_texture + 1 > mem_game[1].N) {
+                if (next_floor_texture + 1 > game_textures_limit) {
                     p_nsngobj->NumbFaces4 = face_dt;
                     return new_obj;
                 }
@@ -473,7 +472,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             }
             if (new_txtr == 0)
             {
-                if (next_floor_texture + 1 > mem_game[1].N) {
+                if (next_floor_texture + 1 > game_textures_limit) {
                     p_nsngobj->NumbFaces4 = face_dt;
                     return new_obj;
                 }

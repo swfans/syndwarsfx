@@ -57,7 +57,7 @@ void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoin
 {
     struct SingleFloorTexture *p_sftex;
 
-    if (sftex >= game_textures_limit) {
+    if (sftex + 1 > game_textures_limit) {
         LOGERR("Texture %d above allocated count of %d", (int)sftex, game_textures_limit);
         sftex = 0; // continue with texture 0 instead
     }

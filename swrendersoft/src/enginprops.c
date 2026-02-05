@@ -26,7 +26,16 @@ u32 render_floor_flags = 0;
 s32 screen_points_limit = 16;
 s32 draw_items_limit = 16;
 s32 game_textures_limit = 16;
+s32 game_anim_tmaps_limit = 16;
+s32 game_object_points_limit = 16;
+s32 game_object_faces_limit = 16;
+s32 game_object_faces4_limit = 16;
+s32 game_normals_limit = 16;
+s32 game_objects_limit = 8;
 s32 face_textures_limit = 16;
+
+s32 prim_object_faces_limit = 16;
+s32 prim_object_faces4_limit = 16;
 
 void (*prim_obj_mem_debug)(ubyte itm_kind, int itm_beg, int itm_end) = NULL;
 /******************************************************************************/
