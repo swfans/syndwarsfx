@@ -1142,9 +1142,9 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
         return true;
     p_thing = &things[thing];
 
-    tngroup = p_thing->U.UObject.EffectiveGroup;
-    mygroup = p_me->U.UObject.EffectiveGroup;
-    if (tngroup == mygroup)
+    tngroup = p_thing->U.UObject.EffectiveGroup & 0x7F;
+    mygroup = p_me->U.UObject.EffectiveGroup & 0x7F;
+    if (thing_group_equal(tngroup, mygroup))
         return true;
     if (thing_group_have_truce(tngroup, mygroup) || thing_group_have_truce(mygroup, tngroup))
         return true;
@@ -1366,8 +1366,45 @@ short check_for_other_people(int x, int y, int z, struct Thing *p_person)
 
 void check_persons_target(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_check_persons_target\n"
         : : "a" (p_person));
+#endif
+    struct Thing *p_target;
+    int dist, range;
+
+    range = get_weapon_range(p_person) + 256;
+    if (range < 1024) {
+        return;
+    }
+
+    p_target = p_person->PTarget;
+
+    if ((p_target == NULL) || ((p_target->Flag & TngF_Destroyed) != 0))
+    {
+        if (p_person->Type == TT_MINE)
+            p_person->PTarget = NULL;
+        if ((p_person->Flag & TngF_Unkn1000) == 0)
+            p_person->Flag &= ~TngF_TriggerUse;
+        return;
+    }
+
+    if (things_check_same_group(p_person->ThingOffset, p_target->ThingOffset))
+    {
+        p_person->PTarget = NULL;
+        p_person->Flag &= ~TngF_TriggerUse;
+        return;
+    }
+
+    dist = get_things_distance_mapcoords_fast(p_person->ThingOffset, p_target->ThingOffset);
+
+    if (dist > range)
+    {
+        if (p_person->Type == TT_MINE)
+            p_person->PTarget = NULL;
+        p_person->Flag &= ~TngF_TriggerUse;
+        p_person->U.UPerson.Flag3 |= 0x40;
+    }
 }
 
 void check_persons_target2(struct Thing *p_person)
@@ -3183,7 +3220,7 @@ TbBool persons_have_truce(struct Thing *p_person1, struct Thing *p_person2)
         return false;
     }
 
-    pers1grp = p_person1->U.UPerson.EffectiveGroup;
+    pers1grp = p_person1->U.UPerson.EffectiveGroup & 0x7F;
     pers2grp = p_person2->U.UPerson.EffectiveGroup & 0x7F;
 
     return thing_group_have_truce(pers1grp, pers2grp);
@@ -3201,7 +3238,7 @@ void persons_set_groups_kill_on_sight(struct Thing *p_attacker, struct Thing *p_
         return;
     }
 
-    attack_grp = p_attacker->U.UPerson.EffectiveGroup;
+    attack_grp = p_attacker->U.UPerson.EffectiveGroup & 0x7F;
     victim_grp = p_victim->U.UPerson.EffectiveGroup & 0x7F;
 
     if (p_victim->SubType == SubTT_PERS_BRIEFCASE_M || p_victim->SubType == SubTT_PERS_WHITE_BRUN_F ||

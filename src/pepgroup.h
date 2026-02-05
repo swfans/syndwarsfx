@@ -68,6 +68,14 @@ struct GroupAction {
 extern struct WarFlag war_flags[PEOPLE_GROUPS_COUNT];
 extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT+1];
 
+/** Checks the two thing groups are equal.
+ */
+TbBool thing_group_equal(short grp1, short grp2);
+
+/** Checks if two things have equal effective groups.
+ */
+TbBool things_check_same_group(ThingIdx tng1, ThingIdx tng2);
+
 /** Finds Group ID for which there are no things created.
  */
 short find_unused_group_id(TbBool largest);

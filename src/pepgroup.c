@@ -20,6 +20,7 @@
 
 #include "bfutility.h"
 #include "bfmemut.h"
+#include <assert.h>
 
 #include "command.h"
 #include "player.h"
@@ -81,6 +82,38 @@ ushort count_people_in_group(ushort group, short subtype)
         count++;
     }
     return count;
+}
+
+TbBool thing_group_equal(short grp1, short grp2)
+{
+    // TODO why are we disallowing outranged groups to be treated as same?
+    return ((grp1 == grp2) && (grp1 < PEOPLE_GROUPS_COUNT) && (grp2 < PEOPLE_GROUPS_COUNT));
+}
+
+TbBool things_check_same_group(ThingIdx tng1, ThingIdx tng2)
+{
+    struct Thing *p_thing1;
+    struct Thing *p_thing2;
+    short grp1, grp2;
+
+    if (tng1 <= 0) {
+        return false;
+    }
+    if (tng2 <= 0) {
+        return false;
+    }
+    p_thing1 = &things[tng1];
+    p_thing2 = &things[tng2];
+
+    // This function can be called for objects, people, vehicles, mguns and rockets
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UPerson.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UVehicle.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UMGun.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UEffect.EffectiveGroup));
+
+    grp1 = p_thing1->U.UObject.EffectiveGroup & 0x7F;
+    grp2 = p_thing2->U.UObject.EffectiveGroup & 0x7F;
+    return thing_group_equal(grp1, grp2);
 }
 
 void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
