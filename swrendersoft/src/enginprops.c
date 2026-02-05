@@ -27,6 +27,8 @@ s32 screen_points_limit = 16;
 s32 draw_items_limit = 16;
 s32 game_textures_limit = 16;
 s32 face_textures_limit = 16;
+
+void (*prim_obj_mem_debug)(ubyte itm_kind, int itm_beg, int itm_end) = NULL;
 /******************************************************************************/
 
 /******************************************************************************/

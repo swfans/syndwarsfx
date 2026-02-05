@@ -32,6 +32,22 @@ struct SinglePoint;
 struct SingleObjectFace3;
 struct SingleObjectFace4;
 
+enum PrimitiveElement {
+    PriEl_NONE = 0,
+    PriEl_PRIM_POINT,
+    PriEl_PRIM_FACE3,
+    PriEl_PRIM_FACE4,
+    PriEl_PRIM_TEXTR3,
+    PriEl_PRIM_TEXTR4,
+    PriEl_PRIM_OBJ,
+    PriEl_GAME_POINT,
+    PriEl_GAME_FACE3,
+    PriEl_GAME_FACE4,
+    PriEl_GAME_TEXTR3,
+    PriEl_GAME_TEXTR4,
+    PriEl_GAME_OBJ,
+};
+
 #pragma pack()
 /******************************************************************************/
 extern struct SinglePoint *prim_object_points;

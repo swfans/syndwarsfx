@@ -88,6 +88,9 @@ extern s32 face_textures_limit;
  */
 extern ubyte *scratch_buf1;
 
+/** Callback for debug of 3D objects primitives.
+ */
+extern void (*prim_obj_mem_debug)(ubyte itm_kind, int itm_beg, int itm_end);
 /******************************************************************************/
 #ifdef __cplusplus
 }

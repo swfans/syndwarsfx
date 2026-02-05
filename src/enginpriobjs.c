@@ -22,10 +22,10 @@
 #include "bfmemut.h"
 
 #include "enginpritxtr.h"
+#include "enginprops.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "game_data.h"
-#include "game_options.h"
 #include "swlog.h"
 /******************************************************************************/
 
@@ -264,10 +264,6 @@ void update_texture_from_anim_tmap(ushort ani_tmap)
 #endif
 }
 
-void prim_obj_mem_debug(int itm_beg, int itm_end)
-{
-}
-
 ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
 {
 #if 0
@@ -335,8 +331,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
         LbMemoryCopy(p_nsngpt, p_psngpt, sizeof(struct SinglePoint));
 
         point_unkn_func_03(p_nsngpt);
-        if (ingame.LowerMemoryUse == 3)
-            prim_obj_mem_debug(pt, pt+1);
+        if (prim_obj_mem_debug != NULL)
+            prim_obj_mem_debug(PriEl_PRIM_POINT, pt, pt+1);
     }
 
     p_nsngobj->StartFace = next_object_face;
@@ -348,8 +344,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
         struct SingleObjectFace3 *p_nface;
         ushort new_face;
 
-        if (ingame.LowerMemoryUse == 3)
-            prim_obj_mem_debug(face_beg, face_beg + face_dt);
+        if (prim_obj_mem_debug != NULL)
+            prim_obj_mem_debug(PriEl_PRIM_FACE3, face_beg + face_dt, face_beg + face_dt + 1);
 
         p_pface = &prim_object_faces[face_beg + face_dt];
         if (next_object_face + 3 > mem_game[4].N) {
@@ -365,6 +361,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             ushort new_txtr;
 
             p_pstxtr = &prim_face_textures[p_pface->Texture];
+            if (prim_obj_mem_debug != NULL)
+                prim_obj_mem_debug(PriEl_PRIM_TEXTR3, p_pface->Texture, p_pface->Texture + 1);
             new_txtr = 0;
             if ((p_pface->GFlags & 0x10) == 0) // If disallow reuse of textures is not set
             {
@@ -381,8 +379,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
                 LbMemoryCopy(p_nstxtr, p_pstxtr, sizeof(struct SingleTexture));
             }
             p_nface->Texture = new_txtr;
-            if (ingame.LowerMemoryUse == 3)
-              prim_obj_mem_debug(-next_face_texture, 0);
+            if (prim_obj_mem_debug != NULL)
+                prim_obj_mem_debug(PriEl_GAME_TEXTR3, new_txtr, new_txtr + 1);
         }
         p_nface->Flags = p_pface->Flags;
         p_nface->GFlags = p_pface->GFlags;
@@ -395,6 +393,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
         p_nface->Light0 = 0;
         p_nface->Light1 = 0;
         p_nface->Light2 = 0;
+        if (prim_obj_mem_debug != NULL)
+            prim_obj_mem_debug(PriEl_GAME_FACE3, new_face, new_face + 1);
     }
 
     p_psngobj = &prim_objects[prim_obj];
@@ -416,8 +416,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
         struct SingleObjectFace4 *p_nface;
         ushort new_face;
 
-        if (ingame.LowerMemoryUse == 3)
-            prim_obj_mem_debug(-face_beg, -(face_beg + face_dt));
+        if (prim_obj_mem_debug != NULL)
+            prim_obj_mem_debug(PriEl_PRIM_FACE4, face_beg, face_beg + face_dt);
 
         p_pface = &prim_object_faces4[face_beg + face_dt];
         if (next_object_face4 + 2 > mem_game[9].N)
@@ -464,6 +464,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             ushort new_txtr;
 
             p_pftxtr = &prim4_textures[p_pface->Texture];
+            if (prim_obj_mem_debug != NULL)
+                prim_obj_mem_debug(PriEl_PRIM_TEXTR4, p_pface->Texture, p_pface->Texture + 1);
             new_txtr = 0;
             if ((p_pface->GFlags & 0x10) == 0)
             {
@@ -480,8 +482,8 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
                 LbMemoryCopy(p_nftxtr, p_pftxtr, sizeof(struct SingleFloorTexture));
             }
             p_nface->Texture = new_txtr;
-            if (ingame.LowerMemoryUse == 3)
-                prim_obj_mem_debug(next_floor_texture, 0);
+            if (prim_obj_mem_debug != NULL)
+                prim_obj_mem_debug(PriEl_GAME_TEXTR4, new_txtr, new_txtr + 1);
         }
         p_nface->Flags = p_pface->Flags;
         p_nface->GFlags = p_pface->GFlags;
@@ -496,12 +498,12 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
         p_nface->Light1 = 0;
         p_nface->Light2 = 0;
         p_nface->Light3 = 0;
+        if (prim_obj_mem_debug != NULL)
+            prim_obj_mem_debug(PriEl_GAME_FACE4, new_face, new_face + 1);
     }
 
-    if (ingame.LowerMemoryUse == 3)
-        prim_obj_mem_debug(-10005, 0);
-    if (ingame.LowerMemoryUse == 3)
-        prim_obj_mem_debug(-10000, 0);
+    if (prim_obj_mem_debug != NULL)
+        prim_obj_mem_debug(PriEl_NONE, -10000, 0);
     return new_obj;
 #endif
 }
