@@ -1423,9 +1423,9 @@ void process_packets(void)
             if (p_thing != INVALID_THING)
             {
                 if ((packet->Action & 0x8000) == 0)
-                    p_thing->Flag &= ~TngF_Unkn0800;
+                    p_thing->Flag &= ~TngF_TriggerUse;
                 else
-                    p_thing->Flag |= TngF_Unkn0800;
+                    p_thing->Flag |= TngF_TriggerUse;
             }
 
             process_packet(plyr, packet, i);

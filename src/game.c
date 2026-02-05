@@ -2549,7 +2549,7 @@ void init_level_unknsub01_person(struct Thing *p_person)
 
 void init_level_unknsub01_building(struct Thing *p_buildng)
 {
-    p_buildng->Flag &= TngF_Unkn0800;
+    p_buildng->Flag &= TngF_TriggerUse;
     if (p_buildng->SubType == SubTT_BLD_MGUN)
     {
         p_buildng->PTarget = NULL;

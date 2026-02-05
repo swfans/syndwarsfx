@@ -828,9 +828,9 @@ void process_next_tnode(struct Thing *p_vehicle)
                     }
                 }
                 if ((p_tnode->UTraffic.Flags[lnk] & 0x01) != 0)
-                    p_vehicle->Flag |= TngF_Unkn0800;
+                    p_vehicle->Flag |= TngF_TriggerUse;
                 else
-                    p_vehicle->Flag &= ~TngF_Unkn0800;
+                    p_vehicle->Flag &= ~TngF_TriggerUse;
             }
             else
             {

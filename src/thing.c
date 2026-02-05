@@ -769,7 +769,7 @@ void process_thing(struct Thing *p_thing, ThingIdx thing)
     case TT_UNKN4:
         process_shield(p_thing);
         process_person(p_thing);
-        if ((p_thing->Flag & TngF_Unkn0800) != 0)
+        if ((p_thing->Flag & TngF_TriggerUse) != 0)
             p_thing->Flag2 |= TgF2_Unkn0400;
         else
             p_thing->Flag2 &= ~TgF2_Unkn0400;

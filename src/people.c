@@ -1174,7 +1174,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
     p_person->Flag |= TngF_Unkn40000000 | TngF_Unkn0004;
     p_person->Owner = p_attacker->ThingOffset;
-    p_person->Flag &= ~(TngF_Unkn00800000|TngF_Unkn00040000|TngF_Unkn00020000|TngF_Unkn0800|TngF_Unkn0080);
+    p_person->Flag &= ~(TngF_Unkn00800000|TngF_Unkn00040000|TngF_Unkn00020000|TngF_TriggerUse|TngF_Unkn0080);
 
     set_person_animmode_walk(p_person);
     p_person->U.UPerson.ComTimer = -1;
@@ -2147,7 +2147,7 @@ StateChRes person_init_cmd_use_weapon(struct Thing *p_person, short x, short y,
     p_person->U.UPerson.WeaponDir = 32 * p_person->U.UPerson.Angle;
     thing_shoot_at_point(p_person, x, y, z, 0);
     process_weapon(p_person);
-    p_person->Flag &= ~TngF_Unkn0800;
+    p_person->Flag &= ~TngF_TriggerUse;
     return StCh_ACCEPTED;
 }
 
@@ -2296,7 +2296,7 @@ StateChRes person_lock_building(struct Thing *p_person, short bldng)
         return StCh_UNATTAIN;
     }
     p_building = &things[bldng];
-    p_building->Flag |= TngF_Unkn0800;
+    p_building->Flag |= TngF_PassageLocked;
     p_person->State = PerSt_NONE;
     return StCh_ACCEPTED;
 }
@@ -2311,7 +2311,7 @@ StateChRes person_unlock_building(struct Thing *p_person, short bldng)
         return StCh_UNATTAIN;
     }
     p_building = &things[bldng];
-    p_building->Flag &= ~TngF_Unkn0800;
+    p_building->Flag &= ~TngF_PassageLocked;
     p_person->State = PerSt_NONE;
     return StCh_ACCEPTED;
 }
@@ -2937,7 +2937,7 @@ void person_init_command(struct Thing *p_person, ushort from)
 
     for (cmd = p_person->U.UPerson.ComCur; 1; )
     {
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
         p_person->U.UPerson.Target2 = 0;
 
         p_cmd = &game_commands[cmd];
@@ -3622,7 +3622,7 @@ void person_go_sleep(struct Thing *p_person)
         p_person->Timer1 = 48;
         p_person->StartTimer1 = 48;
         p_person->U.UPerson.BumpCount = 150;
-        p_person->Flag &= ~(TngF_Unkn0800|TngF_WepRecoil);
+        p_person->Flag &= ~(TngF_TriggerUse|TngF_WepRecoil);
         p_person->Flag2 |= TgF2_KnockedOut;
     }
 }
@@ -4095,7 +4095,7 @@ void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint
         y = (height >> 8) + 20;
     }
 
-    p_thing->Flag |= TngF_Unkn0800;
+    p_thing->Flag |= TngF_TriggerUse;
     if ((p_thing->Flag & TngF_InVehicle) != 0) {
         struct Thing *p_vehicle;
         p_vehicle = &things[p_thing->U.UPerson.Vehicle];
@@ -4119,7 +4119,7 @@ void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint
     change_player_angle(p_thing, (((angle + 128) >> 8) + 8) & 7);
 
     p_thing->PTarget = 0;
-    p_thing->Flag |= TngF_Unkn20000000|TngF_Unkn0800;
+    p_thing->Flag |= TngF_Unkn20000000|TngF_TriggerUse;
 
     plyr = p_thing->U.UPerson.ComCur >> 2;
     plagent = p_thing->U.UPerson.ComCur & 3;
@@ -4459,7 +4459,7 @@ void person_scare_person(struct Thing *p_person)
         range = get_weapon_range(p_person);
         if (can_i_see_thing(p_person, p_person->PTarget, range, 0) > 0)
         {
-            p_person->Flag |= TngF_Unkn0800;
+            p_person->Flag |= TngF_TriggerUse;
             if ((p_person->Flag & TngF_InVehicle) != 0)
             {
                 struct Thing *p_vehicle;
@@ -4489,7 +4489,7 @@ void person_block_person(struct Thing *p_person)
         range = get_weapon_range(p_person);
         if (can_i_see_thing(p_person, p_person->PTarget, range * range, 0) > 0)
         {
-            p_person->Flag |= TngF_Unkn0800;
+            p_person->Flag |= TngF_TriggerUse;
             if ((p_person->Flag & TngF_InVehicle) != 0)
             {
                 struct Thing *p_vehicle;
@@ -4510,7 +4510,7 @@ void process_stationary_shot(struct Thing *p_person)
 {
     if (p_person->U.UPerson.WeaponTurn == 0)
     {
-        if ((p_person->Flag & TngF_Unkn0800) == 0)
+        if ((p_person->Flag & TngF_TriggerUse) == 0)
             p_person->Flag &= ~TngF_StationrSht;
     }
 }
@@ -4781,9 +4781,9 @@ void person_persuade_person(struct Thing *p_person)
     else
         weapon_range = get_hand_weapon_range(p_person, WEP_PERSUADRTRN);
 
-    if (((p_person->Flag & (TngF_Unkn0800|TngF_WepCharging)) != 0) &&
+    if (((p_person->Flag & (TngF_TriggerUse|TngF_WepCharging)) != 0) &&
       (p_person->U.UPerson.WeaponTimer > 5)) {
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
     }
 
     p_target = &things[p_person->GotoThingIndex];
@@ -4830,13 +4830,13 @@ void person_persuade_person(struct Thing *p_person)
     }
     if (p_person->State == 0) {
         p_person->State = PerSt_PERSUADE_PERSON;
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
     }
 
     p_target = p_person->PTarget;
     if ((p_target != NULL) && ((p_target->Flag & TngF_Destroyed) != 0)) {
         p_person->State = PerSt_NONE;
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
     }
 }
 
@@ -4916,9 +4916,9 @@ void person_destroy_building(struct Thing *p_person)
     struct Thing *p_target;
     TbBool in_range;
 
-    if (((p_person->Flag & (TngF_Unkn0800|TngF_WepCharging)) != 0) &&
+    if (((p_person->Flag & (TngF_TriggerUse|TngF_WepCharging)) != 0) &&
       (p_person->U.UPerson.WeaponTimer > 5))
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
 
     {
         int dist_x, dist_z, range;
@@ -4939,7 +4939,7 @@ void person_destroy_building(struct Thing *p_person)
     if (p_target == NULL)
     {
         p_person->State = PerSt_NONE;
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
         return;
     }
 
@@ -4952,12 +4952,12 @@ void person_destroy_building(struct Thing *p_person)
         if (can_i_see_building(p_person, p_building, weapon_range * weapon_range, 1) <= 0)
         {
             in_range = 0;
-            p_person->Flag &= ~TngF_Unkn0800;
+            p_person->Flag &= ~TngF_TriggerUse;
         }
         else
         {
-            p_person->Flag &= ~(TngF_Unkn00200000|TngF_Unkn0800|TngF_PersSupShld);
-            p_person->Flag |= TngF_Unkn0800;
+            p_person->Flag &= ~(TngF_Unkn00200000|TngF_TriggerUse|TngF_PersSupShld);
+            p_person->Flag |= TngF_TriggerUse;
             if ((p_person->Flag & TngF_InVehicle) != 0) {
                 struct Thing *p_vehicle;
                 p_vehicle = &things[p_person->U.UPerson.Vehicle];
@@ -4979,12 +4979,12 @@ void person_destroy_building(struct Thing *p_person)
     if (p_person->State == PerSt_NONE)
     {
         p_person->State = PerSt_DESTROY_BUILDING;
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
     }
     if ((p_target->Flag & TngF_Destroyed) != 0)
     {
         p_person->State = PerSt_NONE;
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
     }
 }
 
@@ -5796,7 +5796,7 @@ void process_person(struct Thing *p_person)
 
         if ((p_person->Flag & TngF_StationrSht) != 0)
         {
-          if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_Unkn0800) == 0))
+          if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_TriggerUse) == 0))
           {
               p_person->Flag &= ~TngF_StationrSht;
           }
@@ -5847,7 +5847,7 @@ void process_person(struct Thing *p_person)
     }
 
     if ((p_person->Flag & (TngF_Unkn40000000|TngF_Destroyed)) != 0)
-        p_person->Flag &= ~TngF_Unkn0800;
+        p_person->Flag &= ~TngF_TriggerUse;
     else
         process_weapon(p_person);
 

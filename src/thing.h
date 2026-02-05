@@ -108,7 +108,7 @@ enum ThingFlags {
     TngF_VehUnkn0100  = 0x0100,
     TngF_StationrSht  = 0x0200,
     TngF_WepCharging  = 0x0400,
-    TngF_Unkn0800     = 0x0800,
+    TngF_TriggerUse   = 0x0800,
     TngF_Unkn1000     = 0x1000,
     TngF_PlayerAgent  = 0x2000,
     TngF_Unkn4000     = 0x4000,
@@ -146,6 +146,11 @@ enum ThingFlags {
  * The flag has this meaning for people, different meaning for other things.
  */
 #define TngF_StandOnVehicle TngF_Unkn01000000
+
+/** Thing object is locked and cannot be entered or passed.
+ * The flag has this meaning for buildings, different meaning for other things.
+ */
+#define TngF_PassageLocked TngF_TriggerUse
 
 enum ThingFlags2 {
     TgF2_Unkn0001     = 0x0001,

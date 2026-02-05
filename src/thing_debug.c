@@ -892,7 +892,7 @@ void things_debug_hud(void)
             draw_text(scr_x + 120, scr_y + ln*4, "SAP", colour_lookup[ColLU_WHITE]);
         if (p_track_thing->Flag & TngF_StationrSht)
             draw_text(scr_x + 160, scr_y + ln*4, "Sta", colour_lookup[ColLU_RED]);
-        if (p_track_thing->Flag & TngF_Unkn0800)
+        if (p_track_thing->Flag & TngF_TriggerUse)
             draw_text(scr_x + 230, scr_y + ln*4, "TRIG", colour_lookup[ColLU_WHITE]);
 
         switch (p_track_thing->Type)
