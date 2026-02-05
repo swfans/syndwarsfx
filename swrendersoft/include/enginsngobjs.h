@@ -175,14 +175,18 @@ struct SingleObject { // sizeof=36
 #pragma pack()
 /******************************************************************************/
 extern struct SingleObjectFace3 *game_object_faces;
-extern struct SingleObjectFace4 *game_object_faces4;
-extern struct SinglePoint *game_object_points;
-extern struct Normal *game_normals;
-extern struct SingleObject *game_objects;
 extern ushort next_object_face;
+
+extern struct SingleObjectFace4 *game_object_faces4;
 extern ushort next_object_face4;
+
+extern struct SinglePoint *game_object_points;
 extern ushort next_object_point;
+
+extern struct Normal *game_normals;
 extern ushort next_normal;
+
+extern struct SingleObject *game_objects;
 extern ushort next_object;
 
 /** Maps fields from old SingleObjectFace3 struct to the current one.

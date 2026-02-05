@@ -23,6 +23,8 @@
 #include "bfmath.h"
 #include "bfmemut.h"
 
+#include "enginprops.h"
+
 #include "swlog.h"
 /******************************************************************************/
 struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];

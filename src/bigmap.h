@@ -66,8 +66,6 @@ extern "C" {
  */
 #define ANGLE_DIRECTION_DISTANCE 256
 
-#define MAX_WALKABLE_STEEPNESS (21 * LbFPMath_PI / 180)
-
 /* Linear distance equal to tan(MAX_WALKABLE_STEEPNESS) * 256
  */
 #define MAX_WALKABLE_STEEPNESS_PER_256 98

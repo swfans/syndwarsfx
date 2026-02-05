@@ -18,14 +18,13 @@
 /******************************************************************************/
 #include "enginsngobjs.h"
 
+#include "bfmemut.h"
+#include "bfmath.h"
 #include <limits.h>
 #include <stdlib.h>
 
-#include "bfmemut.h"
-#include "bfmath.h"
-
-#include "bigmap.h"
-#include "swlog.h"
+#include "enginprops.h"
+#include "privrdlog.h"
 /******************************************************************************/
 
 ushort next_normal = 1;

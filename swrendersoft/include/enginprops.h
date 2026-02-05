@@ -27,6 +27,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define MAX_WALKABLE_STEEPNESS (21 * LbFPMath_PI / 180)
+
 enum RenderFloorFlags {
   RendFlrF_NonPlanetary = 0x01,
   RendFlrF_WobblyTerrain = 0x02,
