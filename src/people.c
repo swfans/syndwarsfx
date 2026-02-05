@@ -1373,8 +1373,8 @@ void check_persons_target(struct Thing *p_person)
     struct Thing *p_target;
     int dist, range;
 
-    range = get_weapon_range(p_person);
-    if (range < 768) {
+    range = get_weapon_range(p_person) + 256;
+    if (range < 1024) {
         return;
     }
 
@@ -1398,7 +1398,7 @@ void check_persons_target(struct Thing *p_person)
 
     dist = get_things_distance_mapcoords_fast(p_person->ThingOffset, p_target->ThingOffset);
 
-    if (dist > range + p_target->Radius + TILE_TO_MAPCOORD(1, 0))
+    if (dist > range + p_target->Radius)
     {
         if (p_person->Type == TT_MINE)
             p_person->PTarget = NULL;
@@ -1409,8 +1409,39 @@ void check_persons_target(struct Thing *p_person)
 
 void check_persons_target2(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_check_persons_target2\n"
         : : "a" (p_person));
+#endif
+    struct Thing *p_target;
+    int dist, range;
+
+    range = get_weapon_range(p_person) + 128;
+    if (range < 1024) {
+        return;
+    }
+
+    p_target = &things[p_person->U.UPerson.Target2];
+
+    if ((p_target == NULL) || ((p_target->Flag & TngF_Destroyed) != 0)) {
+        p_person->Flag &= ~TngF_TriggerUse;
+        return;
+    }
+
+    if (things_check_same_group(p_person->ThingOffset, p_target->ThingOffset))
+    {
+        p_person->U.UPerson.Target2 = 0;
+        p_person->Flag &= ~TngF_TriggerUse;
+        return;
+    }
+
+    dist = get_things_distance_mapcoords_fast(p_person->ThingOffset, p_target->ThingOffset);
+
+    if (dist > range + p_target->Radius)
+    {
+        p_person->Flag &= ~TngF_TriggerUse;
+        p_person->U.UPerson.Flag3 |= 0x40;
+    }
 }
 
 void process_stamina(struct Thing *p_person)
