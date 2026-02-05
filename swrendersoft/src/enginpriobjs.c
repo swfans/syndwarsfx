@@ -19,6 +19,7 @@
 #include "enginpriobjs.h"
 
 #include "bffile.h"
+#include "bfmath.h"
 #include "bfmemut.h"
 
 #include "enginpritxtr.h"
@@ -157,8 +158,69 @@ ushort find_normal(struct Normal *p_normal)
 
 void calc_normal(short face, struct Normal *p_normal)
 {
+#if 0
     asm volatile ("call ASM_calc_normal\n"
         : : "a" (face), "d" (p_normal));
+#endif
+    struct SingleObjectFace3 *p_face;
+    struct SinglePoint *p_objpt1;
+    struct SinglePoint *p_objpt2;
+    struct SinglePoint *p_objpt3;
+    int fctB_x, fctB_y, fctB_z, fctB_len;
+    int fctC_x, fctC_y, fctC_z, fctC_len;
+    int fctD_x, fctD_y, fctD_z;
+    int fctE_a, fctE_b;
+    int dirvec_x, dirvec_y, dirvec_z, dirvec_len;
+    int nx, ny, nz;
+
+    p_face = &game_object_faces[face];
+    p_objpt1 = &game_object_points[p_face->PointNo[0]];
+    p_objpt2 = &game_object_points[p_face->PointNo[1]];
+    p_objpt3 = &game_object_points[p_face->PointNo[2]];
+
+    fctB_y = p_objpt2->X - p_objpt1->X;
+    fctB_z = p_objpt2->Y - p_objpt1->Y;
+    fctB_x = p_objpt2->Z - p_objpt1->Z;
+
+    fctC_x = p_objpt3->X - p_objpt2->X;
+    fctC_z = p_objpt3->Z - p_objpt2->Z;
+    fctC_y = p_objpt3->Z - p_objpt2->Y;
+
+    if (!(fctB_y || fctB_z || fctB_x) || !(fctC_x || fctC_y || fctC_z))
+    {
+        p_normal->NX = 0;
+        p_normal->NY = 255;
+        p_normal->NZ = 0;
+        return;
+    }
+
+    fctB_len = LbSqrL(fctB_x * fctB_x + fctB_y * fctB_y + fctB_z * fctB_z);
+    if (fctB_len == 0)
+        fctB_len = 1;
+    fctD_y = (fctB_y << 8) / fctB_len;
+    fctD_z = (fctB_z << 8) / fctB_len;
+    fctD_x = (fctB_x << 8) / fctB_len;
+    fctC_len = LbSqrL(fctC_x * fctC_x + fctC_y * fctC_y + fctC_z * fctC_z);
+    if (fctC_len == 0)
+        fctC_len = 1;
+    fctE_a = (fctC_x << 8) / fctC_len;
+    fctE_b = (fctC_y << 8) / fctC_len;
+    dirvec_x = ((fctC_z << 8) / fctC_len * fctD_z - fctD_x * fctE_b) >> 8;
+    dirvec_y = (fctE_a * fctD_x - fctD_y * ((fctC_z << 8) / fctC_len)) >> 8;
+    dirvec_z = (fctE_b * fctD_y - fctD_z * fctE_a) >> 8;
+    dirvec_len = LbSqrL(dirvec_y * dirvec_y + dirvec_x * dirvec_x + dirvec_z * dirvec_z);
+    if (dirvec_len == 0)
+        dirvec_len = 1;
+
+    nx = (dirvec_x << 8) / dirvec_len;
+    ny = (dirvec_y << 8) / dirvec_len;
+    nz = (dirvec_z << 8) / dirvec_len;
+    if (!nx && !ny && !nz)
+        ny = 255;
+
+    p_normal->NX = nx;
+    p_normal->NY = ny;
+    p_normal->NZ = nz;
 }
 
 void calc_normal4(short face, struct Normal *p_normal)
