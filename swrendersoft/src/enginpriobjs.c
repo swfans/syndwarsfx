@@ -158,7 +158,7 @@ ushort find_normal(struct Normal *p_normal)
 
 void calc_normal(short face, struct Normal *p_normal)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_calc_normal\n"
         : : "a" (face), "d" (p_normal));
     return;
@@ -179,15 +179,15 @@ void calc_normal(short face, struct Normal *p_normal)
     p_objpt2 = &game_object_points[p_face->PointNo[1]];
     p_objpt3 = &game_object_points[p_face->PointNo[2]];
 
-    fctB_y = p_objpt2->X - p_objpt1->X;
-    fctB_z = p_objpt2->Y - p_objpt1->Y;
-    fctB_x = p_objpt2->Z - p_objpt1->Z;
+    fctB_x = p_objpt2->X - p_objpt1->X;
+    fctB_y = p_objpt2->Y - p_objpt1->Y;
+    fctB_z = p_objpt2->Z - p_objpt1->Z;
 
     fctC_x = p_objpt3->X - p_objpt2->X;
+    fctC_y = p_objpt3->Y - p_objpt2->Y;
     fctC_z = p_objpt3->Z - p_objpt2->Z;
-    fctC_y = p_objpt3->Z - p_objpt2->Y;
 
-    if (!(fctB_y || fctB_z || fctB_x) || !(fctC_x || fctC_y || fctC_z))
+    if (!(fctB_x || fctB_y || fctB_z) || !(fctC_x || fctC_y || fctC_z))
     {
         p_normal->NX = 0;
         p_normal->NY = 255;
@@ -199,9 +199,9 @@ void calc_normal(short face, struct Normal *p_normal)
     if (fctB_len == 0)
         fctB_len = 1;
 
+    fctD_x = (fctB_x << 8) / fctB_len;
     fctD_y = (fctB_y << 8) / fctB_len;
     fctD_z = (fctB_z << 8) / fctB_len;
-    fctD_x = (fctB_x << 8) / fctB_len;
 
     fctC_len = LbSqrL(fctC_x * fctC_x + fctC_y * fctC_y + fctC_z * fctC_z);
     if (fctC_len == 0)
@@ -210,9 +210,9 @@ void calc_normal(short face, struct Normal *p_normal)
     fctE_a = (fctC_x << 8) / fctC_len;
     fctE_b = (fctC_y << 8) / fctC_len;
 
-    dirvec_x = ((fctC_z << 8) / fctC_len * fctD_z - fctD_x * fctE_b) >> 8;
-    dirvec_y = (fctE_a * fctD_x - fctD_y * ((fctC_z << 8) / fctC_len)) >> 8;
-    dirvec_z = (fctE_b * fctD_y - fctD_z * fctE_a) >> 8;
+    dirvec_x = ((fctC_z << 8) / fctC_len * fctD_y - fctD_z * fctE_b) >> 8;
+    dirvec_y = (fctE_a * fctD_z - fctD_x * ((fctC_z << 8) / fctC_len)) >> 8;
+    dirvec_z = (fctE_b * fctD_x - fctD_y * fctE_a) >> 8;
 
     dirvec_len = LbSqrL(dirvec_y * dirvec_y + dirvec_x * dirvec_x + dirvec_z * dirvec_z);
     if (dirvec_len == 0)
@@ -231,7 +231,7 @@ void calc_normal(short face, struct Normal *p_normal)
 
 void calc_normal4(short face, struct Normal *p_normal)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_calc_normal4\n"
         : : "a" (face), "d" (p_normal));
     return;
@@ -253,8 +253,8 @@ void calc_normal4(short face, struct Normal *p_normal)
     p_objpt3 = &game_object_points[p_face->PointNo[2]];
 
     fctB_x = p_objpt2->X - p_objpt1->X;
-    fctB_y = p_objpt2->Y - p_objpt1->Z;
-    fctB_z = p_objpt2->X - p_objpt1->Z;
+    fctB_y = p_objpt2->Y - p_objpt1->Y;
+    fctB_z = p_objpt2->Z - p_objpt1->Z;
 
     fctC_x = p_objpt3->X - p_objpt2->X;
     fctC_y = p_objpt3->Y - p_objpt2->Y;
