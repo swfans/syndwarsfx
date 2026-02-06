@@ -1361,6 +1361,34 @@ void draw_object_face3_deep_rdr(ushort face)
     }
 }
 
+void draw_frame(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z, short scr_sh_x, short scr_sh_y, ushort frm)
+{
+    struct ShEnginePoint sp;
+    struct Frame *p_frm;
+    struct Element *p_el;
+
+    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_frm = &frame[frm];
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
+    {
+        struct TbSprite *p_spr;
+        short x, y;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if (p_spr <= m_sprites)
+           continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 7;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+
+        x = sp.X + ((overall_scale * (p_el->X + scr_sh_x)) >> 9);
+        y = sp.Y + ((overall_scale * (p_el->Y + scr_sh_y)) >> 9);
+        LbSpriteDraw(x, y, p_spr);
+    }
+}
+
 void number_player(struct Thing *p_person, ubyte n)
 {
 #if 0
@@ -1368,9 +1396,6 @@ void number_player(struct Thing *p_person, ubyte n)
         : : "a" (p_person), "d" (n));
     return;
 #endif
-    struct ShEnginePoint sp;
-    struct Frame *p_frm;
-    struct Element *p_el;
     int cor_x, cor_y, cor_z;
     int shift_x, shift_y;
     ushort ani_mdsh, ani_base;
@@ -1447,39 +1472,21 @@ void number_player(struct Thing *p_person, ubyte n)
             return;
     }
 
-    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
-
     if ((p_person->Flag & TngF_InVehicle) != 0)
     {
-        shift_x = 0;
-        sp.X += 7 * n - 14;
+        shift_x = 7 * n - 14;
+        if (lbDisplay.GraphicsScreenHeight < 400)
+        shift_x = 5 * shift_x / 3;
     }
     else
     {
         shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + LbFPMath_PI/2] >> 14;
         if ((p_person->Flag2 & TgF2_Unkn00080000) == 0)
-            shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + LbFPMath_PI/2] >> 15;
+            shift_x /= 2;
     }
     shift_y = 0;
 
-    p_frm = &frame[frm];
-    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
-    {
-        struct TbSprite *p_spr;
-        short x, y;
-
-        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
-        if (p_spr <= m_sprites)
-           continue;
-
-        lbDisplay.DrawFlags = p_el->Flags & 7;
-        if ((p_el->Flags & 0xFE00) != 0)
-            continue;
-
-        x = sp.X + ((overall_scale * (p_el->X + shift_x)) >> 9);
-        y = sp.Y + ((overall_scale * (p_el->Y + shift_y)) >> 9);
-        LbSpriteDraw(x, y, p_spr);
-    }
+    draw_frame(cor_x, cor_y, cor_z, shift_x, shift_y, frm);
 }
 
 // Special non-textured draw; used during nuclear explosions?
