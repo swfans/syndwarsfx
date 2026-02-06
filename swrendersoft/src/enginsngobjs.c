@@ -186,11 +186,76 @@ int alt_change_at_face(short face, int *change_xz)
 
 int get_height_on_face(int x, int z, ushort face)
 {
+#if 0
     int ret;
     asm volatile (
       "call ASM_get_height_on_face\n"
         : "=r" (ret) : "a" (x), "d" (z), "b" (face));
     return ret;
+#endif
+    struct SingleObjectFace3 *p_oface;
+    int pt0_x, pt0_y, pt0_z;
+    int pt1_x, pt1_y, pt1_z;
+    int pt2_x, pt2_y, pt2_z;
+    int cor_x, cor_z;
+    int dt_x, dt_z;
+    int dt_a, dt_b;
+    int len_a, len_b;
+
+    p_oface = &game_object_faces[face];
+    {
+        struct SingleObject *p_sobj;
+        struct SinglePoint *p_opt0;
+        struct SinglePoint *p_opt1;
+        struct SinglePoint *p_opt2;
+        int base_x, base_y, base_z;
+
+        p_sobj = &game_objects[p_oface->Object];
+        base_x = p_sobj->MapX;
+        base_z = p_sobj->MapZ;
+        base_y = p_sobj->OffsetY;
+
+        p_opt0 = &game_object_points[p_oface->PointNo[0]];
+        pt0_x = base_x + p_opt0->X;
+        pt0_y = base_y + p_opt0->Y;
+        pt0_z = base_z + p_opt0->Z;
+
+        p_opt1 = &game_object_points[p_oface->PointNo[1]];
+        pt1_x = base_x + p_opt1->X;
+        pt1_y = base_y + p_opt1->Y;
+        pt1_z = base_z + p_opt1->Z;
+
+        p_opt2 = &game_object_points[p_oface->PointNo[2]];
+        pt2_x = base_x + p_opt2->X;
+        pt2_y = base_y + p_opt2->Y;
+        pt2_z = base_z + p_opt2->Z;
+    }
+    cor_x = x >> 8;
+    cor_z = z >> 8;
+    dt_x = pt2_x - pt0_x;
+    dt_z = pt2_z - pt0_z;
+
+    len_a = dt_x * (pt1_z - pt0_z) - dt_z * (pt1_x - pt0_x);
+    if (len_a == 0) {
+        return len_a;
+    }
+
+    len_b = dt_z * (pt0_x - cor_x) + dt_x * (cor_z - pt0_z);
+    dt_a = (len_b << 9) / len_a;
+    if (dt_a < 0) {
+        return 0;
+    }
+
+    if (dt_x)
+        dt_b = ((cor_x << 9) - (pt0_x << 9) - dt_a * (pt1_x - pt0_x)) / dt_x;
+    else
+        dt_b = ((cor_z << 9) - (pt0_z << 9) - dt_a * (pt1_z - pt0_z)) / dt_z;
+    if (dt_b < 0)
+        return 0;
+    if (dt_a + dt_b >= 512)
+        return 0;
+
+    return 32 * (pt0_y + (((pt2_y - pt0_y) * dt_b) >> 9) + ((dt_a * (pt1_y - pt0_y)) >> 9));
 }
 
 int get_height_on_face_quad(int x, int z, ushort face)
