@@ -49,6 +49,14 @@ enum RenderFloorFlags {
  */
 extern u32 render_anim_turn;
 
+/** Animation speed limiter.
+ *
+ * Lowering this will speed up animation. Increasing will only have effect
+ * to some point, as values have in-code limits. TODO - maybe turn this into
+ * just speed, not a limit?
+ */
+extern u32 render_anim_speed;
+
 /** Floor rendering flags.
  *
  * Affects how the floor is rendered.

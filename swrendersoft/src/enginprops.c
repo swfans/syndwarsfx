@@ -21,6 +21,7 @@
 #include "privrdlog.h"
 /******************************************************************************/
 u32 render_anim_turn = 0;
+u32 render_anim_speed = 80;
 u32 render_floor_flags = 0;
 
 s32 screen_points_limit = 16;

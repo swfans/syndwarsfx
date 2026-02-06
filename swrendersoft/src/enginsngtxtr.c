@@ -21,7 +21,7 @@
 #include "bffile.h"
 #include "bfmemut.h"
 
-#include "game_speed.h" // required for fifties_per_gameturn
+#include "enginprops.h"
 #include "privrdlog.h"
 /******************************************************************************/
 
@@ -501,8 +501,7 @@ void animate_textures(void)
     ushort i, k;
     short dt;
 
-    // TODO animation time should be provided as parameter, not just taken from different module
-    dt = fifties_per_gameturn;
+    dt = render_anim_speed;
     if (dt > 10)
         dt = 10;
 
