@@ -158,9 +158,10 @@ ushort find_normal(struct Normal *p_normal)
 
 void calc_normal(short face, struct Normal *p_normal)
 {
-#if 0
+#if 1
     asm volatile ("call ASM_calc_normal\n"
         : : "a" (face), "d" (p_normal));
+    return;
 #endif
     struct SingleObjectFace3 *p_face;
     struct SinglePoint *p_objpt1;
@@ -230,9 +231,10 @@ void calc_normal(short face, struct Normal *p_normal)
 
 void calc_normal4(short face, struct Normal *p_normal)
 {
-#if 0
+#if 1
     asm volatile ("call ASM_calc_normal4\n"
         : : "a" (face), "d" (p_normal));
+    return;
 #endif
     struct SingleObjectFace4 *p_face;
     struct SinglePoint *p_objpt1;
