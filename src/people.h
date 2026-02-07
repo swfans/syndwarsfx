@@ -391,6 +391,13 @@ TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
 
 void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
+
+/** Performs hitting thing by bullet.
+ *
+ * @return 0 if dealt no damage this time (ie. protected by vehicle or has shield active),
+ *   1 if cannot do damage permanently (ie. ally or already killed),
+ *   < 0 if if dealt enough damage to destroy the thing. TODO: better return values?
+ */
 int person_hit_by_bullet(struct Thing *p_person, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, ushort type);
 
