@@ -2277,11 +2277,12 @@ void init_uzi(struct Thing *p_owner)
         p_hittng = &things[hittng];
         person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
-        make_sparks_sprouts = blood_sprout = (
-          (p_hittng->Type == TT_PERSON) &&
-          ((p_hittng->Flag & TngF_InVehicle) == 0) &&
-          ((p_hittng->Flag & TngF_Destroyed) == 0)) &&
-          (p_hittng->U.UPerson.ShieldEnergy <= 0);
+        if (p_hittng->Type == TT_PERSON) {
+            make_sparks_sprouts = blood_sprout =
+              ((p_hittng->Flag & TngF_InVehicle) == 0) &&
+              ((p_hittng->Flag & TngF_Destroyed) == 0) &&
+              (p_hittng->U.UPerson.ShieldEnergy <= 0);
+        }
     }
     else // if did not hit anything else, go for original target
     {
@@ -2299,11 +2300,12 @@ void init_uzi(struct Thing *p_owner)
                 cor_eff_z = PRCCOORD_TO_MAPCOORD(p_hittng->Z);
                 weapon_shooting_creates_unkn2(cor_eff_x, cor_eff_y, cor_eff_z);
             }
-            make_sparks_sprouts = blood_sprout = (
-              (p_hittng->Type == TT_PERSON) &&
-              ((p_hittng->Flag & TngF_InVehicle) == 0) &&
-              ((p_hittng->Flag & TngF_Destroyed) == 0)) &&
-              (p_hittng->U.UPerson.ShieldEnergy <= 0);
+            if (p_hittng->Type == TT_PERSON) {
+                make_sparks_sprouts = blood_sprout =
+                  ((p_hittng->Flag & TngF_InVehicle) == 0) &&
+                  ((p_hittng->Flag & TngF_Destroyed) == 0) &&
+                  (p_hittng->U.UPerson.ShieldEnergy <= 0);
+            }
         }
     }
 
@@ -2407,11 +2409,12 @@ void init_minigun(struct Thing *p_owner)
         p_hittng = &things[hittng];
         person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
-        make_sparks_sprouts = blood_sprout = (
-          (p_hittng->Type == TT_PERSON) &&
-          ((p_hittng->Flag & TngF_InVehicle) == 0) &&
-          ((p_hittng->Flag & TngF_Destroyed) == 0)) &&
-          (p_hittng->U.UPerson.ShieldEnergy <= 0);
+        if (p_hittng->Type == TT_PERSON) {
+            make_sparks_sprouts = blood_sprout =
+              ((p_hittng->Flag & TngF_InVehicle) == 0) &&
+              ((p_hittng->Flag & TngF_Destroyed) == 0) &&
+              (p_hittng->U.UPerson.ShieldEnergy <= 0);
+        }
     }
     else // if did not hit anything else, go for original target
     {
@@ -2429,11 +2432,12 @@ void init_minigun(struct Thing *p_owner)
                 cor_eff_z = PRCCOORD_TO_MAPCOORD(p_hittng->Z);
                 weapon_shooting_creates_unkn2(cor_eff_x, cor_eff_y, cor_eff_z);
             }
-            make_sparks_sprouts = blood_sprout = (
-              (p_hittng->Type == TT_PERSON) &&
-              ((p_hittng->Flag & TngF_InVehicle) == 0) &&
-              ((p_hittng->Flag & TngF_Destroyed) == 0)) &&
-              (p_hittng->U.UPerson.ShieldEnergy <= 0);
+            if (p_hittng->Type == TT_PERSON) {
+                make_sparks_sprouts = blood_sprout =
+                  ((p_hittng->Flag & TngF_InVehicle) == 0) &&
+                  ((p_hittng->Flag & TngF_Destroyed) == 0) &&
+                  (p_hittng->U.UPerson.ShieldEnergy <= 0);
+            }
         }
     }
 
