@@ -175,7 +175,13 @@ enum ThingFlags2 {
     TgF2_Unkn00080000 = 0x00080000,
     TgF2_Unkn00100000 = 0x00100000,
     TgF2_Unkn00200000 = 0x00200000,
-    TgF2_Unkn00400000 = 0x00400000,
+    /** The thing has sub-type temporarely altered from original.
+     *
+     * If set, the thing is affected by clone shield or from other reasons
+     * has SubTyper property altered from real value. The original value
+     * is stored in OldSubType property.
+     */
+    TgF2_AlteredSubType = 0x00400000,
     TgF2_Unkn00800000 = 0x00800000,
     /** The thing is not added to map content lists and is invisible.
      *

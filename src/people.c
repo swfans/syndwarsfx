@@ -637,7 +637,7 @@ TbBool person_only_affected_by_adv_persuader(ThingIdx person)
 
     p_person = &things[person];
 
-    if ((p_person->Flag2 & TgF2_Unkn00400000) != 0)
+    if ((p_person->Flag2 & TgF2_AlteredSubType) != 0)
         ptype = p_person->U.UPerson.OldSubType;
     else
         ptype = p_person->SubType;

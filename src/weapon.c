@@ -3129,7 +3129,7 @@ void init_fire_weapon(struct Thing *p_person)
 
 void init_clone_disguise(struct Thing *p_person)
 {
-    if ((p_person->Flag2 & TgF2_Unkn00400000) != 0)
+    if ((p_person->Flag2 & TgF2_AlteredSubType) != 0)
         return;
 
     p_person->U.UPerson.AnimMode = ANIM_PERS_IDLE;
@@ -3151,17 +3151,19 @@ void init_clone_disguise(struct Thing *p_person)
     default:
         break;
     }
+    p_person->Speed = calc_person_speed(p_person);
     reset_person_frame(p_person);
-    p_person->Flag2 |= TgF2_Unkn00400000;
+    p_person->Flag2 |= TgF2_AlteredSubType;
 }
 
 void reset_clone_disguise(struct Thing *p_person)
 {
-    if ((p_person->Flag2 & TgF2_Unkn00400000) == 0)
+    if ((p_person->Flag2 & TgF2_AlteredSubType) == 0)
         return;
 
-    p_person->Flag2 &= ~TgF2_Unkn00400000;
+    p_person->Flag2 &= ~TgF2_AlteredSubType;
     p_person->SubType = p_person->U.UPerson.OldSubType;
+    p_person->Speed = calc_person_speed(p_person);
     reset_person_frame(p_person);
 }
 
@@ -3494,7 +3496,7 @@ ushort persuade_power_required(ThingIdx victim)
         return 9999;
 
     p_victim = &things[victim];
-    if ((p_victim->Flag2 & TgF2_Unkn00400000) != 0)
+    if ((p_victim->Flag2 & TgF2_AlteredSubType) != 0)
         ptype = p_victim->U.UPerson.OldSubType;
     else
         ptype = p_victim->SubType;
@@ -3765,7 +3767,7 @@ void weapon_consume_energy(struct Thing *p_person, WeaponType wtype)
 
 void process_clone_disguise(struct Thing *p_person)
 {
-    if ((p_person->Flag2 & TgF2_Unkn00400000) == 0)
+    if ((p_person->Flag2 & TgF2_AlteredSubType) == 0)
         return;
 
     weapon_consume_energy(p_person, WEP_CLONESHLD);
