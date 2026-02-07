@@ -2002,7 +2002,7 @@ TbBool weapon_shooting_floor_creates_smoke(MapCoord cor_x, MapCoord cor_z)
     return false;
 }
 
-TbBool weapon_shooting_floor_creates_unkn1(MapCoord cor_x, MapCoord cor_z)
+TbBool weapon_shooting_fluid_creates_splash(MapCoord cor_x, MapCoord cor_z, short timer)
 {
     struct SimpleThing *p_sthing;
     MapCoord cor_y;
@@ -2013,7 +2013,7 @@ TbBool weapon_shooting_floor_creates_unkn1(MapCoord cor_x, MapCoord cor_z)
     {
         // Create small smoke effect for weapon discharge into water
         cor_y = alt_at_point(cor_x, cor_z) >> 8;
-        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1087, 8);
+        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1087, timer);
         if (p_sthing != NULL) {
             p_sthing->Object = (LbRandomAnyShort() & 0x7F) + 62;
             p_sthing->SubType = 60;
@@ -2315,7 +2315,7 @@ void init_uzi(struct Thing *p_owner)
 
     if (allow_gnd_hit_eff)
     {
-        if (weapon_shooting_floor_creates_unkn1(cor_fin_x, cor_fin_z))
+        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 8))
             return;
         do_shockwave(cor_fin_x, cor_fin_y, cor_fin_z, -50, 1, p_owner);
     }
@@ -2447,7 +2447,7 @@ void init_minigun(struct Thing *p_owner)
 
     if (allow_gnd_hit_eff)
     {
-        if (weapon_shooting_floor_creates_unkn1(cor_fin_x, cor_fin_z))
+        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 8))
             return;
         do_shockwave(cor_fin_x, cor_fin_y, cor_fin_z, -50, 1, p_owner);
     }
@@ -2467,8 +2467,136 @@ void init_flamer(struct Thing *p_owner)
 
 void init_long_range(struct Thing *p_owner)
 {
+#if 0
     asm volatile ("call ASM_init_long_range\n"
         : : "a" (p_owner));
+#endif
+    struct WeaponDef *wdef;
+    struct M31 prc_beg_pt, prc_fin_pt;
+    u32 rhit;
+    int cor_fin_x, cor_fin_y, cor_fin_z;
+    int cor_beg_x, cor_beg_y, cor_beg_z;
+    ThingIdx targetng;
+    ubyte wdmgtyp;
+    ubyte status;
+    TbBool allow_gnd_hit_eff, make_sparks_sprouts, blood_sprout;
+
+    allow_gnd_hit_eff = false;
+    make_sparks_sprouts = true;
+    blood_sprout = false;
+    targetng = 0;
+
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_LONGRANGE, 0)) {
+        return;
+    }
+
+    wdef = &weapon_defs[WEP_LONGRANGE];
+    wdmgtyp = DMG_LONGRANGE;
+
+    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    {
+        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
+        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
+        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        p_owner->Flag &= ~TngF_Unkn20000000;
+        allow_gnd_hit_eff = true;
+    }
+    else if (p_owner->PTarget != NULL)
+    {
+        targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
+          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_LONGRANGE);
+        allow_gnd_hit_eff = (targetng == 0);
+    }
+    else
+    {
+        thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
+          &prc_beg_pt, p_owner, WEP_LONGRANGE);
+        allow_gnd_hit_eff = true;
+    }
+
+    cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
+    cor_beg_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
+    cor_beg_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
+
+    cor_fin_x = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[0]);
+    cor_fin_y = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[1]);
+    cor_fin_z = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[2]);
+    rhit = bul_path_end(cor_beg_x, cor_beg_y, cor_beg_z, &cor_fin_x, &cor_fin_y, &cor_fin_z, 50, p_owner, &status);
+
+    if ((rhit & 0x80000000) != 0) // hit 3D object collision vector
+    {
+        short hitvec;
+
+        hitvec = rhit;
+        if (status == 1)
+            bul_hit_vector(cor_fin_x, cor_fin_y, cor_fin_z, -hitvec, 4, wdmgtyp);
+        p_owner->U.UPerson.Flag3 |= 0x40;
+    }
+    else if ((rhit & 0x20000000) != 0)
+    {
+        // no action
+    }
+    else if ((rhit & 0x40000000) != 0) // hit SimpleThing
+    {
+        struct SimpleThing *p_hitstng;
+        ThingIdx hittng;
+        hittng = rhit | 0xE0000000;
+        p_hitstng = &sthings[-hittng];
+        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage, cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+    }
+    else if (rhit != 0) // hit normal thing
+    {
+        struct Thing *p_hittng;
+        ThingIdx hittng;
+        hittng = rhit & ~0xE0000000;
+        p_hittng = &things[hittng];
+        person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+        if (p_hittng->Type == TT_PERSON) {
+            make_sparks_sprouts = blood_sprout =
+              ((p_hittng->Flag & TngF_InVehicle) == 0) &&
+              ((p_hittng->Flag & TngF_Destroyed) == 0) &&
+              (p_hittng->U.UPerson.ShieldEnergy <= 0);
+        }
+    }
+    else // if did not hit anything else, go for original target
+    {
+        if (targetng != 0)
+        {
+            struct Thing *p_hittng;
+            p_hittng = &things[targetng];
+            person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
+              cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+            if ((p_hittng->Flag & TngF_Destroyed) != 0)
+            {
+                MapCoord cor_eff_x, cor_eff_y, cor_eff_z;
+                cor_eff_x = PRCCOORD_TO_MAPCOORD(p_hittng->X);
+                cor_eff_y = PRCCOORD_TO_MAPCOORD(p_hittng->Y);
+                cor_eff_z = PRCCOORD_TO_MAPCOORD(p_hittng->Z);
+                weapon_shooting_creates_unkn2(cor_eff_x, cor_eff_y, cor_eff_z);
+            }
+            if (p_hittng->Type == TT_PERSON) {
+                make_sparks_sprouts = blood_sprout =
+                  ((p_hittng->Flag & TngF_InVehicle) == 0) &&
+                  ((p_hittng->Flag & TngF_Destroyed) == 0) &&
+                  (p_hittng->U.UPerson.ShieldEnergy <= 0);
+            }
+        }
+    }
+
+    if (allow_gnd_hit_eff)
+    {
+        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 1))
+            return;
+        do_shockwave(cor_fin_x, cor_fin_y, cor_fin_z, -50, 1, p_owner);
+    }
+
+    if (make_sparks_sprouts)
+    {
+        short vel = blood_sprout ? 2 : 4;
+        init_sparks(cor_fin_x, cor_fin_y, cor_fin_z, 3, vel, blood_sprout);
+    }
 }
 
 void init_air_strike(struct Thing *p_owner)

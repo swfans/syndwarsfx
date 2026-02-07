@@ -1758,7 +1758,7 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     }
 }
 
-struct SimpleThing *create_scale_effect(int x, int y, int z, ushort frame, int timer)
+struct SimpleThing *create_scale_effect(int x, int y, int z, ushort frame, short timer)
 {
     struct SimpleThing *ret;
     asm volatile (
