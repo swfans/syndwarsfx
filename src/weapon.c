@@ -1331,6 +1331,10 @@ int bul_path_end(int x1, int y1, int z1, int *x2, int *y2, int *z2,
     return ret;
 }
 
+/** Creates given amount of sparks or sprouts from given point, with given velocity factor.
+ *
+ * @param is_red Makes red blood sprouts instead of yellow sparks.
+ */
 void init_sparks(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z, ushort count, short vel, TbBool is_red)
 {
     ushort i;
@@ -2449,7 +2453,10 @@ void init_minigun(struct Thing *p_owner)
     }
 
     if (make_sparks_sprouts)
-        init_sparks(cor_fin_x, cor_fin_y, cor_fin_z, 4, 3, blood_sprout);
+    {
+        short vel = blood_sprout ? 2 : 3;
+        init_sparks(cor_fin_x, cor_fin_y, cor_fin_z, 4, vel, blood_sprout);
+    }
 }
 
 void init_flamer(struct Thing *p_owner)
