@@ -1967,7 +1967,7 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
         break;
     case 20:
         p_shot->Type = 38;
-        play_dist_sample(p_shot, 0x25u, 0x7Fu, 0x40u, 100, 0, 3);
+        play_dist_sample(p_shot, 0x25u, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
         bang_new4(MAPCOORD_TO_PRCCOORD(p_shot->VX, 0),
           MAPCOORD_TO_PRCCOORD(p_shot->VY, 0),
           MAPCOORD_TO_PRCCOORD(p_shot->VZ, 0), 20);
@@ -2002,22 +2002,33 @@ TbBool weapon_shooting_floor_creates_smoke(MapCoord cor_x, MapCoord cor_z)
     return false;
 }
 
-TbBool weapon_shooting_fluid_creates_splash(MapCoord cor_x, MapCoord cor_z, short timer)
+TbBool weapon_shooting_fluid_creates_splash(MapCoord cor_x, MapCoord cor_z, ushort first_size, short timer)
 {
     struct SimpleThing *p_sthing;
     MapCoord cor_y;
-    ushort textr;
 
-    textr = floor_texture_at_point(cor_x, cor_z);
-    if ((get_my_texture_bits(textr) & 0x02) != 0)
+    if (map_floor_is_water(cor_x, cor_z))
     {
-        // Create small smoke effect for weapon discharge into water
+        // Create water splash effect
         cor_y = alt_at_point(cor_x, cor_z) >> 8;
         p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1087, timer);
         if (p_sthing != NULL) {
-            p_sthing->Object = (LbRandomAnyShort() & 0x7F) + 62;
+            p_sthing->Object = first_size + (LbRandomAnyShort() & 0x7F);
             p_sthing->SubType = 60;
-            play_dist_ssample(p_sthing, 3u, 0x7Fu, 0x40u, 100, 0, 3);
+            play_dist_ssample(p_sthing, 3, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
+        }
+        return true;
+    }
+    if (map_floor_is_sludge(cor_x, cor_z))
+    {
+        // Create sludge bulge effect
+        cor_y = alt_at_point(cor_x, cor_z) >> 8;
+        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1091, timer);
+        if (p_sthing != NULL) {
+            p_sthing->Object = first_size + (LbRandomAnyShort() & 0x7F);
+            // Generic type which just plays animation until end
+            p_sthing->SubType = 58;
+            play_dist_ssample(p_sthing, 25, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
         }
         return true;
     }
@@ -2036,7 +2047,7 @@ void weapon_shooting_creates_unkn2(MapCoord cor_x, MapCoord cor_y, MapCoord cor_
     {
         p_sthing->SubType = 58;
         p_sthing->Object = 256;
-        play_dist_ssample(p_sthing, 0x44u, 0x7Fu, 0x40u, 100, 0, 1);
+        play_dist_ssample(p_sthing, 0x44u, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 1);
     }
 }
 
@@ -2315,7 +2326,7 @@ void init_uzi(struct Thing *p_owner)
 
     if (allow_gnd_hit_eff)
     {
-        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 8))
+        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 62, 8))
             return;
         do_shockwave(cor_fin_x, cor_fin_y, cor_fin_z, -50, 1, p_owner);
     }
@@ -2447,7 +2458,7 @@ void init_minigun(struct Thing *p_owner)
 
     if (allow_gnd_hit_eff)
     {
-        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 8))
+        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 62, 8))
             return;
         do_shockwave(cor_fin_x, cor_fin_y, cor_fin_z, -50, 1, p_owner);
     }
@@ -2587,7 +2598,7 @@ void init_long_range(struct Thing *p_owner)
 
     if (allow_gnd_hit_eff)
     {
-        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 1))
+        if (weapon_shooting_fluid_creates_splash(cor_fin_x, cor_fin_z, 62, 1))
             return;
         do_shockwave(cor_fin_x, cor_fin_y, cor_fin_z, -50, 1, p_owner);
     }

@@ -178,6 +178,9 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz);
  */
 void update_map_flags(void);
 
+TbBool map_floor_is_water(MapCoord cor_x, MapCoord cor_z);
+TbBool map_floor_is_sludge(MapCoord cor_x, MapCoord cor_z);
+
 /** Checks if a tile should not be allowed to walk on due to terrain.
  *
  * To do such check during gameplay, MapElement flags should be used - this one

@@ -81,6 +81,10 @@ extern ushort tnext_floor_texture;
 
 ushort floor_texture_index(struct SingleFloorTexture *p_sftex);
 
+/** Checks whether texture with specified index is the only in use within given game texture.
+ */
+TbBool my_texture_is_only_using_index(short textr, int index);
+
 /** Maps content of old SingleFloorTexture struct to the current one.
  */
 void refresh_old_floor_texture_format(struct SingleFloorTexture *p_fltextr,

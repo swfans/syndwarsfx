@@ -24,6 +24,7 @@
 #include "bfmemut.h"
 
 #include "enginprops.h"
+#include "enginsngtxtr.h"
 
 #include "swlog.h"
 /******************************************************************************/
@@ -406,6 +407,26 @@ void update_map_flags(void)
                 p_mapel->Flags2 |= MEF2_Unkn04;
         }
     }
+}
+
+TbBool map_floor_is_water(MapCoord cor_x, MapCoord cor_z)
+{
+    ushort textr;
+
+    textr = floor_texture_at_point(cor_x, cor_z);
+    if ((get_my_texture_bits(textr) & 0x02) != 0)
+        return true;
+    return false;
+}
+
+TbBool map_floor_is_sludge(MapCoord cor_x, MapCoord cor_z)
+{
+    ushort textr;
+
+    textr = floor_texture_at_point(cor_x, cor_z);
+    if (my_texture_is_only_using_index(textr, 29))
+        return true;
+    return false;
 }
 
 void quick_crater(int x, int z, int size)
