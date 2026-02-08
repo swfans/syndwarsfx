@@ -3050,7 +3050,6 @@ void init_player(void)
     player_agents_clear_weapon_delays(local_player_no);
 
     init_game_controls();
-    preprogress_game_turns();
 }
 
 /** Macro for returning given array of elements in random order.
@@ -3151,6 +3150,7 @@ void prep_single_mission(void)
             packet_write_whole_player_init();
         }
     }
+    preprogress_game_turns();
     prep_multicolor_sprites();
     LbScreenClear(0);
     generate_shadows_for_multicolor_sprites();
@@ -3183,6 +3183,7 @@ void restart_back_into_mission(ushort missi)
             packet_write_whole_player_init();
         }
     }
+    preprogress_game_turns();
 }
 
 void compound_mission_brief_store_next(void)
@@ -6088,6 +6089,7 @@ void show_load_and_prep_mission(void)
             packet_read_whole_player_init();
         }
         init_game(0);
+        preprogress_game_turns();
     }
 
     // Update game progress and prepare level to play
