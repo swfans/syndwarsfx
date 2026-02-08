@@ -5837,7 +5837,6 @@ void process_person(struct Thing *p_person)
     if (((p_person->Flag & TngF_Unkn40000000) == 0) || (((p_person->Flag & TngF_Destroyed) == 0)
         && ((p_person->Flag & (TngF_Persuaded|TngF_Unkn00040000|TngF_WepRecoil|TngF_Unkn4000|TngF_StationrSht)) != 0)))
     {
-
         if ((p_person->Flag & TngF_Unkn4000) != 0)
           return;
         if ((p_person->Flag & TngF_WepRecoil) != 0)

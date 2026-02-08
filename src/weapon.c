@@ -1290,25 +1290,25 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
 
 #if 0 //TODO not sure if this is the best place to restrict range, maybe to do that in process_weapon() ?
     int dist, range;
-    int dt_x, dt_y, dt_z;
+    int dist_x, dist_y, dist_z;
     range = get_persons_weapon_range(p_owner, wtype);
 
     // Simplification to avoid multiplication and square root to get proper distance
-     dt_x = prc_fin_pt->R[0] - prc_beg_pt->R[0];
-     dt_y = prc_fin_pt->R[1] - prc_beg_pt->R[1];
-     dt_z = prc_fin_pt->R[2] - prc_beg_pt->R[2];
+     dist_x = prc_fin_pt->R[0] - prc_beg_pt->R[0];
+     dist_y = prc_fin_pt->R[1] - prc_beg_pt->R[1];
+     dist_z = prc_fin_pt->R[2] - prc_beg_pt->R[2];
 
-    dist = map_distance_deltas_fast(PRCCOORD_TO_MAPCOORD(dt_x),
-      PRCCOORD_TO_MAPCOORD(dt_y), PRCCOORD_TO_MAPCOORD(dt_z));
+    dist = map_distance_deltas_fast(PRCCOORD_TO_MAPCOORD(dist_x),
+      PRCCOORD_TO_MAPCOORD(dist_y), PRCCOORD_TO_MAPCOORD(dist_z));
 
     if (dist <= range + p_target->Radius + TILE_TO_MAPCOORD(1, 0))
     {
         return p_target->ThingOffset;
     }
 
-    prc_fin_pt->R[0] = prc_beg_pt->R[0] + range * dt_x / dist;
-    prc_fin_pt->R[1] = prc_beg_pt->R[1] + range * dt_y / dist;
-    prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * dt_z / dist;
+    prc_fin_pt->R[0] = prc_beg_pt->R[0] + range * dist_x / dist;
+    prc_fin_pt->R[1] = prc_beg_pt->R[1] + range * dist_y / dist;
+    prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * dist_z / dist;
 
     return 0;
 #else
