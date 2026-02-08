@@ -1361,13 +1361,33 @@ void draw_object_face3_deep_rdr(ushort face)
     }
 }
 
-void draw_frame(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z, short scr_sh_x, short scr_sh_y, ushort frm)
+void draw_frame_on_map_coords_unscaled(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
+  short scr_sh_x, short scr_sh_y, ushort frm)
 {
     struct ShEnginePoint sp;
     struct Frame *p_frm;
     struct Element *p_el;
+    int cor_dt_x, cor_dt_y, cor_dt_z;
 
-    transform_shpoint(&sp, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dt_x = cor_x - engn_xc;
+    cor_dt_y = cor_y - (engn_yc >> 3);
+    cor_dt_z = cor_z - engn_zc;
+    {
+        int cor_lr, cor_sm;
+        if (abs(cor_dt_x) <= abs(cor_dt_z)) {
+            cor_sm = abs(cor_dt_x);
+            cor_lr = abs(cor_dt_z);
+        } else {
+            cor_sm = abs(cor_dt_z);
+            cor_lr = abs(cor_dt_x);
+        }
+        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(18,0))
+            return;
+    }
+
+    transform_shpoint(&sp, cor_dt_x, cor_dt_y - 8 * engn_yc, cor_dt_z);
+    sp.X += ((overall_scale * scr_sh_x) >> 8);
+    sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
     p_frm = &frame[frm];
     for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
@@ -1383,9 +1403,57 @@ void draw_frame(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z, short scr_sh_x, 
         if ((p_el->Flags & 0xFE00) != 0)
             continue;
 
-        x = sp.X + ((overall_scale * (p_el->X + scr_sh_x)) >> 9);
-        y = sp.Y + ((overall_scale * (p_el->Y + scr_sh_y)) >> 9);
+        x = sp.X + ((overall_scale * p_el->X) >> 9);
+        y = sp.Y + ((overall_scale * p_el->Y) >> 9);
         LbSpriteDraw(x, y, p_spr);
+    }
+}
+
+void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
+  short scr_sh_x, short scr_sh_y, ushort frm)
+{
+    struct ShEnginePoint sp;
+    struct Frame *p_frm;
+    struct Element *p_el;
+    int cor_dt_x, cor_dt_y, cor_dt_z;
+
+    cor_dt_x = cor_x - engn_xc;
+    cor_dt_y = cor_y - (engn_yc >> 3);
+    cor_dt_z = cor_z - engn_zc;
+    {
+        int cor_lr, cor_sm;
+        if (abs(cor_dt_x) <= abs(cor_dt_z)) {
+            cor_sm = abs(cor_dt_x);
+            cor_lr = abs(cor_dt_z);
+        } else {
+            cor_sm = abs(cor_dt_z);
+            cor_lr = abs(cor_dt_x);
+        }
+        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(18,0))
+            return;
+    }
+
+    transform_shpoint(&sp, cor_dt_x, cor_dt_y - 8 * engn_yc, cor_dt_z);
+    sp.X += ((overall_scale * scr_sh_x) >> 8);
+    sp.Y += ((overall_scale * scr_sh_y) >> 8);
+
+    p_frm = &frame[frm];
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
+    {
+        struct TbSprite *p_spr;
+        short x, y;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if (p_spr <= m_sprites)
+           continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 7;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+
+        x = sp.X + ((overall_scale * p_el->X) >> 9);
+        y = sp.Y + ((overall_scale * p_el->Y) >> 9);
+        LbSpriteDrawScaled(x, y, p_spr, (overall_scale * p_spr->SWidth + 127) >> 9, (overall_scale * p_spr->SHeight + 127) >> 9);
     }
 }
 
@@ -1396,7 +1464,6 @@ void number_player(struct Thing *p_person, ubyte n)
         : : "a" (p_person), "d" (n));
     return;
 #endif
-    int cor_x, cor_y, cor_z;
     int shift_x, shift_y;
     ushort ani_mdsh, ani_base;
     ushort frm;
@@ -1405,7 +1472,7 @@ void number_player(struct Thing *p_person, ubyte n)
         ani_mdsh = 0;
     else
         ani_mdsh = 4;
-    if (byte_1DB2E9 == 1)
+    if (byte_1DB2E9 == 1) // green or blue
         ani_base = 1528;
     else
         ani_base = 1520;
@@ -1432,51 +1499,32 @@ void number_player(struct Thing *p_person, ubyte n)
     if ((p_person->Flag2 & TgF2_Unkn0002) != 0)
         return;
 
-    {
-        int tng_cor_x, tng_cor_y, tng_cor_z;
+    int tng_cor_x, tng_cor_y, tng_cor_z;
 
-        if (person_is_in_a_train(p_person))
-        {
-            tng_cor_x = p_person->X;
-            tng_cor_y = p_person->Y;
-            tng_cor_z = p_person->Z;
-        }
-        else if ((p_person->Flag & TngF_Unkn4000) != 0)
-        {
-            struct Thing *p_vehicle;
-            p_vehicle = &things[p_person->U.UPerson.Vehicle];
-            tng_cor_x = p_vehicle->X;
-            tng_cor_y = p_vehicle->Y;
-            tng_cor_z = p_vehicle->Z;
-        }
-        else
-        {
-            tng_cor_x = p_person->X;
-            tng_cor_y = p_person->Y;
-            tng_cor_z = p_person->Z;
-        }
-        cor_x = PRCCOORD_TO_MAPCOORD(tng_cor_x) - engn_xc;
-        cor_y = PRCCOORD_TO_YCOORD(tng_cor_y) - (engn_yc >> 3);
-        cor_z = PRCCOORD_TO_MAPCOORD(tng_cor_z) - engn_zc;
-    }
+    if (person_is_in_a_train(p_person))
     {
-        int cor_lr, cor_sm;
-        if (abs(cor_x) <= abs(cor_z)) {
-            cor_sm = abs(cor_x);
-            cor_lr = abs(cor_z);
-        } else {
-            cor_sm = abs(cor_z);
-            cor_lr = abs(cor_x);
-        }
-        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(18,0))
-            return;
+        tng_cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+        tng_cor_y = PRCCOORD_TO_MAPCOORD(p_person->Y);
+        tng_cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+    }
+    else if ((p_person->Flag & TngF_Unkn4000) != 0)
+    {
+        struct Thing *p_vehicle;
+        p_vehicle = &things[p_person->U.UPerson.Vehicle];
+        tng_cor_x = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
+        tng_cor_y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
+        tng_cor_z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
+    }
+    else
+    {
+        tng_cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+        tng_cor_y = PRCCOORD_TO_MAPCOORD(p_person->Y);
+        tng_cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
     }
 
     if ((p_person->Flag & TngF_InVehicle) != 0)
     {
         shift_x = 7 * n - 14;
-        if (lbDisplay.GraphicsScreenHeight < 400)
-        shift_x = 5 * shift_x / 3;
     }
     else
     {
@@ -1486,7 +1534,14 @@ void number_player(struct Thing *p_person, ubyte n)
     }
     shift_y = 0;
 
-    draw_frame(cor_x, cor_y, cor_z, shift_x, shift_y, frm);
+    if (lbDisplay.GraphicsScreenHeight < 400)
+    {
+        draw_frame_on_map_coords_unscaled(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm);
+    }
+    else
+    {
+        draw_frame_on_map_coords(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm);
+    }
 }
 
 // Special non-textured draw; used during nuclear explosions?
