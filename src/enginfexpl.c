@@ -1139,9 +1139,6 @@ void draw_explode(void)
 {
     ushort exface;
 
-    if (next_ex_face != 0)
-        animate_explode();
-
     if (dont_bother_with_explode_faces)
         return;
 

@@ -1858,6 +1858,7 @@ void process_engine_unk3(void)
     {
         clear_super_quick_lights();
     }
+    process_explode();
     assert(vec_tmap[1] != NULL);
     vec_map = vec_tmap[1];
     p_locplayer = &players[local_player_no];
