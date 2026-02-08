@@ -1779,6 +1779,17 @@ struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int 
     return ret;
 }
 
+struct SimpleThing *create_stasis_pod(MapCoord x, MapCoord y, MapCoord z,
+  ushort timer, struct Thing *p_owner)
+{
+    struct SimpleThing *ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_create_stasis_pod\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (timer), "g" (p_owner));
+    return ret;
+}
+
 void mine_detonate(struct Thing *p_thing)
 {
     play_dist_sample(p_thing, 37, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);

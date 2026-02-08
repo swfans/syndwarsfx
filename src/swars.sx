@@ -148307,7 +148307,7 @@ create_time_pod:	/* 0x0C2934 */
 
 
 /*----------------------------------------------------------------*/
-create_stasis_pod:	/* 0x0C2A00 */
+GLOBAL_FUNC(ASM_create_stasis_pod)	/* 0x0C2A00 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -148687,7 +148687,7 @@ GLOBAL_FUNC(ASM_init_stasis_gun)	/* 0x0C2C6C */
 		mov    0x6(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   create_stasis_pod
+		call   ac_create_stasis_pod
 		test   %eax,%eax
 		je     jump_c2e4b
 		mov    0x16(%esi),%dx

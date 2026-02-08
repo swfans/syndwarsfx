@@ -187,7 +187,7 @@ enum PersonSex {
  *
  * Used as starting point of shots.
  */
-#define PERSON_BOTTOM_TO_WEAPON_HEIGHT 20
+#define PERSON_BOTTOM_TO_WEAPON_HEIGHT 22
 
 /** Multiplayer when transferring weapon energy points to shield points.
  */

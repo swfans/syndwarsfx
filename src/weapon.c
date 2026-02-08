@@ -1281,6 +1281,8 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
 
     if (wtype == WEP_RAP)
         height = 20;
+    else if (wtype == WEP_STASISFLD)
+        height = 0;
     else
         height = 10;
 
@@ -2646,8 +2648,90 @@ void init_air_strike(struct Thing *p_owner)
 
 void init_stasis_gun(struct Thing *p_owner)
 {
+#if 0
     asm volatile ("call ASM_init_stasis_gun\n"
         : : "a" (p_owner));
+#endif
+    struct M31 prc_beg_pt, prc_fin_pt;
+    struct Thing *p_target;
+    int cor_fin_x, cor_fin_y, cor_fin_z;
+    int cor_beg_x, cor_beg_y, cor_beg_z;
+    ubyte status;
+
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_STASISFLD, 0)) {
+        return;
+    }
+
+    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    {
+        short plyr; // stores PlayerIdx or -1
+        short user_vy;
+
+        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
+        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+
+        user_vy = 0;
+        plyr = person_get_dcontrol_player(p_owner->ThingOffset);
+        if (plyr >= 0)
+        {
+            PlayerInfo *p_player;
+            ushort plagent;
+
+            p_player = &players[plyr];
+            plagent = p_owner->U.UPerson.ComCur & 3;
+            user_vy = p_player->UserVY[plagent];
+            p_player->UserVY[plagent] = 0;
+        }
+
+        if (user_vy != 0)
+        {
+            prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(user_vy,0);
+        }
+        else
+        {
+            prc_fin_pt.R[1] = alt_at_point(prc_fin_pt.R[0], prc_fin_pt.R[2]) + MAPCOORD_TO_PRCCOORD(20,0);
+        }
+
+        p_owner->Flag &= ~TngF_Unkn20000000;
+    }
+    else if (p_owner->PTarget != NULL)
+    {
+        thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
+          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_STASISFLD);
+    }
+    else
+    {
+        //TODO use something related to this gun rather than UZI
+        thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
+          &prc_beg_pt, p_owner, WEP_UZI);
+    }
+
+    cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
+    cor_beg_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
+    cor_beg_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
+
+    cor_fin_x = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[0]);
+    cor_fin_y = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[1]);
+    cor_fin_z = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[2]);
+
+    cor_fin_y += 30;
+    bul_path_end(cor_beg_x, cor_beg_y, cor_beg_z,
+      &cor_fin_x, &cor_fin_y, &cor_fin_z, 50, p_owner, &status);
+    cor_fin_y -= 30;
+
+    struct SimpleThing *p_pod;
+    p_pod = create_stasis_pod(cor_fin_x, cor_fin_y, cor_fin_z, 50, p_owner);
+    if (p_pod != NULL) {
+        p_pod->Owner2 = p_owner->ThingOffset;
+    }
+    p_target = p_owner->PTarget;
+    p_owner->Flag |= TngF_Unkn20000000;
+    p_owner->PTarget = NULL;
+    p_owner->VX = cor_fin_x;
+    p_owner->VY = cor_fin_y;
+    p_owner->VZ = cor_fin_z;
+    init_laser(p_owner, 1);
+    p_owner->PTarget = p_target;
 }
 
 void init_time_gun(struct Thing *p_owner)
