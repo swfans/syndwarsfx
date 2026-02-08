@@ -1495,13 +1495,9 @@ void draw_hud(int dcthing)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    if (ingame.TrackThing != 0)
-    {
-        if (!game_cam_tracked_thing_is_player_agent())
-            return;
-    }
-    if ((ingame.Flags & GamF_HUDPanel) == 0)
+    if (!panel_any_visible()) {
         return;
+    }
 
     show_goto_point(0);
 

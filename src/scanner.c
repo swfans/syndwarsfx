@@ -34,6 +34,7 @@
 #include "game.h"
 #include "game_options.h"
 #include "game_speed.h"
+#include "hud_panel.h"
 #include "lvobjctv.h"
 #include "scandraw.h"
 #include "swlog.h"
@@ -418,7 +419,7 @@ ushort do_group_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
         }
         else
         {
-            if (((ingame.TrackThing == 0) || game_cam_tracked_thing_is_player_agent()) && (ingame.Flags & GamF_HUDPanel))
+            if (panel_any_visible())
                 SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
         }
         SCANNER_keep_arcs = 1;
@@ -558,7 +559,7 @@ ushort do_thing_arrive_area_scanner(struct Objective *p_objectv, ushort next_sig
     }
     else
     {
-        if (((ingame.TrackThing == 0) || game_cam_tracked_thing_is_player_agent()) && (ingame.Flags & GamF_HUDPanel))
+        if (panel_any_visible())
             SCANNER_init_arcpoint(Z, X,
               MAPCOORD_TO_PRCCOORD(p_objectv->Z,0),
               MAPCOORD_TO_PRCCOORD(p_objectv->X,0), 1);
@@ -616,7 +617,7 @@ ushort do_thing_near_thing_scanner(struct Objective *p_objectv, ushort next_sign
     }
     else
     {
-        if (((ingame.TrackThing == 0) || game_cam_tracked_thing_is_player_agent()) && (ingame.Flags & GamF_HUDPanel))
+        if (panel_any_visible())
             SCANNER_init_arcpoint(Z2, X2, Z1, X1, 1);
     }
     SCANNER_keep_arcs = 1;

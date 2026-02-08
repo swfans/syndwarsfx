@@ -90,6 +90,14 @@ TbBool panel_exists(short panel)
     return (p_panel->Spr[0] != -1);
 }
 
+TbBool panel_any_visible(void)
+{
+    if ((ingame.TrackThing != 0) && !game_cam_tracked_thing_is_player_agent())
+        return false;
+
+    return ((ingame.Flags & GamF_HUDPanel) != 0);
+}
+
 TbBool panel_for_speciifc_agent(short panel)
 {
     struct GamePanel *p_panel;

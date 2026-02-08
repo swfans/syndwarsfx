@@ -123,6 +123,7 @@ extern short gui_scale;
 
 int SCANNER_objective_info_height(void);
 
+TbBool panel_any_visible(void);
 void draw_new_panel(void);
 
 TbResult load_pop_sprites_for_current_mode(void);
