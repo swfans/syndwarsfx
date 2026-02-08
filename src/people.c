@@ -5838,37 +5838,39 @@ void process_person(struct Thing *p_person)
         && ((p_person->Flag & (TngF_Persuaded|TngF_Unkn00040000|TngF_WepRecoil|TngF_Unkn4000|TngF_StationrSht)) != 0)))
     {
         if ((p_person->Flag & TngF_Unkn4000) != 0)
-          return;
+        {
+            return;
+        }
         if ((p_person->Flag & TngF_WepRecoil) != 0)
         {
-          stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
-          person_recoil(p_person);
-          calc_lighting(p_person);
-          process_weapon(p_person);
-          return;
+            stop_looped_weapon_sample(p_person, p_person->U.UPerson.CurrentWeapon);
+            person_recoil(p_person);
+            calc_lighting(p_person);
+            process_weapon(p_person);
+            return;
         }
         if (((p_person->Flag & TngF_Persuaded) != 0) && ((p_person->Flag & TngF_Destroyed) == 0))
         {
-          process_persuaded(p_person);
-          calc_lighting(p_person);
-          process_weapon(p_person);
-          return;
+            process_persuaded(p_person);
+            calc_lighting(p_person);
+            process_weapon(p_person);
+            return;
         }
         if (((p_person->Flag & TngF_Unkn00040000) != 0) && ((p_person->Flag & (TngF_Unkn1000|TngF_Destroyed)) == 0))
         {
-          person_run_away(p_person);
-          calc_lighting(p_person);
-          return;
+            person_run_away(p_person);
+            calc_lighting(p_person);
+            return;
         }
 
         if ((p_person->Flag & TngF_StationrSht) != 0)
         {
-          if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_TriggerUse) == 0))
-          {
-              p_person->Flag &= ~TngF_StationrSht;
-          }
-          process_weapon(p_person);
-          return;
+            if ((p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_TriggerUse) == 0))
+            {
+                p_person->Flag &= ~TngF_StationrSht;
+            }
+            process_weapon(p_person);
+            return;
         }
     }
 
