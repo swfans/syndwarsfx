@@ -4187,7 +4187,7 @@ void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint
     change_player_angle(p_thing, (((angle + 128) >> 8) + 8) & 7);
 
     p_thing->PTarget = NULL;
-    p_thing->Flag |= TngF_Unkn20000000|TngF_TriggerUse;
+    p_thing->Flag |= TngF_ShootAtPos|TngF_TriggerUse;
 
     plyr = p_thing->U.UPerson.ComCur >> 2;
     plagent = p_thing->U.UPerson.ComCur & 3;

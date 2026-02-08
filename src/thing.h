@@ -126,7 +126,7 @@ enum ThingFlags {
     TngF_Unkn04000000 = 0x04000000,
     TngF_Unkn08000000 = 0x08000000,
     TngF_InVehicle    = 0x10000000,
-    TngF_Unkn20000000 = 0x20000000,
+    TngF_ShootAtPos   = 0x20000000,
     TngF_Unkn40000000 = 0x40000000,
 };
 

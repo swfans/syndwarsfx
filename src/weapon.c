@@ -1398,12 +1398,12 @@ void init_laser(struct Thing *p_owner, ushort start_age)
     wdef = &weapon_defs[WEP_LASER];
     wdmgtyp = DMG_LASER;
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
         prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
         prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
     {
@@ -1680,14 +1680,14 @@ void init_rocket(struct Thing *p_owner)
     p_shot->PTarget = NULL;
     p_shot->Flag = 0;
     p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
         prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY + 20, 0);
         prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
         // Transfer the flag from owner to shot
-        p_shot->Flag |= TngF_Unkn20000000;
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_shot->Flag |= TngF_ShootAtPos;
+        p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
     {
@@ -1813,12 +1813,12 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
     wdmgtyp = DMG_BEAM;
     p_shot->U.UEffect.Angle = p_owner->U.UObject.Angle;
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
         prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
         prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
     {
@@ -2088,12 +2088,12 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
     wdef = &weapon_defs[WEP_ELLASER];
     wdmgtyp = DMG_ELLASER;
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
         prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
         prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
@@ -2235,12 +2235,12 @@ void init_uzi(struct Thing *p_owner)
     wdef = &weapon_defs[WEP_UZI];
     wdmgtyp = DMG_UZI;
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
         prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
         prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
@@ -2366,12 +2366,12 @@ void init_minigun(struct Thing *p_owner)
     wdef = &weapon_defs[WEP_MINIGUN];
     wdmgtyp = DMG_MINIGUN;
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
         prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
         prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
@@ -2506,12 +2506,12 @@ void init_long_range(struct Thing *p_owner)
     wdef = &weapon_defs[WEP_LONGRANGE];
     wdmgtyp = DMG_LONGRANGE;
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
         prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
         prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
@@ -2662,7 +2662,7 @@ void init_stasis_gun(struct Thing *p_owner)
         return;
     }
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         short plyr; // stores PlayerIdx or -1
         short user_vy;
@@ -2692,7 +2692,7 @@ void init_stasis_gun(struct Thing *p_owner)
             prc_fin_pt.R[1] = alt_at_point(prc_fin_pt.R[0], prc_fin_pt.R[2]) + MAPCOORD_TO_PRCCOORD(20,0);
         }
 
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
     {
@@ -2724,7 +2724,7 @@ void init_stasis_gun(struct Thing *p_owner)
         p_pod->Owner2 = p_owner->ThingOffset;
     }
     p_target = p_owner->PTarget;
-    p_owner->Flag |= TngF_Unkn20000000;
+    p_owner->Flag |= TngF_ShootAtPos;
     p_owner->PTarget = NULL;
     p_owner->VX = cor_fin_x;
     p_owner->VY = cor_fin_y;
@@ -2793,14 +2793,14 @@ void init_v_rocket(struct Thing *p_owner)
 
     p_target = p_veh->PTarget;
 
-    if ((p_owner->Flag & TngF_Unkn20000000) != 0)
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
         p_shot->U.UEffect.GotoX = p_veh->U.UVehicle.TargetDX;
         p_shot->U.UEffect.GotoY = p_veh->U.UVehicle.TargetDY;
         p_shot->U.UEffect.GotoZ = p_veh->U.UVehicle.TargetDZ;
         // Transfer the flag from owner to shot
-        p_owner->Flag &= ~TngF_Unkn20000000;
-        p_shot->Flag |= TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
+        p_shot->Flag |= TngF_ShootAtPos;
     }
     else if (p_target != NULL)
     {
@@ -2892,19 +2892,19 @@ void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y,
 
     p_target = p_mech->PTarget;
 
-    if ((p_mech->Flag & TngF_Unkn20000000) != 0)
+    if ((p_mech->Flag & TngF_ShootAtPos) != 0)
     {
-        p_owner->Flag &= ~TngF_Unkn20000000;
+        p_owner->Flag &= ~TngF_ShootAtPos;
         p_shot->U.UEffect.GotoX = p_mech->U.UVehicle.TargetDX;
         p_shot->U.UEffect.GotoY = p_mech->U.UVehicle.TargetDY;
         p_shot->U.UEffect.GotoZ = p_mech->U.UVehicle.TargetDZ;
         p_shot->PTarget = NULL;
-        p_shot->Flag |= TngF_Unkn20000000;
+        p_shot->Flag |= TngF_ShootAtPos;
     }
     else if (p_target != NULL)
     {
         p_shot->PTarget = p_target;
-        p_shot->Flag &= ~TngF_Unkn20000000;
+        p_shot->Flag &= ~TngF_ShootAtPos;
         p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(p_target->X);
         p_shot->U.UEffect.GotoY = PRCCOORD_TO_MAPCOORD(p_target->Y);
         p_shot->U.UEffect.GotoZ = PRCCOORD_TO_MAPCOORD(p_target->Z);
@@ -3215,7 +3215,7 @@ void init_fire_weapon(struct Thing *p_person)
         }
     }
     if (((p_person->Flag & TngF_WepCharging) == 0) && (p_person->U.UPerson.CurrentWeapon != WEP_FLAMER))
-        p_person->Flag &= ~TngF_Unkn20000000;
+        p_person->Flag &= ~TngF_ShootAtPos;
     if ((p_person->Flag & TngF_PlayerAgent) != 0)
         set_player_weapon_turn(p_person, p_person->U.UPerson.WeaponTurn);
 #endif
@@ -3406,7 +3406,7 @@ void process_vehicle_weapon(struct Thing *p_vehicle, struct Thing *p_person)
       && (get_vehicle_passenger_in_player_control(p_vehicle) != 0))
         return;
 
-    if ((p_person->Flag & TngF_Unkn20000000) != 0)
+    if ((p_person->Flag & TngF_ShootAtPos) != 0)
     {
         short tdx, tdy, tdz;
 
@@ -3445,13 +3445,13 @@ void process_vehicle_weapon(struct Thing *p_vehicle, struct Thing *p_person)
         p_vehicle->U.UVehicle.TargetDX = tdx;
         p_vehicle->U.UVehicle.TargetDZ = tdz;
         p_vehicle->U.UVehicle.TargetDY = tdy;
-        p_vehicle->Flag |= TngF_Unkn20000000;
+        p_vehicle->Flag |= TngF_ShootAtPos;
     }
     else if (p_person->PTarget != NULL)
     {
         struct Thing *p_target;
 
-        p_vehicle->Flag &= ~TngF_Unkn20000000;
+        p_vehicle->Flag &= ~TngF_ShootAtPos;
         p_target = p_person->PTarget;
         if (p_vehicle->PTarget != p_target)
         {
@@ -3463,7 +3463,7 @@ void process_vehicle_weapon(struct Thing *p_vehicle, struct Thing *p_person)
     if (((p_person->Flag & TngF_TriggerUse) != 0)
       && (p_vehicle->OldTarget < 24)
       && ((p_vehicle->PTarget != NULL && p_person->PTarget != NULL)
-      || (p_vehicle->Flag & TngF_Unkn20000000) != 0))
+      || (p_vehicle->Flag & TngF_ShootAtPos) != 0))
     {
         vehicle_with_person_shoot_at_target(p_person);
     }
@@ -3482,12 +3482,12 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
     asm volatile ("call ASM_process_mech_weapon\n"
         : : "a" (p_vehicle), "d" (p_person));
 #else
-    if ((p_person->Flag & TngF_Unkn20000000) != 0)
+    if ((p_person->Flag & TngF_ShootAtPos) != 0)
     {
         short tdx, tdy, tdz;
 
         p_vehicle->PTarget = NULL;
-        p_vehicle->Flag |= TngF_Unkn20000000;
+        p_vehicle->Flag |= TngF_ShootAtPos;
         if ((p_person->Flag & TngF_PlayerAgent) != 0)
         {
             PlayerInfo *p_player;
@@ -3529,7 +3529,7 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
     {
         struct Thing *p_target;
 
-        p_vehicle->Flag &= ~TngF_Unkn20000000;
+        p_vehicle->Flag &= ~TngF_ShootAtPos;
         p_target = p_person->PTarget;
         if (p_vehicle->PTarget != p_target)
         {
@@ -3543,7 +3543,7 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
 
     if (((p_person->Flag & TngF_TriggerUse) != 0) && ((p_vehicle->U.UVehicle.TNode & 0x0004) != 0)
       && (p_person->U.UPerson.WeaponTurn == 0)
-      && ((p_vehicle->PTarget != NULL && p_person->PTarget != NULL) || (p_vehicle->Flag & TngF_Unkn20000000) != 0))
+      && ((p_vehicle->PTarget != NULL && p_person->PTarget != NULL) || (p_vehicle->Flag & TngF_ShootAtPos) != 0))
     {
         p_person->U.UVehicle.WeaponTurn = 10;
         if (p_vehicle->OldTarget < 24)
@@ -3730,7 +3730,7 @@ void choose_best_weapon_for_range(struct Thing *p_person, int dist)
 void process_weapon_recoil(struct Thing *p_person)
 {
     if (((p_person->Flag2 & TgF2_Unkn0800) == 0) &&
-      ((p_person->Flag & (TngF_Unkn20000000|TngF_PlayerAgent)) == (TngF_Unkn20000000|TngF_PlayerAgent)))
+      ((p_person->Flag & (TngF_ShootAtPos|TngF_PlayerAgent)) == (TngF_ShootAtPos|TngF_PlayerAgent)))
     {
         PlayerInfo *p_player;
         ushort plyr, plagent;
@@ -3743,7 +3743,7 @@ void process_weapon_recoil(struct Thing *p_person)
         p_person->VY = p_player->UserVY[plagent];
         p_person->VZ = p_player->UserVZ[plagent];
     }
-    else if ((p_person->Flag & (TngF_Unkn20000000|TngF_Persuaded)) == (TngF_Unkn20000000|TngF_Persuaded))
+    else if ((p_person->Flag & (TngF_ShootAtPos|TngF_Persuaded)) == (TngF_ShootAtPos|TngF_Persuaded))
     {
         PlayerInfo *p_player;
         struct Thing *p_owner;
@@ -4001,7 +4001,7 @@ void process_move_while_firing(struct Thing *p_person)
     }
     else
     {
-        if ((p_person->Flag & TngF_Unkn20000000) == 0)
+        if ((p_person->Flag & TngF_ShootAtPos) == 0)
             check_persons_target(p_person);
         if (p_person->U.UPerson.Target2 != 0)
         {
@@ -4394,7 +4394,7 @@ void process_wielded_weapon(struct Thing *p_person)
             }
             weapon_inc_timer(p_person, wtype);
 
-            if ((p_person->Flag & (TngF_Unkn20000000|TngF_PlayerAgent)) != (TngF_Unkn20000000|TngF_PlayerAgent))
+            if ((p_person->Flag & (TngF_ShootAtPos|TngF_PlayerAgent)) != (TngF_ShootAtPos|TngF_PlayerAgent))
             {
                 int resp_time;
 
@@ -4466,7 +4466,7 @@ void process_weapon(struct Thing *p_person)
             {
                 p_person->Flag |= TngF_TriggerUse;
                 p_person->PTarget = p_target;
-                p_person->Flag &= ~TngF_Unkn20000000;
+                p_person->Flag &= ~TngF_ShootAtPos;
             }
         }
     }
