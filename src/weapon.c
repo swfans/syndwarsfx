@@ -1290,7 +1290,11 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
     prc_fin_pt->R[1] = p_target->Y + MAPCOORD_TO_PRCCOORD(height, 0);
     prc_fin_pt->R[2] = p_target->Z;
 
-#if 0 //TODO not sure if this is the best place to restrict range, maybe to do that in process_weapon() ?
+    if ((p_owner->U.UPerson.Flag3 & PrsF3_Unkn40) == 0) {
+        // No need for narrowing range
+        return p_target->ThingOffset;
+    }
+
     int dist, range;
     int dist_x, dist_y, dist_z;
     range = get_persons_weapon_range(p_owner, wtype);
@@ -1303,8 +1307,10 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
     dist = map_distance_deltas_fast(PRCCOORD_TO_MAPCOORD(dist_x),
       PRCCOORD_TO_MAPCOORD(dist_y), PRCCOORD_TO_MAPCOORD(dist_z));
 
-    if (dist <= range + p_target->Radius + TILE_TO_MAPCOORD(1, 0))
+    if (dist <= range + p_target->Radius)
     {
+        // The out of range flag could be set because of a different target, so this in not an error
+        LOGSYNC("Target %s %d not out of range", thing_type_name(p_target->Type, p_target->SubType), (int)p_target->ThingOffset);
         return p_target->ThingOffset;
     }
 
@@ -1313,9 +1319,6 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
     prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * dist_z / dist;
 
     return 0;
-#else
-    return p_target->ThingOffset;
-#endif
 }
 
 int bul_path_end(int x1, int y1, int z1, int *x2, int *y2, int *z2,

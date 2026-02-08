@@ -747,8 +747,8 @@ void process_building(struct Thing *p_building)
 int building_hit_by_bullet(struct Thing *p_thing, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, ushort type)
 {
-    if (p_attacker != NULL) {
-        p_attacker->U.UPerson.Flag3 |= 0x40;
+    if ((p_attacker != NULL) && (p_attacker->Type == TT_PERSON)) {
+        p_attacker->U.UPerson.Flag3 |= PrsF3_Unkn40;
     }
     if (p_thing->SubType != 32)
     {

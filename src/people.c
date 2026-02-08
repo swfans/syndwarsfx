@@ -1380,15 +1380,21 @@ void check_persons_target(struct Thing *p_person)
 
     p_target = p_person->PTarget;
 
+    // Handle shooting dead targets
     if ((p_target == NULL) || ((p_target->Flag & TngF_Destroyed) != 0))
     {
         if (p_person->Type == TT_MINE)
             p_person->PTarget = NULL;
         if ((p_person->Flag & TngF_Unkn1000) == 0)
             p_person->Flag &= ~TngF_TriggerUse;
+    }
+
+    // If lost target or stopped shooting, no need for any more checks
+    if ((p_target == NULL) || ((p_person->Flag & TngF_TriggerUse) == 0)) {
         return;
     }
 
+    // Handle shooting allies
     if (things_check_same_group(p_person->ThingOffset, p_target->ThingOffset))
     {
         p_person->PTarget = NULL;
@@ -1396,14 +1402,14 @@ void check_persons_target(struct Thing *p_person)
         return;
     }
 
+    // Handle shooting out of range
     dist = get_things_distance_mapcoords_fast(p_person->ThingOffset, p_target->ThingOffset);
 
     if (dist > range + p_target->Radius)
     {
         if (p_person->Type == TT_MINE)
             p_person->PTarget = NULL;
-        p_person->Flag &= ~TngF_TriggerUse;
-        p_person->U.UPerson.Flag3 |= 0x40;
+        p_person->U.UPerson.Flag3 |= PrsF3_Unkn40;
     }
 }
 
@@ -1439,8 +1445,7 @@ void check_persons_target2(struct Thing *p_person)
 
     if (dist > range + p_target->Radius)
     {
-        p_person->Flag &= ~TngF_TriggerUse;
-        p_person->U.UPerson.Flag3 |= 0x40;
+        p_person->U.UPerson.Flag3 |= PrsF3_Unkn40;
     }
 }
 
