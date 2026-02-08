@@ -2446,6 +2446,7 @@ void blind_progress_game(ulong nturns)
     for (n = 0; n < nturns; n++)
     {
         process_things();
+        process_explode();
         gameturn++;
     }
 }

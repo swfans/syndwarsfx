@@ -1129,6 +1129,11 @@ void animate_explode(void)
         dont_bother_with_explode_faces = 1;
 }
 
+void process_explode(void)
+{
+    if (next_ex_face != 0)
+        animate_explode();
+}
 
 void draw_explode(void)
 {
