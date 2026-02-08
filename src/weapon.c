@@ -2701,9 +2701,8 @@ void init_stasis_gun(struct Thing *p_owner)
     }
     else
     {
-        //TODO use something related to this gun rather than UZI
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_UZI);
+          &prc_beg_pt, p_owner, WEP_STASISFLD);
     }
 
     cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
