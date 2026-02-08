@@ -1055,7 +1055,7 @@ void process_things(void)
 
     if (!execute_commands)
         return;
-    if ((ingame.Flags & GamF_StopThings) == 0)
+    if ((ingame.Flags & TngF_ProgressAction) == 0)
         return;
     monitor_all_samples();
 

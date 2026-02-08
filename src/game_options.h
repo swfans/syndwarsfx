@@ -110,7 +110,7 @@ enum GameFlags {
     GamF_MortalGame   = 0x0010,
     GamF_Unkn0020     = 0x0020,
     GamF_RenderScene  = 0x0040,
-    GamF_StopThings   = 0x0080, /**< Do not process things, stopping ingame action. */
+    TngF_ProgressAction = 0x0080, /**< Process things states, enabling in-mission action. */
     GamF_Unkn0100     = 0x0100,
     GamF_Unkn0200     = 0x0200,
     GamF_DeepRadar    = 0x0400,
@@ -149,7 +149,7 @@ struct InGame {
     ulong fld_unkC4B;	// offset=0x477
     short MissionEndFade;
     short MissionStatus;
-    long Flags;
+    u32 Flags;
     ushort fld_unkC57;
     short fld_unkC59;
     short draw_unknprop_01;

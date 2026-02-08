@@ -3007,11 +3007,25 @@ void init_random_seed_default(void)
 void preprogress_game_turns(void)
 {
     struct Mission *p_missi;
+    u32 bkp_ingame_flags;
+    ubyte bkp_execute_commands;
 
     p_missi = &mission_list[ingame.CurrentMission];
     LOGSYNC("PreProcess %d turns for mission %d, starting at %lu",
       (int)p_missi->PreProcess, (int)ingame.CurrentMission, (ulong)gameturn);
+
+    // Stopping things update would make the preprocess ineffective
+    bkp_ingame_flags = ingame.Flags;
+    ingame.Flags |= TngF_ProgressAction;
+
+    bkp_execute_commands = execute_commands;
+    execute_commands = 1;
+
     blind_progress_game(p_missi->PreProcess);
+
+    execute_commands = bkp_execute_commands;
+    if ((bkp_ingame_flags & TngF_ProgressAction) == 0)
+        ingame.Flags &= ~TngF_ProgressAction;
 }
 
 /** Initializes player presence on a level.
@@ -5552,10 +5566,10 @@ ubyte do_user_interface(void)
     if (is_key_pressed(KC_F3, KMod_CONTROL))
     {
         clear_key_pressed(KC_F3);
-        if (ingame.Flags & GamF_StopThings)
-            ingame.Flags &= ~GamF_StopThings;
+        if (ingame.Flags & TngF_ProgressAction)
+            ingame.Flags &= ~TngF_ProgressAction;
         else
-            ingame.Flags |= GamF_StopThings;
+            ingame.Flags |= TngF_ProgressAction;
         did_inp |= GINPUT_DIRECT;
     }
     if (is_key_pressed(KC_F4, KMod_CONTROL))
