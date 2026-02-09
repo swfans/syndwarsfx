@@ -252,6 +252,54 @@ ubyte packet_action_params_count(ushort action)
     }
 }
 
+void snprint_packet(char *buf, ulong buflen, struct Packet *p_pckt)
+{
+    const char *name;
+    char *s;
+    ubyte nparams;
+    ushort actn;
+
+    actn = (p_pckt->Action & 0x7FFF);
+    s = buf;
+
+    if (actn > sizeof(packet_action_name)/sizeof(packet_action_name[0])) {
+        snprintf(s, buflen - (s - buf), "%s%hu()", "OUTRANGED", actn);
+        return;
+    }
+
+    name = get_packet_action_name(actn);
+
+    snprintf(s, buflen - (s - buf), "%s( ", name);
+    s += strlen(s);
+
+    nparams = packet_action_params_count(actn);
+
+    if (nparams >= 1) {
+        snprintf(s, buflen - (s - buf), "Data(%d)", (int)p_pckt->Data);
+        s += strlen(s);
+    }
+
+    if (nparams >= 2) {
+        { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "X(%d)", (int)p_pckt->X);
+        s += strlen(s);
+    }
+
+    if (nparams >= 3) {
+        { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Y(%d)", (int)p_pckt->Y);
+        s += strlen(s);
+    }
+
+    if (nparams >= 4) {
+        { snprintf(s, buflen - (s - buf), ", "); s += strlen(s); }
+        snprintf(s, buflen - (s - buf), "Z(%d)", (int)p_pckt->Z);
+        s += strlen(s);
+    }
+
+    snprintf(s, buflen - (s-buf), " )");
+}
+
 void build_packet(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z)
 {
 #if 0

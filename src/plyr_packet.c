@@ -1389,10 +1389,20 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
         result = PARes_DONE;
         break;
     }
-    if (result > PARes_SUCCESS) {
-        LOGWARN("Player %d action %s: %s", (int)plyr,
-          get_packet_action_name(p_pckt->Action & 0x7FFF),
-          get_packet_action_result_text(result));
+    if ((debug_log_things & 0x02) != 0)
+    {
+        char locstr[192];
+
+        snprint_packet(locstr, sizeof(locstr), p_pckt);
+
+        if ((p_pckt->Action & 0x7FFF) == PAct_NONE)
+            ; // no logging for empty packet
+        else if (result <= PARes_SUCCESS)
+            LOGSYNC("Player %d packet %s: %s", (int)plyr,
+              locstr, get_packet_action_result_text(result));
+        else
+            LOGWARN("Player %d packet %s: %s", (int)plyr,
+              locstr, get_packet_action_result_text(result));
     }
 }
 

@@ -190,6 +190,7 @@ extern ubyte packet_rec_use_levelno;
 
 const char * get_packet_action_name(ushort atype);
 const char * get_packet_action_result_text(short result);
+void snprint_packet(char *buf, ulong buflen, struct Packet *p_pckt);
 
 void build_packet(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z);
 void build_packet2(struct Packet *packet, ushort action, u32 param1, s32 x, s32 y, s32 z);
