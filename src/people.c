@@ -4070,6 +4070,8 @@ void player_change_person(short thing, ushort plyr)
         dcthing = players[plyr].DirectControl[0];
         p_dcthing = &things[dcthing];
         p_dcthing->Flag &= ~TngF_Unkn1000;
+        // Avoid shooting a target not intended for that, set for previous state
+        p_dcthing->PTarget = NULL;
     }
 
     p_person = &things[thing];
