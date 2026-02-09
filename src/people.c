@@ -1835,7 +1835,7 @@ ushort person_command_until_check_condition(struct Thing *p_person, ushort cond_
                 char locstr[192];
                 snprint_command(cond_locstr, sizeof(cond_locstr), cond_cmd);
                 snprint_command(locstr, sizeof(locstr), cmd);
-                LOGSYNC("Person %s %d %s %d ends, met %s %d, state %d.%d",
+                LOGSYNC_F("Person %s %d %s %d ends, met %s %d, state %d.%d",
                   person_type_name(p_person->SubType), (int)p_person->ThingOffset,
                   cond_locstr, cond_cmd, locstr, cmd, p_person->State, p_person->SubState);
             }
@@ -2625,7 +2625,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
     short othertng;
 
     if ((debug_log_things & 0x01) != 0) {
-        LOGSYNC("%s %d inits %s %d",
+        LOGSYNC_F("Thing %s %d inits %s %d",
           thing_type_name(p_person->Type, p_person->SubType),
           (int)p_person->ThingOffset, command_codename(cmd), (int)cmd);
     }
@@ -2937,7 +2937,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         snprint_command(locstr, sizeof(locstr), cmd);
 
         if (res <= StCh_ALREADY)
-            LOGSYNC("Person %s %d %s %d %s, state %d.%d",
+            LOGSYNC_F("Person %s %d %s %d %s, state %d.%d",
               person_type_name(p_person->SubType), (int)p_person->ThingOffset, locstr,
               cmd, state_change_result_name(res), p_person->State, p_person->SubState);
         else
@@ -2974,7 +2974,7 @@ TbBool person_init_specific_preplay_command(struct Thing *p_person, ushort cmd)
 
         snprint_command(locstr, sizeof(locstr), cmd);
 
-        LOGSYNC("Person %s %d %s %d %s, state %d.%d",
+        LOGSYNC_F("Person %s %d %s %d %s, state %d.%d",
           person_type_name(p_person->SubType), (int)p_person->ThingOffset, locstr,
           cmd, "pre-played", p_person->State, p_person->SubState);
     }
@@ -3633,7 +3633,7 @@ void person_enter_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
     else if ((p_vehicle->State != VehSt_PARKED_PARAL) && (p_vehicle->State != VehSt_PARKED_PERPN) && (p_vehicle->State != VehSt_NONE))
     {
         if ((debug_log_things & 0x01) != 0) {
-            LOGSYNC("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
+            LOGSYNC_F("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
               person_type_name(p_person->SubType), (int)p_person->ThingOffset,
               p_person->State, p_person->SubState,
               vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,
@@ -4774,7 +4774,7 @@ void person_wait(struct Thing *p_person)
         if ((debug_log_things & 0x01) != 0) {
             char locstr[192];
             snprint_command(locstr, sizeof(locstr), p_person->U.UPerson.ComCur);
-            LOGSYNC("Person %s %d %s %d condition met, state %d.%d",
+            LOGSYNC_F("Person %s %d %s %d condition met, state %d.%d",
               person_type_name(p_person->SubType), (int)p_person->ThingOffset,
               locstr, (int)p_person->U.UPerson.ComCur, p_person->State, p_person->SubState);
         }
@@ -4930,7 +4930,7 @@ void person_use_vehicle(struct Thing *p_person)
     if ((p_person->Flag & TngF_InVehicle) != 0)
     {
         if ((debug_log_things & 0x01) != 0) {
-            LOGSYNC("Person %s %d has finished state %d.%d",
+            LOGSYNC_F("Person %s %d has finished state %d.%d",
               person_type_name(p_person->SubType), (int)p_person->ThingOffset,
               p_person->State, p_person->SubState);
         }
@@ -4941,7 +4941,7 @@ void person_use_vehicle(struct Thing *p_person)
     person_goto_point(p_person);
     if ((p_person->Flag & TngF_StandOnVehicle) == 0) {
         if ((debug_log_things & 0x01) != 0) {
-            LOGSYNC("Person %s %d has wrong flags to enter, state %d.%d",
+            LOGSYNC_F("Person %s %d has wrong flags to enter, state %d.%d",
               person_type_name(p_person->SubType), (int)p_person->ThingOffset,
               p_person->State, p_person->SubState);
         }
@@ -4950,7 +4950,7 @@ void person_use_vehicle(struct Thing *p_person)
 
     if (p_person->U.UPerson.Vehicle != p_person->GotoThingIndex) {
         if ((debug_log_things & 0x01) != 0) {
-            LOGSYNC("Person %s %d went to wrong thing, state %d.%d",
+            LOGSYNC_F("Person %s %d went to wrong thing, state %d.%d",
               person_type_name(p_person->SubType), (int)p_person->ThingOffset,
               p_person->State, p_person->SubState);
         }
@@ -4961,7 +4961,7 @@ void person_use_vehicle(struct Thing *p_person)
 
     if (!can_i_enter_vehicle(p_person, p_vehicle)) {
         if ((debug_log_things & 0x01) != 0) {
-            LOGSYNC("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
+            LOGSYNC_F("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
               person_type_name(p_person->SubType), (int)p_person->ThingOffset,
               p_person->State, p_person->SubState,
               vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,

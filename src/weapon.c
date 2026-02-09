@@ -1274,6 +1274,25 @@ void thing_fire_shot_finish_position_straight_forward(struct M31 *prc_fin_pt,
     prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * angle_direction[angl].DiY;
 }
 
+void thing_fire_shot_log(const struct M31 *prc_beg_pt, const struct M31 *prc_fin_pt,
+  const struct Thing *p_owner, const struct Thing *p_target, WeaponType wtype,
+   const char *result)
+{
+    if ((debug_log_things & 0x04) != 0) {
+        LOGSYNC_F("Attacker %s %d shot %s from Coord(%d,%d,%d) to Coord(%d,%d,%d), target %s %d %s",
+          thing_type_name(p_owner->Type, p_owner->SubType), (int)p_owner->ThingOffset,
+          weapon_codename(wtype),
+          PRCCOORD_TO_MAPCOORD(prc_beg_pt->R[0]),
+          PRCCOORD_TO_MAPCOORD(prc_beg_pt->R[1]),
+          PRCCOORD_TO_MAPCOORD(prc_beg_pt->R[2]),
+          PRCCOORD_TO_MAPCOORD(prc_fin_pt->R[0]),
+          PRCCOORD_TO_MAPCOORD(prc_fin_pt->R[1]),
+          PRCCOORD_TO_MAPCOORD(prc_fin_pt->R[2]),
+          thing_type_name(p_target->Type, p_target->SubType), (int)p_target->ThingOffset,
+          result);
+    }
+}
+
 ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
   const struct M31 *prc_beg_pt, struct Thing *p_owner, struct Thing *p_target, WeaponType wtype)
 {
@@ -1292,6 +1311,7 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
 
     if ((p_owner->U.UPerson.Flag3 & PrsF3_Unkn40) == 0) {
         // No need for narrowing range
+        thing_fire_shot_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "reached");
         return p_target->ThingOffset;
     }
 
@@ -1310,13 +1330,15 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
     if (dist <= range + p_target->Radius)
     {
         // The out of range flag could be set because of a different target, so this in not an error
-        LOGSYNC("Target %s %d not out of range", thing_type_name(p_target->Type, p_target->SubType), (int)p_target->ThingOffset);
+        thing_fire_shot_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "unexpectedly reached");
         return p_target->ThingOffset;
     }
 
     prc_fin_pt->R[0] = prc_beg_pt->R[0] + range * dist_x / dist;
     prc_fin_pt->R[1] = prc_beg_pt->R[1] + range * dist_y / dist;
     prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * dist_z / dist;
+
+    thing_fire_shot_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "too far");
 
     return 0;
 }

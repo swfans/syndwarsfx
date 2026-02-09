@@ -96,7 +96,8 @@ print_help (const char *argv0)
 "                -I <num>  Multiplayer connect through IPX using given IPX\n"
 "                          network address\n"
 "                -l <str>  Activate additional logging; s - thing states and\n"
-"                          commands; p - player actions and packets\n"
+"                          commands; p - player actions and packets; w - weapon\n"
+"                          shooting and projectiles\n"
 "                -m <n>,<n> Load campaign with given index, from which load\n"
 "                          mission with given index in single map mode\n"
 "                -N        Sets a flag which is never used. Debug feature?\n"
@@ -274,6 +275,9 @@ static TbBool process_options(int *argc, char ***argv)
                     break;
                 case 's':
                     debug_log_things |= 0x01;
+                    break;
+                case 'w':
+                    debug_log_things |= 0x04;
                     break;
                 default:
                     LOGERR("Invalid value after '-l' parameter. Unexpected char '%c'.", optarg[tmpint]);

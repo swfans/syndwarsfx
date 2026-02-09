@@ -432,7 +432,7 @@ ubyte input_user_control_agent(ushort plyr, short dmuser)
             else
             {
                 if ((debug_log_things & 0x01) != 0) {
-                    LOGSYNC("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
+                    LOGSYNC_F("Person %s %d state %d.%d cannot enter %s %d state %d.%d",
                       person_type_name(p_dcthing->SubType), (int)p_dcthing->ThingOffset,
                       p_dcthing->State, p_dcthing->SubState,
                       vehicle_type_name(p_vehicle->SubType), (int)p_vehicle->ThingOffset,

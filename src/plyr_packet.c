@@ -1398,7 +1398,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
         if ((p_pckt->Action & 0x7FFF) == PAct_NONE)
             ; // no logging for empty packet
         else if (result <= PARes_SUCCESS)
-            LOGSYNC("Player %d packet %s: %s", (int)plyr,
+            LOGSYNC_F("Player %d packet %s: %s", (int)plyr,
               locstr, get_packet_action_result_text(result));
         else
             LOGWARN("Player %d packet %s: %s", (int)plyr,

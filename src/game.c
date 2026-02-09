@@ -5782,7 +5782,7 @@ ubyte do_user_interface(void)
 
             if ((debug_log_things & 0x02) != 0)
             {
-                LOGSYNC("User %d.%d ControlMode 0x%04X Bits 0x%04X Turn %u Dt(%d,%d) OnFace %d",
+                LOGSYNC_F("User %d.%d ControlMode 0x%04X Bits 0x%04X Turn %u Dt(%d,%d) OnFace %d",
                   (int)local_player_no, (int)n, (uint)p_usrinp->ControlMode, (uint)p_usrinp->Bits,
                   (uint)p_usrinp->Turn, (int)p_usrinp->DtX, (int)p_usrinp->DtZ,
                   (int)p_usrinp->OnFace);
@@ -5838,7 +5838,7 @@ ubyte do_user_interface(void)
         }
         if ((debug_log_things & 0x02) != 0)
         {
-            LOGSYNC("User %d.%d ControlMode 0x%04X Bits 0x%04X Turn %u Dt(%d,%d) OnFace %d",
+            LOGSYNC_F("User %d.%d ControlMode 0x%04X Bits 0x%04X Turn %u Dt(%d,%d) OnFace %d",
               (int)local_player_no, (int)n, (uint)p_usrinp->ControlMode, (uint)p_usrinp->Bits,
               (uint)p_usrinp->Turn, (int)p_usrinp->DtX, (int)p_usrinp->DtZ,
               (int)p_usrinp->OnFace);
