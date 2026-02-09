@@ -3832,6 +3832,17 @@ short check_col_collision_when_moved_by(struct Thing *p_person, short sh_x, shor
     return 0;
 }
 
+void person_protect_update_follow_distance(struct Thing *p_person)
+{
+    short plagent, ownplyr;
+    struct Thing *p_owntng;
+
+    p_owntng = &things[p_person->Owner];
+    plagent = p_person->U.UPerson.ComCur & 3;
+    ownplyr = p_owntng->U.UPerson.ComCur & 3;
+    p_person->U.UPerson.ComRange = follow_dist[ownplyr][plagent];
+}
+
 ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 {
 #if 0
@@ -3949,11 +3960,7 @@ ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 
       if (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->State == PerSt_PROTECT_PERSON))
       {
-          short plagent, owagent;
-
-          plagent = p_person->U.UPerson.ComCur & 3;
-          owagent = things[p_person->Owner].U.UPerson.ComCur & 3;
-          p_person->U.UPerson.ComRange = follow_dist[owagent][plagent];
+          person_protect_update_follow_distance(p_person);
       }
 
       if ((p_vehicle->Flag & TngF_Destroyed) != 0)
@@ -4043,10 +4050,67 @@ ubyte person_attempt_to_leave_vehicle(struct Thing *p_person)
     return 0;
 }
 
+void make_peep_protect_peep(struct Thing *p_protector, struct Thing *p_leader)
+{
+    asm volatile ("call ASM_make_peep_protect_peep\n"
+        : : "a" (p_protector), "d" (p_leader));
+}
+
 void player_change_person(short thing, ushort plyr)
 {
+#if 0
     asm volatile ("call ASM_player_change_person\n"
         : : "a" (thing), "d" (plyr));
+#endif
+    struct Thing *p_person;
+
+    {
+        struct Thing *p_dcthing;
+        short dcthing;
+        dcthing = players[plyr].DirectControl[0];
+        p_dcthing = &things[dcthing];
+        p_dcthing->Flag &= ~TngF_Unkn1000;
+    }
+
+    p_person = &things[thing];
+    if ((p_person->Flag2 & TgF2_Unkn10000000) != 0)
+    {
+        p_person->GotoThingIndex = p_person->Owner;
+        p_person->State = PerSt_PROTECT_PERSON;
+        person_protect_update_follow_distance(p_person);
+        p_person->Flag2 &= ~TgF2_Unkn10000000;
+    }
+    players[plyr].DirectControl[0] = thing;
+    p_person->U.UPerson.Target2 = 0;
+    p_person->Flag |= TngF_Unkn1000;
+
+    if (p_person->State == PerSt_PROTECT_PERSON)
+    {
+        struct Thing *p_protng;
+        ushort plagent;
+
+        p_protng = &things[p_person->GotoThingIndex];
+        if (((p_protng->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0) && (p_protng->State != PerSt_PROTECT_PERSON)) {
+            make_peep_protect_peep(p_protng, p_person);
+        }
+        for (plagent = 0; plagent < playable_agents; plagent++)
+        {
+            struct Thing *p_agent;
+
+            p_agent = players[plyr].MyAgent[plagent];
+            if ((p_agent != p_person) && (p_agent->State == PerSt_PROTECT_PERSON) &&
+              (p_agent->GotoThingIndex == p_person->GotoThingIndex))
+            {
+                p_agent->GotoThingIndex = p_person->ThingOffset;
+                p_agent->Owner = p_person->ThingOffset;
+                person_protect_update_follow_distance(p_agent);
+                remove_path(p_agent);
+            }
+        }
+        p_person->State = PerSt_NONE;
+        p_person->Owner = 0;
+        p_person->GotoThingIndex = 0;
+    }
 }
 
 ThingIdx person_find_ferry_to_catch(struct Thing *p_person)
@@ -5701,12 +5765,6 @@ void person_find_next_state(struct Thing *p_person)
     }
 
     person_init_command(p_person, PCmd_USE_WEAPON);
-}
-
-void make_peep_protect_peep(struct Thing *p_protector, struct Thing *p_leader)
-{
-    asm volatile ("call ASM_make_peep_protect_peep\n"
-        : : "a" (p_protector), "d" (p_leader));
 }
 
 void people_intel(ubyte flag)
