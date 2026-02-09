@@ -1308,8 +1308,38 @@ void thing_fire_shot_finish_position_at_marked_spot(struct M31 *prc_fin_pt,
         height = 0;
 
     prc_fin_pt->R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-    prc_fin_pt->R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0) + MAPCOORD_TO_PRCCOORD(height, 0);
     prc_fin_pt->R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+
+    if (wtype == WEP_STASISFLD)
+    {
+        short plyr; // stores PlayerIdx or -1
+        short user_vy;
+
+        user_vy = 0;
+        plyr = person_get_dcontrol_player(p_owner->ThingOffset);
+        if (plyr >= 0)
+        {
+            PlayerInfo *p_player;
+            ushort plagent;
+
+            p_player = &players[plyr];
+            plagent = p_owner->U.UPerson.ComCur & 3;
+            user_vy = p_player->UserVY[plagent];
+            player_clear_user_vect_y(plyr, plagent);
+        }
+        if (user_vy != 0)
+        {
+            prc_fin_pt->R[1] = MAPCOORD_TO_PRCCOORD(user_vy,0);
+        }
+        else
+        {
+            prc_fin_pt->R[1] = alt_at_point(prc_fin_pt->R[0], prc_fin_pt->R[2]) + MAPCOORD_TO_PRCCOORD(20,0);
+        }
+    }
+    else
+    {
+        prc_fin_pt->R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0) + MAPCOORD_TO_PRCCOORD(height, 0);
+    }
 
     thing_fire_shot_at_spot_log(prc_beg_pt, prc_fin_pt, p_owner, wtype, "at marked spot");
 }
@@ -2744,35 +2774,8 @@ void init_stasis_gun(struct Thing *p_owner)
 
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        short plyr; // stores PlayerIdx or -1
-        short user_vy;
-
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
-
-        user_vy = 0;
-        plyr = person_get_dcontrol_player(p_owner->ThingOffset);
-        if (plyr >= 0)
-        {
-            PlayerInfo *p_player;
-            ushort plagent;
-
-            p_player = &players[plyr];
-            plagent = p_owner->U.UPerson.ComCur & 3;
-            user_vy = p_player->UserVY[plagent];
-            p_player->UserVY[plagent] = 0;
-        }
-
-        if (user_vy != 0)
-        {
-            prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(user_vy,0);
-        }
-        else
-        {
-            prc_fin_pt.R[1] = alt_at_point(prc_fin_pt.R[0], prc_fin_pt.R[2]) + MAPCOORD_TO_PRCCOORD(20,0);
-        }
-        thing_fire_shot_at_spot_log(&prc_beg_pt, &prc_fin_pt, p_owner, wtype, "at marked spot");
-
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
@@ -2839,11 +2842,10 @@ void init_v_rocket(struct Thing *p_owner)
         : : "a" (p_owner));
 #else
     ThingIdx shottng;
+    struct M31 prc_beg_pt, prc_fin_pt;
     struct Thing *p_shot;
     struct Thing *p_veh;
     struct Thing *p_mgun;
-    struct Thing *p_target;
-    struct M31 prc_beg_pt;
     int pos_dt_x, pos_dt_z, pos_dt_y;
     int dist;
     WeaponType wtype;
@@ -2875,32 +2877,37 @@ void init_v_rocket(struct Thing *p_owner)
     p_shot->PTarget = NULL;
     p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
 
-    p_target = p_veh->PTarget;
-
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        p_shot->U.UEffect.GotoX = p_veh->U.UVehicle.TargetDX;
-        p_shot->U.UEffect.GotoY = p_veh->U.UVehicle.TargetDY;
-        p_shot->U.UEffect.GotoZ = p_veh->U.UVehicle.TargetDZ;
+        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_veh->U.UVehicle.TargetDX,0);
+        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_veh->U.UVehicle.TargetDY,0);
+        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_veh->U.UVehicle.TargetDZ,0);
         // Transfer the flag from owner to shot
         p_owner->Flag &= ~TngF_ShootAtPos;
         p_shot->Flag |= TngF_ShootAtPos;
     }
-    else if (p_target != NULL)
+    else if (p_veh->PTarget != NULL)
     {
+        struct Thing *p_target;
+        p_target = p_veh->PTarget;
+        prc_fin_pt.R[0] = p_target->X;
+        prc_fin_pt.R[1] = p_target->Y;
+        prc_fin_pt.R[2] = p_target->Z;
         p_shot->PTarget = p_target;
-        p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(p_target->X);
-        p_shot->U.UEffect.GotoY = PRCCOORD_TO_MAPCOORD(p_target->Y);
-        p_shot->U.UEffect.GotoZ = PRCCOORD_TO_MAPCOORD(p_target->Z);
     }
     else
     {
         // The function should be only called if the vehicle has a target set,
         // so this should be safe
-        p_shot->U.UEffect.GotoX = p_veh->U.UVehicle.TargetDX;
-        p_shot->U.UEffect.GotoY = p_veh->U.UVehicle.TargetDY;
-        p_shot->U.UEffect.GotoZ = p_veh->U.UVehicle.TargetDZ;
+        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_veh->U.UVehicle.TargetDX,0);
+        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_veh->U.UVehicle.TargetDY,0);
+        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_veh->U.UVehicle.TargetDZ,0);
     }
+
+    p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[0]);
+    p_shot->U.UEffect.GotoY = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[1]);
+    p_shot->U.UEffect.GotoZ = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[2]);
+
     pos_dt_x = p_shot->U.UEffect.GotoX - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
     pos_dt_y = p_shot->U.UEffect.GotoY - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
     pos_dt_z = p_shot->U.UEffect.GotoZ - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
@@ -2941,9 +2948,9 @@ void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y,
       "call ASM_init_mech_rocket\n"
         : : "a" (p_owner), "d" (p_mech), "b" (x), "c" (y), "g" (z));
 #endif
+    struct M31 prc_beg_pt, prc_fin_pt;
     ThingIdx shottng;
     struct Thing *p_shot;
-    struct Thing *p_target;
     int pos_dt_x, pos_dt_z, pos_dt_y;
     int dist;
 
@@ -2958,9 +2965,13 @@ void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y,
 
     p_shot = &things[shottng];
 
-    p_shot->X = MAPCOORD_TO_PRCCOORD(x, 0);
-    p_shot->Y = MAPCOORD_TO_PRCCOORD(y >> 3, 0);
-    p_shot->Z = MAPCOORD_TO_PRCCOORD(z, 0);
+    prc_beg_pt.R[0] = MAPCOORD_TO_PRCCOORD(x, 0);
+    prc_beg_pt.R[1] = MAPCOORD_TO_PRCCOORD(y >> 3, 0);
+    prc_beg_pt.R[2] = MAPCOORD_TO_PRCCOORD(z, 0);
+
+    p_shot->X = prc_beg_pt.R[0];
+    p_shot->Y = prc_beg_pt.R[1];
+    p_shot->Z = prc_beg_pt.R[2];
     p_shot->Type = TT_ROCKET;
     p_shot->Radius = 50;
     p_shot->Owner = p_owner->ThingOffset;
@@ -2974,37 +2985,41 @@ void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y,
     p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
     p_shot->Flag |= 0x0004;
 
-    p_target = p_mech->PTarget;
-
     if ((p_mech->Flag & TngF_ShootAtPos) != 0)
     {
+        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_mech->U.UVehicle.TargetDX,0);
+        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_mech->U.UVehicle.TargetDY,0);
+        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_mech->U.UVehicle.TargetDZ,0);
         p_owner->Flag &= ~TngF_ShootAtPos;
-        p_shot->U.UEffect.GotoX = p_mech->U.UVehicle.TargetDX;
-        p_shot->U.UEffect.GotoY = p_mech->U.UVehicle.TargetDY;
-        p_shot->U.UEffect.GotoZ = p_mech->U.UVehicle.TargetDZ;
         p_shot->PTarget = NULL;
         p_shot->Flag |= TngF_ShootAtPos;
     }
-    else if (p_target != NULL)
+    else if (p_mech->PTarget != NULL)
     {
+        struct Thing *p_target;
+        p_target = p_mech->PTarget;
+        prc_fin_pt.R[0] = p_target->X;
+        prc_fin_pt.R[1] = p_target->Y;
+        prc_fin_pt.R[2] = p_target->Z;
         p_shot->PTarget = p_target;
         p_shot->Flag &= ~TngF_ShootAtPos;
-        p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(p_target->X);
-        p_shot->U.UEffect.GotoY = PRCCOORD_TO_MAPCOORD(p_target->Y);
-        p_shot->U.UEffect.GotoZ = PRCCOORD_TO_MAPCOORD(p_target->Z);
     }
     else
     {
         // The function should be only called if the vehicle has a target set,
         // so this should be safe
-        p_shot->U.UEffect.GotoX = p_mech->U.UVehicle.TargetDX;
-        p_shot->U.UEffect.GotoY = p_mech->U.UVehicle.TargetDY;
-        p_shot->U.UEffect.GotoZ = p_mech->U.UVehicle.TargetDZ;
+        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_mech->U.UVehicle.TargetDX,0);
+        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_mech->U.UVehicle.TargetDY,0);
+        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_mech->U.UVehicle.TargetDZ,0);
     }
 
-    pos_dt_x = p_shot->U.UEffect.GotoX - x;
-    pos_dt_y = p_shot->U.UEffect.GotoY - (y >> 3);
-    pos_dt_z = p_shot->U.UEffect.GotoZ - z;
+    p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[0]);
+    p_shot->U.UEffect.GotoY = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[1]);
+    p_shot->U.UEffect.GotoZ = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[2]);
+
+    pos_dt_x = p_shot->U.UEffect.GotoX - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
+    pos_dt_y = p_shot->U.UEffect.GotoY - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
+    pos_dt_z = p_shot->U.UEffect.GotoZ - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
 
     dist = map_distance_deltas_fast(pos_dt_x, pos_dt_y, pos_dt_z);
     if (dist == 0)
@@ -3509,7 +3524,7 @@ void process_vehicle_weapon(struct Thing *p_vehicle, struct Thing *p_person)
             if (p_player->UserVY[plagent] != 0)
             {
                 tdy = p_player->UserVY[plagent];
-                p_player->UserVY[plagent] = 0;
+                player_clear_user_vect_y(plyr, plagent);
             }
             else
             {
@@ -3587,7 +3602,7 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
             if (p_player->UserVY[plagent] != 0)
             {
                 tdy = p_player->UserVY[plagent];
-                p_player->UserVY[plagent] = 0;
+                player_clear_user_vect_y(plyr, plagent);
             }
             else
             {

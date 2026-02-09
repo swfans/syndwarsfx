@@ -4092,7 +4092,9 @@ void player_change_person(short thing, ushort plyr)
         ushort plagent;
 
         p_protng = &things[p_person->GotoThingIndex];
-        if (((p_protng->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0) && (p_protng->State != PerSt_PROTECT_PERSON)) {
+        if (((p_protng->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0) &&
+          (p_protng->State != PerSt_PROTECT_PERSON))
+        {
             make_peep_protect_peep(p_protng, p_person);
         }
         for (plagent = 0; plagent < playable_agents; plagent++)

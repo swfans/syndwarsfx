@@ -153,6 +153,9 @@ void player_agents_clear_weapon_delays(PlayerIdx plyr);
 int place_default_player(PlayerIdx plyr, TbBool replace);
 void place_single_player(void);
 
+void player_clear_user_vect(PlayerIdx plyr, short plagent);
+void player_clear_user_vect_y(PlayerIdx plyr, short plagent);
+
 TbBool player_can_toggle_thermal(PlayerIdx plyr);
 void player_toggle_thermal(PlayerIdx plyr);
 void player_update_thermal(PlayerIdx plyr);

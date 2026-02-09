@@ -2706,9 +2706,7 @@ void init_level(void)
         p_player = &players[plyr_no];
         for (plagent = 0; plagent < LOCAL_USERS_MAX_COUNT; plagent++)
         {
-            p_player->UserVX[plagent] = 0;
-            p_player->UserVY[plagent] = 0;
-            p_player->UserVZ[plagent] = 0;
+            player_clear_user_vect(plyr_no, plagent);
             p_player->SpecialItems[plagent] = 0;
             p_player->PanelItem[plagent] = 0;
             p_player->PanelState[plagent] = PANEL_STATE_NORMAL;

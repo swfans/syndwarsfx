@@ -472,6 +472,34 @@ void player_target_clear(PlayerIdx plyr)
     p_player->TargetType = TrgTp_NONE;
 }
 
+void player_clear_user_vect(PlayerIdx plyr, short plagent)
+{
+    PlayerInfo *p_player;
+
+    assert(plyr >= 0);
+    assert(plyr < PLAYERS_LIMIT);
+    assert(plagent >= 0);
+    assert(plagent < LOCAL_USERS_MAX_COUNT);
+
+    p_player = &players[plyr];
+    p_player->UserVX[plagent] = 0;
+    p_player->UserVY[plagent] = 0;
+    p_player->UserVZ[plagent] = 0;
+}
+
+void player_clear_user_vect_y(PlayerIdx plyr, short plagent)
+{
+    PlayerInfo *p_player;
+
+    assert(plyr >= 0);
+    assert(plyr < PLAYERS_LIMIT);
+    assert(plagent >= 0);
+    assert(plagent < LOCAL_USERS_MAX_COUNT);
+
+    p_player = &players[plyr];
+    p_player->UserVY[plagent] = 0;
+}
+
 void kill_my_players(PlayerIdx plyr)
 {
 #if 0
