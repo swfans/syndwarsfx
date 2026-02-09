@@ -439,6 +439,30 @@ ThingIdx direct_control_thing_for_player(PlayerIdx plyr)
     return dcthing;
 }
 
+TbBool thing_is_player_agent_under_direct_control(ThingIdx thing)
+{
+    PlayerInfo *p_player;
+    struct Thing *p_person;
+    PlayerIdx plyr;
+    ushort dmuser;
+
+    if (thing <= 0)
+        return false;
+    p_person = &things[thing];
+    if ((p_person->Flag & TngF_PlayerAgent) == 0)
+        return false;
+
+    plyr = p_person->U.UPerson.ComCur >> 2;
+    p_player = &players[plyr];
+
+    for (dmuser = 0; dmuser < p_player->DoubleMode + 1; dmuser++)
+    {
+        if (thing == (ThingIdx)p_player->DirectControl[dmuser])
+            return true;
+    }
+    return false;
+}
+
 void players_init_default_control_mode(void)
 {
     PlayerIdx plyr;
@@ -476,7 +500,6 @@ void player_clear_user_vect(PlayerIdx plyr, short plagent)
 {
     PlayerInfo *p_player;
 
-    assert(plyr >= 0);
     assert(plyr < PLAYERS_LIMIT);
     assert(plagent >= 0);
     assert(plagent < LOCAL_USERS_MAX_COUNT);
@@ -491,7 +514,6 @@ void player_clear_user_vect_y(PlayerIdx plyr, short plagent)
 {
     PlayerInfo *p_player;
 
-    assert(plyr >= 0);
     assert(plyr < PLAYERS_LIMIT);
     assert(plagent >= 0);
     assert(plagent < LOCAL_USERS_MAX_COUNT);

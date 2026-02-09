@@ -1001,7 +1001,7 @@ void process_things(void)
     int i;
     ushort plyr;
 
-    for (plyr = 0; plyr < 8; plyr++)
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
         PlayerInfo *p_player;
         struct Thing *p_dcthing;
