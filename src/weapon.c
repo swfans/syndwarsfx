@@ -1261,20 +1261,7 @@ TbBool thing_fire_shot_start_position(struct M31 *prc_beg_pt, struct Thing *p_ow
     return true;
 }
 
-void thing_fire_shot_finish_position_straight_forward(struct M31 *prc_fin_pt,
-  const struct M31 *prc_beg_pt, struct Thing *p_owner, WeaponType wtype)
-{
-    ushort range;
-    ubyte angl;
-
-    range = get_persons_weapon_range(p_owner, wtype);
-    angl = p_owner->U.UPerson.Angle;
-    prc_fin_pt->R[0] = prc_beg_pt->R[0] + range * angle_direction[angl].DiX;
-    prc_fin_pt->R[1] = prc_beg_pt->R[1];
-    prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * angle_direction[angl].DiY;
-}
-
-void thing_fire_shot_log(const struct M31 *prc_beg_pt, const struct M31 *prc_fin_pt,
+void thing_fire_shot_target_log(const struct M31 *prc_beg_pt, const struct M31 *prc_fin_pt,
   const struct Thing *p_owner, const struct Thing *p_target, WeaponType wtype,
    const char *result)
 {
@@ -1291,6 +1278,55 @@ void thing_fire_shot_log(const struct M31 *prc_beg_pt, const struct M31 *prc_fin
           thing_type_name(p_target->Type, p_target->SubType), (int)p_target->ThingOffset,
           result);
     }
+}
+
+void thing_fire_shot_at_spot_log(const struct M31 *prc_beg_pt, const struct M31 *prc_fin_pt,
+  const struct Thing *p_owner, WeaponType wtype, const char *result)
+{
+    if ((debug_log_things & 0x04) != 0) {
+        LOGSYNC_F("Attacker %s %d shot %s from Coord(%d,%d,%d) to Coord(%d,%d,%d), %s",
+          thing_type_name(p_owner->Type, p_owner->SubType), (int)p_owner->ThingOffset,
+          weapon_codename(wtype),
+          PRCCOORD_TO_MAPCOORD(prc_beg_pt->R[0]),
+          PRCCOORD_TO_MAPCOORD(prc_beg_pt->R[1]),
+          PRCCOORD_TO_MAPCOORD(prc_beg_pt->R[2]),
+          PRCCOORD_TO_MAPCOORD(prc_fin_pt->R[0]),
+          PRCCOORD_TO_MAPCOORD(prc_fin_pt->R[1]),
+          PRCCOORD_TO_MAPCOORD(prc_fin_pt->R[2]),
+          result);
+    }
+}
+
+void thing_fire_shot_finish_position_at_marked_spot(struct M31 *prc_fin_pt,
+  const struct M31 *prc_beg_pt, struct Thing *p_owner, WeaponType wtype)
+{
+    short height;
+
+    if (wtype == WEP_RAP)
+        height = 20;
+    else
+        height = 0;
+
+    prc_fin_pt->R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
+    prc_fin_pt->R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0) + MAPCOORD_TO_PRCCOORD(height, 0);
+    prc_fin_pt->R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+
+    thing_fire_shot_at_spot_log(prc_beg_pt, prc_fin_pt, p_owner, wtype, "at marked spot");
+}
+
+void thing_fire_shot_finish_position_straight_forward(struct M31 *prc_fin_pt,
+  const struct M31 *prc_beg_pt, struct Thing *p_owner, WeaponType wtype)
+{
+    ushort range;
+    ubyte angl;
+
+    range = get_persons_weapon_range(p_owner, wtype);
+    angl = p_owner->U.UPerson.Angle;
+    prc_fin_pt->R[0] = prc_beg_pt->R[0] + range * angle_direction[angl].DiX;
+    prc_fin_pt->R[1] = prc_beg_pt->R[1];
+    prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * angle_direction[angl].DiY;
+
+    thing_fire_shot_at_spot_log(prc_beg_pt, prc_fin_pt, p_owner, wtype, "straight forward");
 }
 
 ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
@@ -1311,7 +1347,7 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
 
     if ((p_owner->U.UPerson.Flag3 & PrsF3_Unkn40) == 0) {
         // No need for narrowing range
-        thing_fire_shot_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "reached");
+        thing_fire_shot_target_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "reached");
         return p_target->ThingOffset;
     }
 
@@ -1330,7 +1366,7 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
     if (dist <= range + p_target->Radius)
     {
         // The out of range flag could be set because of a different target, so this in not an error
-        thing_fire_shot_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "unexpectedly reached");
+        thing_fire_shot_target_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "unexpectedly reached");
         return p_target->ThingOffset;
     }
 
@@ -1338,7 +1374,7 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
     prc_fin_pt->R[1] = prc_beg_pt->R[1] + range * dist_y / dist;
     prc_fin_pt->R[2] = prc_beg_pt->R[2] + range * dist_z / dist;
 
-    thing_fire_shot_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "too far");
+    thing_fire_shot_target_log(prc_beg_pt, prc_fin_pt, p_owner, p_target, wtype, "too far");
 
     return 0;
 }
@@ -1403,7 +1439,10 @@ void init_laser(struct Thing *p_owner, ushort start_age)
     u32 rhit;
     int damage;
     ThingIdx shottng, targetng;
+    WeaponType wtype;
     ubyte wdmgtyp;
+
+    wtype = WEP_LASER;
 
     shottng = get_new_thing();
     if (shottng == 0) {
@@ -1414,31 +1453,30 @@ void init_laser(struct Thing *p_owner, ushort start_age)
 
     p_shot->U.UObject.Angle = p_owner->U.UPerson.Angle;
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_LASER, 0)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         remove_thing(shottng);
         return;
     }
 
     targetng = 0;
-    wdef = &weapon_defs[WEP_LASER];
+    wdef = &weapon_defs[wtype];
     wdmgtyp = DMG_LASER;
 
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
     {
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_LASER);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
     }
     else if ((p_owner->Flag & TngF_Unkn1000) != 0)
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_LASER);
+          &prc_beg_pt, p_owner, wtype);
     }
     else
     {
@@ -1542,7 +1580,10 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
     u32 rhit;
     ThingIdx shottng;
     short damage;
+    WeaponType wtype;
     ubyte wdmgtyp;
+
+    wtype = WEP_LASER;
 
     if (p_owner->PTarget == NULL)
         return;
@@ -1554,12 +1595,12 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
     }
     p_shot = &things[shottng];
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_LASER, p_owner->U.UMGun.ShotTurn)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, p_owner->U.UMGun.ShotTurn)) {
         remove_thing(shottng);
         return;
     }
 
-    wdef = &weapon_defs[WEP_LASER];
+    wdef = &weapon_defs[wtype];
     wdmgtyp = DMG_LASER;
 
     get_thing_position_mapcoords(&tgtng_x, &tgtng_y, &tgtng_z, p_owner->PTarget->ThingOffset);
@@ -1632,12 +1673,15 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     ThingIdx thing;
     ushort group, n_targets;
     ushort range;
+    WeaponType wtype;
+
+    wtype = WEP_LASER;
 
     p_target = p_person->PTarget;
     if (p_target == NULL)
         return;
 
-    range = get_persons_weapon_range(p_person, WEP_LASER);
+    range = get_persons_weapon_range(p_person, wtype);
     group = p_target->U.UPerson.EffectiveGroup & 0x1F;
     init_laser(p_person, timer);
 
@@ -1684,6 +1728,9 @@ void init_rocket(struct Thing *p_owner)
     int pos_dt_x, pos_dt_z, pos_dt_y;
     int dist;
     ThingIdx shottng;
+    WeaponType wtype;
+
+    wtype = WEP_RAP;
 
     LOGSYNC("Shot fired by %s offs=%d",
       thing_type_name(p_owner->Type, p_owner->SubType),
@@ -1697,7 +1744,7 @@ void init_rocket(struct Thing *p_owner)
 
     p_shot = &things[shottng];
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_RAP, 0)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         remove_thing(shottng);
         return;
     }
@@ -1707,9 +1754,8 @@ void init_rocket(struct Thing *p_owner)
     p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY + 20, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         // Transfer the flag from owner to shot
         p_shot->Flag |= TngF_ShootAtPos;
         p_owner->Flag &= ~TngF_ShootAtPos;
@@ -1718,7 +1764,7 @@ void init_rocket(struct Thing *p_owner)
     {
         ThingIdx targetng;
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_RAP);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
         if (targetng != 0) {
             p_shot->PTarget = &things[targetng];
         }
@@ -1726,7 +1772,7 @@ void init_rocket(struct Thing *p_owner)
     else
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_RAP);
+          &prc_beg_pt, p_owner, wtype);
     }
 
     p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[0]);
@@ -1811,6 +1857,7 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
     struct Thing *p_shot;
     struct WeaponDef *wdef;
     struct M31 prc_beg_pt, prc_fin_pt;
+    WeaponType wtype;
     ubyte wdmgtyp;
 
     ushort shottng;
@@ -1820,6 +1867,7 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
     int cor_beg_x, cor_beg_y, cor_beg_z;
     ThingIdx targetng;
 
+    wtype = WEP_BEAM;
     targetng = 0;
 
     shottng = get_new_thing();
@@ -1829,31 +1877,30 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
     }
     p_shot = &things[shottng];
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_BEAM, 0)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         remove_thing(shottng);
         return;
     }
 
-    wdef = &weapon_defs[WEP_BEAM];
+    wdef = &weapon_defs[wtype];
     wdmgtyp = DMG_BEAM;
     p_shot->U.UEffect.Angle = p_owner->U.UObject.Angle;
 
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
     {
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_BEAM);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
     }
     else if ((p_owner->Flag & 0x1000) != 0)
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_BEAM);
+          &prc_beg_pt, p_owner, wtype);
     }
     else
     {
@@ -2091,8 +2138,11 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
     u32 rhit;
     int damage;
     ThingIdx shottng, targetng;
+    WeaponType wtype;
     ubyte wdmgtyp;
     TbBool allow_gnd_hit_eff;
+
+    wtype = WEP_ELLASER;
 
     shottng = get_new_thing();
     if (shottng == 0) {
@@ -2103,34 +2153,33 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
 
     p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_ELLASER, 0)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         remove_thing(shottng);
         return;
     }
 
     targetng = 0;
     allow_gnd_hit_eff = false;
-    wdef = &weapon_defs[WEP_ELLASER];
+    wdef = &weapon_defs[wtype];
     wdmgtyp = DMG_ELLASER;
 
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
     {
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_ELLASER);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
         allow_gnd_hit_eff = (targetng == 0);
     }
     else if ((p_owner->Flag & TngF_Unkn1000) != 0)
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_ELLASER);
+          &prc_beg_pt, p_owner, wtype);
         allow_gnd_hit_eff = true;
     }
     else
@@ -2244,40 +2293,41 @@ void init_uzi(struct Thing *p_owner)
     int cor_fin_x, cor_fin_y, cor_fin_z;
     int cor_beg_x, cor_beg_y, cor_beg_z;
     ThingIdx targetng;
+    WeaponType wtype;
     ubyte wdmgtyp;
     ubyte status;
     TbBool allow_gnd_hit_eff, make_sparks_sprouts, blood_sprout;
 
+    wtype = WEP_UZI;
     allow_gnd_hit_eff = false;
     make_sparks_sprouts = true;
     blood_sprout = false;
     targetng = 0;
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_UZI, 0)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         return;
     }
 
-    wdef = &weapon_defs[WEP_UZI];
+    wdef = &weapon_defs[wtype];
     wdmgtyp = DMG_UZI;
 
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
     {
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_UZI);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
         allow_gnd_hit_eff = (targetng == 0);
     }
     else
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_UZI);
+          &prc_beg_pt, p_owner, wtype);
         allow_gnd_hit_eff = true;
     }
     cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
@@ -2375,40 +2425,41 @@ void init_minigun(struct Thing *p_owner)
     int cor_fin_x, cor_fin_y, cor_fin_z;
     int cor_beg_x, cor_beg_y, cor_beg_z;
     ThingIdx targetng;
+    WeaponType wtype;
     ubyte wdmgtyp;
     ubyte status;
     TbBool allow_gnd_hit_eff, make_sparks_sprouts, blood_sprout;
 
+    wtype = WEP_MINIGUN;
     allow_gnd_hit_eff = false;
     make_sparks_sprouts = true;
     blood_sprout = false;
     targetng = 0;
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_MINIGUN, 0)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         return;
     }
 
-    wdef = &weapon_defs[WEP_MINIGUN];
+    wdef = &weapon_defs[wtype];
     wdmgtyp = DMG_MINIGUN;
 
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
     {
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_MINIGUN);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
         allow_gnd_hit_eff = (targetng == 0);
     }
     else
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_MINIGUN);
+          &prc_beg_pt, p_owner, wtype);
         allow_gnd_hit_eff = true;
     }
     weapon_sweep(p_owner, &cor_fin_x, &cor_fin_y, &cor_fin_z);
@@ -2515,40 +2566,41 @@ void init_long_range(struct Thing *p_owner)
     int cor_fin_x, cor_fin_y, cor_fin_z;
     int cor_beg_x, cor_beg_y, cor_beg_z;
     ThingIdx targetng;
+    WeaponType wtype;
     ubyte wdmgtyp;
     ubyte status;
     TbBool allow_gnd_hit_eff, make_sparks_sprouts, blood_sprout;
 
+    wtype = WEP_LONGRANGE;
     allow_gnd_hit_eff = false;
     make_sparks_sprouts = true;
     blood_sprout = false;
     targetng = 0;
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_LONGRANGE, 0)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         return;
     }
 
-    wdef = &weapon_defs[WEP_LONGRANGE];
+    wdef = &weapon_defs[wtype];
     wdmgtyp = DMG_LONGRANGE;
 
     if ((p_owner->Flag & TngF_ShootAtPos) != 0)
     {
-        prc_fin_pt.R[0] = MAPCOORD_TO_PRCCOORD(p_owner->VX, 0);
-        prc_fin_pt.R[1] = MAPCOORD_TO_PRCCOORD(p_owner->VY, 0);
-        prc_fin_pt.R[2] = MAPCOORD_TO_PRCCOORD(p_owner->VZ, 0);
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
         p_owner->Flag &= ~TngF_ShootAtPos;
         allow_gnd_hit_eff = true;
     }
     else if (p_owner->PTarget != NULL)
     {
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_LONGRANGE);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
         allow_gnd_hit_eff = (targetng == 0);
     }
     else
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_LONGRANGE);
+          &prc_beg_pt, p_owner, wtype);
         allow_gnd_hit_eff = true;
     }
 
@@ -2681,9 +2733,12 @@ void init_stasis_gun(struct Thing *p_owner)
     struct Thing *p_target;
     int cor_fin_x, cor_fin_y, cor_fin_z;
     int cor_beg_x, cor_beg_y, cor_beg_z;
+    WeaponType wtype;
     ubyte status;
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, WEP_STASISFLD, 0)) {
+    wtype = WEP_STASISFLD;
+
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         return;
     }
 
@@ -2716,18 +2771,19 @@ void init_stasis_gun(struct Thing *p_owner)
         {
             prc_fin_pt.R[1] = alt_at_point(prc_fin_pt.R[0], prc_fin_pt.R[2]) + MAPCOORD_TO_PRCCOORD(20,0);
         }
+        thing_fire_shot_at_spot_log(&prc_beg_pt, &prc_fin_pt, p_owner, wtype, "at marked spot");
 
         p_owner->Flag &= ~TngF_ShootAtPos;
     }
     else if (p_owner->PTarget != NULL)
     {
         thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
-          &prc_beg_pt, p_owner, p_owner->PTarget, WEP_STASISFLD);
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
     }
     else
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
-          &prc_beg_pt, p_owner, WEP_STASISFLD);
+          &prc_beg_pt, p_owner, wtype);
     }
 
     cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
@@ -2790,6 +2846,9 @@ void init_v_rocket(struct Thing *p_owner)
     struct M31 prc_beg_pt;
     int pos_dt_x, pos_dt_z, pos_dt_y;
     int dist;
+    WeaponType wtype;
+
+    wtype = WEP_RAP;
 
     LOGSYNC("Shot fired by %s offs=%d", thing_type_name(p_owner->Type, p_owner->SubType),
       (int)p_owner->ThingOffset);
@@ -2808,7 +2867,7 @@ void init_v_rocket(struct Thing *p_owner)
       thing_type_name(p_veh->Type, p_veh->SubType), (int)p_veh->ThingOffset,
       thing_type_name(p_mgun->Type, p_mgun->SubType), (int)p_mgun->ThingOffset);
 
-    if (!thing_fire_shot_start_position(&prc_beg_pt, p_veh, WEP_RAP, p_mgun->U.UMGun.ShotTurn)) {
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_veh, wtype, p_mgun->U.UMGun.ShotTurn)) {
         remove_thing(shottng);
         return;
     }
