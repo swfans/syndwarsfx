@@ -5779,6 +5779,14 @@ ubyte do_user_interface(void)
             {
                 update_agent_move_direction_deltas(p_usrinp);
             }
+
+            if ((debug_log_things & 0x02) != 0)
+            {
+                LOGSYNC("User %d.%d ControlMode 0x%04X Bits 0x%04X Turn %u Dt(%d,%d) OnFace %d",
+                  (int)local_player_no, (int)n, (uint)p_usrinp->ControlMode, (uint)p_usrinp->Bits,
+                  (uint)p_usrinp->Turn, (int)p_usrinp->DtX, (int)p_usrinp->DtZ,
+                  (int)p_usrinp->OnFace);
+            }
         }
     }
     else
@@ -5827,6 +5835,13 @@ ubyte do_user_interface(void)
                 do_user_input_bits_direction_from_kbd(p_usrinp);
                 do_user_input_bits_direction_from_joy(p_usrinp, 0);
             }
+        }
+        if ((debug_log_things & 0x02) != 0)
+        {
+            LOGSYNC("User %d.%d ControlMode 0x%04X Bits 0x%04X Turn %u Dt(%d,%d) OnFace %d",
+              (int)local_player_no, (int)n, (uint)p_usrinp->ControlMode, (uint)p_usrinp->Bits,
+              (uint)p_usrinp->Turn, (int)p_usrinp->DtX, (int)p_usrinp->DtZ,
+              (int)p_usrinp->OnFace);
         }
     }
     return did_inp;
