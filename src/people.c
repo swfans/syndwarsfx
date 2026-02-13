@@ -1409,6 +1409,8 @@ void check_persons_target(struct Thing *p_person)
     {
         if (p_person->Type == TT_MINE)
             p_person->PTarget = NULL;
+        //TODO selected agent should be allowed to shoot out of range, other agents should release the trigger
+        p_person->Flag &= ~TngF_TriggerUse;
         p_person->U.UPerson.Flag3 |= PrsF3_Unkn40;
     }
 }
@@ -1445,6 +1447,8 @@ void check_persons_target2(struct Thing *p_person)
 
     if (dist > range + p_target->Radius)
     {
+        //TODO selected agent should be allowed to shoot out of range, other agents should release the trigger
+        p_person->Flag &= ~TngF_TriggerUse;
         p_person->U.UPerson.Flag3 |= PrsF3_Unkn40;
     }
 }
