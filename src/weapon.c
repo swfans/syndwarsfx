@@ -3854,8 +3854,63 @@ void get_soul(struct Thing *p_dead, struct Thing *p_person)
 
 void choose_best_weapon_for_range(struct Thing *p_person, int dist)
 {
+#if 0
     asm volatile ("call ASM_choose_best_weapon_for_range\n"
         : : "a" (p_person), "d" (dist));
+#endif
+    u32 wmask;
+    int best_range;
+    int best_damage;
+    WeaponType wtype;
+    WeaponType best_r_wtype;
+    WeaponType best_d_wtype;
+
+    best_range = -10000;
+    best_r_wtype = WEP_NULL;
+
+    best_damage = -10000;
+    best_d_wtype = WEP_NULL;
+
+    //TODO check properties of each weapon instead of masking
+    wmask = p_person->U.UPerson.WeaponsCarried & 0xF29D799F;
+
+    if ((p_person->Flag & TngF_Persuaded) != 0)
+        wmask &= ~(1 << (WEP_H2HTASER-1));
+
+    for (wtype = WEP_NULL + 1; wtype < WEP_TYPES_COUNT && wmask; wtype++, wmask >>= 1)
+    {
+        struct WeaponDef *wdef;
+
+        wdef = &weapon_defs[wtype];
+
+        if ((wmask & 1) == 0)
+            continue;
+
+        if (wdef->RangeBlocks > best_range)
+        {
+            best_range = wdef->RangeBlocks;
+            best_r_wtype = wtype;
+        }
+        if ((TILE_TO_MAPCOORD(wdef->RangeBlocks,0) > dist) && (wdef->HitDamage > best_damage))
+        {
+            best_damage = wdef->HitDamage;
+            best_d_wtype = wtype;
+        }
+    }
+
+    if (best_d_wtype != WEP_NULL)
+    {
+        wtype = best_d_wtype;
+    }
+    else if (best_r_wtype != WEP_NULL)
+    {
+        wtype = best_r_wtype;
+    }
+    else
+    {
+        return;
+    }
+    p_person->U.UPerson.CurrentWeapon = wtype;
 }
 
 void process_weapon_recoil(struct Thing *p_person)
