@@ -58,6 +58,14 @@ extern "C" {
  */
 #define SHOT_ROCKED_SPEED 256
 
+/** Gravitational pull of throwable weapons, in map coords.
+ */
+#define SHOT_THROWN_GRAVITY 500
+
+/** Gravitational pull of throwable weapons, in map coords.
+ */
+#define SHOT_GRENADE_FLIGHT_GTURNS 16
+
 enum WeaponType
 {
   WEP_NULL = 0x0,

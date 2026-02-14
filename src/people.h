@@ -183,11 +183,23 @@ enum PersonSex {
  */
 #define PERSON_CENTER_TO_ROCKT_WEAPON_TIP_MAPCOORD 32
 
+/** Length from person center to tip of the persons weapon, for throwing weapons.
+ *
+ * Used as starting point of shots.
+ */
+#define PERSON_CENTER_TO_THROW_WEAPON_TIP_MAPCOORD 32
+
 /** Distance from bottom of the person to where the weapon barrel is.
  *
  * Used as starting point of shots.
  */
 #define PERSON_BOTTOM_TO_WEAPON_HEIGHT 22
+
+/** Distance from bottom of the person to where the throwing height is.
+ *
+ * Used as starting point of shots.
+ */
+#define PERSON_BOTTOM_TO_THROW_HEIGHT 10
 
 /** Multiplayer when transferring weapon energy points to shield points.
  */

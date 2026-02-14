@@ -1210,6 +1210,11 @@ TbBool thing_fire_shot_start_position(struct M31 *prc_beg_pt, struct Thing *p_ow
 
             switch (wtype)
             {
+            case WEP_NUCLGREN:
+                prc_beg_pt->R[0] = p_owner->X + PERSON_CENTER_TO_THROW_WEAPON_TIP_MAPCOORD * angle_direction[angl].DiX;
+                prc_beg_pt->R[1] = p_owner->Y + MAPCOORD_TO_PRCCOORD(PERSON_BOTTOM_TO_THROW_HEIGHT, 0);
+                prc_beg_pt->R[2] = p_owner->Z + PERSON_CENTER_TO_THROW_WEAPON_TIP_MAPCOORD * angle_direction[angl].DiY;
+                break;
             case WEP_RAP:
                 prc_beg_pt->R[0] = p_owner->X + PERSON_CENTER_TO_ROCKT_WEAPON_TIP_MAPCOORD * angle_direction[angl].DiX;
                 prc_beg_pt->R[1] = p_owner->Y + MAPCOORD_TO_PRCCOORD(PERSON_BOTTOM_TO_WEAPON_HEIGHT, 0);
@@ -2863,8 +2868,88 @@ void init_c_iff(struct Thing *p_owner)
 
 void init_grenade(struct Thing *p_owner, ushort gtype)
 {
+#if 0
     asm volatile ("call ASM_init_grenade\n"
         : : "a" (p_owner), "d" (gtype));
+#endif
+    struct Thing *p_shot;
+    struct M31 prc_beg_pt, prc_fin_pt;
+    int pos_dt_x, pos_dt_z, pos_dt_y;
+    ThingIdx shottng;
+    WeaponType wtype;
+
+    wtype = WEP_NUCLGREN;
+
+    shottng = get_new_thing();
+    if (shottng == 0) {
+        LOGERR("No thing slots for a shot");
+        return;
+    }
+    p_shot = &things[shottng];
+
+    p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
+
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
+        remove_thing(shottng);
+        return;
+    }
+
+    p_shot->PTarget = NULL;
+    p_shot->Flag = 0;
+
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
+    {
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
+        p_owner->Flag &= ~TngF_ShootAtPos;
+    }
+    else if (p_owner->PTarget != NULL)
+    {
+        ThingIdx targetng;
+        targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
+        if (targetng != 0) {
+            p_shot->PTarget = &things[targetng];
+        }
+    }
+    else
+    {
+        thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
+    }
+
+    p_shot->U.UEffect.GotoX = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[0]);
+    p_shot->U.UEffect.GotoY = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[1]);
+    p_shot->U.UEffect.GotoZ = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[2]);
+
+    pos_dt_x = p_shot->U.UEffect.GotoX - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
+    pos_dt_y = p_shot->U.UEffect.GotoY - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
+    pos_dt_z = p_shot->U.UEffect.GotoZ - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
+
+    // Grenade is thown in a way so that it always gives the same explosion delay,
+    // (assuming it will not collide earlier).
+    p_shot->VX = pos_dt_x / SHOT_GRENADE_FLIGHT_GTURNS;
+    // Add acceleration such that half of expected turns the shot will fly up.
+    p_shot->VY = pos_dt_y + SHOT_THROWN_GRAVITY * SHOT_GRENADE_FLIGHT_GTURNS / 2;
+    p_shot->VZ = pos_dt_z / SHOT_GRENADE_FLIGHT_GTURNS;
+
+    p_shot->X = prc_beg_pt.R[0];
+    p_shot->Z = prc_beg_pt.R[2];
+    p_shot->Y = prc_beg_pt.R[1];
+
+    p_shot->StartTimer1 = 999;
+    p_shot->Timer1 = 999;
+    p_shot->Owner = p_owner->ThingOffset;
+    p_shot->Speed = 400;
+    p_shot->StartFrame = 1068;
+    p_shot->U.UEffect.Object = 0;
+    p_shot->Parent = 0;
+    p_shot->Frame = nstart_ani[p_shot->StartFrame];
+    p_shot->Flag |= 0x0004;
+    add_node_thing(p_shot->ThingOffset);
+    p_shot->Type = TT_GRENADE;
+    p_shot->Radius = 50;
+    p_shot->SubType = gtype;
 }
 
 void init_v_rocket(struct Thing *p_owner)
