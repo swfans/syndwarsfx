@@ -1108,7 +1108,7 @@ void set_person_animmode_walk(struct Thing *p_person)
     reset_person_frame(p_person);
     p_person->Timer1 = 48;
     p_person->StartTimer1 = 48;
-    p_person->Flag2 &= ~(0x80000000|TngF_Persuaded);
+    p_person->Flag2 &= ~(TgF2_IgnoreEnemies|TgF2_Unkn00080000);
     p_person->Speed = calc_person_speed(p_person);
 }
 
@@ -4799,7 +4799,7 @@ ubyte protect_person_weapon_unkn1(struct Thing *p_person, struct Thing *p_protng
 
 void process_protect_person(struct Thing *p_person)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_process_protect_person\n"
         : : "a" (p_person));
     return;
@@ -4807,27 +4807,27 @@ void process_protect_person(struct Thing *p_person)
     struct Thing *p_protng;
 
     p_protng = &things[p_person->GotoThingIndex];
-    if ((p_protng->Flag & 0x100) != 0)
-        p_person->Flag |= 0x200000 | 0x0100;
+    if ((p_protng->Flag & TngF_PersSupShld) != 0)
+        p_person->Flag |= TngF_Unkn00200000 | TngF_PersSupShld;
     else
-        p_person->Flag &= ~0x0100;
-    if ((p_person->Flag & 0x2000) != 0)
+        p_person->Flag &= ~TngF_PersSupShld;
+    if ((p_person->Flag & TngF_PlayerAgent) != 0)
     {
         if (p_person->GotoThingIndex != p_person->Owner)
             p_person->GotoThingIndex = p_person->Owner;
-        if (((p_protng->Flag & 0x2000) == 0) &&
-          ((p_person->Flag2 & 0x0800) == 0) && in_network_game)
+        if (((p_protng->Flag & TngF_PlayerAgent) == 0) &&
+          ((p_person->Flag2 & TgF2_Unkn0800) == 0) && in_network_game)
             p_person->State = PerSt_NONE;
     }
-    if ((p_person->U.UPerson.Flag3 & 0x0004) != 0)
+    if ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0)
     {
-        if ((p_protng->U.UPerson.Flag3 & 0x0004) == 0)
+        if ((p_protng->U.UPerson.Flag3 & PrsF3_Unkn04) == 0)
         {
-            p_person->U.UPerson.Flag3 &= ~0x0004;
-            p_person->Flag2 &= ~0x80000000;
+            p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn04;
+            p_person->Flag2 &= ~TgF2_IgnoreEnemies;
         }
         if ((p_protng->State == PerSt_WAIT) &&
-          ((p_person->Flag2 & 0x80000) != 0))
+          ((p_person->Flag2 & TgF2_Unkn00080000) != 0))
         {
             ubyte anim;
             anim = gun_out_anim(p_person, 0);
@@ -4835,64 +4835,66 @@ void process_protect_person(struct Thing *p_person)
             reset_person_frame(p_person);
             p_person->Timer1 = 48;
             p_person->StartTimer1 = 48;
-            p_person->Flag2 &= ~0x080000;
+            p_person->Flag2 &= ~TgF2_Unkn00080000;
             p_person->Speed = calc_person_speed(p_person);
         }
-        p_person->Flag2 &= 0x00080000;
-        if ((p_person->Flag2 & 0x00080000) != 0)
+        p_person->Flag2 &= TgF2_Unkn00080000;
+        if ((p_person->Flag2 & TgF2_Unkn00080000) != 0)
             return;
     }
 
-    if ((p_protng->Flag & 0x4000) == 0)
+    if ((p_protng->Flag & TngF_Unkn4000) == 0)
     {
-        p_person->Flag2 &= ~0x4000;
+        p_person->Flag2 &= ~TgF2_Unkn4000;
     }
-    else if (((p_person->Flag & 0x4000) == 0) &&
-      ((p_person->Flag2 & 0x4000) == 0))
+    else if (((p_person->Flag & TngF_Unkn4000) == 0) &&
+      ((p_person->Flag2 & TgF2_Unkn4000) == 0))
     {
         remove_path(p_person);
         p_person->U.UPerson.ComTimer = -1;
-        p_person->Flag2 |= 0x4000;
+        p_person->Flag2 |= TgF2_Unkn4000;
     }
-    if ((p_person->Flag & 0x4000) != 0)
-      p_person->Flag2 &= ~0x4000;
-
-    if ((p_protng->Flag2 & (0x8000|0x00080000)) != 0)
+    if ((p_person->Flag & TngF_Unkn4000) != 0)
     {
-        if (((p_protng->Flag2 & 0x80000) != 0)
-          && ((p_person->Flag2 & 0x80000) == 0)
+        p_person->Flag2 &= ~TgF2_Unkn4000;
+    }
+
+    if ((p_protng->Flag2 & (TgF2_Unkn8000|TgF2_Unkn00080000)) != 0)
+    {
+        if (((p_protng->Flag2 & TgF2_Unkn00080000) != 0)
+          && ((p_person->Flag2 & TgF2_Unkn00080000) == 0)
           && (p_person->U.UPerson.Stamina > (p_person->U.UPerson.MaxStamina >> 2) + 64))
         {
-            p_person->Flag2 |= 0x80000000;
+            p_person->Flag2 |= TgF2_IgnoreEnemies;
             set_person_animmode_run(p_person);
         }
-        if ((p_protng->Flag2 & 0x8000) != 0)
+        if ((p_protng->Flag2 & TgF2_Unkn8000) != 0)
         {
             remove_path(p_person);
             p_person->U.UPerson.ComTimer = -1;
         }
     }
 
-    if ( (p_person->Flag & 0x10000000) != 0 )
+    if ( (p_person->Flag & TngF_InVehicle) != 0 )
     {
-        if ((p_protng->Flag & 0x10000000) != 0)
+        if ((p_protng->Flag & TngF_InVehicle) != 0)
         {
-            p_person->Flag2 &= ~0x80000000;
+            p_person->Flag2 &= ~TgF2_IgnoreEnemies;
         }
         else
         {
             person_attempt_to_leave_vehicle(p_person);
-            if ((p_person->Flag & 0x2000) != 0)
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
                 person_protect_update_follow_distance(p_person, p_protng->ThingOffset);
             else
                 p_person->U.UPerson.ComRange = 8;
-            p_person->State = 43;
-      }
+            p_person->State = PerSt_PROTECT_PERSON;
+        }
     }
-    else if ((p_protng->Flag & 0x10000000) != 0)
+    else if ((p_protng->Flag & TngF_InVehicle) != 0)
     {
         p_person->U.UPerson.ComRange = 0;
-        if (((p_person->Flag & 0x01000000) != 0) && (p_person->U.UPerson.Vehicle == p_protng->U.UPerson.Vehicle))
+        if (((p_person->Flag & TngF_Unkn01000000) != 0) && (p_person->U.UPerson.Vehicle == p_protng->U.UPerson.Vehicle))
         {
             person_enter_vehicle(p_person, &things[p_person->U.UPerson.Vehicle]);
             if (p_person->U.UPerson.PathIndex != 0)
@@ -4901,18 +4903,18 @@ void process_protect_person(struct Thing *p_person)
             return;
         }
     }
-    if ((p_protng->Flag & 0x0002) != 0)
+    if ((p_protng->Flag & TngF_Destroyed) != 0)
     {
         p_person->State = PerSt_NONE;
         return;
     }
 
-    if ((((p_protng->Flag & 0xC00) != 0) || ((p_protng->Flag2 & 0x400) != 0)) &&
-      ((p_person->Flag2 & 0x80000000) == 0))
+    if ((((p_protng->Flag & (TngF_TriggerUse|TngF_WepCharging)) != 0) || ((p_protng->Flag2 & TgF2_Unkn0400) != 0)) &&
+      ((p_person->Flag2 & TgF2_IgnoreEnemies) == 0))
     {
       if ((p_protng->PTarget == NULL) || (p_person->U.UPerson.CurrentWeapon == 0))
       {
-        if (((p_person->Flag & 0x2000) == 0) || ((p_protng->Flag & 0x20000000) == 0))
+        if (((p_person->Flag & TngF_PlayerAgent) == 0) || ((p_protng->Flag & TngF_ShootAtPos) == 0))
         {
             // no action
         }
@@ -4928,7 +4930,7 @@ void process_protect_person(struct Thing *p_person)
             short full_angle;
             ubyte angl;
 
-            p_person->Flag |= 0x20000000;
+            p_person->Flag |= TngF_ShootAtPos;
             prot_plyr = p_protng->U.UPerson.ComCur >> 2;
             face_cor_x = players[prot_plyr].SpecialItems[0];
             face_cor_y = players[prot_plyr].SpecialItems[1];
@@ -4941,7 +4943,7 @@ void process_protect_person(struct Thing *p_person)
               PRCCOORD_TO_MAPCOORD(p_person->Z),
               &face_cor_x, &face_cor_y, &face_cor_z, weapon_range);
 
-            if ((p_person->Flag & 0x2000) != 0)
+            if ((p_person->Flag & TngF_PlayerAgent) != 0)
             {
                 PlayerIdx plyr;
                 short plagent;
@@ -4950,9 +4952,10 @@ void process_protect_person(struct Thing *p_person)
                 plagent = p_person->U.UPerson.ComCur & 3;
                 player_set_user_vect(plyr, plagent, face_cor_x, face_cor_y, face_cor_z);
             }
-            p_person->Flag |= 0x0800;
-            if ((p_person->Flag & 0x10000000) != 0)
-                things[p_person->U.UPerson.Vehicle].Flag |= 0x01000000;
+            p_person->Flag |= TngF_TriggerUse;
+            if ((p_person->Flag & TngF_InVehicle) != 0) {
+                things[p_person->U.UPerson.Vehicle].Flag |= TngF_Unkn01000000;
+            }
 
             full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_person->X),
               PRCCOORD_TO_MAPCOORD(p_person->Z), face_cor_x, face_cor_z);
@@ -4978,11 +4981,11 @@ void process_protect_person(struct Thing *p_person)
             {
               if (see_range * see_range <= weapon_range * weapon_range)
               {
-                  p_person->U.UPerson.Flag3 &= ~0x0008;
+                  p_person->U.UPerson.Flag3 &= ~PrsF3_Unkn08;
               }
-              else if ((p_person->Flag & 0x2000) == 0)
+              else if ((p_person->Flag & TngF_PlayerAgent) == 0)
               {
-                  p_person->U.UPerson.Flag3 |= 0x0008;
+                  p_person->U.UPerson.Flag3 |= PrsF3_Unkn08;
               }
               p_person->PTarget = p_protng->PTarget;
             }
@@ -4990,49 +4993,49 @@ void process_protect_person(struct Thing *p_person)
       }
     }
 
-    if ((p_person->Flag & 0x20000000) != 0 && (p_person->Flag & 0xC00) == 0)
-        p_person->Flag &= ~0x20000000;
-    if ((p_person->Flag & 0x20000000) != 0)
+    if ((p_person->Flag & TngF_ShootAtPos) != 0 && (p_person->Flag & (TngF_TriggerUse|TngF_WepCharging)) == 0)
+        p_person->Flag &= ~TngF_ShootAtPos;
+    if ((p_person->Flag & TngF_ShootAtPos) != 0)
     {
-        if ((p_protng->Flag & 0x0800) == 0) {
-            p_person->Flag &= ~0x0800;
+        if ((p_protng->Flag & TngF_TriggerUse) == 0) {
+            p_person->Flag &= ~TngF_TriggerUse;
         }
     }
     else if (p_person->PTarget != NULL)
     {
         struct Thing *p_target;
         p_target = p_person->PTarget;
-        if ((p_target->Flag & 0x0002) != 0) {
+        if ((p_target->Flag & TngF_Destroyed) != 0) {
             p_person->PTarget = NULL;
-            p_person->Flag &= ~0x0800;
+            p_person->Flag &= ~TngF_TriggerUse;
         }
     }
     else
     {
-        p_person->Flag &= ~0x0800;
+        p_person->Flag &= ~TngF_TriggerUse;
     }
-    if ((p_person->PTarget != NULL) && (p_person->Flag2 & 0x80000000) != 0)
+    if ((p_person->PTarget != NULL) && (p_person->Flag2 & TgF2_IgnoreEnemies) != 0)
         p_person->PTarget = NULL;
-    if (((p_person->Flag & 0x2000) == 0) && ((p_protng->Flag & 0x10000000) == 0))
+    if (((p_person->Flag & TngF_PlayerAgent) == 0) && ((p_protng->Flag & TngF_InVehicle) == 0))
         p_person->U.UPerson.ComRange = 8;
-    if (((p_person->Flag & 0x10000000) == 0)
-      && ((p_person->U.UPerson.Flag3 & 0x04) == 0)
+    if (((p_person->Flag & TngF_InVehicle) == 0)
+      && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) == 0)
       && person_goto_person_nav(p_person) < (p_person->U.UPerson.ComRange * p_person->U.UPerson.ComRange) << 12
-      && ((p_person->Flag2 & 0x80000) != 0)
-      && ((p_protng->Flag2 & 0x80000) == 0))
+      && ((p_person->Flag2 & TgF2_Unkn00080000) != 0)
+      && ((p_protng->Flag2 & TgF2_Unkn00080000) == 0))
     {
         set_person_animmode_walk(p_person);
     }
     if ((p_person->PTarget == NULL)
       && (p_person->U.UPerson.Target2 == 0)
-      && ((p_person->Flag & 0x20000000) == 0))
+      && ((p_person->Flag & TngF_ShootAtPos) == 0))
     {
-        if ((p_person->Flag & 0x0800) != 0)
-            p_person->Flag &= ~0x0800;
+        if ((p_person->Flag & TngF_TriggerUse) != 0)
+            p_person->Flag &= ~TngF_TriggerUse;
     }
     if (p_person->PTarget != NULL)
     {
-        p_person->Flag &= ~0x20000000;
+        p_person->Flag &= ~TngF_ShootAtPos;
         try_and_kill_target(p_person);
     }
     if (p_person->State == 0)
