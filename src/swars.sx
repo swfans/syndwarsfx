@@ -42874,7 +42874,7 @@ GLOBAL_FUNC(ASM_process_danger)	/* 0x054130 */
 
 
 /*----------------------------------------------------------------*/
-try_and_kill_target:	/* 0x05418C */
+GLOBAL_FUNC(ASM_try_and_kill_target)	/* 0x05418C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -43490,7 +43490,7 @@ GLOBAL_FUNC(ASM_process_support_person)	/* 0x054824 */
 		cmpl   $0x0,0x40(%edx)
 		je     jump_5489e
 		mov    %edx,%eax
-		call   try_and_kill_target
+		call   ac_try_and_kill_target
 		pop    %edx
 		pop    %ecx
 		pop    %ebx
@@ -44381,7 +44381,7 @@ GLOBAL_FUNC(ASM_process_protect_person)	/* 0x054B54 */
 		and    $0xdf,%bh
 		mov    %esi,%eax
 		mov    %bh,0xf(%esi)
-		call   try_and_kill_target
+		call   ac_try_and_kill_target
 	jump_55373:
 		xor    %eax,%eax
 		mov    0xa(%esi),%ax
@@ -44652,7 +44652,7 @@ GLOBAL_FUNC(ASM_process_persuaded)	/* 0x0554B8 */
 		cmpl   $0x0,0x40(%esi)
 		je     jump_556c0
 		mov    %esi,%eax
-		call   try_and_kill_target
+		call   ac_try_and_kill_target
 		cmpl   $0x0,0x40(%esi)
 		jne    jump_556e3
 	jump_556c0:

@@ -3420,7 +3420,7 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
               return 1;
           }
           if ((p_attacker != NULL) && (type != DMG_ELSTRAND)
-            && !thing_group_have_truce(p_attacker->U.UPerson.EffectiveGroup, p_thing->U.UPerson.EffectiveGroup & 0x7F)
+            && !persons_have_truce(p_attacker, p_thing)
             && (((p_attacker->Flag & TngF_Unkn1000) != 0) || ((p_thing == p_attacker->PTarget) && (p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)))
           {
               ubyte attack_grp, victim_grp;
@@ -3836,15 +3836,19 @@ short check_col_collision_when_moved_by(struct Thing *p_person, short sh_x, shor
     return 0;
 }
 
-void person_protect_update_follow_distance(struct Thing *p_person)
+void person_protect_update_follow_distance(struct Thing *p_person, ThingIdx leadtng)
 {
-    short plagent, ownplyr;
-    struct Thing *p_owntng;
+    struct Thing *p_leadtng;
+    short plagent, leadagnt;
 
-    p_owntng = &things[p_person->Owner];
+    if (leadtng > 0) {
+        p_leadtng = &things[leadtng];
+        leadagnt = p_leadtng->U.UPerson.ComCur & 3;
+    } else {
+        leadagnt = 0;
+    }
     plagent = p_person->U.UPerson.ComCur & 3;
-    ownplyr = p_owntng->U.UPerson.ComCur & 3;
-    p_person->U.UPerson.ComRange = follow_dist[ownplyr][plagent];
+    p_person->U.UPerson.ComRange = follow_dist[leadagnt][plagent];
 }
 
 ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
@@ -3964,7 +3968,7 @@ ubyte person_leave_vehicle(struct Thing *p_person, struct Thing *p_vehicle)
 
       if (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->State == PerSt_PROTECT_PERSON))
       {
-          person_protect_update_follow_distance(p_person);
+          person_protect_update_follow_distance(p_person, p_person->Owner);
       }
 
       if ((p_vehicle->Flag & TngF_Destroyed) != 0)
@@ -4083,7 +4087,7 @@ void player_change_person(short thing, ushort plyr)
     {
         p_person->GotoThingIndex = p_person->Owner;
         p_person->State = PerSt_PROTECT_PERSON;
-        person_protect_update_follow_distance(p_person);
+        person_protect_update_follow_distance(p_person, p_person->GotoThingIndex);
         p_person->Flag2 &= ~TgF2_Unkn10000000;
     }
     players[plyr].DirectControl[0] = thing;
@@ -4111,7 +4115,7 @@ void player_change_person(short thing, ushort plyr)
             {
                 p_agent->GotoThingIndex = p_person->ThingOffset;
                 p_agent->Owner = p_person->ThingOffset;
-                person_protect_update_follow_distance(p_agent);
+                person_protect_update_follow_distance(p_agent, p_agent->GotoThingIndex);
                 remove_path(p_agent);
             }
         }
@@ -4755,10 +4759,284 @@ void process_im_shoved(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void try_and_kill_target(struct Thing *p_person)
+{
+    asm volatile ("call ASM_try_and_kill_target\n"
+        : : "a" (p_person));
+}
+
+ubyte protect_person_weapon_unkn1(struct Thing *p_person, struct Thing *p_protng)
+{
+    WeaponType wtype;
+
+    wtype = p_protng->U.UPerson.CurrentWeapon;
+    if ((wtype <= 11) || (wtype >= 14 && wtype <= 15))
+        return 1;
+    else if (wtype >= 12 && wtype <= 13)
+        return 0;
+    else if (wtype == 16)
+        return 0;
+    else if (wtype == 18)
+        return 0;
+    else if ((wtype == 17) || (wtype >= 19 && wtype <= 21))
+        return 1;
+    else if (wtype == 22)
+        return (wtype == p_person->U.UPerson.CurrentWeapon) ? 3 : 1;
+    else if (wtype >= 23 && wtype <= 24)
+        return 1;
+    else if (wtype == 25)
+        return (wtype == p_person->U.UPerson.CurrentWeapon) ? 3 : 1;
+    else if (wtype == 26)
+        return (wtype == p_person->U.UPerson.CurrentWeapon) ? 1 : 0;
+    else if (wtype >= 27 && wtype <= 29)
+        return 0;
+    else if (wtype >= 30)
+        return 1;
+    assert(!"unreachable");
+    return 0;
+}
+
+
 void process_protect_person(struct Thing *p_person)
 {
+#if 1
     asm volatile ("call ASM_process_protect_person\n"
         : : "a" (p_person));
+    return;
+#endif
+    struct Thing *p_protng;
+
+    p_protng = &things[p_person->GotoThingIndex];
+    if ((p_protng->Flag & 0x100) != 0)
+        p_person->Flag |= 0x200000 | 0x0100;
+    else
+        p_person->Flag &= ~0x0100;
+    if ((p_person->Flag & 0x2000) != 0)
+    {
+        if (p_person->GotoThingIndex != p_person->Owner)
+            p_person->GotoThingIndex = p_person->Owner;
+        if (((p_protng->Flag & 0x2000) == 0) &&
+          ((p_person->Flag2 & 0x0800) == 0) && in_network_game)
+            p_person->State = PerSt_NONE;
+    }
+    if ((p_person->U.UPerson.Flag3 & 0x0004) != 0)
+    {
+        if ((p_protng->U.UPerson.Flag3 & 0x0004) == 0)
+        {
+            p_person->U.UPerson.Flag3 &= ~0x0004;
+            p_person->Flag2 &= ~0x80000000;
+        }
+        if ((p_protng->State == PerSt_WAIT) &&
+          ((p_person->Flag2 & 0x80000) != 0))
+        {
+            ubyte anim;
+            anim = gun_out_anim(p_person, 0);
+            p_person->U.UPerson.AnimMode = anim;
+            reset_person_frame(p_person);
+            p_person->Timer1 = 48;
+            p_person->StartTimer1 = 48;
+            p_person->Flag2 &= ~0x080000;
+            p_person->Speed = calc_person_speed(p_person);
+        }
+        p_person->Flag2 &= 0x00080000;
+        if ((p_person->Flag2 & 0x00080000) != 0)
+            return;
+    }
+
+    if ((p_protng->Flag & 0x4000) == 0)
+    {
+        p_person->Flag2 &= ~0x4000;
+    }
+    else if (((p_person->Flag & 0x4000) == 0) &&
+      ((p_person->Flag2 & 0x4000) == 0))
+    {
+        remove_path(p_person);
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->Flag2 |= 0x4000;
+    }
+    if ((p_person->Flag & 0x4000) != 0)
+      p_person->Flag2 &= ~0x4000;
+
+    if ((p_protng->Flag2 & (0x8000|0x00080000)) != 0)
+    {
+        if (((p_protng->Flag2 & 0x80000) != 0)
+          && ((p_person->Flag2 & 0x80000) == 0)
+          && (p_person->U.UPerson.Stamina > (p_person->U.UPerson.MaxStamina >> 2) + 64))
+        {
+            p_person->Flag2 |= 0x80000000;
+            set_person_animmode_run(p_person);
+        }
+        if ((p_protng->Flag2 & 0x8000) != 0)
+        {
+            remove_path(p_person);
+            p_person->U.UPerson.ComTimer = -1;
+        }
+    }
+
+    if ( (p_person->Flag & 0x10000000) != 0 )
+    {
+        if ((p_protng->Flag & 0x10000000) != 0)
+        {
+            p_person->Flag2 &= ~0x80000000;
+        }
+        else
+        {
+            person_attempt_to_leave_vehicle(p_person);
+            if ((p_person->Flag & 0x2000) != 0)
+                person_protect_update_follow_distance(p_person, p_protng->ThingOffset);
+            else
+                p_person->U.UPerson.ComRange = 8;
+            p_person->State = 43;
+      }
+    }
+    else if ((p_protng->Flag & 0x10000000) != 0)
+    {
+        p_person->U.UPerson.ComRange = 0;
+        if (((p_person->Flag & 0x01000000) != 0) && (p_person->U.UPerson.Vehicle == p_protng->U.UPerson.Vehicle))
+        {
+            person_enter_vehicle(p_person, &things[p_person->U.UPerson.Vehicle]);
+            if (p_person->U.UPerson.PathIndex != 0)
+                remove_path(p_person);
+            p_person->State = PerSt_PROTECT_PERSON;
+            return;
+        }
+    }
+    if ((p_protng->Flag & 0x0002) != 0)
+    {
+        p_person->State = PerSt_NONE;
+        return;
+    }
+
+    if ((((p_protng->Flag & 0xC00) != 0) || ((p_protng->Flag2 & 0x400) != 0)) &&
+      ((p_person->Flag2 & 0x80000000) == 0))
+    {
+      if ((p_protng->PTarget == NULL) || (p_person->U.UPerson.CurrentWeapon == 0))
+      {
+        if (((p_person->Flag & 0x2000) == 0) || ((p_protng->Flag & 0x20000000) == 0))
+        {
+            // no action
+        }
+        else if (protect_person_weapon_unkn1(p_person, p_protng) == 0)
+        {
+            // no action
+        }
+        else if ((p_protng->PTarget == NULL) && (p_person->U.UPerson.Target2 == 0))
+        {
+            short face_cor_x, face_cor_y, face_cor_z;
+            int weapon_range;
+            PlayerIdx prot_plyr;
+            short full_angle;
+            ubyte angl;
+
+            p_person->Flag |= 0x20000000;
+            prot_plyr = p_protng->U.UPerson.ComCur >> 2;
+            face_cor_x = players[prot_plyr].SpecialItems[0];
+            face_cor_y = players[prot_plyr].SpecialItems[1];
+            face_cor_z = players[prot_plyr].SpecialItems[2];
+
+            weapon_range = get_weapon_range(p_person);
+            map_limit_distance_to_target_fast(
+              PRCCOORD_TO_MAPCOORD(p_person->X),
+              PRCCOORD_TO_MAPCOORD(p_person->Y),
+              PRCCOORD_TO_MAPCOORD(p_person->Z),
+              &face_cor_x, &face_cor_y, &face_cor_z, weapon_range);
+
+            if ((p_person->Flag & 0x2000) != 0)
+            {
+                PlayerIdx plyr;
+                short plagent;
+
+                plyr = p_person->U.UPerson.ComCur >> 2;
+                plagent = p_person->U.UPerson.ComCur & 3;
+                player_set_user_vect(plyr, plagent, face_cor_x, face_cor_y, face_cor_z);
+            }
+            p_person->Flag |= 0x0800;
+            if ((p_person->Flag & 0x10000000) != 0)
+                things[p_person->U.UPerson.Vehicle].Flag |= 0x01000000;
+
+            full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_person->X),
+              PRCCOORD_TO_MAPCOORD(p_person->Z), face_cor_x, face_cor_z);
+            angl = (((ushort)(full_angle + 128) >> 8) + 8) & 7;
+            if (angl != p_person->U.UPerson.Angle)
+                change_player_angle(p_person, angl);
+        }
+      }
+      else
+      {
+        if (protect_person_weapon_unkn1(p_person, p_protng) == 0)
+        {
+            // no action
+        }
+        else if (!persons_have_truce(p_protng, p_protng->PTarget))
+        {
+            int weapon_range;
+            int see_range;
+
+            weapon_range = get_weapon_range(p_person);
+            see_range = can_i_see_thing(p_person, p_protng->PTarget, weapon_range * weapon_range + 1280 * 1280, 1);
+            if (see_range != 0)
+            {
+              if (see_range * see_range <= weapon_range * weapon_range)
+              {
+                  p_person->U.UPerson.Flag3 &= ~0x0008;
+              }
+              else if ((p_person->Flag & 0x2000) == 0)
+              {
+                  p_person->U.UPerson.Flag3 |= 0x0008;
+              }
+              p_person->PTarget = p_protng->PTarget;
+            }
+        }
+      }
+    }
+
+    if ((p_person->Flag & 0x20000000) != 0 && (p_person->Flag & 0xC00) == 0)
+        p_person->Flag &= ~0x20000000;
+    if ((p_person->Flag & 0x20000000) != 0)
+    {
+        if ((p_protng->Flag & 0x0800) == 0) {
+            p_person->Flag &= ~0x0800;
+        }
+    }
+    else if (p_person->PTarget != NULL)
+    {
+        struct Thing *p_target;
+        p_target = p_person->PTarget;
+        if ((p_target->Flag & 0x0002) != 0) {
+            p_person->PTarget = NULL;
+            p_person->Flag &= ~0x0800;
+        }
+    }
+    else
+    {
+        p_person->Flag &= ~0x0800;
+    }
+    if ((p_person->PTarget != NULL) && (p_person->Flag2 & 0x80000000) != 0)
+        p_person->PTarget = NULL;
+    if (((p_person->Flag & 0x2000) == 0) && ((p_protng->Flag & 0x10000000) == 0))
+        p_person->U.UPerson.ComRange = 8;
+    if (((p_person->Flag & 0x10000000) == 0)
+      && ((p_person->U.UPerson.Flag3 & 0x04) == 0)
+      && person_goto_person_nav(p_person) < (p_person->U.UPerson.ComRange * p_person->U.UPerson.ComRange) << 12
+      && ((p_person->Flag2 & 0x80000) != 0)
+      && ((p_protng->Flag2 & 0x80000) == 0))
+    {
+        set_person_animmode_walk(p_person);
+    }
+    if ((p_person->PTarget == NULL)
+      && (p_person->U.UPerson.Target2 == 0)
+      && ((p_person->Flag & 0x20000000) == 0))
+    {
+        if ((p_person->Flag & 0x0800) != 0)
+            p_person->Flag &= ~0x0800;
+    }
+    if (p_person->PTarget != NULL)
+    {
+        p_person->Flag &= ~0x20000000;
+        try_and_kill_target(p_person);
+    }
+    if (p_person->State == 0)
+        p_person->State = PerSt_PROTECT_PERSON;
 }
 
 void process_wander(struct Thing *p_person)
@@ -5798,12 +6076,9 @@ void process_person(struct Thing *p_person)
           && ((p_person->Flag & (TngF_Unkn40000000|TngF_Destroyed)) == 0)
           && ((p_person->Flag2 & (TgF2_KnockedOut|TgF2_Unkn0008)) == 0))
         {
-            struct Thing *p_target;
-
             p_person->GotoThingIndex = p_person->Owner;
-            p_target = &things[p_person->GotoThingIndex];
             p_person->State = PerSt_PROTECT_PERSON;
-            p_person->U.UPerson.ComRange = follow_dist[p_target->U.UPerson.ComCur & 3][p_person->U.UPerson.ComCur & 3];
+            person_protect_update_follow_distance(p_person, p_person->GotoThingIndex);
             p_person->Flag2 &= ~TgF2_Unkn10000000;
         }
     }
@@ -6024,11 +6299,8 @@ void process_person(struct Thing *p_person)
               person_goto_point(p_person);
               if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0))
               {
-                  struct Thing *p_target;
-
-                  p_target = &things[p_person->GotoThingIndex];
                   p_person->State = PerSt_PROTECT_PERSON;
-                  p_person->U.UPerson.ComRange = follow_dist[p_target->U.UPerson.ComCur & 3][p_person->U.UPerson.ComCur & 3];
+                  person_protect_update_follow_distance(p_person, p_person->GotoThingIndex);
               }
               break;
         case PerSt_WANDER:

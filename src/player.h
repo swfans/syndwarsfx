@@ -154,6 +154,8 @@ void player_agents_clear_weapon_delays(PlayerIdx plyr);
 int place_default_player(PlayerIdx plyr, TbBool replace);
 void place_single_player(void);
 
+void player_set_user_vect(PlayerIdx plyr, short plagent,
+  short vx, short vy, short vz);
 void player_clear_user_vect(PlayerIdx plyr, short plagent);
 void player_clear_user_vect_y(PlayerIdx plyr, short plagent);
 
