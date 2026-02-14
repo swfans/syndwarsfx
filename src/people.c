@@ -4765,37 +4765,11 @@ void try_and_kill_target(struct Thing *p_person)
         : : "a" (p_person));
 }
 
-ubyte protect_person_weapon_unkn1(struct Thing *p_person, struct Thing *p_protng)
+ubyte protect_person_simultaneous_fire(struct Thing *p_person, struct Thing *p_protng)
 {
-    WeaponType wtype;
-
-    wtype = p_protng->U.UPerson.CurrentWeapon;
-    if ((wtype <= 11) || (wtype >= 14 && wtype <= 15))
-        return 1;
-    else if (wtype >= 12 && wtype <= 13)
-        return 0;
-    else if (wtype == 16)
-        return 0;
-    else if (wtype == 18)
-        return 0;
-    else if ((wtype == 17) || (wtype >= 19 && wtype <= 21))
-        return 1;
-    else if (wtype == 22)
-        return (wtype == p_person->U.UPerson.CurrentWeapon) ? 3 : 1;
-    else if (wtype >= 23 && wtype <= 24)
-        return 1;
-    else if (wtype == 25)
-        return (wtype == p_person->U.UPerson.CurrentWeapon) ? 3 : 1;
-    else if (wtype == 26)
-        return (wtype == p_person->U.UPerson.CurrentWeapon) ? 1 : 0;
-    else if (wtype >= 27 && wtype <= 29)
-        return 0;
-    else if (wtype >= 30)
-        return 1;
-    assert(!"unreachable");
-    return 0;
+    return weapon_simultaneous_fire_in_group(p_protng->U.UPerson.CurrentWeapon,
+      p_person->U.UPerson.CurrentWeapon);
 }
-
 
 void process_protect_person(struct Thing *p_person)
 {
@@ -4918,7 +4892,7 @@ void process_protect_person(struct Thing *p_person)
         {
             // no action
         }
-        else if (protect_person_weapon_unkn1(p_person, p_protng) == 0)
+        else if (protect_person_simultaneous_fire(p_person, p_protng) == 0)
         {
             // no action
         }
@@ -4966,7 +4940,7 @@ void process_protect_person(struct Thing *p_person)
       }
       else
       {
-        if (protect_person_weapon_unkn1(p_person, p_protng) == 0)
+        if (protect_person_simultaneous_fire(p_person, p_protng) == 0)
         {
             // no action
         }

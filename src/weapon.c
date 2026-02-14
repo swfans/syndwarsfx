@@ -606,9 +606,19 @@ TbBool weapon_is_breaking_will(WeaponType wtype)
     return (wtype == WEP_PERSUADRTRN) || (wtype == WEP_PERSUADER2);
 }
 
+TbBool weapon_is_for_restoration(WeaponType wtype)
+{
+    return (wtype == WEP_MEDI1) || (wtype == WEP_MEDI2);
+}
+
 TbBool weapon_is_self_affecting(WeaponType wtype)
 {
     return (wtype == WEP_MEDI1) || (wtype == WEP_MEDI2) || (wtype == WEP_CLONESHLD);
+}
+
+TbBool weapon_has_unstackable_effect(WeaponType wtype)
+{
+    return (wtype == WEP_STASISFLD) || (wtype == WEP_TIMEGUN);
 }
 
 ushort weapon_fourpack_index(WeaponType wtype)
@@ -653,6 +663,28 @@ TbBool weapon_can_be_charged(WeaponType wtype)
 {
     return (wtype == WEP_LASER) || (wtype == WEP_ELLASER)
       || (wtype == WEP_BEAM) || (wtype == WEP_QDEVASTATOR);
+}
+
+ubyte weapon_simultaneous_fire_in_group(WeaponType lead_wtype, WeaponType follwr_wtype)
+{
+    if (weapon_is_for_spreading_on_ground(lead_wtype)) {
+        return 0;
+    }
+    if (weapon_is_for_planting(lead_wtype)) {
+        return 0;
+    }
+    if (weapon_is_for_restoration(lead_wtype) && weapon_is_self_affecting(lead_wtype)) {
+        return 0;
+    }
+    if (weapon_has_unstackable_effect(lead_wtype)) {
+        return (lead_wtype == follwr_wtype) ? 3 : 1;
+    }
+    if (weapon_is_for_deploying(lead_wtype)) {
+        if (lead_wtype == WEP_AIRSTRIKE)
+            return 0;
+        return (lead_wtype == follwr_wtype) ? 1 : 0;
+    }
+    return 1;
 }
 
 TbBool weapons_has_weapon(ulong weapons, WeaponType wtype)

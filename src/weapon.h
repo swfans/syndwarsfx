@@ -203,9 +203,19 @@ TbBool weapon_is_for_spreading_on_ground(WeaponType wtype);
  */
 TbBool weapon_is_deployed_at_wielder_pos(WeaponType wtype);
 
+/** Returns if the weapon is for restoring parameters (ie. health) rather than inflicting damage.
+ */
+TbBool weapon_is_for_restoration(WeaponType wtype);
+
 /** Returns if the weapon is targeted at / affects the wielding person.
  */
 TbBool weapon_is_self_affecting(WeaponType wtype);
+
+/** Returns if a weapon effects are not additive/stackable.
+ *
+ * Effects are unstackable if a single shot gives the same effect as multiple simultaneous shots.
+ */
+TbBool weapon_has_unstackable_effect(WeaponType wtype);
 
 /** Returns if a weapon has limited amount of uses before disappearing.
  */
@@ -221,6 +231,10 @@ TbBool weapon_can_be_charged(WeaponType wtype);
  * use the same resources and same player controls.
  */
 TbBool weapon_has_targetting(WeaponType wtype);
+
+/** Returns flags for whether leader shooting a weapon should cause follower shoot his weapon as well.
+ */
+ubyte weapon_simultaneous_fire_in_group(WeaponType lead_wtype, WeaponType follwr_wtype);
 
 /** Returns panel sprite index to be used to represent the weapon.
  */
