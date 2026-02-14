@@ -286,6 +286,10 @@ TbBool person_has_supershield_active(ThingIdx person);
 TbBool person_can_toggle_supershield(ThingIdx person);
 void person_supershield_toggle(struct Thing *p_person);
 
+/** Returns if a target thing is within shooting range of persons current weapon.
+ */
+TbBool person_has_weapon_target_within_range(struct Thing *p_person, ThingIdx target);
+
 /** Returns if a person can be used as energy source to enable thermal view.
  */
 TbBool person_can_sustain_thermal(ThingIdx person);

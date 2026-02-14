@@ -4584,20 +4584,30 @@ void process_weapon(struct Thing *p_person)
 
     process_move_while_firing(p_person);
 
+    // Normal protect/presuade state does not transfer shooting dead bodies from owner.
+    // Handle such transfer here, if neccessary.
     if (((p_person->Flag & TngF_Persuaded) != 0) || (p_person->State == PerSt_PROTECT_PERSON))
     {
-        struct Thing *p_owner;
         struct Thing *p_target;
+        struct Thing *p_owner;
 
-        p_owner = &things[p_person->Owner];
-        p_target = p_owner->PTarget;
+        if (p_person->Owner > 0) {
+            p_owner = &things[p_person->Owner];
+            p_target = p_owner->PTarget;
+        } else {
+            p_owner = NULL;
+            p_target = NULL;
+        }
         if (p_target != NULL)
         {
             if ((p_target->State == PerSt_DEAD) && (p_owner->Flag & (TngF_WepCharging|TngF_TriggerUse)) != 0)
             {
-                p_person->Flag |= TngF_TriggerUse;
-                p_person->PTarget = p_target;
-                p_person->Flag &= ~TngF_ShootAtPos;
+                if (person_has_weapon_target_within_range(p_person, p_target->ThingOffset))
+                {
+                    p_person->Flag |= TngF_TriggerUse;
+                    p_person->PTarget = p_target;
+                    p_person->Flag &= ~TngF_ShootAtPos;
+                }
             }
         }
     }
