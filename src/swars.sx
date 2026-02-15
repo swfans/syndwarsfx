@@ -77642,7 +77642,7 @@ func_75b47:
 
 
 /*----------------------------------------------------------------*/
-init_just_things:	/* 0x075CF0 */
+GLOBAL_FUNC (ASM_init_just_things)	/* 0x075CF0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -77740,7 +77740,7 @@ GLOBAL_FUNC (ASM_init_things)	/* 0x75DDC */
 		mov    $0x1,%edx
 		mov    %eax,things
 		mov    %eax,EXPORT_SYMBOL(sthings)
-		call   init_just_things
+		call   ac_init_just_things
 		mov    %dx,EXPORT_SYMBOL(next_command)
 		pop    %edx
 		pop    %ebx

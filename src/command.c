@@ -419,6 +419,11 @@ TbBool is_command_any_until(struct Command *p_cmd)
     return true;
 }
 
+void init_commands(void)
+{
+    next_command = 1;
+}
+
 ushort get_new_command(void)
 {
     struct Command *p_cmd;

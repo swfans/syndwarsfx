@@ -29,6 +29,7 @@
 #include "bigmap.h"
 #include "building.h"
 #include "bmbang.h"
+#include "command.h"
 #include "display.h"
 #include "engindrwlstx.h"
 #include "enginfexpl.h"
@@ -64,6 +65,7 @@ struct UnkFLight { // sizeof=0x0A
 
 ushort next_unkn_full_light = 1;
 extern struct UnkFLight unkn_full_lights[50];
+extern u32 things_init_times; // = 0;
 
 ubyte debug_log_things = 0;
 
@@ -298,10 +300,25 @@ void move_mapwho(struct Thing *p_thing, int x, int y, int z)
         : : "a" (p_thing), "d" (x), "b" (y), "c" (z));
 }
 
+void init_just_things(void)
+{
+    asm volatile ("call ASM_init_just_things\n"
+        :  :  : "eax" );
+}
+
 void init_things(void)
 {
+#if 0
     asm volatile ("call ASM_init_things\n"
         :  :  : "eax" );
+#endif
+    things_init_times++;
+    gameturn = 0;
+    memset(game_user_heap + 34000, 0, 0x3EFD0u);
+    things = (struct Thing *)(game_user_heap + 124000);
+    sthings = (struct SimpleThing *)(game_user_heap + 124000);
+    init_just_things();
+    init_commands();
 }
 
 void quick_light_unkn_func_04(short a1, int a2, short a3, short a4)
@@ -414,22 +431,24 @@ struct SimpleThing *init_nuclear_bomb(MapCoord x, MapCoord y, MapCoord z)
     return ret;
 #endif
     struct SimpleThing *p_sthing;
-    ThingIdx new_sthing;
+    ThingIdx thing;
 
     if (x < 0)
-        return 0;
+        return NULL;
     if (z < 0)
-        return 0;
-    if (sthings_used > STHINGS_LIMIT - 5)
-        return 0;
+        return NULL;
+    if (sthings_used > STHINGS_LIMIT - 5) {
+        return NULL;
+    }
+    thing = get_new_sthing();
+    if (thing == 0) {
+        return NULL;
+    }
+    if (thing <= -STHINGS_LIMIT-1) {
+        return NULL;
+    }
 
-    new_sthing = get_new_sthing();
-    if (new_sthing == 0)
-        return 0;
-    if (new_sthing < -STHINGS_LIMIT)
-        return 0;
-
-    p_sthing = &sthings[new_sthing];
+    p_sthing = &sthings[thing];
     p_sthing->Type = SmTT_NUCLEAR_BOMB;
     p_sthing->Radius = 64;
     p_sthing->X = MAPCOORD_TO_PRCCOORD(x, 0);
@@ -437,7 +456,7 @@ struct SimpleThing *init_nuclear_bomb(MapCoord x, MapCoord y, MapCoord z)
     p_sthing->Y = MAPCOORD_TO_PRCCOORD(y, 0);
     p_sthing->Timer1 = 0;
     p_sthing->Flag = (TngF_InVehicle|TngF_Persuaded|TngF_Unkn0004);
-    add_node_sthing(new_sthing);
+    add_node_sthing(thing);
     set_nuclear_shade_point(x, y, z);
 
     return p_sthing;
@@ -1288,14 +1307,17 @@ short add_static(int x, int y, int z, ushort frame, int timer)
 
     if (map_coords_limit(NULL, NULL, NULL, x, y, z))
         return 0;
-    if (sthings_used > STHINGS_LIMIT - 5)
+    if (sthings_used > STHINGS_LIMIT - 5) {
         return 0;
+    }
 
     thing = get_new_sthing();
-    if (thing == 0)
+    if (thing == 0) {
         return 0;
-    if (thing <= -STHINGS_LIMIT-1)
+    }
+    if (thing <= -STHINGS_LIMIT-1) {
         return 0;
+    }
     p_sthing = &sthings[thing];
     p_sthing->Z = MAPCOORD_TO_PRCCOORD(z,127);
     p_sthing->X = MAPCOORD_TO_PRCCOORD(x,127);
@@ -1793,11 +1815,39 @@ struct SimpleThing *create_stasis_pod(MapCoord x, MapCoord y, MapCoord z,
 struct SimpleThing *create_time_pod(MapCoord x, MapCoord y, MapCoord z,
   ushort timer)
 {
+#if 0
     struct SimpleThing *ret;
     asm volatile (
       "call ASM_create_time_pod\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (timer));
     return ret;
+#endif
+    struct SimpleThing *p_podtng;
+    ThingIdx thing;
+
+    if (sthings_used > STHINGS_LIMIT - 5) {
+        return NULL;
+    }
+    if ( x < 0 || z < 0 )
+        return NULL;
+    thing = get_new_sthing();
+    if (thing == 0) {
+        return NULL;
+    }
+    if (thing <= -STHINGS_LIMIT-1) {
+        return NULL;
+    }
+    p_podtng = &sthings[thing];
+    p_podtng->Radius = 0;
+    p_podtng->StartFrame = 0;
+    p_podtng->Type = 30;
+    p_podtng->State = 0;
+    p_podtng->X = MAPCOORD_TO_PRCCOORD(x, 0);
+    p_podtng->Z = MAPCOORD_TO_PRCCOORD(z, 0);
+    p_podtng->Y = MAPCOORD_TO_PRCCOORD(y, 0);
+    p_podtng->Timer1 = timer;
+    add_node_sthing(thing);
+    return p_podtng;
 }
 
 void mine_detonate(struct Thing *p_thing)
