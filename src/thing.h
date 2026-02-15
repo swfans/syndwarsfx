@@ -551,7 +551,7 @@ struct STngUFire {
     short flame;
 };
 
-struct SimpleThing
+struct SimpleThing // sizeof=60
 {
     /** Index of some kind of entity which generated the thing.
      * Speciifics depend on thing type; often it's another thing index,

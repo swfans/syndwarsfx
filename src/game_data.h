@@ -106,6 +106,7 @@ void adjust_memory_use(void);
 TbResult init_memory(MemSystem *mem_table);
 int get_memory_ptr_allocated_count(void **mgptr);
 TbResult propagate_memory_sizes(void);
+void init_things_memory_with_user_heap(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -22,6 +22,7 @@
 #include "bffile.h"
 #include "bfdir.h"
 #include "bffnuniq.h"
+#include "bfmemut.h"
 #include "bfstrut.h"
 
 #include "campaign.h"
@@ -43,6 +44,7 @@
 #include "lvobjctv.h"
 #include "lvwalk.h"
 #include "swlog.h"
+#include "thing.h"
 #include "tngcolisn.h"
 #include "osunix.h"
 #include "oswindws.h"
@@ -54,6 +56,8 @@ static char data_path_hdd[DISKPATH_SIZE] = "";
 static char game_dir_language[64] = "language/eng";
 
 u32 scratch_malloc_size = 0;
+
+extern ubyte *game_user_heap;
 
 /******************************************************************************/
 
@@ -585,4 +589,18 @@ TbResult propagate_memory_sizes(void)
     return ret;
 }
 
+void init_things_memory_with_user_heap(void)
+{
+    ubyte *buf;
+    u32 sthings_len, things_len;
+
+    buf = game_user_heap + 34000;
+    sthings_len = STHINGS_LIMIT * sizeof(struct SimpleThing);
+    things_len = THINGS_LIMIT * sizeof(struct Thing);
+    LbMemorySet(buf, 0, sthings_len + things_len);
+
+    buf += sthings_len;
+    things = (struct Thing *)buf;
+    sthings = (struct SimpleThing *)buf;
+}
 /******************************************************************************/

@@ -37,6 +37,7 @@
 #include "enginsngtxtr.h"
 #include "frame_sprani.h"
 #include "game.h"
+#include "game_data.h"
 #include "game_options.h"
 #include "game_speed.h"
 #include "matrix.h"
@@ -314,9 +315,8 @@ void init_things(void)
 #endif
     things_init_times++;
     gameturn = 0;
-    memset(game_user_heap + 34000, 0, 0x3EFD0u);
-    things = (struct Thing *)(game_user_heap + 124000);
-    sthings = (struct SimpleThing *)(game_user_heap + 124000);
+
+    init_things_memory_with_user_heap();
     init_just_things();
     init_commands();
 }

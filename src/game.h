@@ -201,7 +201,6 @@ extern struct ColColumn *game_col_columns;
 extern ushort next_col_column;
 extern struct SingleObjectFace3 *game_special_object_faces;
 extern struct SingleObjectFace4 *game_special_object_faces4;
-extern ubyte *game_user_heap;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
