@@ -1261,6 +1261,18 @@ TbBool thing_fire_shot_start_position(struct M31 *prc_beg_pt, struct Thing *p_ow
         }
         else if (p_owner->SubType == SubTT_VEH_MECH)
         {
+            short angl;
+            angl = p_owner->U.UVehicle.AngleY;
+            angl = (angl + 2 * LbFPMath_PI) & LbFPMath_AngleMask;
+
+            switch (wtype)
+            {
+            default:
+                prc_beg_pt->R[0] = p_owner->X + ((MECH_CENTER_TO_BEAM_WEAPON_TIP_MAPCOORD * lbSinTable[angl]) >> 8);
+                prc_beg_pt->R[2] = p_owner->Z + ((MECH_CENTER_TO_BEAM_WEAPON_TIP_MAPCOORD * lbSinTable[angl + LbFPMath_PI/2]) >> 8);
+                prc_beg_pt->R[1] = p_owner->Y + MAPCOORD_TO_PRCCOORD(MECH_BOTTOM_TO_BEAM_WEAPON_HEIGHT, 0);
+                break;
+            }
             assert(!"Not implemented");
         }
         else
@@ -1278,9 +1290,10 @@ TbBool thing_fire_shot_start_position(struct M31 *prc_beg_pt, struct Thing *p_ow
             else
                 angl = p_owner->U.UMGun.AngleY - 48;
             angl = (angl + 2 * LbFPMath_PI) & LbFPMath_AngleMask;
+
             prc_beg_pt->R[0] = p_owner->X + 3 * lbSinTable[angl] / 2;
             prc_beg_pt->R[2] = p_owner->Z - 3 * lbSinTable[angl + LbFPMath_PI/2] / 2;
-            prc_beg_pt->R[1] = p_owner->Y;
+            prc_beg_pt->R[1] = p_owner->Y + MAPCOORD_TO_PRCCOORD(MGUN_BOTTOM_TO_WEAPON_HEIGHT, 0);
         }
         break;
     default:
@@ -1509,6 +1522,11 @@ void init_laser(struct Thing *p_owner, ushort start_age)
     WeaponType wtype;
     ubyte wdmgtyp;
 
+    // This function can be called for objects, IFF mines and people
+    // not for mguns or vehicles - they have their own function
+    assert(offsetof(struct Thing, U.UPerson.Angle) == offsetof(struct Thing, U.UObject.Angle));
+    assert(offsetof(struct Thing, U.UPerson.Angle) == offsetof(struct Thing, U.UEffect.Angle));
+
     wtype = WEP_LASER;
 
     shottng = get_new_thing();
@@ -1518,7 +1536,7 @@ void init_laser(struct Thing *p_owner, ushort start_age)
     }
     p_shot = &things[shottng];
 
-    p_shot->U.UObject.Angle = p_owner->U.UPerson.Angle;
+    p_shot->U.UEffect.Angle = p_owner->U.UPerson.Angle;
 
     if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
         remove_thing(shottng);
@@ -1915,7 +1933,7 @@ void update_razor_wire(struct Thing *p_person)
         : : "a" (p_person));
 }
 
-void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
+void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte stype)
 {
 #if 0
     asm volatile ("call ASM_init_laser_beam\n"
@@ -2101,13 +2119,13 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
     p_shot->Flag = TngF_Unkn0004;
     add_node_thing(p_shot->ThingOffset);
 
-    switch (type)
+    switch (stype)
     {
     case 17:
         p_shot->Type = TT_LASER29;
         break;
     case 20:
-        p_shot->Type = 38;
+        p_shot->Type = TT_LASER38;
         play_dist_sample(p_shot, 0x25u, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
         bang_new4(MAPCOORD_TO_PRCCOORD(p_shot->VX, 0),
           MAPCOORD_TO_PRCCOORD(p_shot->VY, 0),
@@ -2117,10 +2135,76 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte type)
     }
 }
 
-void init_laser_guided(struct Thing *p_owner, ushort start_age)
+void init_laser_guided(struct Thing *p_owner, ushort count)
 {
+#if 0
     asm volatile ("call ASM_init_laser_guided\n"
-        : : "a" (p_owner), "d" (start_age));
+        : : "a" (p_owner), "d" (count));
+    return;
+#endif
+    WeaponType wtype;
+    u32 group_bits;
+    int a_dist;
+
+    wtype = WEP_LASER; // there is no weapon for q devastator energy spall
+    a_dist = 0x10000;
+    group_bits = ~(1 << p_owner->U.UPerson.EffectiveGroup);
+
+    // Person must be given; for vehicles, use the driver
+    assert(p_owner->Type == TT_PERSON);
+
+    for (; count > 0; count--)
+    {
+        struct M31 prc_beg_pt;
+        struct Thing *p_shot;
+        struct Thing *p_target;
+        ThingIdx person;
+        ThingIdx shottng;
+
+        person = find_nearest_person_min(
+          PRCCOORD_TO_MAPCOORD(p_owner->X),
+          PRCCOORD_TO_MAPCOORD(p_owner->Y),
+          PRCCOORD_TO_MAPCOORD(p_owner->Z),
+          a_dist, &a_dist, -1, group_bits);
+        if (person == 0)
+            break;
+
+        shottng = get_new_thing();
+        if (shottng == 0) {
+            LOGERR("No thing slots for a shot");
+            break;
+        }
+        p_shot = &things[shottng];
+
+        p_shot->U.UEffect.Angle = p_owner->U.UObject.Angle;
+
+        if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
+            remove_thing(shottng);
+            return;
+        }
+
+        p_shot->U.UEffect.AngleY = ((p_owner->U.UPerson.Angle + 4) & 7) << 8;
+        if ((p_owner->Flag & TngF_PlayerAgent) == 0)
+        {
+            short dangl;
+
+            dangl = (LbRandomAnyShort() & 0x01FF) - 255;
+            p_shot->U.UEffect.AngleY += dangl;
+            p_shot->U.UEffect.AngleY &= 0x07FF;
+        }
+        p_shot->X = prc_beg_pt.R[0];
+        p_shot->Z = prc_beg_pt.R[2];
+        p_shot->Y = prc_beg_pt.R[1];
+
+        p_target = &things[person];
+        p_shot->StartTimer1 = 30;
+        p_shot->Timer1 = 30;
+        p_shot->Flag = TngF_Unkn0004;
+        p_shot->Owner = p_owner->ThingOffset;
+        p_shot->PTarget = p_target;
+        add_node_thing(p_shot->ThingOffset);
+        p_shot->Type = TT_LASER_GUIDED;
+    }
 }
 
 TbBool weapon_shooting_floor_creates_smoke(MapCoord cor_x, MapCoord cor_z)
@@ -2338,14 +2422,14 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
     add_node_thing(p_shot->ThingOffset);
 }
 
-void init_laser_q_sep(struct Thing *p_owner, ushort start_age)
+void init_laser_q_sep(struct Thing *p_owner, ushort count)
 {
-    init_laser_guided(p_owner, start_age);
-    init_laser_guided(p_owner, start_age);
-    init_laser_guided(p_owner, start_age);
-    init_laser_guided(p_owner, start_age);
-    init_laser_guided(p_owner, start_age);
-    init_laser_beam(p_owner, start_age, 0x14u);
+    init_laser_guided(p_owner, count);
+    init_laser_guided(p_owner, count);
+    init_laser_guided(p_owner, count);
+    init_laser_guided(p_owner, count);
+    init_laser_guided(p_owner, count);
+    init_laser_beam(p_owner, count, 20);
 }
 
 void init_uzi(struct Thing *p_owner)

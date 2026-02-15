@@ -30,6 +30,18 @@ extern "C" {
 
 #define VEHICLE_PASSENGER_LIMIT 500
 
+/** Distance from bottom of the mech body to where the barrel is, for beam weapons.
+ *
+ * Used as starting point of shots.
+ */
+#define MECH_BOTTOM_TO_BEAM_WEAPON_HEIGHT 22
+
+/** Length from mech body center to tip of the mech weapon, for beam weapons.
+ *
+ * Used as starting point of shots.
+ */
+#define MECH_CENTER_TO_BEAM_WEAPON_TIP_MAPCOORD 128
+
 enum SubTypeVehicle {
   SubTT_VEH_TRAIN = 0x1D,
   SubTT_VEH_UNKN30 = 0x1E,

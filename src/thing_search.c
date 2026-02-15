@@ -1079,4 +1079,18 @@ struct Thing *check_for_radius_hit_person(int prc_x, int prc_y, int prc_z,
 #endif
 }
 
+short find_nearest_person_min(int x, int y, int z,
+  int n_dist, int *a_dist, int angle1, u32 group_bits)
+{
+    short ret;
+    asm volatile (
+      "push %7\n"
+      "push %6\n"
+      "push %5\n"
+      "call ASM_find_nearest_person_min\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (n_dist), "g" (a_dist), "g" (angle1), "g" (group_bits));
+    return ret;
+}
+
+
 /******************************************************************************/

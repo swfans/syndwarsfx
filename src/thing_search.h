@@ -115,6 +115,9 @@ ThingIdx search_things_for_any_including_offmap_nearest_within_circle(short X, s
 struct Thing *check_for_radius_hit_person(int prc_x, int prc_y, int prc_z,
         int radius, struct Thing *p_owner, int flag, int skip);
 
+short find_nearest_person_min(int x, int y, int z,
+  int n_dist, int *a_dist, int angle1, u32 group_bits);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

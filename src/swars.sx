@@ -51372,7 +51372,7 @@ GLOBAL_FUNC(ASM_person_go_sleep)	/* 0x05A2C0 */
 
 
 /*----------------------------------------------------------------*/
-find_nearest_person_min:	/* 0x05A3D8 */
+GLOBAL_FUNC(ASM_find_nearest_person_min)	/* 0x05A3D8 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -51492,7 +51492,7 @@ init_electricity_bomb:	/* 0x05A4D0 */
 		push   %eax
 		mov    %esi,%edx
 		mov    %ebp,%eax
-		call   find_nearest_person_min
+		call   ac_find_nearest_person_min
 		cmpl   $0x2fa000,(%esp)
 		jge    jump_5a4ed
 		test   %ax,%ax
@@ -149712,7 +149712,7 @@ GLOBAL_FUNC(ASM_process_electric_strand)	/* 0x0C3A40 */
 		mov    0x18(%esi),%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   find_nearest_person_min
+		call   ac_find_nearest_person_min
 		test   %ax,%ax
 		je     jump_c3a59
 		cmpl   $0x200000,(%esp)
@@ -150712,7 +150712,7 @@ GLOBAL_FUNC(ASM_init_laser_guided)	/* 0x0C4720 */
 		mov    0x18(%esi),%eax
 		sar    $0x8,%ebx
 		sar    $0x8,%eax
-		call   find_nearest_person_min
+		call   ac_find_nearest_person_min
 		mov    %eax,0x10(%esp)
 		test   %ax,%ax
 		je     jump_c48c0

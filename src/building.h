@@ -28,6 +28,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define MGUN_BOTTOM_TO_WEAPON_HEIGHT 0
+
 enum SubTypeBuilding {
   SubTT_BLD_NONE = 0x0,
   SubTT_BLD_1 = 0x1,
