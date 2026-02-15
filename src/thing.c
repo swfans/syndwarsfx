@@ -383,6 +383,7 @@ void unkn_update_lights(void)
 
 void process_rocket(struct Thing *p_rocket)
 {
+    //TODO modify to make the rocket disappear when falling into sludge
     asm volatile (
       "call ASM_process_rocket\n"
         : : "a" (p_rocket));
@@ -404,6 +405,7 @@ void process_mine(struct SimpleThing *p_mine)
 
 void process_grenade(struct Thing *p_grenade)
 {
+    //TODO modify to make grenade disappear when falling into sludge
     asm volatile (
       "call ASM_process_grenade\n"
         : : "a" (p_grenade));
