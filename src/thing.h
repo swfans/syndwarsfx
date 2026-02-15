@@ -1096,6 +1096,8 @@ struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int 
 
 struct SimpleThing *create_stasis_pod(MapCoord x, MapCoord y, MapCoord z,
   ushort timer, struct Thing *p_owner);
+struct SimpleThing *create_time_pod(MapCoord x, MapCoord y, MapCoord z,
+  ushort timer);
 
 int mine_hit_by_bullet(struct Thing *p_thing, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, ushort type);

@@ -2397,6 +2397,7 @@ void init_uzi(struct Thing *p_owner)
           &prc_beg_pt, p_owner, wtype);
         allow_gnd_hit_eff = true;
     }
+
     cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
     cor_beg_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
     cor_beg_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
@@ -2856,8 +2857,68 @@ void init_stasis_gun(struct Thing *p_owner)
 
 void init_time_gun(struct Thing *p_owner)
 {
+#if 0
     asm volatile ("call ASM_init_time_gun\n"
         : : "a" (p_owner));
+#endif
+    struct M31 prc_beg_pt, prc_fin_pt;
+    int cor_fin_x, cor_fin_y, cor_fin_z;
+    int cor_beg_x, cor_beg_y, cor_beg_z;
+    WeaponType wtype;
+    ubyte status;
+
+    wtype = WEP_TIMEGUN;
+
+    if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
+        return;
+    }
+
+    if ((p_owner->Flag & TngF_ShootAtPos) != 0)
+    {
+        thing_fire_shot_finish_position_at_marked_spot(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
+        p_owner->Flag &= ~TngF_ShootAtPos;
+    }
+    else if (p_owner->PTarget != NULL)
+    {
+        thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
+          &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
+    }
+    else
+    {
+        thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
+          &prc_beg_pt, p_owner, wtype);
+    }
+    cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
+    cor_beg_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
+    cor_beg_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
+
+    cor_fin_x = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[0]);
+    cor_fin_y = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[1]);
+    cor_fin_z = PRCCOORD_TO_MAPCOORD(prc_fin_pt.R[2]);
+
+    cor_fin_y += 30;
+    bul_path_end(cor_beg_x, cor_beg_y, cor_beg_z,
+      &cor_fin_x, &cor_fin_y, &cor_fin_z, 50, p_owner, &status);
+    cor_fin_y -= 30;
+
+    create_time_pod(cor_fin_x, cor_fin_y, cor_fin_z, 50u);
+    {
+        struct Thing *p_target;
+
+        p_target = p_owner->PTarget;
+
+        p_owner->PTarget = NULL;
+        p_owner->Flag |= TngF_ShootAtPos;
+        p_owner->VX = cor_fin_x;
+        p_owner->VY = cor_fin_y + 10;
+        p_owner->VZ = cor_fin_z;
+        byte_1DD8F8 |= 0x01;
+        init_laser(p_owner, 1);
+        byte_1DD8F8 &= ~0x01;
+
+        p_owner->PTarget = p_target;
+    }
 }
 
 void init_c_iff(struct Thing *p_owner)

@@ -148221,7 +148221,7 @@ GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 
 
 /*----------------------------------------------------------------*/
-create_time_pod:	/* 0x0C2934 */
+GLOBAL_FUNC(ASM_create_time_pod)	/* 0x0C2934 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -148497,7 +148497,7 @@ GLOBAL_FUNC(ASM_init_time_gun)	/* 0x0C2AE0 */
 		mov    0x2(%esp),%edx
 		sar    $0x10,%eax
 		sar    $0x10,%edx
-		call   create_time_pod
+		call   ac_create_time_pod
 		mov    0xf(%esi),%al
 		mov    0x40(%esi),%ebx
 		or     $0x20,%al

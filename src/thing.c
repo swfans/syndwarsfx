@@ -1790,6 +1790,16 @@ struct SimpleThing *create_stasis_pod(MapCoord x, MapCoord y, MapCoord z,
     return ret;
 }
 
+struct SimpleThing *create_time_pod(MapCoord x, MapCoord y, MapCoord z,
+  ushort timer)
+{
+    struct SimpleThing *ret;
+    asm volatile (
+      "call ASM_create_time_pod\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (timer));
+    return ret;
+}
+
 void mine_detonate(struct Thing *p_thing)
 {
     play_dist_sample(p_thing, 37, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
