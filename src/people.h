@@ -351,6 +351,7 @@ short calc_person_speed(struct Thing *p_person);
 
 void check_persons_target(struct Thing *p_person);
 void check_persons_target2(struct Thing *p_person);
+ushort check_col_collision(int x, int y, int z);
 void process_stamina(struct Thing *p_person);
 void process_shield(struct Thing *p_person);
 void process_person(struct Thing *p_person);

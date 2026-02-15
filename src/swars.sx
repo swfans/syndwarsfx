@@ -103974,7 +103974,7 @@ GLOBAL_FUNC(ASM_process_map_craters)	/* 0x08A1EC */
 
 
 /*----------------------------------------------------------------*/
-sea_texture:	/* 0x08A220 */
+GLOBAL_FUNC(ASM_sea_texture)	/* 0x08A220 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -106476,7 +106476,7 @@ func_8ae35:
 		add    %edi,%ebx
 		cmp    %edx,%eax
 		je     jump_8c28a
-		call   sea_texture
+		call   ac_sea_texture
 		test   %eax,%eax
 		jne    jump_8c28a
 		lea    -0x81(%ebx),%eax
@@ -157444,7 +157444,7 @@ GLOBAL_FUNC(ASM_process_rocket)	/* 0x0C9100 */
 		mov    (%edx,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   sea_texture
+		call   ac_sea_texture
 		test   %eax,%eax
 		je     jump_c98d2
 		push   $0x8
@@ -158246,7 +158246,7 @@ GLOBAL_FUNC(ASM_process_grenade)	/* 0x0C9D60 */
 		mov    (%eax,%edi,2),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   sea_texture
+		call   ac_sea_texture
 		test   %eax,%eax
 		je     jump_c9ff2
 		mov    0x20(%esi),%eax
@@ -159558,7 +159558,7 @@ func_ca88e:
 		mov    (%edx,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   sea_texture
+		call   ac_sea_texture
 		test   %eax,%eax
 		je     jump_cad4d
 		mov    $0x3,%edx

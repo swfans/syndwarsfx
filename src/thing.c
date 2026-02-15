@@ -307,6 +307,15 @@ void init_just_things(void)
         :  :  : "eax" );
 }
 
+uint sea_texture(int tex)
+{
+    uint ret;
+    asm volatile (
+      "call ASM_sea_texture\n"
+        : "=r" (ret) : "a" (tex));
+    return ret;
+}
+
 void init_things(void)
 {
 #if 0
@@ -403,26 +412,6 @@ void process_mine(struct SimpleThing *p_mine)
         : : "a" (p_mine));
 }
 
-void process_grenade(struct Thing *p_grenade)
-{
-    //TODO modify to make grenade disappear when falling into sludge
-    asm volatile (
-      "call ASM_process_grenade\n"
-        : : "a" (p_grenade));
-}
-
-void process_laser_elec(struct Thing *p_elec)
-{
-    asm volatile (
-      "call ASM_process_laser_elec\n"
-        : : "a" (p_elec));
-}
-
-void process_razor_wire(struct Thing *p_thing)
-{
-    ;
-}
-
 struct SimpleThing *init_nuclear_bomb(MapCoord x, MapCoord y, MapCoord z)
 {
 #if 0
@@ -464,6 +453,123 @@ struct SimpleThing *init_nuclear_bomb(MapCoord x, MapCoord y, MapCoord z)
     return p_sthing;
 }
 
+void process_grenade(struct Thing *p_grenade)
+{
+#if 0
+    asm volatile (
+      "call ASM_process_grenade\n"
+        : : "a" (p_grenade));
+#endif
+    if (p_grenade->Timer1 == 0)
+    {
+        MapCoord cor_x, cor_y, cor_z;
+
+        cor_x = PRCCOORD_TO_MAPCOORD(p_grenade->X);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_grenade->Z);
+        cor_y = PRCCOORD_TO_MAPCOORD(alt_at_point(cor_x, cor_z));
+
+        if (p_grenade->SubType == 3)
+        {
+            struct SimpleThing *p_bomb;
+            p_bomb = init_nuclear_bomb(cor_x, cor_y, cor_z);
+            if (p_bomb != NULL) {
+                p_bomb->Owner2 = p_grenade->Owner;
+                play_dist_ssample(p_bomb, 0x22u, 0x7Fu, 0x40u, 100, 0, 2);
+                play_dist_ssample(p_bomb, 1u, 0x7Fu, 0x40u, 100, 0, 3);
+            }
+        }
+        else if ((p_grenade->SubType == 4) || (p_grenade->SubType == 5))
+        {
+            struct SimpleThing *p_bomb;
+            p_bomb = init_nuclear_bomb(cor_x, cor_y, cor_z);
+            if (p_bomb != NULL) {
+                p_bomb->Type = SmTT_CANISTER;
+                p_bomb->SubType = p_grenade->SubType;
+                p_bomb->Owner2 = p_grenade->Owner;
+                play_dist_ssample(p_bomb, 0x22u, 0x7Fu, 0x40u, 100, 0, 2);
+                if (p_bomb->SubType == 4)
+                    play_dist_ssample(p_bomb, 0x20u, 0, 0x40u, 100, -1, 3);
+                else
+                    play_dist_ssample(p_bomb, 0x1Fu, 0, 0x40u, 100, -1, 3);
+            }
+        }
+
+        remove_thing(p_grenade->ThingOffset);
+        delete_node(p_grenade);
+        return;
+    }
+
+    short qbit;
+    int prc_x, prc_y, prc_z;
+
+    prc_x = p_grenade->X + MAPCOORD_TO_PRCCOORD(p_grenade->VX,0);
+    prc_y = p_grenade->Y + p_grenade->VY;
+    prc_z = p_grenade->Z + MAPCOORD_TO_PRCCOORD(p_grenade->VZ,0);
+    p_grenade->VY -= 500;
+    qbit = check_col_collision(PRCCOORD_TO_MAPCOORD(prc_x), PRCCOORD_TO_MAPCOORD(prc_y), PRCCOORD_TO_MAPCOORD(prc_z));
+    if (qbit == -1)
+    {
+        ushort txtr;
+        txtr = floor_texture_at_point(PRCCOORD_TO_MAPCOORD(prc_x), PRCCOORD_TO_MAPCOORD(prc_z));
+        if (sea_texture(txtr))
+        {
+            struct SimpleThing *p_effect;
+            MapCoord cor_x, cor_y, cor_z;
+
+            cor_x = PRCCOORD_TO_MAPCOORD(p_grenade->X);
+            cor_z = PRCCOORD_TO_MAPCOORD(p_grenade->Z);
+            cor_y = PRCCOORD_TO_MAPCOORD(alt_at_point(cor_x, cor_z));
+            p_effect = create_scale_effect(cor_x, cor_y, cor_z, 1087, 8);
+            if (p_effect != NULL) {
+                p_effect->SubType = 60;
+                p_effect->Object = 62 + (LbRandomAnyShort() & 0x7F);
+                create_sound_effect(cor_x, 0, cor_z, 3, 0, 0);
+            }
+            remove_thing(p_grenade->ThingOffset);
+            delete_node(p_grenade);
+            return;
+        }
+        if (map_floor_is_sludge(PRCCOORD_TO_MAPCOORD(prc_x), PRCCOORD_TO_MAPCOORD(prc_z)))
+        {
+            struct SimpleThing *p_effect;
+            MapCoord cor_x, cor_y, cor_z;
+
+            // Create sludge bulge effect
+            cor_x = PRCCOORD_TO_MAPCOORD(p_grenade->X);
+            cor_z = PRCCOORD_TO_MAPCOORD(p_grenade->Z);
+            cor_y = PRCCOORD_TO_MAPCOORD(alt_at_point(cor_x, cor_z));
+            p_effect = create_scale_effect(cor_x, cor_y, cor_z, 1091, 8);
+            if (p_effect != NULL) {
+                p_effect->Object = 62 + (LbRandomAnyShort() & 0x7F);
+                // Generic type which just plays animation until end
+                p_effect->SubType = 58;
+                create_sound_effect(cor_x, cor_y, cor_z, 25, 0, 0);
+            }
+            remove_thing(p_grenade->ThingOffset);
+            delete_node(p_grenade);
+            return;
+        }
+    }
+    if (qbit != 0) {
+        p_grenade->Timer1 = 0;
+    }
+    if ((PRCCOORD_TO_MAPCOORD(prc_x) < MAP_COORD_WIDTH) &&
+      (PRCCOORD_TO_MAPCOORD(prc_z) < MAP_COORD_HEIGHT)) {
+        move_mapwho(p_grenade, prc_x, prc_y, prc_z);
+    }
+}
+
+void process_laser_elec(struct Thing *p_elec)
+{
+    asm volatile (
+      "call ASM_process_laser_elec\n"
+        : : "a" (p_elec));
+}
+
+void process_razor_wire(struct Thing *p_thing)
+{
+    ;
+}
 
 void process_air_strike(struct Thing *p_thing)
 {
