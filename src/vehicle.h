@@ -34,13 +34,13 @@ extern "C" {
  *
  * Used as starting point of shots.
  */
-#define MECH_BOTTOM_TO_BEAM_WEAPON_HEIGHT 22
+#define MECH_BOTTOM_TO_BEAM_WEAPON_HEIGHT 24
 
 /** Length from mech body center to tip of the mech weapon, for beam weapons.
  *
  * Used as starting point of shots.
  */
-#define MECH_CENTER_TO_BEAM_WEAPON_TIP_MAPCOORD 128
+#define MECH_CENTER_TO_BEAM_WEAPON_TIP_MAPCOORD -96
 
 enum SubTypeVehicle {
   SubTT_VEH_TRAIN = 0x1D,

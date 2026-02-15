@@ -1267,13 +1267,15 @@ TbBool thing_fire_shot_start_position(struct M31 *prc_beg_pt, struct Thing *p_ow
 
             switch (wtype)
             {
+            case WEP_RAP:
+                assert(!"Not implemented");
+                // pass
             default:
                 prc_beg_pt->R[0] = p_owner->X + ((MECH_CENTER_TO_BEAM_WEAPON_TIP_MAPCOORD * lbSinTable[angl]) >> 8);
                 prc_beg_pt->R[2] = p_owner->Z + ((MECH_CENTER_TO_BEAM_WEAPON_TIP_MAPCOORD * lbSinTable[angl + LbFPMath_PI/2]) >> 8);
-                prc_beg_pt->R[1] = p_owner->Y + MAPCOORD_TO_PRCCOORD(MECH_BOTTOM_TO_BEAM_WEAPON_HEIGHT, 0);
+                prc_beg_pt->R[1] = p_owner->Y + MAPCOORD_TO_PRCCOORD(MECH_BOTTOM_TO_BEAM_WEAPON_HEIGHT + barrel, 0);
                 break;
             }
-            assert(!"Not implemented");
         }
         else
         {
@@ -2142,9 +2144,10 @@ void init_laser_guided(struct Thing *p_owner, ushort count)
         : : "a" (p_owner), "d" (count));
     return;
 #endif
-    WeaponType wtype;
+    struct Thing *p_startpostng;
     u32 group_bits;
     int a_dist;
+    WeaponType wtype;
 
     wtype = WEP_LASER; // there is no weapon for q devastator energy spall
     a_dist = 0x10000;
@@ -2152,6 +2155,12 @@ void init_laser_guided(struct Thing *p_owner, ushort count)
 
     // Person must be given; for vehicles, use the driver
     assert(p_owner->Type == TT_PERSON);
+
+    // Start position should be computed from the vehicle, if the owner sits in one
+    if ((p_owner->Flag & TngF_InVehicle) != 0)
+        p_startpostng = &things[p_owner->U.UPerson.Vehicle];
+    else
+        p_startpostng = p_owner;
 
     for (; count > 0; count--)
     {
@@ -2178,7 +2187,7 @@ void init_laser_guided(struct Thing *p_owner, ushort count)
 
         p_shot->U.UEffect.Angle = p_owner->U.UObject.Angle;
 
-        if (!thing_fire_shot_start_position(&prc_beg_pt, p_owner, wtype, 0)) {
+        if (!thing_fire_shot_start_position(&prc_beg_pt, p_startpostng, wtype, count - 1)) {
             remove_thing(shottng);
             return;
         }
@@ -2189,8 +2198,7 @@ void init_laser_guided(struct Thing *p_owner, ushort count)
             short dangl;
 
             dangl = (LbRandomAnyShort() & 0x01FF) - 255;
-            p_shot->U.UEffect.AngleY += dangl;
-            p_shot->U.UEffect.AngleY &= 0x07FF;
+            p_shot->U.UEffect.AngleY = (p_shot->U.UEffect.AngleY + dangl) & 0x07FF;
         }
         p_shot->X = prc_beg_pt.R[0];
         p_shot->Z = prc_beg_pt.R[2];
@@ -3911,6 +3919,7 @@ void process_mech_weapon(struct Thing *p_vehicle, struct Thing *p_person)
         {
             int val;
 
+            // Select rocket or guided lasers for next weapon animation
             if ((LbRandomAnyShort() & 0x1F) != 0)
                 val = ((gameturn & 1) != 0) + 5;
             else
