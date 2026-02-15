@@ -2219,10 +2219,8 @@ TbBool weapon_shooting_floor_creates_smoke(MapCoord cor_x, MapCoord cor_z)
 {
     struct SimpleThing *p_sthing;
     MapCoord cor_y;
-    ushort textr;
 
-    textr = floor_texture_at_point(cor_x, cor_z);
-    if ((get_my_texture_bits(textr) & 0x02) != 0)
+    if (map_floor_is_water(cor_x, cor_z) ||	map_floor_is_sludge(cor_x, cor_z))
     {
         // Create small smoke effect for weapon discharge into water
         cor_y = alt_at_point(cor_x, cor_z) >> 8;
