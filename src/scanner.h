@@ -88,9 +88,6 @@ extern ushort SCANNER_base_zoom_factor;
 extern ushort SCANNER_user_zoom_factor;
 extern ubyte SCANNER_scale_dots;
 
-extern short waft_table2[32];
-extern short waft_table[32];
-
 void SCANNER_init(void);
 void SCANNER_fill_in(void);
 void SCANNER_fill_in_a_little_bit(int x1, int y1, int x2, int y2);

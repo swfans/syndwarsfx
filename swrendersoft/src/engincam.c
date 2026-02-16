@@ -33,6 +33,8 @@ extern long dword_176D84;
 extern long dword_176D88;
 extern long dword_176D8C;
 
+/******************************************************************************/
+
 void camera_setup_view(int *p_pos_beg_x, int *p_pos_beg_z,
   int *p_rend_beg_x, int *p_rend_beg_z, int *p_tlcount_x, int *p_tlcount_z)
 {

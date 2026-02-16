@@ -39,6 +39,18 @@ enum GamePostSceneEffectType {
 extern ushort gamep_scene_effect_type;
 extern ushort gamep_scene_effect_intensity;
 
+/* Wavy float table with even number of elements.
+ *
+ * The period of this table is 31, last element repeats first.
+ */
+extern const short waft_table2[32];
+
+/* Wavy float table with odd number of elements.
+ *
+ * The period of this table is 32, last element repeats first.
+ */
+extern const short waft_table[33];
+
 void scene_post_effect_prepare(void);
 void scene_post_effect_for_bucket(short bckt);
 

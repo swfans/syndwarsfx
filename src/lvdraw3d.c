@@ -29,6 +29,7 @@
 #include "engincolour.h"
 #include "enginfloor.h"
 #include "enginlights.h"
+#include "enginpeff.h"
 #include "engintrns.h"
 #include "engintxtrmap.h"
 #include "enginzoom.h"

@@ -30,6 +30,7 @@
 #include "engincolour.h"
 #include "engindrwlstx.h"
 #include "enginfloor.h"
+#include "enginpeff.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "enginshrapn.h"
@@ -1068,7 +1069,8 @@ void draw_bang(struct SimpleThing *p_pow)
  *
  * Before this call, the caller needs to ensure there is a free screen point.
  */
-static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp, int offset_x, int offset_y, int offset_z, ushort matx, ushort pt)
+static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp,
+  int offset_x, int offset_y, int offset_z, ushort matx, ushort pt)
 {
     struct SinglePoint *p_snpoint;
     struct SpecialPoint *p_specpt;

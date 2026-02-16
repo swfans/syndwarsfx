@@ -35,6 +35,7 @@
 
 #include "engincam.h"
 #include "engincolour.h"
+#include "enginpeff.h"
 #include "engintxtrmap.h"
 #include "render_gpoly.h"
 

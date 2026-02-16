@@ -30,9 +30,18 @@
 #include "enginprops.h"
 #include "engintrns.h"
 #include "engintxtrmap.h"
-#include "scanner.h"
 #include "privrdlog.h"
 /******************************************************************************/
+const short waft_table2[] = {
+  -28, -27, -25, -22, -18, -13, -7, 0,  7,  13,  18,  22,  25,  27,  28,  29,
+   28,  27,       22,  18,  13,  7, 0, -7, -13, -18, -22, -25, -27, -28, -29, -28,
+};
+
+const short waft_table[] = {
+  -28, -24, -21, -17, -14, -10, -7, -3, 0,  4,  7,  11,  14,  18,  21,  24,
+   28,  24,  21,  18,  14,  11,  7,  4, 0, -3, -7, -10, -14, -17, -21, -24, -28,
+};
+
 ushort gamep_scene_effect_intensity = 1000;
 short gamep_scene_effect_change = -1;
 
