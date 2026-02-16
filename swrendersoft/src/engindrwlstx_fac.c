@@ -1399,6 +1399,85 @@ void draw_special_object_face4(ushort face4)
 }
 
 /**
+ * Draw a textured pole between two points, using remaining two point indexes as diameters at each end.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_object_face4_pole(ushort face4)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_object_face4_pole\n"
+        : : "a" (face4));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+    struct PolyPoint point4;
+    struct PolyPoint point1;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_colour = p_face4->ExCol;
+    vec_mode = p_face4->Flags;
+
+    if (p_face4->Texture != 0)
+    {
+        set_floor_texture_uv(p_face4->Texture, &point3, &point2, &point1, &point4, p_face4->GFlags);
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+        int shift_x;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+
+        shift_x = (overall_scale * p_face4->PointNo[2]) >> 8;
+
+        point3.X = p_scrpoint->X - shift_x;
+        point3.Y = p_scrpoint->Y;
+
+        point2.X = p_scrpoint->X + shift_x;
+        point2.Y = p_scrpoint->Y;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+        int shift_x;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+
+        shift_x = (overall_scale * p_face4->PointNo[3]) >> 8;
+
+        point1.X = p_scrpoint->X + shift_x;
+        point1.Y = p_scrpoint->Y;
+
+        point4.X = p_scrpoint->X - shift_x;
+        point4.Y = p_scrpoint->Y;
+    }
+
+    {
+        point3.S = 0x200000;
+        point2.S = 0x200000;
+        point1.S = 0x200000;
+        point4.S = 0x200000;
+    }
+
+    dword_176D4C++;
+    if (vec_mode == 2)
+        vec_mode = 27;
+    draw_trigpoly(&point1, &point2, &point3);
+
+    dword_176D4C++;
+    if (vec_mode == 2)
+        vec_mode = 27;
+    draw_trigpoly(&point4, &point1, &point3);
+}
+
+/**
  * Draw shrapnel polygon.
  *
  * @param shrap Index of Shrapnel instance.

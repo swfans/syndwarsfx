@@ -182544,7 +182544,7 @@ GLOBAL (current_map)	/* 0x1C8448 */
 		.short  0x0
 GLOBAL (current_level)	/* 0x1C844A */
 		.long	0x0
-GLOBAL (byte_1C844E)	/* 0x1C844E */
+GLOBAL (byte_1C844E)	/* 0x1C844E delete pending - no longer used in C */
 		.byte	0x0
 GLOBAL (byte_1C844F)	/* 0x1C844F */
 		.byte	0x0
