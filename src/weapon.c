@@ -1599,8 +1599,7 @@ void init_laser(struct Thing *p_owner, ushort start_age)
         short hitvec;
 
         hitvec = rhit;
-        if ((p_owner->Flag2 & TgF2_ExistsOffMap) == 0)
-        {
+        if ((p_owner->Flag2 & TgF2_ExistsOffMap) == 0) {
             bul_hit_vector(p_shot->VX, p_shot->VY, p_shot->VZ, -hitvec, 4 * start_age, wdmgtyp);
             p_owner->U.UPerson.Flag3 |= 0x40;
         }
@@ -1615,8 +1614,10 @@ void init_laser(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, damage, p_shot->VX - cor_x,
-          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+        person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+          p_shot->VX - cor_x,
+          p_shot->VY - cor_y,
+          p_shot->VZ - cor_z, p_owner, wdmgtyp);
     }
     else if (rhit != 0) // hit normal thing
     {
@@ -1624,19 +1625,23 @@ void init_laser(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, damage, p_shot->VX - cor_x,
-          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+        person_hit_by_bullet(p_hittng, damage,
+          p_shot->VX - cor_x,
+          p_shot->VY - cor_y,
+          p_shot->VZ - cor_z, p_owner, wdmgtyp);
     }
     else // if did not hit anything else, go for original target
     {
         if (targetng != 0)
         {
-            person_hit_by_bullet(&things[targetng], damage, p_shot->VX - cor_x,
-              p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+            person_hit_by_bullet(&things[targetng], damage,
+              p_shot->VX - cor_x,
+              p_shot->VY - cor_y,
+              p_shot->VZ - cor_z, p_owner, wdmgtyp);
         }
         else if ((p_owner->Flag2 & TgF2_ExistsOffMap) != 0)
         {
-            p_shot->VY = p_shot->Y >> 8;
+            p_shot->VY = PRCCOORD_TO_MAPCOORD(p_shot->Y);
         }
     }
     p_shot->StartTimer1 = start_age;
@@ -1705,7 +1710,6 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
     cor_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
     cor_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
     cor_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
-
     rhit = laser_hit_at(cor_x, cor_y, cor_z, &p_shot->VX, &p_shot->VY, &p_shot->VZ, p_shot);
 
     if (start_age > 15)
@@ -1713,14 +1717,16 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
     if (start_age < 5)
         start_age = 5;
     // For every consecutive turn of damage, deal more of it
-    damage = wdef->HitDamage + (start_age - 5) * wdef->HitDamage;
+    damage = wdef->HitDamage + (wdef->HitDamage * (start_age - 5));
 
     if ((rhit & 0x80000000) != 0) // hit 3D object collision vector
     {
         short hitvec;
 
         hitvec = rhit;
-        bul_hit_vector(p_shot->VX, p_shot->VY, p_shot->VZ, -hitvec, 2 * start_age, wdmgtyp);
+        {
+            bul_hit_vector(p_shot->VX, p_shot->VY, p_shot->VZ, -hitvec, 2 * start_age, wdmgtyp);
+        }
     }
     else if ((rhit & 0x20000000) != 0)
     {
@@ -1733,8 +1739,10 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
 
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, damage, p_shot->VX - cor_x,
-          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+        person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+          p_shot->VX - cor_x,
+          p_shot->VY - cor_y,
+          p_shot->VZ - cor_z, p_owner, wdmgtyp);
     }
     else if (rhit != 0) // hit normal thing
     {
@@ -1743,8 +1751,10 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
 
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, damage, p_shot->VX - cor_x,
-          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+        person_hit_by_bullet(p_hittng, damage,
+          p_shot->VX - cor_x,
+          p_shot->VY - cor_y,
+          p_shot->VZ - cor_z, p_owner, wdmgtyp);
     }
     p_shot->StartTimer1 = start_age;
     p_shot->Timer1 = start_age;
@@ -2050,8 +2060,10 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte stype)
             ThingIdx hittng;
             hittng = rhit | 0xE0000000;
             p_hitstng = &sthings[-hittng];
-            dmg_delta = person_hit_by_bullet((struct Thing *)p_hitstng, damage, p_shot->VX - cor_beg_x,
-              p_shot->VY - cor_beg_y, p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
+            dmg_delta = person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+              p_shot->VX - cor_beg_x,
+              p_shot->VY - cor_beg_y,
+              p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
             if (dmg_delta < 0)
                 break;
         }
@@ -2061,8 +2073,10 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte stype)
             ThingIdx hittng;
             hittng = rhit & ~0xE0000000;
             p_hittng = &things[hittng];
-            dmg_delta = person_hit_by_bullet(p_hittng, damage, p_shot->VX - cor_beg_x,
-              p_shot->VY - cor_beg_y, p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
+            dmg_delta = person_hit_by_bullet(p_hittng, damage,
+              p_shot->VX - cor_beg_x,
+              p_shot->VY - cor_beg_y,
+              p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
             if (dmg_delta < 0)
                 break;
         }
@@ -2291,7 +2305,7 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
     struct Thing *p_shot;
     struct WeaponDef *wdef;
     struct M31 prc_beg_pt, prc_fin_pt;
-    MapCoord cor_x, cor_y, cor_z;
+    MapCoord cor_beg_x, cor_beg_y, cor_beg_z;
     u32 rhit;
     int damage;
     ThingIdx shottng, targetng;
@@ -2356,10 +2370,10 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
     p_shot->Radius = 50;
     p_shot->Owner = p_owner->ThingOffset;
 
-    cor_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
-    cor_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
-    cor_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
-    rhit = laser_hit_at(cor_x, cor_y, cor_z, &p_shot->VX, &p_shot->VY, &p_shot->VZ, p_shot);
+    cor_beg_x = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]);
+    cor_beg_y = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]);
+    cor_beg_z = PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]);
+    rhit = laser_hit_at(cor_beg_x, cor_beg_y, cor_beg_z, &p_shot->VX, &p_shot->VY, &p_shot->VZ, p_shot);
 
     if (start_age > 15)
         start_age = 15;
@@ -2373,10 +2387,10 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
         short hitvec;
 
         hitvec = rhit;
-        if (hitvec != -9999)
-        {
+        if (hitvec != -9999) {
             elec_hit_building(p_shot->VX, p_shot->VY, p_shot->VZ, -hitvec);
         }
+        // no exra flag set
     }
     else if ((rhit & 0x20000000) != 0)
     {
@@ -2388,8 +2402,10 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, damage, p_shot->VX - cor_x,
-          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+        person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+          p_shot->VX - cor_beg_x,
+          p_shot->VY - cor_beg_y,
+          p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
     }
     else if (rhit != 0) // hit normal thing
     {
@@ -2397,15 +2413,19 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, damage, p_shot->VX - cor_x,
-          p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+        person_hit_by_bullet(p_hittng, damage,
+          p_shot->VX - cor_beg_x,
+          p_shot->VY - cor_beg_y,
+          p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
     }
     else // if did not hit anything else, go for original target
     {
         if (targetng != 0)
         {
-            person_hit_by_bullet(&things[targetng], damage, p_shot->VX - cor_x,
-              p_shot->VY - cor_y, p_shot->VZ - cor_z, p_owner, wdmgtyp);
+            person_hit_by_bullet(&things[targetng], damage,
+              p_shot->VX - cor_beg_x,
+              p_shot->VY - cor_beg_y,
+              p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
         }
         else
         {
@@ -2502,8 +2522,9 @@ void init_uzi(struct Thing *p_owner)
         short hitvec;
 
         hitvec = rhit;
-        if (status == 1)
+        if (status == 1) {
             bul_hit_vector(cor_fin_x, cor_fin_y, cor_fin_z, -hitvec, 4, wdmgtyp);
+        }
         p_owner->U.UPerson.Flag3 |= 0x40;
     }
     else if ((rhit & 0x20000000) != 0)
@@ -2517,7 +2538,9 @@ void init_uzi(struct Thing *p_owner)
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
         person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
-          cor_fin_x - cor_beg_x, cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+          cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y,
+          cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
     }
     else if (rhit != 0) // hit normal thing
     {
@@ -2525,8 +2548,10 @@ void init_uzi(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-          cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+        person_hit_by_bullet(p_hittng, wdef->HitDamage,
+          cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y,
+          cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
         if (p_hittng->Type == TT_PERSON) {
             make_sparks_sprouts = blood_sprout =
               ((p_hittng->Flag & TngF_InVehicle) == 0) &&
@@ -2540,8 +2565,10 @@ void init_uzi(struct Thing *p_owner)
         {
             struct Thing *p_hittng;
             p_hittng = &things[targetng];
-            person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-              cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+            person_hit_by_bullet(p_hittng, wdef->HitDamage,
+              cor_fin_x - cor_beg_x,
+              cor_fin_y - cor_beg_y,
+              cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
             if ((p_hittng->Flag & TngF_Destroyed) != 0)
             {
                 MapCoord cor_eff_x, cor_eff_y, cor_eff_z;
@@ -2635,8 +2662,9 @@ void init_minigun(struct Thing *p_owner)
         short hitvec;
 
         hitvec = rhit;
-        if (status == 1)
+        if (status == 1) {
             bul_hit_vector(cor_fin_x, cor_fin_y, cor_fin_z, -hitvec, 4, wdmgtyp);
+        }
         p_owner->U.UPerson.Flag3 |= 0x40;
     }
     else if ((rhit & 0x20000000) != 0)
@@ -2649,8 +2677,10 @@ void init_minigun(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-          cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
+          cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y,
+          cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
     }
     else if (rhit != 0) // hit normal thing
     {
@@ -2658,8 +2688,10 @@ void init_minigun(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-          cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+        person_hit_by_bullet(p_hittng, wdef->HitDamage,
+          cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y,
+          cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
         if (p_hittng->Type == TT_PERSON) {
             make_sparks_sprouts = blood_sprout =
               ((p_hittng->Flag & TngF_InVehicle) == 0) &&
@@ -2673,8 +2705,10 @@ void init_minigun(struct Thing *p_owner)
         {
             struct Thing *p_hittng;
             p_hittng = &things[targetng];
-            person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-              cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+            person_hit_by_bullet(p_hittng, wdef->HitDamage,
+              cor_fin_x - cor_beg_x,
+              cor_fin_y - cor_beg_y,
+              cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
             if ((p_hittng->Flag & TngF_Destroyed) != 0)
             {
                 MapCoord cor_eff_x, cor_eff_y, cor_eff_z;
@@ -2776,8 +2810,9 @@ void init_long_range(struct Thing *p_owner)
         short hitvec;
 
         hitvec = rhit;
-        if (status == 1)
+        if (status == 1) {
             bul_hit_vector(cor_fin_x, cor_fin_y, cor_fin_z, -hitvec, 4, wdmgtyp);
+        }
         p_owner->U.UPerson.Flag3 |= 0x40;
     }
     else if ((rhit & 0x20000000) != 0)
@@ -2790,8 +2825,10 @@ void init_long_range(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-          cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
+          cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y,
+          cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
     }
     else if (rhit != 0) // hit normal thing
     {
@@ -2799,8 +2836,10 @@ void init_long_range(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-          cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+        person_hit_by_bullet(p_hittng, wdef->HitDamage,
+          cor_fin_x - cor_beg_x,
+          cor_fin_y - cor_beg_y,
+          cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
         if (p_hittng->Type == TT_PERSON) {
             make_sparks_sprouts = blood_sprout =
               ((p_hittng->Flag & TngF_InVehicle) == 0) &&
@@ -2814,8 +2853,10 @@ void init_long_range(struct Thing *p_owner)
         {
             struct Thing *p_hittng;
             p_hittng = &things[targetng];
-            person_hit_by_bullet(p_hittng, wdef->HitDamage, cor_fin_x - cor_beg_x,
-              cor_fin_y - cor_beg_y, cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
+            person_hit_by_bullet(p_hittng, wdef->HitDamage,
+              cor_fin_x - cor_beg_x,
+              cor_fin_y - cor_beg_y,
+              cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
             if ((p_hittng->Flag & TngF_Destroyed) != 0)
             {
                 MapCoord cor_eff_x, cor_eff_y, cor_eff_z;
