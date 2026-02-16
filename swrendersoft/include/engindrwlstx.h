@@ -110,8 +110,6 @@ void draw_sort_sprite1a(ushort sspr);
 void draw_floor_tile1a(ushort tl);
 void draw_floor_tile1b(ushort tl);
 
-uint cummulate_shade_from_quick_lights(ushort light_first);
-
 void set_nuclear_shade_point(s32 x, s32 y, s32 z);
 void set_nuclear_shade_timer(ulong tmval);
 

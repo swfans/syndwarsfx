@@ -27,6 +27,7 @@
 #include "engincolour.h"
 #include "enginfexpl.h"
 #include "enginfloor.h"
+#include "enginlights.h"
 #include "enginprops.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"

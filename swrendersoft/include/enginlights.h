@@ -27,6 +27,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define MAX_LIGHTS_AFFECTING_FACE 100
+
 struct QuickLight { // sizeof=6
     ushort Ratio;
     ushort Light;
@@ -73,6 +75,8 @@ extern struct LightCommand *game_light_commands;
 extern ushort next_quick_light;
 extern ushort next_full_light;
 extern ushort next_light_command;
+
+uint cummulate_shade_from_quick_lights(ushort light_first);
 
 /** Maps fields from old FullLight struct to the current one.
  */
