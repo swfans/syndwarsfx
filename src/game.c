@@ -1756,6 +1756,15 @@ ubyte get_engine_inputs(void)
         clear_gamekey_pressed(GKey_TRANS_OBJ_LINE_COL);
         did_inp |= GINPUT_DIRECT;
     }
+    if (game_perspective == 3)
+    {
+        if (lbKeyOn[KC_RALT]) {
+            render_faces_flags |= RendFacF_Perspectv3SkipWireframe;
+            did_inp |= GINPUT_DIRECT;
+        } else {
+            render_faces_flags &= ~RendFacF_Perspectv3SkipWireframe;
+        }
+    }
     return did_inp;
 }
 

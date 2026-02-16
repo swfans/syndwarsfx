@@ -41,6 +41,13 @@
 /******************************************************************************/
 #define SINGLE_TEXTURE_DIM 32
 
+const sbyte byte_153014[] = {
+  1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1,
+  0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
+  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+};
+
 extern long dword_176D00;
 extern long dword_176D04;
 
@@ -1475,6 +1482,380 @@ void draw_object_face4_pole(ushort face4)
     if (vec_mode == 2)
         vec_mode = 27;
     draw_trigpoly(&point4, &point1, &point3);
+}
+
+/**
+ * Draw triangular face with textured surface.
+ *
+ * @param face Index of SingleObjectFace3 instance.
+ */
+void draw_object_face3_textrd(ushort face)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_object_face3_textrd\n"
+        : : "a" (face));
+    return;
+#endif
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+    struct SingleObjectFace3 *p_face;
+
+    p_face = &game_object_faces[face];
+    vec_colour = p_face->ExCol;
+    vec_mode = p_face->Flags;
+
+    if (p_face->Texture != 0)
+    {
+        if ((p_face->GFlags & FGFlg_Unkn40) != 0) {
+            uint frame;
+            frame = render_anim_turn + p_face->Object;
+            if ((frame & 0x1FF) > 0x100 && !byte_153014[frame & 0x3F])
+                vec_mode = 5;
+        }
+        set_face_texture_uv(p_face->Texture, &point1, &point3, &point2, p_face->GFlags);
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if ((vec_mode == 2) || (vec_mode == 0))
+    {
+        point1.S = 0x200000;
+    }
+    else
+    {
+        uint shade;
+
+        shade = p_face->Shade0 << 7;
+        shade += cummulate_shade_from_quick_lights(p_face->Light0);
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point1.S = shade << 7;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (game_perspective == 7)
+    {
+        vec_mode = 7;
+        vec_colour = point1.S >> 16;
+    }
+    else
+    {
+        if ((vec_mode == 2) || (vec_mode == 0))
+        {
+            point2.S = 0x200000;
+        }
+        else
+        {
+            uint shade;
+
+            shade = p_face->Shade2 << 7;
+            shade += cummulate_shade_from_quick_lights(p_face->Light2);
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point2.S = shade << 7;
+        }
+
+        {
+            struct SinglePoint *p_point;
+            struct SpecialPoint *p_scrpoint;
+
+            p_point = &game_object_points[p_face->PointNo[1]];
+            p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+            point3.X = p_scrpoint->X + dword_176D00;
+            point3.Y = p_scrpoint->Y + dword_176D04;
+        }
+        if ((vec_mode == 2) || (vec_mode == 0))
+        {
+            point3.S = 0x200000;
+        }
+        else
+        {
+            uint shade;
+
+            shade = p_face->Shade1 << 7;
+            shade += cummulate_shade_from_quick_lights(p_face->Light1);
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point3.S = shade << 7;
+        }
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+
+    if (!engine_render_lights)
+    {
+        point1.S = 0x200000;
+        point2.S = 0x200000;
+        point3.S = 0x200000;
+    }
+    dword_176D4C++;
+
+    if (game_perspective == 3)
+    {
+        vec_mode = 0;
+        vec_colour = pixmap.fade_table[256 * (point3.S >> 16) + colour_lookup[ColLU_RED]];
+        draw_trigpoly(&point1, &point2, &point3);
+        vec_colour = colour_lookup[ColLU_GREEN];
+        if ((render_faces_flags & RendFacF_Perspectv3SkipWireframe) == 0)
+        {
+            poly_line(&point1, &point3);
+            poly_line(&point2, &point3);
+            poly_line(&point1, &point2);
+        }
+    }
+    else
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+        if ((p_face->GFlags & FGFlg_Unkn01) != 0)
+        {
+            if (vec_mode == 2)
+                vec_mode = 27;
+            draw_trigpoly(&point1, &point3, &point2);
+            dword_176D4C++;
+        }
+    }
+
+    if ((p_face->GFlags & FGFlg_Unkn04) != 0)
+    {
+        screen_position_face_render_cb(&point1, &point2, &point3, face, 1);
+    }
+}
+
+/**
+ * Draw rectangular face with textured surface, version D.
+ * TODO: figure out how this version is unique.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_object_face4d_textrd(ushort face4)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_object_face4d_textrd\n"
+        : : "a" (face4));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point3;
+    struct PolyPoint point4;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_colour = p_face4->ExCol;
+    vec_mode = p_face4->Flags;
+    if (p_face4->Texture != 0)
+    {
+        if ((p_face4->GFlags & FGFlg_Unkn40) != 0) {
+            uint frame;
+            frame = render_anim_turn + p_face4->Object;
+            if ((frame & 0x1FF) > 0x100 && !byte_153014[frame & 0x3F])
+                vec_mode = 5;
+        }
+        if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point4, &point2, p_face4->GFlags);
+        } else {
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point2, &point4, p_face4->GFlags);
+        }
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (vec_mode == 2)
+    {
+        point1.S = 0x200000;
+    }
+    else
+    {
+        ushort shade;
+
+        shade = p_face4->Shade0 << 7;
+        shade += cummulate_shade_from_quick_lights(p_face4->Light0);
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point1.S = shade << 7;
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if (game_perspective == 7)
+    {
+        vec_mode = 7;
+        vec_colour = point1.S >> 16;
+    }
+    else
+    {
+        if (vec_mode == 2)
+        {
+            point2.S = 0x200000;
+        }
+        else
+        {
+            ushort shade;
+
+            shade = p_face4->Shade2 << 7;
+            shade += cummulate_shade_from_quick_lights(p_face4->Light2);
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point2.S = shade << 7;
+        }
+
+        if (vec_mode == 2)
+        {
+            point3.S = 0x200000;
+        }
+        else
+        {
+            ushort shade;
+
+            shade = p_face4->Shade1 << 7;
+            shade += cummulate_shade_from_quick_lights(p_face4->Light1);
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point3.S = shade << 7;
+        }
+
+        if (vec_mode == 2)
+        {
+            point4.S = 0x200000;
+        }
+        else
+        {
+            ushort shade;
+
+            shade = p_face4->Shade3 << 7;
+            shade += cummulate_shade_from_quick_lights(p_face4->Light3);
+            if (shade > 0x7E00)
+                shade = 0x7F00;
+            point4.S = shade << 7;
+        }
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[3]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point4.X = p_scrpoint->X + dword_176D00;
+        point4.Y = p_scrpoint->Y + dword_176D04;
+    }
+
+    if (!engine_render_lights)
+    {
+        point1.S = 0x200000;
+        point2.S = 0x200000;
+        point3.S = 0x200000;
+        point4.S = 0x200000;
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point2);
+    }
+
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
+    {
+        screen_position_face_render_cb(&point1, &point2, &point3, face4, 2);
+    }
+
+    if (p_face4->Texture != 0)
+    {
+        struct SingleFloorTexture *p_sftex;
+
+        p_sftex = &game_textures[p_face4->Texture];
+        if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
+            point4.U = p_sftex->TMapX3 << 16;
+            point4.V = p_sftex->TMapY3 << 16;
+            point2.U = p_sftex->TMapX4 << 16;
+            point2.V = p_sftex->TMapY4 << 16;
+        } else {
+            point4.U = p_sftex->TMapX4 << 16;
+            point4.V = p_sftex->TMapY4 << 16;
+            point2.U = p_sftex->TMapX3 << 16;
+            point2.V = p_sftex->TMapY3 << 16;
+        }
+        point3.U = p_sftex->TMapX2 << 16;
+        point3.V = p_sftex->TMapY2 << 16;
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point2);
+    }
+
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point2, &point3);
+    }
+
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
+    {
+        screen_position_face_render_cb(&point4, &point3, &point2, face4, 3);
+    }
 }
 
 /**

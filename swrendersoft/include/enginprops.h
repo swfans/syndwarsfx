@@ -34,6 +34,10 @@ enum RenderFloorFlags {
   RendFlrF_WobblyTerrain = 0x02,
 };
 
+enum RenderFacesFlags {
+  RendFacF_Perspectv3SkipWireframe = 0x01,
+};
+
 #pragma pack()
 /******************************************************************************/
 /** Animation turn for the animations controlled within the render engine.
@@ -62,6 +66,12 @@ extern u32 render_anim_speed;
  * Affects how the floor is rendered.
  */
 extern u32 render_floor_flags;
+
+/** Faces rendering flags.
+ *
+ * Affects how the faces are rendered.
+ */
+extern u32 render_faces_flags;
 
 /** Amount of available screen points, cached in render module to optimize speed.
  *
