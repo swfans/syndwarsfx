@@ -51,6 +51,8 @@ extern s32 engn_nuclear_shade_z;
 
 ScreenTriangleRenderCallback screen_position_face_render_cb = NULL;
 
+struct SpecialPoint *game_screen_point_pool = NULL;
+ushort next_screen_point;
 /******************************************************************************/
 
 void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
@@ -1304,6 +1306,96 @@ void draw_floor_tile1b(ushort tl)
         draw_trigpoly(&point4, &point3, &point1);
         dword_176D4C += 2;
     }
+}
+
+/**
+ * Draw a textured beam stored as special object face, usually from energy weapon.
+ * What is special about these is that each SingleObjectFace4 instance stores
+ * SpecialPoint indexes rather than SinglePoint indexes.
+ *
+ * @param face4 Index of SingleObjectFace4 instance.
+ */
+void draw_special_object_face4(ushort face4)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_special_object_face4\n"
+        : : "a" (face4));
+    return;
+#endif
+
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point4;
+    struct PolyPoint point2;
+    struct PolyPoint point1;
+    struct PolyPoint point3;
+
+    p_face4 = &game_special_object_faces4[face4];
+    vec_colour = p_face4->ExCol;
+    vec_mode = p_face4->Flags;
+
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[0]];
+        point2.X = p_scrpoint->X;
+        point2.Y = p_scrpoint->Y;
+        point2.S = p_face4->Shade0 << 15;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[1]];
+        point1.X = p_scrpoint->X;
+        point1.Y = p_scrpoint->Y;
+        point1.S = p_face4->Shade1 << 15;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[2]];
+        point3.X = p_scrpoint->X;
+        point3.Y = p_scrpoint->Y;
+        point3.S = p_face4->Shade2 << 15;
+    }
+    {
+        struct SpecialPoint *p_scrpoint;
+
+        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[3]];
+        point4.X = p_scrpoint->X;
+        point4.Y = p_scrpoint->Y;
+        point4.S = p_face4->Shade3 << 15;
+    }
+
+    if ((p_face4->Flags == 10) || (p_face4->Flags == 9))
+    {
+        set_floor_texture_uv(p_face4->Texture, &point2, &point1, &point3, &point4, p_face4->GFlags);
+    }
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point3, &point2, &point1);
+    }
+    dword_176D4C++;
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point3, &point4);
+    }
+    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point1);
+    }
+    dword_176D4C++;
 }
 
 /**

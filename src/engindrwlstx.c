@@ -96,9 +96,6 @@ struct DrawItem *game_draw_list;
 struct DrawItem *p_current_draw_item;
 ushort next_draw_item;
 
-struct SpecialPoint *game_screen_point_pool;
-ushort next_screen_point;
-
 struct SortSprite *game_sort_sprites;
 struct SortSprite *p_current_sort_sprite;
 ushort next_sort_sprite;
@@ -152,6 +149,7 @@ void draw_object_face4_reflect(ushort face4);
 void draw_object_face3g_textrd(ushort face);
 void draw_object_face4d_textrd_dk(ushort face4);
 void draw_ex_face(ushort exface);
+void draw_special_object_face4(ushort face4);
 void draw_shrapnel(ushort shrap);
 
 void reset_drawlist(void)
@@ -492,96 +490,6 @@ ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
         return 1;
     }
     return 0;
-}
-
-/**
- * Draw a textured beam stored as special object face, usually from energy weapon.
- * What is special about these is that each SingleObjectFace4 instance stores
- * SpecialPoint indexes rather than SinglePoint indexes.
- *
- * @param face4 Index of SingleObjectFace4 instance.
- */
-void draw_special_object_face4(ushort face4)
-{
-#if 0
-    asm volatile (
-      "call ASM_draw_special_object_face4\n"
-        : : "a" (face4));
-    return;
-#endif
-
-    struct SingleObjectFace4 *p_face4;
-    struct PolyPoint point4;
-    struct PolyPoint point2;
-    struct PolyPoint point1;
-    struct PolyPoint point3;
-
-    p_face4 = &game_special_object_faces4[face4];
-    vec_colour = p_face4->ExCol;
-    vec_mode = p_face4->Flags;
-
-    {
-        struct SpecialPoint *p_scrpoint;
-
-        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[0]];
-        point2.X = p_scrpoint->X;
-        point2.Y = p_scrpoint->Y;
-        point2.S = p_face4->Shade0 << 15;
-    }
-    {
-        struct SpecialPoint *p_scrpoint;
-
-        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[1]];
-        point1.X = p_scrpoint->X;
-        point1.Y = p_scrpoint->Y;
-        point1.S = p_face4->Shade1 << 15;
-    }
-    {
-        struct SpecialPoint *p_scrpoint;
-
-        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[2]];
-        point3.X = p_scrpoint->X;
-        point3.Y = p_scrpoint->Y;
-        point3.S = p_face4->Shade2 << 15;
-    }
-    {
-        struct SpecialPoint *p_scrpoint;
-
-        p_scrpoint = &game_screen_point_pool[p_face4->PointNo[3]];
-        point4.X = p_scrpoint->X;
-        point4.Y = p_scrpoint->Y;
-        point4.S = p_face4->Shade3 << 15;
-    }
-
-    if ((p_face4->Flags == 10) || (p_face4->Flags == 9))
-    {
-        set_floor_texture_uv(p_face4->Texture, &point2, &point1, &point3, &point4, p_face4->GFlags);
-    }
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point3, &point2, &point1);
-    }
-    dword_176D4C++;
-
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point4);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point1);
-    }
-    dword_176D4C++;
 }
 
 void draw_sort_sprite1b(int sspr)

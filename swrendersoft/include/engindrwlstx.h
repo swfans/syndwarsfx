@@ -78,6 +78,18 @@ extern struct DrawItem *game_draw_list;
 extern struct DrawItem *p_current_draw_item;
 extern ushort next_draw_item;
 
+/** Array of triangular faces valid only as part of drawlist for a single frame.
+ */
+extern struct SingleObjectFace3 *game_special_object_faces;
+extern ushort next_special_face;
+
+/** Array of rectangular faces valid only as part of drawlist for a single frame.
+ */
+extern struct SingleObjectFace4 *game_special_object_faces4;
+extern ushort next_special_face4;
+
+/** Array of points with items valid only as part of drawlist for a single frame.
+ */
 extern struct SpecialPoint *game_screen_point_pool;
 extern ushort next_screen_point;
 
@@ -91,9 +103,6 @@ extern ushort next_sort_line;
 
 extern TbPixel deep_radar_surface_col;
 extern TbPixel deep_radar_line_col;
-
-extern ushort next_special_face;
-extern ushort next_special_face4;
 
 extern ubyte engine_render_lights;
 
