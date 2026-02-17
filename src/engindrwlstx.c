@@ -122,7 +122,8 @@ void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
   ubyte bri, ubyte angle);
 void draw_sort_sprite1c(ushort sspr);
 void draw_phwoar(ushort ph);
-void draw_sort_sprite_level_bar(short sspr, ushort w, ushort h, short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col);
+void draw_horiz_level_bar(short scr_x, short scr_y, ushort w, ushort h,
+  short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col);
 void draw_sort_sprite_number(ushort sspr);
 void draw_fire_flame(ushort flm);
 // from engindrwlstx_fac
@@ -347,11 +348,11 @@ ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
     return 0;
 }
 
-void draw_sort_sprite1b(int sspr)
+void draw_sort_sprite_pers_e(int sspr)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_sort_sprite1b\n"
+      "call ASM_draw_sort_sprite_pers_e\n"
         : : "a" (sspr));
     return;
 #endif
@@ -497,7 +498,7 @@ void draw_sort_sprite_veh_health_bar(short sspr)
         lvl_col = 15;
         bar_col = 19;
     }
-    draw_sort_sprite_level_bar(sspr, 44, 5, p_thing->Health,
+    draw_horiz_level_bar(p_sspr->X, p_sspr->Y, 44, 5, p_thing->Health,
       p_thing->U.UVehicle.MaxHealth, lvl_col, bar_col);
 }
 
@@ -726,8 +727,8 @@ void draw_drawitem_1(ushort dihead)
       case DrIT_Unkn12:
           draw_special_object_face4(itm->Offset);
           break;
-      case DrIT_Unkn13:
-          draw_sort_sprite1b(itm->Offset);
+      case DrIT_SprPersE:
+          draw_sort_sprite_pers_e(itm->Offset);
           break;
       case DrIT_Unkn14:
           draw_object_face4_pole(itm->Offset);
@@ -785,8 +786,8 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn12:
           draw_special_object_face4(itm->Offset);
           break;
-      case DrIT_Unkn13:
-          draw_sort_sprite1b(itm->Offset);
+      case DrIT_SprPersE:
+          draw_sort_sprite_pers_e(itm->Offset);
           break;
       case DrIT_Unkn14:
           draw_object_face4_pole(itm->Offset);

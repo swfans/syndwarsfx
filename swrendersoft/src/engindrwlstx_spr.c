@@ -510,16 +510,12 @@ void draw_fire_flame(ushort flm)
 
 /**
  * Draw a bar showing some kind of level parameter, usually health.
- *
- * @param sspr Index of SortSprite instance which stores the draw parameters.
  */
-void draw_sort_sprite_level_bar(short sspr, ushort w, ushort h, short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col)
+void draw_horiz_level_bar(short scr_x, short scr_y, ushort w, ushort h,
+  short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col)
 {
-    struct SortSprite *p_sspr;
     ushort range_w, range_h, bar_w, bar_h;
     short level_x;
-
-    p_sspr = &game_sort_sprites[sspr];
 
     if (max_lvl == 0)
         max_lvl = 1;
@@ -545,10 +541,10 @@ void draw_sort_sprite_level_bar(short sspr, ushort w, ushort h, short lvl, ushor
     else
         range_h &= ~1;
 
-    LbDrawBox(p_sspr->X - bar_w / 2, p_sspr->Y, bar_w, bar_h, bar_col);
+    LbDrawBox(scr_x - bar_w / 2, scr_y, bar_w, bar_h, bar_col);
 
     level_x = range_w * lvl / max_lvl;
-    LbDrawBox(p_sspr->X - bar_w / 2, p_sspr->Y + (bar_h - range_h) / 2, level_x, range_h, lvl_col);
+    LbDrawBox(scr_x - bar_w / 2, scr_y + (bar_h - range_h) / 2, level_x, range_h, lvl_col);
 }
 
 void draw_sort_sprite_number(ushort sspr)

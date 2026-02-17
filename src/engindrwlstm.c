@@ -322,7 +322,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
             scr_depth = -BUCKETS_COUNT;
     }
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn13, BUCKET_MID + scr_depth);
+    p_sspr = draw_item_add_sprite(DrIT_SprPersE, BUCKET_MID + scr_depth);
     if (p_sspr == NULL)
         return;
 

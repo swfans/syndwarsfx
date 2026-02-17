@@ -55,7 +55,7 @@ enum DrawItemType {
     DrIT_Unkn10 = 0xA,
     DrIT_Unkn11 = 0xB,
     DrIT_Unkn12 = 0xC,
-    DrIT_Unkn13 = 0xD,
+    DrIT_SprPersE = 0xD,
     DrIT_Unkn14 = 0xE,
     DrIT_Unkn15 = 0xF,
     DrIT_Unkn16 = 0x10,
