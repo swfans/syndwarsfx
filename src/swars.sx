@@ -10454,7 +10454,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_reflect)	/* 0x0295E4 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_calculate_enginepoint_shade_1)	/* 0x02980C */
+GLOBAL_FUNC(ASM_calculate_enginepoint_shade3)	/* 0x02980C */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -10531,7 +10531,7 @@ GLOBAL_FUNC(ASM_calculate_enginepoint_shade_1)	/* 0x02980C */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_calculate_enginepoint_shade_2)	/* 0x0298E0 */
+GLOBAL_FUNC(ASM_calculate_enginepoint_shade4)	/* 0x0298E0 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -10738,7 +10738,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		lea    0x28(%esp),%eax
 		mov    %ebx,0x38(%esp)
 		xor    %ebx,%ebx
-		call   ac_calculate_enginepoint_shade_1
+		call   ac_calculate_enginepoint_shade3
 		mov    %eax,0x38(%esp)
 		mov    0x78(%esp),%eax
 		xor    %edx,%edx
@@ -10817,7 +10817,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		mov    $0x2,%ebx
 		mov    0x78(%esp),%edx
 		mov    %esp,%eax
-		call   ac_calculate_enginepoint_shade_1
+		call   ac_calculate_enginepoint_shade3
 		mov    %eax,0x10(%esp)
 		mov    0x78(%esp),%eax
 		xor    %edx,%edx
@@ -10898,7 +10898,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		mov    $0x1,%ebx
 		mov    0x78(%esp),%edx
 		lea    0x50(%esp),%eax
-		call   ac_calculate_enginepoint_shade_1
+		call   ac_calculate_enginepoint_shade3
 		mov    %eax,0x60(%esp)
 		cmpb   $0x0,EXPORT_SYMBOL(engine_render_lights)
 		jne    jump_29db7
@@ -11111,7 +11111,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		lea    0x28(%esp),%eax
 		mov    %ebx,0x38(%esp)
 		xor    %ebx,%ebx
-		call   ac_calculate_enginepoint_shade_2
+		call   ac_calculate_enginepoint_shade4
 		mov    %eax,0x38(%esp)
 		mov    0xa8(%esp),%eax
 		xor    %edx,%edx
@@ -11188,7 +11188,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    $0x2,%ebx
 		mov    0xa8(%esp),%edx
 		lea    0x50(%esp),%eax
-		call   ac_calculate_enginepoint_shade_2
+		call   ac_calculate_enginepoint_shade4
 		mov    %eax,0x60(%esp)
 		mov    0xa8(%esp),%eax
 		xor    %edx,%edx
@@ -11265,7 +11265,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    $0x1,%ebx
 		mov    0xa8(%esp),%edx
 		lea    0x50(%esp),%eax
-		call   ac_calculate_enginepoint_shade_2
+		call   ac_calculate_enginepoint_shade4
 		mov    %eax,0x88(%esp)
 		mov    0xa8(%esp),%eax
 		xor    %edx,%edx
@@ -11344,7 +11344,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    $0x3,%ebx
 		mov    0xa8(%esp),%edx
 		mov    %esp,%eax
-		call   ac_calculate_enginepoint_shade_2
+		call   ac_calculate_enginepoint_shade4
 		mov    EXPORT_SYMBOL(engine_render_lights),%bh
 		mov    %eax,0x10(%esp)
 		test   %bh,%bh

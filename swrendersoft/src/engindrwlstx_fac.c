@@ -252,13 +252,13 @@ void set_floor_texture_uv_damaged_ground(struct PolyPoint *p_pt1,
     }
 }
 
-int calculate_enginepoint_shade_1(struct PolyPoint *p_pt1,
+int calculate_enginepoint_shade3(struct PolyPoint *p_pt1,
   struct SingleObjectFace3 *p_face, ushort pt2)
 {
 #if 0
     int ret;
     asm volatile (
-      "call ASM_calculate_enginepoint_shade_1\n"
+      "call ASM_calculate_enginepoint_shade3\n"
         : "=r" (ret) : "a" (p_pt1), "d" (p_face), "b" (pt2));
     return ret;
 #endif
@@ -286,13 +286,13 @@ int calculate_enginepoint_shade_1(struct PolyPoint *p_pt1,
     return p_pt1->S;
 }
 
-int calculate_enginepoint_shade_2(struct PolyPoint *p_pt1,
+int calculate_enginepoint_shade4(struct PolyPoint *p_pt1,
   struct SingleObjectFace4 *p_face4, ushort pt2)
 {
 #if 0
     int ret;
     asm volatile (
-      "call ASM_calculate_enginepoint_shade_2\n"
+      "call ASM_calculate_enginepoint_shade4\n"
         : "=r" (ret) : "a" (p_pt1), "d" (p_face4), "b" (pt2));
     return ret;
 #endif
@@ -1018,7 +1018,7 @@ void draw_object_face4d_textrd_dk(ushort face4)
             shade = 0x7F00;
         point1.S = shade << 7;
     }
-    point1.S = calculate_enginepoint_shade_2(&point1, p_face4, 0);
+    point1.S = calculate_enginepoint_shade4(&point1, p_face4, 0);
 
     {
         struct SinglePoint *p_point;
@@ -1043,7 +1043,7 @@ void draw_object_face4d_textrd_dk(ushort face4)
             shade = 0x7F00;
         point2.S = shade << 7;
     }
-    point2.S = calculate_enginepoint_shade_2(&point2, p_face4, 2);
+    point2.S = calculate_enginepoint_shade4(&point2, p_face4, 2);
 
     {
         struct SinglePoint *p_point;
@@ -1068,7 +1068,7 @@ void draw_object_face4d_textrd_dk(ushort face4)
             shade = 0x7F00;
         point3.S = shade << 7;
     }
-    point3.S = calculate_enginepoint_shade_2(&point2, p_face4, 1); //TODO why point2? is that a coding mistake?
+    point3.S = calculate_enginepoint_shade4(&point2, p_face4, 1); //TODO why point2? is that a coding mistake?
 
     {
         struct SinglePoint *p_point;
@@ -1093,7 +1093,7 @@ void draw_object_face4d_textrd_dk(ushort face4)
             shade = 0x7F00;
         point4.S = shade << 7;
     }
-    point4.S = calculate_enginepoint_shade_2(&point4, p_face4, 3);
+    point4.S = calculate_enginepoint_shade4(&point4, p_face4, 3);
 
     if (!engine_render_lights)
     {
@@ -1851,6 +1851,287 @@ void draw_object_face4d_textrd(ushort face4)
             vec_mode = 27;
         draw_trigpoly(&point4, &point2, &point3);
     }
+
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
+    {
+        screen_position_face_render_cb(&point4, &point3, &point2, face4, 3);
+    }
+}
+
+/**
+ * Draw triangular face with normally textured surface, but dark.
+ *
+ * The dark view is used to contrast with extremely intense light, like nuclear explosions.
+ *
+ * @param face Index of SingleObjectFace3 instance.
+ */
+void draw_object_face3_textrd_dk(ushort face)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_object_face3_textrd_dk\n"
+        : : "a" (face));
+    return;
+#endif
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+    struct SingleObjectFace3 *p_face;
+
+    p_face = &game_object_faces[face];
+    vec_colour = 0x40;
+    vec_mode = 4;
+
+    if (p_face->Texture != 0)
+    {
+        set_face_texture_uv(p_face->Texture, &point1, &point3, &point2, p_face->GFlags);
+    }
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if ((vec_mode == 2) || (vec_mode == 0))
+    {
+        point1.S = 0x200000;
+    }
+    else
+    {
+        uint shade;
+
+        shade = p_face->Shade0 << 7;
+        shade += cummulate_shade_from_quick_lights(p_face->Light0);
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point1.S = shade << 7;
+    }
+    point1.S = calculate_enginepoint_shade3(&point1, p_face, 0);
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if ((vec_mode == 2) || (vec_mode == 0))
+    {
+        point2.S = 0x200000;
+    }
+    else
+    {
+        uint shade;
+
+        shade = p_face->Shade2 << 7;
+        shade += cummulate_shade_from_quick_lights(p_face->Light2);
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point2.S = shade << 7;
+    }
+    point2.S = calculate_enginepoint_shade3(&point2, p_face, 2);
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    if ((vec_mode == 2) || (vec_mode == 0))
+    {
+        point3.S = 0x200000;
+    }
+    else
+    {
+        uint shade;
+
+        shade = p_face->Shade1 << 7;
+        shade += cummulate_shade_from_quick_lights(p_face->Light1);
+        if (shade > 0x7E00)
+            shade = 0x7F00;
+        point3.S = shade << 7;
+    }
+    point3.S = calculate_enginepoint_shade3(&point3, p_face, 1);
+
+    if (!engine_render_lights)
+    {
+        point1.S = 0x200000;
+        point2.S = 0x200000;
+        point3.S = 0x200000;
+    }
+    dword_176D4C++;
+
+    if (game_perspective == 3)
+    {
+        vec_colour = colour_lookup[ColLU_GREEN];
+        if ((render_faces_flags & RendFacF_Perspectv3SkipWireframe) == 0)
+        {
+            poly_line(&point1, &point3);
+            poly_line(&point2, &point3);
+            poly_line(&point1, &point2);
+        }
+    }
+    else
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+        if ((p_face->GFlags & FGFlg_Unkn01) != 0)
+        {
+            if (vec_mode == 2)
+                vec_mode = 27;
+            draw_trigpoly(&point1, &point3, &point2);
+            dword_176D4C++;
+        }
+    }
+}
+
+void draw_object_face3_deep_rdr(ushort face)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_object_face3_deep_rdr\n"
+        : : "a" (face));
+    return;
+#endif
+    struct SingleObjectFace3 *p_face;
+    struct PolyPoint point2;
+    struct PolyPoint point1;
+    struct PolyPoint point3;
+
+    p_face = &game_object_faces[face];
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+
+    vec_colour = deep_radar_line_col;
+    poly_line(&point1, &point3);
+    poly_line(&point2, &point3);
+    poly_line(&point1, &point2);
+
+    vec_colour = deep_radar_surface_col;
+    vec_mode = 15;
+    draw_trigpoly(&point1, &point2, &point3);
+
+    if ((p_face->GFlags & FGFlg_Unkn04) != 0)
+    {
+        screen_position_face_render_cb(&point1, &point2, &point3, face, 1);
+    }
+}
+
+void draw_object_face4_deep_rdr(ushort face4)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_object_face4_deep_rdr\n"
+        : : "a" (face4));
+    return;
+#endif
+    struct SingleObjectFace4 *p_face4;
+    struct PolyPoint point4;
+    struct PolyPoint point1;
+    struct PolyPoint point2;
+    struct PolyPoint point3;
+
+    p_face4 = &game_object_faces4[face4];
+    vec_colour = deep_radar_surface_col;
+    vec_mode = 15;
+
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[0]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point1.X = p_scrpoint->X + dword_176D00;
+        point1.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[2]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point2.X = p_scrpoint->X + dword_176D00;
+        point2.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[1]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point3.X = p_scrpoint->X + dword_176D00;
+        point3.Y = p_scrpoint->Y + dword_176D04;
+    }
+    {
+        struct SinglePoint *p_point;
+        struct SpecialPoint *p_scrpoint;
+
+        p_point = &game_object_points[p_face4->PointNo[3]];
+        p_scrpoint = &game_screen_point_pool[p_point->PointOffset];
+        point4.X = p_scrpoint->X + dword_176D00;
+        point4.Y = p_scrpoint->Y + dword_176D04;
+    }
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point1, &point2, &point3);
+    }
+
+    {
+        if (vec_mode == 2)
+            vec_mode = 27;
+        draw_trigpoly(&point4, &point3, &point2);
+    }
+
+    vec_colour = deep_radar_line_col;
+
+    poly_line(&point1, &point2);
+    poly_line(&point3, &point1);
+
+    if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
+    {
+        screen_position_face_render_cb(&point1, &point2, &point3, face4, 2);
+    }
+
+    poly_line(&point4, &point3);
+    poly_line(&point4, &point2);
 
     if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
