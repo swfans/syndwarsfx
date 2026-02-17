@@ -147,6 +147,7 @@ void build_vehicle(struct Thing *p_thing)
 void build_person(struct Thing *p_thing)
 {
     ushort frame, bri;
+    int cor_x, cor_y, cor_z;
 
     if (p_thing->State == PerSt_BEING_PERSUADED)
     {
@@ -186,11 +187,18 @@ void build_person(struct Thing *p_thing)
         bri = p_thing->U.UPerson.Brightness;
     }
 
-    draw_pers_e_graphic(p_thing,
-      PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
-      PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
-      PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
+    cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc;
+    cor_y = PRCCOORD_TO_YCOORD(p_thing->Y) >> 3;
+    cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc;
+
+    draw_pers_e_graphic(p_thing, cor_x, cor_y, cor_z,
       frame, p_thing->Radius, bri);
+
+    if (debug_hud_collision) {
+        draw_e_number(cor_x, cor_y, cor_z,
+          0, 37, p_thing->U.UPerson.RecoilTimer,
+          p_thing->Radius - 1, colour_lookup[ColLU_RED]);
+    }
 }
 
 /** Build rendering drawlist items for a rocket.

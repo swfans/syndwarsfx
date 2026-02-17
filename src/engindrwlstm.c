@@ -250,7 +250,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    scr_depth = sp.Depth - radius;
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
     if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
         scr_depth += BUCKETS_COUNT;
 
@@ -278,7 +278,7 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    scr_depth = sp.Depth - radius - 100;
+    scr_depth = sp.Depth - (((radius - 100) * overall_scale) >> 8);
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn15, BUCKET_MID + scr_depth);
     if (p_sspr == NULL)
@@ -307,7 +307,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    scr_depth = sp.Depth - radius;
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
     if (ingame.DisplayMode == 50)
     {
         if ((p_thing->Flag2 & TgF2_InsideBuilding) != 0) {
@@ -337,7 +337,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) || p_thing->U.UPerson.OnFace || (p_thing->SubType == SubTT_PERS_MECH_SPIDER))
         return;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn19, BUCKET_MID + scr_depth - 200);
+    p_sspr = draw_item_add_sprite(DrIT_Unkn19, BUCKET_MID + scr_depth - ((200 * overall_scale) >> 8));
     if (p_sspr == NULL)
         return;
 
@@ -357,7 +357,7 @@ void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy, int num, int
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    scr_depth = sp.Depth - radius;
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
 
     p_sspr = draw_item_add_sprite(DrIT_Number, BUCKET_MID + scr_depth);
     if (p_sspr == NULL)

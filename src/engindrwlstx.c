@@ -457,15 +457,7 @@ void draw_sort_sprite_pers_e(int sspr)
         draw_sorted_sprite1b(frv, fr, p_sspr->X, p_sspr->Y, br_inc, 0);
     }
 
-    //TODO draing debug numbers should be a separate draw item; use draw_e_number()
-    if (debug_hud_collision) {
-        char locstr[32];
-        short dy;
-        sprintf(locstr, "%d ", p_thing->U.UPerson.RecoilTimer);
-        dy = (37 * overall_scale) >> 8;
-        draw_text(p_sspr->X, p_sspr->Y - dy, locstr, colour_lookup[ColLU_RED]);
-    }
-
+    //TODO drawing debug strings should be a separate draw item
     if ((p_thing->Flag2 & TgF2_ExistsOffMap) != 0) {
         short dx, dy;
         dx = (2 * overall_scale) >> 8;
