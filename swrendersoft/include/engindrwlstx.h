@@ -46,7 +46,7 @@ struct SortSprite {
     short Y;
     short Z;
     ushort Frame;
-    struct Thing *PThing;
+    intptr_t SrcItem;
     ubyte Brightness;
     ubyte Angle;
     short Scale;

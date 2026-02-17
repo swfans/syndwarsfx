@@ -27,6 +27,9 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+#define COLOUR_LOOKUP_LENGTH 16
+#define COLOUR_LOOKUP_INDEX_MASK 0x0F
+
 enum ColourLookUp {
     ColLU_BLACK     = 0,
     ColLU_WHITE,

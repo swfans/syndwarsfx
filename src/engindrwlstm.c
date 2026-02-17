@@ -264,7 +264,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
     p_sspr->Frame = frame;
     p_sspr->Brightness = intensity;
     p_sspr->Scale = 256;
-    p_sspr->PThing = p_thing;
+    p_sspr->SrcItem = (intptr_t)p_thing;
 }
 
 void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int intensity, int scale)
@@ -290,7 +290,7 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
     p_sspr->Frame = frame;
     p_sspr->Brightness = intensity;
     p_sspr->Scale = scale;
-    p_sspr->PThing = NULL;
+    p_sspr->SrcItem = (intptr_t)NULL;
 }
 
 void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity)
@@ -330,7 +330,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     p_sspr->Y = sp.Y;
     p_sspr->Z = 0;
     p_sspr->Frame = frame;
-    p_sspr->PThing = p_thing;
+    p_sspr->SrcItem = (intptr_t)p_thing;
     p_sspr->Brightness = bri;
     p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
 
@@ -343,7 +343,33 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 
     p_sspr->X = sp.X;
     p_sspr->Y = sp.Y;
-    p_sspr->PThing = p_thing;
+    p_sspr->SrcItem = (intptr_t)p_thing;
+}
+
+void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy, int num, int radius, TbPixel colour)
+{
+    struct ShEnginePoint sp;
+    struct SortSprite *p_sspr;
+    int scr_depth;
+
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+        y += waft_table[gameturn & 0x1F] >> 3;
+
+    transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
+
+    scr_depth = sp.Depth - radius;
+
+    p_sspr = draw_item_add_sprite(DrIT_Number, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL)
+        return;
+
+    p_sspr->X = sp.X + scr_dx;
+    p_sspr->Y = sp.Y + scr_dy;
+    p_sspr->Z = scr_depth;
+    p_sspr->Frame = 0;
+    p_sspr->Brightness = colour;
+    p_sspr->Scale = 256;
+    p_sspr->SrcItem = (intptr_t)num;
 }
 
 void FIRE_draw_fire(struct SimpleThing *p_sthing)
@@ -1792,7 +1818,7 @@ void draw_vehicle_health(struct Thing *p_thing)
     p_sspr->X = sp.X;
     p_sspr->Y = sp.Y + 20;
     p_sspr->Z = scr_depth;
-    p_sspr->PThing = p_thing;
+    p_sspr->SrcItem = (intptr_t)p_thing;
 }
 
 void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,

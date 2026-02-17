@@ -168,12 +168,12 @@ int alt_at_point_under_height(int x, int z, int h)
     return alt_best;
 }
 
-void draw_person_shadow(ushort face)
+void draw_person_shadow(ushort sspr)
 {
 #if 0
     asm volatile (
       "call ASM_draw_person_shadow\n"
-        : : "a" (face));
+        : : "a" (sspr));
     return;
 #endif
     struct Thing *p_thing;
@@ -186,13 +186,14 @@ void draw_person_shadow(ushort face)
     int sc_a, sc_b;
     short strng;
 
-    struct SortSprite *sspr;
+    struct SortSprite *p_sspr;
     struct EnginePoint point4;
     struct EnginePoint point2;
     struct EnginePoint point1;
     struct EnginePoint point3;
 
-    p_thing = game_sort_sprites[face].PThing;
+    p_sspr = &game_sort_sprites[sspr];
+    p_thing = (struct Thing *)p_sspr->SrcItem;
     vec_mode = 10;
     assert(vec_tmap[ingame.LastTmap] != NULL);
     vec_map = vec_tmap[ingame.LastTmap];
@@ -231,22 +232,22 @@ void draw_person_shadow(ushort face)
     sc_b = (strng * sh_x) >> 6;
     sh_x = -sh_x;
 
-    sspr = &game_sort_sprites[face];
-    point3.pp.X = sspr->X - sh_x;
-    point3.pp.Y = sspr->Y - sh_y;
-    point4.pp.X = sspr->X + sh_x;
-    point4.pp.Y = sspr->Y + sh_y;
+    p_sspr = &game_sort_sprites[sspr];
+    point3.pp.X = p_sspr->X - sh_x;
+    point3.pp.Y = p_sspr->Y - sh_y;
+    point4.pp.X = p_sspr->X + sh_x;
+    point4.pp.Y = p_sspr->Y + sh_y;
 
     if (strng > 64) {
         sh_x = (sh_x * strng) >> 6;
         sh_y = (sh_y * strng) >> 6;
     }
 
-    sspr = &game_sort_sprites[face];
-    point1.pp.X = 4 * sc_a + sspr->X + sh_x;
-    point1.pp.Y = 4 * sc_b + sspr->Y + sh_y;
-    point2.pp.X = 4 * sc_a + sspr->X - sh_x;
-    point2.pp.Y = 4 * sc_b + sspr->Y - sh_y;
+    p_sspr = &game_sort_sprites[sspr];
+    point1.pp.X = 4 * sc_a + p_sspr->X + sh_x;
+    point1.pp.Y = 4 * sc_b + p_sspr->Y + sh_y;
+    point2.pp.X = 4 * sc_a + p_sspr->X - sh_x;
+    point2.pp.Y = 4 * sc_b + p_sspr->Y - sh_y;
 
     dword_176D4C++;
     if (vec_mode == 2)

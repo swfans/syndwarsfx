@@ -551,10 +551,12 @@ void draw_sort_sprite_number(ushort sspr)
 {
     char locstr[50];
     struct SortSprite *p_sspr;
+    TbPixel colour;
 
     p_sspr = &game_sort_sprites[sspr];
-    sprintf(locstr, "%d", (int)p_sspr->PThing);
-    draw_text(p_sspr->X, p_sspr->Y, locstr, colour_lookup[ColLU_RED]);
+    colour = p_sspr->Brightness;
+    sprintf(locstr, "%d", (int)p_sspr->SrcItem);
+    draw_text(p_sspr->X, p_sspr->Y, locstr, colour);
 }
 
 /******************************************************************************/

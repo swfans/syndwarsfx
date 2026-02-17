@@ -1788,7 +1788,8 @@ void screen_sorted_sprite_1a_render_callback(ushort sspr)
     PlayerInfo *p_locplayer;
 
     p_locplayer = &players[local_player_no];
-    p_thing = game_sort_sprites[sspr].PThing;
+    p_thing = (struct Thing *)game_sort_sprites[sspr].SrcItem;
+
     if ((p_locplayer->TargetType <= TrgTp_DroppedTng) && (p_thing->Type == SmTT_DROPPED_ITEM)) {
         check_mouse_overlap_item(sspr);
     }

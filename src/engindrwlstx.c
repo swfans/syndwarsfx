@@ -212,8 +212,10 @@ ubyte check_mouse_overlap(ushort sspr)
     if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
     {
         PlayerInfo *p_locplayer;
+        struct Thing *p_thing;
+        p_thing = (struct Thing *)p_sspr->SrcItem;
         p_locplayer = &players[local_player_no];
-        p_locplayer->Target = p_sspr->PThing->ThingOffset;
+        p_locplayer->Target = p_thing->ThingOffset;
         p_locplayer->TargetType = TrgTp_Unkn7;
         return 1;
     }
@@ -244,8 +246,10 @@ ubyte check_mouse_overlap_item(ushort sspr)
     p_locplayer = &players[local_player_no];
     if (p_locplayer->TargetType == TrgTp_DroppedTng)
     {
+        struct Thing *p_thing;
         ushort VX;
-        VX = p_sspr->PThing->VX;
+        p_thing = (struct Thing *)p_sspr->SrcItem;
+        VX = p_thing->VX;
         if ( VX )
         {
             if (VX < 12 || VX > 13)
@@ -258,7 +262,9 @@ ubyte check_mouse_overlap_item(ushort sspr)
     }
     if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
     {
-        p_locplayer->Target = p_sspr->PThing->ThingOffset;
+        struct Thing *p_thing;
+        p_thing = (struct Thing *)p_sspr->SrcItem;
+        p_locplayer->Target = p_thing->ThingOffset;
         p_locplayer->TargetType = TrgTp_DroppedTng;
         return 1;
     }
@@ -300,7 +306,9 @@ ubyte check_mouse_overlap_corpse(ushort sspr)
 
     if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
     {
-        p_locplayer->Target = p_sspr->PThing->ThingOffset;
+        struct Thing *p_thing;
+        p_thing = (struct Thing *)p_sspr->SrcItem;
+        p_locplayer->Target = p_thing->ThingOffset;
         p_locplayer->TargetType = TrgTp_Unkn1;
         return 1;
     }
@@ -362,7 +370,7 @@ void draw_sort_sprite_pers_e(int sspr)
     ubyte bright;
 
     p_sspr = &game_sort_sprites[sspr];
-    p_thing = p_sspr->PThing;
+    p_thing = (struct Thing *)p_sspr->SrcItem;
     if (p_sspr->Frame > 10000)
         return;
 
@@ -449,6 +457,7 @@ void draw_sort_sprite_pers_e(int sspr)
         draw_sorted_sprite1b(frv, fr, p_sspr->X, p_sspr->Y, br_inc, 0);
     }
 
+    //TODO draing debug numbers should be a separate draw item; use draw_e_number()
     if (debug_hud_collision) {
         char locstr[32];
         short dy;
@@ -489,7 +498,7 @@ void draw_sort_sprite_veh_health_bar(short sspr)
     TbPixel lvl_col, bar_col;
 
     p_sspr = &game_sort_sprites[sspr];
-    p_thing = p_sspr->PThing;
+    p_thing = (struct Thing *)p_sspr->SrcItem;
 
     if (ingame.PanelPermutation == -3) {
         lvl_col = 33;
@@ -825,7 +834,7 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn25:
           draw_fire_flame(itm->Offset);
           break;
-      case DrIT_Unkn26:
+      case DrIT_Number:
           draw_sort_sprite_number(itm->Offset);
           break;
       default:
