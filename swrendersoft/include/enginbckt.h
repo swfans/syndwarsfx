@@ -68,7 +68,8 @@ enum DrawItemType {
     DrIT_Unkn23 = 0x17,
     DrIT_Unkn24 = 0x18,
     DrIT_Unkn25 = 0x19,
-    DrIT_Number = 0x1A,
+    DrIT_Number,
+    DrIT_ShortText,
 };
 
 #pragma pack()

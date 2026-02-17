@@ -24,6 +24,7 @@
 #include "bfbox.h"
 #include "bfgentab.h"
 #include "bfline.h"
+#include "bfmemut.h"
 #include "bfsprite.h"
 #include "insspr.h"
 
@@ -554,8 +555,21 @@ void draw_sort_sprite_number(ushort sspr)
     TbPixel colour;
 
     p_sspr = &game_sort_sprites[sspr];
-    colour = p_sspr->Brightness;
+    colour = p_sspr->Frame;
     sprintf(locstr, "%d", (int)p_sspr->SrcItem);
+    draw_text(p_sspr->X, p_sspr->Y, locstr, colour);
+}
+
+void draw_sort_sprite_short_text(ushort sspr)
+{
+    char locstr[50];
+    struct SortSprite *p_sspr;
+    TbPixel colour;
+
+    p_sspr = &game_sort_sprites[sspr];
+    colour = p_sspr->Frame;
+    LbMemoryCopy(locstr, &p_sspr->SrcItem, 8);
+    locstr[8] = '\0';
     draw_text(p_sspr->X, p_sspr->Y, locstr, colour);
 }
 

@@ -20,6 +20,7 @@
 
 #include "bfendian.h"
 #include "bfmath.h"
+#include "bfmemut.h"
 #include "bfutility.h"
 #include <assert.h>
 #include <limits.h>
@@ -366,10 +367,34 @@ void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy, int num, int
     p_sspr->X = sp.X + scr_dx;
     p_sspr->Y = sp.Y + scr_dy;
     p_sspr->Z = scr_depth;
-    p_sspr->Frame = 0;
-    p_sspr->Brightness = colour;
+    p_sspr->Frame = colour;
+    p_sspr->Brightness = 0;
     p_sspr->Scale = 256;
     p_sspr->SrcItem = (intptr_t)num;
+}
+
+void draw_e_text(int x, int y, int z, short scr_dx, short scr_dy, const char *text, int radius, TbPixel colour)
+{
+    struct ShEnginePoint sp;
+    struct SortSprite *p_sspr;
+    int scr_depth;
+
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+        y += waft_table[gameturn & 0x1F] >> 3;
+
+    transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
+
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
+
+    p_sspr = draw_item_add_sprite(DrIT_ShortText, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL)
+        return;
+
+    p_sspr->X = sp.X + scr_dx;
+    p_sspr->Y = sp.Y + scr_dy;
+    p_sspr->Z = scr_depth;
+    p_sspr->Frame = colour;
+    LbMemoryCopy(&p_sspr->SrcItem, text, min(strlen(text)+1, 8));
 }
 
 void FIRE_draw_fire(struct SimpleThing *p_sthing)

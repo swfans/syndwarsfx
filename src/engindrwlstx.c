@@ -125,6 +125,7 @@ void draw_phwoar(ushort ph);
 void draw_horiz_level_bar(short scr_x, short scr_y, ushort w, ushort h,
   short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col);
 void draw_sort_sprite_number(ushort sspr);
+void draw_sort_sprite_short_text(ushort sspr);
 void draw_fire_flame(ushort flm);
 // from engindrwlstx_fac
 void set_face_texture_uv(ushort stex, struct PolyPoint *p_pt1,
@@ -455,20 +456,6 @@ void draw_sort_sprite_pers_e(int sspr)
         k = ((gameturn + 16 * p_thing->ThingOffset) >> 2) & 7;
         frv = byte_15399C + 5 * k;
         draw_sorted_sprite1b(frv, fr, p_sspr->X, p_sspr->Y, br_inc, 0);
-    }
-
-    //TODO drawing debug strings should be a separate draw item
-    if ((p_thing->Flag2 & TgF2_ExistsOffMap) != 0) {
-        short dx, dy;
-        dx = (2 * overall_scale) >> 8;
-        dy = (37 * overall_scale) >> 8;
-        draw_text(p_sspr->X - dx, p_sspr->Y - dy, "E", colour_lookup[ColLU_RED]);
-    }
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0)) {
-        short dx, dy;
-        dx = (2 * overall_scale) >> 8;
-        dy = (37 * overall_scale) >> 8;
-        draw_text(p_sspr->X + dx, p_sspr->Y - dy, "B", colour_lookup[ColLU_RED]);
     }
 }
 
@@ -828,6 +815,9 @@ void draw_drawitem_2(ushort dihead)
           break;
       case DrIT_Number:
           draw_sort_sprite_number(itm->Offset);
+          break;
+      case DrIT_ShortText:
+          draw_sort_sprite_short_text(itm->Offset);
           break;
       default:
           break;

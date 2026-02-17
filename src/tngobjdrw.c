@@ -148,6 +148,7 @@ void build_person(struct Thing *p_thing)
 {
     ushort frame, bri;
     int cor_x, cor_y, cor_z;
+    char locstr[12];
 
     if (p_thing->State == PerSt_BEING_PERSUADED)
     {
@@ -197,6 +198,19 @@ void build_person(struct Thing *p_thing)
     if (debug_hud_collision) {
         draw_e_number(cor_x, cor_y, cor_z,
           0, 37, p_thing->U.UPerson.RecoilTimer,
+          p_thing->Radius - 1, colour_lookup[ColLU_RED]);
+    }
+
+    locstr[0] = '\0';
+
+    if ((p_thing->Flag2 & TgF2_ExistsOffMap) != 0) {
+        strcat(locstr, "E");
+    }
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0)) {
+        strcat(locstr, "B");
+    }
+    if (locstr[0] != '\0') {
+        draw_e_text(cor_x, cor_y, cor_z, -8, 37, locstr,
           p_thing->Radius - 1, colour_lookup[ColLU_RED]);
     }
 }

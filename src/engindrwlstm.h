@@ -56,6 +56,7 @@ void draw_bang(struct SimpleThing *p_pow);
  * @param colour The text colour.
  */
 void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy, int num, int radius, TbPixel colour);
+void draw_e_text(int x, int y, int z, short scr_dx, short scr_dy, const char *text, int radius, TbPixel colour);
 
 /** Adds primitives for a rotated 3D object to drawlist.
  *
