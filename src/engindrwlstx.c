@@ -121,8 +121,8 @@ void draw_sort_line1a(ushort sln);
 void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
   ubyte bri, ubyte angle);
 void draw_sort_sprite1c(ushort sspr);
-void draw_frame_on_screen_unscaled(short scr_x, short scr_y, ushort frm);
-void draw_frame_on_screen(short scr_x, short scr_y, ushort frm);
+void draw_hud_frame_on_screen_unscaled_but_scale_pos(short scr_x, short scr_y, ushort frm, int sscale);
+void draw_hud_frame_on_screen(short scr_x, short scr_y, ushort frm, int sscale);
 void draw_phwoar(ushort ph);
 void draw_horiz_level_bar(short scr_x, short scr_y, ushort w, ushort h,
   short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col);
@@ -486,7 +486,7 @@ void draw_sort_sprite_veh_health_bar(short sspr)
       p_thing->U.UVehicle.MaxHealth, lvl_col, bar_col);
 }
 
-void draw_frame_on_map_coords_unscaled(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
+void draw_frame_on_map_coords_unscaled_but_scale_pos(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
   short scr_sh_x, short scr_sh_y, ushort frm)
 {
     struct ShEnginePoint sp;
@@ -512,7 +512,7 @@ void draw_frame_on_map_coords_unscaled(MapCoord cor_x, MapCoord cor_y, MapCoord 
     sp.X += ((overall_scale * scr_sh_x) >> 8);
     sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
-    draw_frame_on_screen_unscaled(sp.X, sp.Y, frm);
+    draw_hud_frame_on_screen_unscaled_but_scale_pos(sp.X, sp.Y, frm, overall_scale);
 }
 
 void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
@@ -541,7 +541,7 @@ void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
     sp.X += ((overall_scale * scr_sh_x) >> 8);
     sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
-    draw_frame_on_screen(sp.X, sp.Y, frm);
+    draw_hud_frame_on_screen(sp.X, sp.Y, frm, overall_scale);
 }
 
 void number_player(struct Thing *p_person, ubyte n)
@@ -623,7 +623,7 @@ void number_player(struct Thing *p_person, ubyte n)
 
     if (lbDisplay.GraphicsScreenHeight < 400)
     {
-        draw_frame_on_map_coords_unscaled(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm);
+        draw_frame_on_map_coords_unscaled_but_scale_pos(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm);
     }
     else
     {

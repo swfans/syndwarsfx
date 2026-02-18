@@ -111,7 +111,7 @@ extern ScreenSortSpriteRenderCallback screen_sorted_sprite_render_cb;
 
 /******************************************************************************/
 
-void draw_unkn1_scaled_alpha_sprite(ushort fr, int scr_x, int scr_y,
+void draw_frame_scaled_alpha(int scr_x, int scr_y, ushort frm,
   ushort scale, ushort alpha);
 void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte csel);
 void draw_sort_sprite1a(ushort sspr);
