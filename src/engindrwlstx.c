@@ -121,6 +121,8 @@ void draw_sort_line1a(ushort sln);
 void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
   ubyte bri, ubyte angle);
 void draw_sort_sprite1c(ushort sspr);
+void draw_frame_on_screen_unscaled(short scr_x, short scr_y, ushort frm);
+void draw_frame_on_screen(short scr_x, short scr_y, ushort frm);
 void draw_phwoar(ushort ph);
 void draw_horiz_level_bar(short scr_x, short scr_y, ushort w, ushort h,
   short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col);
@@ -494,8 +496,6 @@ void draw_frame_on_map_coords_unscaled(MapCoord cor_x, MapCoord cor_y, MapCoord 
   short scr_sh_x, short scr_sh_y, ushort frm)
 {
     struct ShEnginePoint sp;
-    struct Frame *p_frm;
-    struct Element *p_el;
     int cor_dt_x, cor_dt_y, cor_dt_z;
 
     cor_dt_x = cor_x - engn_xc;
@@ -518,32 +518,13 @@ void draw_frame_on_map_coords_unscaled(MapCoord cor_x, MapCoord cor_y, MapCoord 
     sp.X += ((overall_scale * scr_sh_x) >> 8);
     sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
-    p_frm = &frame[frm];
-    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
-    {
-        struct TbSprite *p_spr;
-        short x, y;
-
-        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
-        if (p_spr <= m_sprites)
-           continue;
-
-        lbDisplay.DrawFlags = p_el->Flags & 7;
-        if ((p_el->Flags & 0xFE00) != 0)
-            continue;
-
-        x = sp.X + ((overall_scale * p_el->X) >> 9);
-        y = sp.Y + ((overall_scale * p_el->Y) >> 9);
-        LbSpriteDraw(x, y, p_spr);
-    }
+    draw_frame_on_screen_unscaled(sp.X, sp.Y, frm);
 }
 
 void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
   short scr_sh_x, short scr_sh_y, ushort frm)
 {
     struct ShEnginePoint sp;
-    struct Frame *p_frm;
-    struct Element *p_el;
     int cor_dt_x, cor_dt_y, cor_dt_z;
 
     cor_dt_x = cor_x - engn_xc;
@@ -566,24 +547,7 @@ void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
     sp.X += ((overall_scale * scr_sh_x) >> 8);
     sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
-    p_frm = &frame[frm];
-    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
-    {
-        struct TbSprite *p_spr;
-        short x, y;
-
-        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
-        if (p_spr <= m_sprites)
-           continue;
-
-        lbDisplay.DrawFlags = p_el->Flags & 7;
-        if ((p_el->Flags & 0xFE00) != 0)
-            continue;
-
-        x = sp.X + ((overall_scale * p_el->X) >> 9);
-        y = sp.Y + ((overall_scale * p_el->Y) >> 9);
-        LbSpriteDrawScaled(x, y, p_spr, (overall_scale * p_spr->SWidth + 127) >> 9, (overall_scale * p_spr->SHeight + 127) >> 9);
-    }
+    draw_frame_on_screen(sp.X, sp.Y, frm);
 }
 
 void number_player(struct Thing *p_person, ubyte n)

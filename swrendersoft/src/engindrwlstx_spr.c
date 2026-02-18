@@ -295,6 +295,7 @@ void draw_unkn3_scaled_alpha_sprite(ushort frm, short x, short y, ubyte bri)
             LbSpriteDrawRemap((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y,
               p_spr, &pixmap.fade_table[256 * bri]);
         }
+
         if (word_1A5834 > p_elem->X >> 1)
             word_1A5834 = p_elem->X >> 1;
         if (word_1A5836 > p_elem->Y >> 1)
@@ -303,7 +304,7 @@ void draw_unkn3_scaled_alpha_sprite(ushort frm, short x, short y, ubyte bri)
     lbDisplay.DrawFlags = 0;
 }
 
-void draw_unkn4_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
+void draw_unkn4_scaled_alpha_sprite(ubyte *frv, ushort frm, short scr_x, short scr_y,
   ubyte bri)
 {
     struct Frame *p_frm;
@@ -314,26 +315,82 @@ void draw_unkn4_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
       p_elem = &melement_ani[p_elem->Next])
     {
         struct TbSprite *p_spr;
+        short x, y;
 
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if (p_spr <= m_sprites)
             continue;
 
+        if (frv[(p_elem->Flags >> 4) & 0x1F] != ((p_elem->Flags >> 9) & 0x07))
+            continue;
+
         lbDisplay.DrawFlags = p_elem->Flags & 7;
-        if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
-        {
-            if (((p_elem->Flags >> 4) & 0x1F) == 4)
-                LbSpriteDraw((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y, p_spr);
-            else
-                LbSpriteDrawRemap((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y,
-                  p_spr, &pixmap.fade_table[256 * bri]);
-            if (word_1A5834 > p_elem->X >> 1)
-                word_1A5834 = p_elem->X >> 1;
-            if (word_1A5836 > p_elem->Y >> 1)
-                word_1A5836 = p_elem->Y >> 1;
+        x = scr_x + (p_elem->X >> 1);
+        y = scr_y + (p_elem->Y >> 1);
+        if (((p_elem->Flags >> 4) & 0x1F) == 4) {
+            LbSpriteDraw(x, y, p_spr);
+        } else {
+            LbSpriteDrawRemap(x, y, p_spr, &pixmap.fade_table[256 * bri]);
         }
+
+        if (word_1A5834 > p_elem->X >> 1)
+            word_1A5834 = p_elem->X >> 1;
+        if (word_1A5836 > p_elem->Y >> 1)
+            word_1A5836 = p_elem->Y >> 1;
     }
     lbDisplay.DrawFlags = 0;
+}
+
+void draw_frame_on_screen_unscaled(short scr_x, short scr_y, ushort frm)
+{
+    struct Frame *p_frm;
+    struct Element *p_el;
+
+    p_frm = &frame[frm];
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani;
+      p_el = &melement_ani[p_el->Next])
+    {
+        struct TbSprite *p_spr;
+        short x, y;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if (p_spr <= m_sprites)
+           continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 7;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+
+        x = scr_x + ((overall_scale * p_el->X) >> 9);
+        y = scr_y + ((overall_scale * p_el->Y) >> 9);
+        LbSpriteDraw(x, y, p_spr);
+    }
+}
+
+void draw_frame_on_screen(short scr_x, short scr_y, ushort frm)
+{
+    struct Frame *p_frm;
+    struct Element *p_el;
+
+    p_frm = &frame[frm];
+    for (p_el = &melement_ani[p_frm->FirstElement]; p_el > melement_ani;
+      p_el = &melement_ani[p_el->Next])
+    {
+        struct TbSprite *p_spr;
+        short x, y;
+
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_el->ToSprite);
+        if (p_spr <= m_sprites)
+           continue;
+
+        lbDisplay.DrawFlags = p_el->Flags & 7;
+        if ((p_el->Flags & 0xFE00) != 0)
+            continue;
+
+        x = scr_x + ((overall_scale * p_el->X) >> 9);
+        y = scr_y + ((overall_scale * p_el->Y) >> 9);
+        LbSpriteDrawScaled(x, y, p_spr, (overall_scale * p_spr->SWidth + 127) >> 9, (overall_scale * p_spr->SHeight + 127) >> 9);
+    }
 }
 
 void debug_check_unkn_sprite_size(const char *src_fname, int src_line)
