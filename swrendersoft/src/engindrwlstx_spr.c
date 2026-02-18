@@ -275,7 +275,7 @@ void draw_unkn2_scaled_alpha_sprite(ubyte *frv, ushort frm, short x, short y,
 }
 
 
-void draw_unkn3_scaled_alpha_sprite(ushort frm, short x, short y, ubyte bri)
+void draw_unkn3_scaled_alpha_sprite(ushort frm, short scr_x, short scr_y, ubyte bri)
 {
     struct Frame *p_frm;
     struct Element *p_elem;
@@ -285,15 +285,17 @@ void draw_unkn3_scaled_alpha_sprite(ushort frm, short x, short y, ubyte bri)
       p_elem = &melement_ani[p_elem->Next])
     {
         struct TbSprite *p_spr;
+        short x, y;
 
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if (p_spr <= m_sprites)
             continue;
 
         lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+        x = scr_x + (p_elem->X >> 1);
+        y = scr_y + (p_elem->Y >> 1);
         if ((p_elem->Flags & 0xFE00) == 0) {
-            LbSpriteDrawRemap((p_elem->X >> 1) + x, (p_elem->Y >> 1) + y,
-              p_spr, &pixmap.fade_table[256 * bri]);
+            LbSpriteDrawRemap(x, y, p_spr, &pixmap.fade_table[256 * bri]);
         }
 
         if (word_1A5834 > p_elem->X >> 1)
@@ -358,12 +360,11 @@ void draw_frame_on_screen_unscaled(short scr_x, short scr_y, ushort frm)
            continue;
 
         lbDisplay.DrawFlags = p_el->Flags & 7;
-        if ((p_el->Flags & 0xFE00) != 0)
-            continue;
-
         x = scr_x + ((overall_scale * p_el->X) >> 9);
         y = scr_y + ((overall_scale * p_el->Y) >> 9);
-        LbSpriteDraw(x, y, p_spr);
+        if ((p_el->Flags & 0xFE00) == 0) {
+            LbSpriteDraw(x, y, p_spr);
+        }
     }
 }
 
@@ -384,12 +385,11 @@ void draw_frame_on_screen(short scr_x, short scr_y, ushort frm)
            continue;
 
         lbDisplay.DrawFlags = p_el->Flags & 7;
-        if ((p_el->Flags & 0xFE00) != 0)
-            continue;
-
-        x = scr_x + ((overall_scale * p_el->X) >> 9);
-        y = scr_y + ((overall_scale * p_el->Y) >> 9);
-        LbSpriteDrawScaled(x, y, p_spr, (overall_scale * p_spr->SWidth + 127) >> 9, (overall_scale * p_spr->SHeight + 127) >> 9);
+        if ((p_el->Flags & 0xFE00) == 0) {
+            x = scr_x + ((overall_scale * p_el->X) >> 9);
+            y = scr_y + ((overall_scale * p_el->Y) >> 9);
+            LbSpriteDrawScaled(x, y, p_spr, (overall_scale * p_spr->SWidth + 127) >> 9, (overall_scale * p_spr->SHeight + 127) >> 9);
+        }
     }
 }
 
@@ -425,12 +425,6 @@ void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
 
 void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_sorted_sprite1a\n"
-        : : "a" (frm), "d" (x), "b" (y), "c" (bright));
-    return;
-#endif
     int sscale;
     ubyte bri;
 
@@ -483,12 +477,6 @@ void draw_sort_sprite1c(ushort sspr)
 
 void draw_sort_sprite1a(ushort sspr)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_sort_sprite1a\n"
-        : : "a" (a1));
-    return;
-#endif
     struct SortSprite *p_sspr;
 
     p_sspr = &game_sort_sprites[sspr];
@@ -509,15 +497,15 @@ void draw_phwoar(ushort ph)
     struct Phwoar *p_phwoar;
     struct Element *p_elem;
     ushort el;
-    int point_x, point_y;
+    int scr_x, scr_y;
 
     p_phwoar = &phwoar[ph];
     {
         struct SpecialPoint *p_scrpoint;
 
         p_scrpoint = &game_screen_point_pool[p_phwoar->PointOffset];
-        point_x = p_scrpoint->X + dword_176D00;
-        point_y = p_scrpoint->Y + dword_176D04;
+        scr_x = p_scrpoint->X + dword_176D00;
+        scr_y = p_scrpoint->Y + dword_176D04;
     }
 
     el = frame[p_phwoar->f].FirstElement;
@@ -531,13 +519,13 @@ void draw_phwoar(ushort ph)
             continue;
 
         lbDisplay.DrawFlags = p_elem->Flags & 0x07;
-        if ((p_elem->Flags & 0xFE00) == 0)
-        {
+        if ((p_elem->Flags & 0xFE00) == 0) {
             int el_x, el_y;
-            el_x = point_x + ((p_elem->X * overall_scale) >> 9);
-            el_y = point_y + ((p_elem->Y * overall_scale) >> 9);
+            el_x = scr_x + ((p_elem->X * overall_scale) >> 9);
+            el_y = scr_y + ((p_elem->Y * overall_scale) >> 9);
             LbSpriteDrawResized(el_x, el_y, (16 * overall_scale) >> 8, p_spr);
         }
+
         if (word_1A5834 > p_elem->X >> 1)
             word_1A5834 = p_elem->X >> 1;
         if (word_1A5836 > p_elem->Y >> 1)

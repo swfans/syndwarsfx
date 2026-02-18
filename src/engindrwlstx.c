@@ -361,12 +361,6 @@ ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
 
 void draw_sort_sprite_pers_e(int sspr)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_sort_sprite_pers_e\n"
-        : : "a" (sspr));
-    return;
-#endif
     struct SortSprite *p_sspr;
     struct Thing *p_thing;
     short br_inc;

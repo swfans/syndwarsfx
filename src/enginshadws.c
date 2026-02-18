@@ -470,11 +470,6 @@ struct Element *element_unkn_func_05(ushort frm, short *x1, short *x2, short *y1
  */
 void generate_shadows_for_multicolor_sprites(void)
 {
-#if 0
-    asm volatile ("call ASM_generate_shadows_for_multicolor_sprites\n"
-        :  :  : "eax" );
-    return;
-#endif
     struct ScreenBufBkp bkp;
     int shpak;
     short v23mw;
