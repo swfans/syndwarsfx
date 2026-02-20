@@ -445,34 +445,21 @@ void draw_sort_sprite_pers_e(int sspr)
 }
 
 /**
- * Draw health bar of a vehicle.
+ * Draw long property bar, like health of a vehicle.
  *
- * @param sspr Index of SortSprite instance which stores reference to the vehicle thing.
+ * @param sspr Index of SortSprite instance which stores bar properties.
  */
-void draw_sort_sprite_veh_health_bar(short sspr)
+void draw_sort_sprite_long_prop_bar(short sspr)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_sort_sprite_veh_health_bar\n"
-        : : "a" (sspr));
-    return;
-#endif
     struct SortSprite *p_sspr;
-    struct Thing *p_thing;
     TbPixel lvl_col, bar_col;
 
     p_sspr = &game_sort_sprites[sspr];
-    p_thing = (struct Thing *)p_sspr->SrcItem;
+    lvl_col = p_sspr->Brightness;
+    bar_col = p_sspr->Angle;
 
-    if (ingame.PanelPermutation == -3) {
-        lvl_col = 33;
-        bar_col = 42;
-    } else {
-        lvl_col = 15;
-        bar_col = 19;
-    }
-    draw_horiz_level_bar(p_sspr->X, p_sspr->Y, 44, 5, p_thing->Health,
-      p_thing->U.UVehicle.MaxHealth, lvl_col, bar_col);
+    draw_horiz_level_bar(p_sspr->X, p_sspr->Y, 44, 5, p_sspr->Scale,
+      p_sspr->Frame, lvl_col, bar_col);
 }
 
 void draw_frame_on_map_coords_unscaled_but_scale_pos(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
@@ -732,8 +719,8 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn21:
           draw_phwoar(itm->Offset);
           break;
-      case DrIT_Unkn22:
-          draw_sort_sprite_veh_health_bar(itm->Offset);
+      case DrIT_LongPropBar:
+          draw_sort_sprite_long_prop_bar(itm->Offset);
           break;
       case DrIT_Unkn23:
           draw_object_face4_deep_rdr(itm->Offset);

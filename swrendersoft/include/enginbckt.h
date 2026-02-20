@@ -64,7 +64,7 @@ enum DrawItemType {
     DrIT_Unkn19 = 0x13,
     DrIT_Unkn20 = 0x14,
     DrIT_Unkn21 = 0x15,
-    DrIT_Unkn22 = 0x16,
+    DrIT_LongPropBar,
     DrIT_Unkn23 = 0x17,
     DrIT_Unkn24 = 0x18,
     DrIT_Unkn25 = 0x19,

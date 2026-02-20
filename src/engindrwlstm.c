@@ -1828,6 +1828,7 @@ void draw_vehicle_health(struct Thing *p_thing)
     struct SortSprite *p_sspr;
     int bckt;
     int scr_depth;
+    TbPixel lvl_col, bar_col;
 
     x = (p_thing->X >> 8) - engn_xc;
     y = PRCCOORD_TO_YCOORD(p_thing->Y) - engn_yc;
@@ -1836,14 +1837,26 @@ void draw_vehicle_health(struct Thing *p_thing)
 
     scr_depth = sp.Depth - 2 * p_thing->Radius;
     bckt = BUCKET_MID + scr_depth;
-    p_sspr = draw_item_add_sprite(DrIT_Unkn22, bckt);
+    p_sspr = draw_item_add_sprite(DrIT_LongPropBar, bckt);
     if (p_sspr == NULL)
         return;
+
+    if (ingame.PanelPermutation == -3) {
+        lvl_col = 33;
+        bar_col = 42;
+    } else {
+        lvl_col = 15;
+        bar_col = 19;
+    }
 
     p_sspr->X = sp.X;
     p_sspr->Y = sp.Y + 20;
     p_sspr->Z = scr_depth;
     p_sspr->SrcItem = (intptr_t)p_thing;
+    p_sspr->Frame = p_thing->U.UVehicle.MaxHealth;
+    p_sspr->Scale = p_thing->Health;
+    p_sspr->Brightness = lvl_col;
+    p_sspr->Angle = bar_col;
 }
 
 void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
