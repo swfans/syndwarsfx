@@ -50,10 +50,6 @@ extern short word_1A5836;
 
 extern long sprite_over_16x16;
 
-extern long unkn1_pos_x;
-extern long unkn1_pos_y;
-extern struct TbSprite *unkn1_spr;
-
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 

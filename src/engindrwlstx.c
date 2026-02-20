@@ -30,6 +30,7 @@
 #include "enginpeff.h"
 #include "enginprops.h"
 #include "render_gpoly.h"
+#include "enginzoom.h"
 
 #include "bigmap.h"
 #include "display.h"
@@ -72,18 +73,6 @@ extern long dword_176CC4;
 extern struct Thing *dword_176CC8;
 extern int dword_176CCC;
 extern int dword_176CD0;
-
-extern long unkn1_pos_x;
-extern long unkn1_pos_y;
-extern struct TbSprite *unkn1_spr;
-extern long dword_176CE0;
-extern long dword_176CE4;
-extern long dword_176CE8;
-extern long dword_176CEC;
-extern long dword_176CF0;
-extern long dword_176CF4;
-extern long dword_176D00;
-extern long dword_176D04;
 
 extern ubyte byte_176D49;
 
@@ -493,22 +482,14 @@ void draw_frame_on_map_coords_unscaled_but_scale_pos(MapCoord cor_x, MapCoord co
     int cor_dt_x, cor_dt_y, cor_dt_z;
 
     cor_dt_x = cor_x - engn_xc;
-    cor_dt_y = cor_y - (engn_yc >> 3);
+    cor_dt_y = cor_y;
     cor_dt_z = cor_z - engn_zc;
-    {
-        int cor_lr, cor_sm;
-        if (abs(cor_dt_x) <= abs(cor_dt_z)) {
-            cor_sm = abs(cor_dt_x);
-            cor_lr = abs(cor_dt_z);
-        } else {
-            cor_sm = abs(cor_dt_z);
-            cor_lr = abs(cor_dt_x);
-        }
-        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(18,0))
-            return;
+    if ((cor_dt_x > TILE_TO_MAPCOORD(render_area_a,0)) ||
+      (cor_dt_z > TILE_TO_MAPCOORD(render_area_b,0))) {
+        return;
     }
 
-    transform_shpoint(&sp, cor_dt_x, cor_dt_y - 8 * engn_yc, cor_dt_z);
+    transform_shpoint(&sp, cor_dt_x, 8 * cor_dt_y - 8 * engn_yc, cor_dt_z);
     sp.X += ((overall_scale * scr_sh_x) >> 8);
     sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
@@ -522,22 +503,14 @@ void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
     int cor_dt_x, cor_dt_y, cor_dt_z;
 
     cor_dt_x = cor_x - engn_xc;
-    cor_dt_y = cor_y - (engn_yc >> 3);
+    cor_dt_y = cor_y;
     cor_dt_z = cor_z - engn_zc;
-    {
-        int cor_lr, cor_sm;
-        if (abs(cor_dt_x) <= abs(cor_dt_z)) {
-            cor_sm = abs(cor_dt_x);
-            cor_lr = abs(cor_dt_z);
-        } else {
-            cor_sm = abs(cor_dt_z);
-            cor_lr = abs(cor_dt_x);
-        }
-        if (cor_lr + (cor_sm >> 1) > TILE_TO_MAPCOORD(18,0))
-            return;
+    if ((cor_dt_x > TILE_TO_MAPCOORD(render_area_a,0)) ||
+      (cor_dt_z > TILE_TO_MAPCOORD(render_area_b,0))) {
+        return;
     }
 
-    transform_shpoint(&sp, cor_dt_x, cor_dt_y - 8 * engn_yc, cor_dt_z);
+    transform_shpoint(&sp, cor_dt_x, 8 * cor_dt_y - 8 * engn_yc, cor_dt_z);
     sp.X += ((overall_scale * scr_sh_x) >> 8);
     sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
