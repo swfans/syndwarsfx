@@ -5515,8 +5515,21 @@ ubyte do_user_interface(void)
     if (is_key_pressed(KC_F9, KMod_NONE))
     {
         clear_key_pressed(KC_F9);
-        StopCD();
         game_option_inc(GOpt_PanelPermutation);
+        init_scanner_colour();
+        load_pop_sprites_for_current_mode();
+        did_inp |= GINPUT_DIRECT;
+    }
+
+    // Switch old/new panel
+    if (is_key_pressed(KC_F9, KMod_CONTROL))
+    {
+        clear_key_pressed(KC_F9);
+        //game_option_inc(GOpt_PanelType);
+        if (ingame.PanelPermutation < 0)
+            game_option_set(GOpt_PanelPermutation, -ingame.PanelPermutation-1);
+        else
+            game_option_set(GOpt_PanelPermutation, -ingame.PanelPermutation-1);
         init_scanner_colour();
         load_pop_sprites_for_current_mode();
         did_inp |= GINPUT_DIRECT;
@@ -5526,7 +5539,6 @@ ubyte do_user_interface(void)
     if (is_key_pressed(KC_F10, KMod_NONE))
     {
         clear_key_pressed(KC_F10);
-        StopCD();
         game_option_inc(GOpt_TrenchcoatPreference);
         prep_multicolor_sprites();
         did_inp |= GINPUT_DIRECT;
