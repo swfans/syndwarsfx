@@ -206,7 +206,7 @@ int SCANNER_text_draw(const char *text, int start_x, int height)
     height_base = 9 * fnt_height / 6;
     y = 0;
     str = (const ubyte *)text;
-    sel_c1 = SCANNER_colour[0];
+    sel_c1 = SCANNER_colour[ScnClr_Text];
     x = start_x;
     if (height != height_base)
     {
@@ -347,7 +347,7 @@ void SCANNER_draw_objective_info(int x, int y, int width)
     v48 = y;
     for (i = 0; i < height; i++)
     {
-        SCANNER_unkn_func_203(x, v48, x + width - 1, v48, SCANNER_colour[0],
+        SCANNER_unkn_func_203(x, v48, x + width - 1, v48, SCANNER_colour[ScnClr_Text],
           ingame.Scanner.Brightness, ingame.Scanner.Contrast);
         ++v48;
     }

@@ -462,29 +462,8 @@ void draw_sort_sprite_long_prop_bar(short sspr)
       p_sspr->Frame, lvl_col, bar_col);
 }
 
-void draw_frame_on_map_coords_unscaled_but_scale_pos(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
-  short scr_sh_x, short scr_sh_y, ushort frm)
-{
-    struct ShEnginePoint sp;
-    int cor_dt_x, cor_dt_y, cor_dt_z;
-
-    cor_dt_x = cor_x - engn_xc;
-    cor_dt_y = cor_y;
-    cor_dt_z = cor_z - engn_zc;
-    if ((cor_dt_x > TILE_TO_MAPCOORD(render_area_a,0)) ||
-      (cor_dt_z > TILE_TO_MAPCOORD(render_area_b,0))) {
-        return;
-    }
-
-    transform_shpoint(&sp, cor_dt_x, 8 * cor_dt_y - 8 * engn_yc, cor_dt_z);
-    sp.X += ((overall_scale * scr_sh_x) >> 8);
-    sp.Y += ((overall_scale * scr_sh_y) >> 8);
-
-    draw_hud_frame_on_screen_unscaled_but_scale_pos(sp.X, sp.Y, frm, overall_scale);
-}
-
 void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
-  short scr_sh_x, short scr_sh_y, ushort frm)
+  short scr_sh_x, short scr_sh_y, ushort frm, TbBool unscaled)
 {
     struct ShEnginePoint sp;
     int cor_dt_x, cor_dt_y, cor_dt_z;
@@ -501,7 +480,10 @@ void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
     sp.X += ((overall_scale * scr_sh_x) >> 8);
     sp.Y += ((overall_scale * scr_sh_y) >> 8);
 
-    draw_hud_frame_on_screen(sp.X, sp.Y, frm, overall_scale);
+    if (unscaled)
+        draw_hud_frame_on_screen_unscaled_but_scale_pos(sp.X, sp.Y, frm, overall_scale);
+    else
+        draw_hud_frame_on_screen(sp.X, sp.Y, frm, overall_scale);
 }
 
 void number_player(struct Thing *p_person, ubyte n)
@@ -514,6 +496,7 @@ void number_player(struct Thing *p_person, ubyte n)
     int shift_x, shift_y;
     ushort ani_mdsh, ani_base;
     ushort frm;
+    TbBool unscaled;
 
     if (lbDisplay.GraphicsScreenHeight < 400)
         ani_mdsh = 0;
@@ -581,14 +564,9 @@ void number_player(struct Thing *p_person, ubyte n)
     }
     shift_y = 0;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-    {
-        draw_frame_on_map_coords_unscaled_but_scale_pos(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm);
-    }
-    else
-    {
-        draw_frame_on_map_coords(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm);
-    }
+    unscaled = (lbDisplay.GraphicsScreenHeight < 400);
+
+    draw_frame_on_map_coords(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm, unscaled);
 }
 
 // Special non-textured draw; used during nuclear explosions?

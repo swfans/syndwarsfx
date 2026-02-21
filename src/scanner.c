@@ -20,6 +20,7 @@
 
 #include "bfgentab.h"
 #include "bfmath.h"
+#include "bfpalette.h"
 #include "bfscreen.h"
 #include "bfutility.h"
 
@@ -129,21 +130,24 @@ void SCANNER_set_colour(ubyte col)
     asm volatile ("call ASM_SCANNER_set_colour\n"
         :  : "a" ((long)col));
 #endif
+    TbPixel bcol1;
     switch (col)
     {
     case 1:
-        SCANNER_colour[0] = 40;
-        SCANNER_colour[1] = 68;
-        SCANNER_colour[2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + 20];
-        SCANNER_colour[4] = 40;
-        SCANNER_colour[3] = 32;
+        bcol1 = LbPaletteFindColour(display_palette, 13,7,30);
+        SCANNER_colour[ScnClr_Text] = LbPaletteFindColour(display_palette, 19,22,17);
+        SCANNER_colour[ScnClr_Unkn1] = LbPaletteFindColour(display_palette, 22,22,22);
+        SCANNER_colour[ScnClr_Unkn2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + bcol1];
+        SCANNER_colour[ScnClr_Frame] = LbPaletteFindColour(display_palette, 19,22,17);
+        SCANNER_colour[ScnClr_Unkn3] = LbPaletteFindColour(display_palette, 38,44,34);
         break;
     case 2:
-        SCANNER_colour[0] = 20;
-        SCANNER_colour[1] = 68;
-        SCANNER_colour[2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + 20];
-        SCANNER_colour[4] = 20;
-        SCANNER_colour[3] = colour_lookup[ColLU_CYAN];
+        bcol1 = LbPaletteFindColour(display_palette, 13,7,30);
+        SCANNER_colour[ScnClr_Text] = LbPaletteFindColour(display_palette, 13,7,30);
+        SCANNER_colour[ScnClr_Unkn1] = LbPaletteFindColour(display_palette, 22,22,22);
+        SCANNER_colour[ScnClr_Unkn2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + bcol1];
+        SCANNER_colour[ScnClr_Frame] = LbPaletteFindColour(display_palette, 13,7,30);
+        SCANNER_colour[ScnClr_Unkn3] = colour_lookup[ColLU_CYAN];//RGB(0,63,63)
         break;
     default:
         break;
@@ -187,7 +191,7 @@ void SCANNER_fill_in_a_little_bit(int x1, int z1, int x2, int z2)
             int alt1, alt2, alt3, alt4;
             int cor_x, cor_z;
             ushort sc_col;
-            short col2;
+            short bri;
             TbPixel col1;
 
             cor_x = tile_x << 7;
@@ -195,23 +199,23 @@ void SCANNER_fill_in_a_little_bit(int x1, int z1, int x2, int z2)
 
             sc_col = SCANNER_find_colour(cor_x, cor_z);
             if (sc_col == 0)
-                col1 = SCANNER_colour[0];
+                col1 = SCANNER_colour[ScnClr_Text];
             else if (sc_col == 1)
-                col1 = SCANNER_colour[1];
+                col1 = SCANNER_colour[ScnClr_Unkn1];
             else if (sc_col == 2)
-                col1 = SCANNER_colour[2];
+                col1 = SCANNER_colour[ScnClr_Unkn2];
 
             alt1 = alt_at_point(cor_z, cor_x + 128);
             alt2 = alt_at_point(cor_z, cor_x - 128);
             alt3 = alt_at_point(cor_z + 128, cor_x);
             alt4 = alt_at_point(cor_z - 128, cor_x);
-            col2 = ((alt1 - alt2) >> 9) + ((alt3 - alt4) >> 9) + 32;
-            if (col2 < 0)
-                col2 = 0;
-            if (col2 > 63)
-                col2 = 63;
+            bri = ((alt1 - alt2) >> 9) + ((alt3 - alt4) >> 9) + 32;
+            if (bri < 0)
+                bri = 0;
+            if (bri > 63)
+                bri = 63;
 
-            SCANNER_data[tile_x][tile_z] = pixmap.fade_table[256 * col2 + col1];
+            SCANNER_data[tile_x][tile_z] = pixmap.fade_table[256 * bri + col1];
         }
     }
 }

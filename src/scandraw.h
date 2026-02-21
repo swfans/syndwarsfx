@@ -28,6 +28,13 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+enum ScannerColours {
+    ScnClr_Text = 0,
+    ScnClr_Unkn1,
+    ScnClr_Unkn2,
+    ScnClr_Unkn3,
+    ScnClr_Frame,
+};
 
 #pragma pack()
 /******************************************************************************/
