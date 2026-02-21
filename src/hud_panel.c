@@ -208,13 +208,7 @@ void srm_scanner_set_size_to_panel_with_limit(struct GamePanel *p_panel)
 
 void srm_scanner_size_update(void)
 {
-    short margin, width, height, border;
     short panel;
-
-    panel_get_scanner_screen_size(&margin, &width, &height,
-      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, pop1_sprites_scale);
-    border = 1;
-
     struct GamePanel *p_panel;
 
     for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
@@ -228,16 +222,6 @@ void srm_scanner_size_update(void)
         SCANNER_set_screen_box(0, 0, 0, 0, 0);
         return;
     }
-
-    p_panel->dyn.X = 0;
-    p_panel->dyn.Y = lbDisplay.GraphicsScreenHeight - margin - height;
-    p_panel->dyn.Width = width;
-    p_panel->dyn.Height = height;
-
-    p_panel->pos.X = p_panel->dyn.X - border;
-    p_panel->pos.Y = p_panel->dyn.Y - border;
-    p_panel->pos.Width = p_panel->dyn.Width + 2 * border;
-    p_panel->pos.Height = p_panel->dyn.Height + 2 * border;
 
     srm_scanner_set_size_to_panel_with_limit(p_panel);
 }

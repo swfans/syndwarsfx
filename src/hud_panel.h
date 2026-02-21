@@ -54,15 +54,25 @@ enum PanelType {
 
 enum PanelFlags {
     PanF_ENABLED = 0x0001,
+    /** The panel has more than one sprite, to merge into horizontal line. */
     PanF_SPRITES_IN_LINE_HORIZ = 0x0020,
+    /** The panel has more than one sprite, to merge into vertical line. */
     PanF_SPRITES_IN_LINE_VERTC = 0x0040,
     PanF_SPR_TOGGLED_ON = 0x0080,
+    /** Strech the panel to new resolution in the dimension in which sprites make up a line, but accumulate the whole streching in middle sprite. */
     PanF_RESIZE_MIDDLE_SPR = 0x0100,
     PanF_REPOSITION_HORIZ = 0x0200,
     PanF_REPOSITION_VERTC = 0x0400,
+    /** If owining panel gets moved, move position of the flagged panel with it. */
     PanF_REPOSITION_WITH_PARENT = 0x0800,
+    /** If owining panel gets resized, strech the flagged one by that size change. */
     PanF_STRECH_TO_PARENT_SIZE = 0x1000,
+    /** If owining panel gets resized, move position of the flagged panel by that size change. */
     PanF_REPOSITION_TO_AFTER = 0x2000,
+    /** Strech the panel to new resolution horizontally. */
+    PanF_RESIZE_PROPOR_HORIZ = 0x4000,
+    /** Strech the panel to new resolution vertically. */
+    PanF_RESIZE_PROPOR_VERTC = 0x8000,
 };
 
 enum PanelShift {

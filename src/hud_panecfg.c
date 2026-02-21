@@ -137,6 +137,8 @@ const struct TbNamedEnum panels_conf_panel_flags[] = {
   {"RepositionWithParent",	PanF_REPOSITION_WITH_PARENT},
   {"RepositionToAfter",		PanF_REPOSITION_TO_AFTER},
   {"StrechToParentSize",	PanF_STRECH_TO_PARENT_SIZE},
+  {"ResizeProporHoriz",		PanF_RESIZE_PROPOR_HORIZ},
+  {"ResizeProporVertc",		PanF_RESIZE_PROPOR_VERTC},
   {NULL,					0},
 };
 
@@ -258,7 +260,7 @@ void panel_strech_width_to_res(short detail)
 
         if (p_panel->Spr[1] == -1)
             continue;
-        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_HORIZ|PanF_REPOSITION_HORIZ)) == 0)
+        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_HORIZ|PanF_REPOSITION_HORIZ|PanF_RESIZE_PROPOR_HORIZ)) == 0)
             continue;
 
         if (p_panel->Spr[1] > 0)
@@ -283,7 +285,8 @@ void panel_strech_width_to_res(short detail)
             new_dim = p_panel->pos.X * lbDisplay.GraphicsScreenWidth / base_width;
             dt_x = new_dim - p_panel->pos.X;
         }
-        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0)
+        if ((((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0) && ((p_panel->Flags & PanF_SPRITES_IN_LINE_HORIZ) != 0))
+          || ((p_panel->Flags & PanF_RESIZE_PROPOR_HORIZ) != 0))
         {
             new_dim = p_panel->pos.Width * lbDisplay.GraphicsScreenWidth / base_width;
             dt_width = new_dim - p_panel->pos.Width;
@@ -353,6 +356,19 @@ void panel_strech_height_to_res(short detail)
 
             p_spr = &pop1_sprites[p_panel->Spr[0]];
             p_panel->SprHeight = p_spr->SHeight;
+        }
+
+        if (p_panel->Type == PanT_Scanner) //TODO use scaling flags rather than consitions on specific type
+        {
+            short border;
+            border = 1;
+
+            p_panel->dyn.Y = lbDisplay.GraphicsScreenHeight - scan_margin - scan_height;
+            p_panel->dyn.Height = scan_height;
+
+            p_panel->pos.Y = p_panel->dyn.Y - border;
+            p_panel->pos.Height = p_panel->dyn.Height + 2 * border;
+            continue;
         }
 
         if (p_panel->Spr[1] == -1)
