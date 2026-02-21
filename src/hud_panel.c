@@ -1345,7 +1345,7 @@ void draw_panel_pickable_item(void)
         draw_panel_pickable_thing_player_targeted(p_locplayer);
 }
 
-TbBool func_1caf8(ubyte *panel_wep)
+TbBool draw_weapons_panel(ubyte *panel_wep)
 {
     TbBool ret;
     PlayerInfo *p_locplayer;
@@ -2250,9 +2250,9 @@ void draw_new_panel(void)
 
     draw_panel_pickable_item();
 
-    if (!func_1caf8(panel_wep))
+    if (!draw_weapons_panel(panel_wep))
     {
-        if (ingame.Flags & GamF_Unkn0200) {
+        if ((ingame.Flags & GamF_NaviPerfInfo) != 0) {
             uint y;
             ushort ctlmode;
 

@@ -286,7 +286,7 @@ void count_fnavs(TbBool a1)
         word_1DC898++;
         return;
     }
-    if ((ingame.Flags & GamF_Unkn0200) != 0)
+    if ((ingame.Flags & GamF_NaviPerfInfo) != 0)
     {
         ushort i;
         TbPixel col;
@@ -316,7 +316,7 @@ void navi_onscreen_debug(TbBool a1)
         word_1DC8CE++;
         return;
     }
-    if ((ingame.Flags & GamF_Unkn0200) != 0)
+    if ((ingame.Flags & GamF_NaviPerfInfo) != 0)
     {
         ushort i;
 

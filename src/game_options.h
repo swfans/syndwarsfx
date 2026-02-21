@@ -112,7 +112,7 @@ enum GameFlags {
     GamF_RenderScene  = 0x0040,
     TngF_ProgressAction = 0x0080, /**< Process things states, enabling in-mission action. */
     GamF_Unkn0100     = 0x0100,
-    GamF_Unkn0200     = 0x0200,
+    GamF_NaviPerfInfo = 0x0200,
     GamF_DeepRadar    = 0x0400,
     GamF_Unkn0800     = 0x0800,
     GamF_Unkn1000     = 0x1000,

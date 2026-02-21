@@ -86,6 +86,7 @@ print_help (const char *argv0)
 "                          events/interrupts\n"
 "                -d <str>  Activate debug functions; t - things debug HUD,\n"
 "                          o - objectives debug HUD, c - collision debug HUD\n"
+"                          v - navigation perf HUD\n"
 "                -E <num>  Joystick config\n"
 "                -F        Re-compute and re-save `tables.dat` colour tables\n"
 "                          file, using `fade.dat` as input\n"
@@ -223,6 +224,9 @@ static TbBool process_options(int *argc, char ***argv)
                     break;
                 case 'c':
                     debug_hud_collision = 1;
+                    break;
+                case 'v':
+                    ingame.Flags |= GamF_NaviPerfInfo;
                     break;
                 default:
                     LOGERR("Invalid value after '-d' parameter. Unexpected char '%c'.", optarg[tmpint]);
