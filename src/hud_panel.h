@@ -48,6 +48,8 @@ enum PanelType {
     PanT_WeaponEnergy,
     PanT_UNKN09,
     PanT_Grouping,
+    PanT_Scanner,
+    PanT_Objective,
 };
 
 enum PanelFlags {
@@ -129,6 +131,10 @@ void draw_new_panel(void);
 TbResult load_pop_sprites_for_current_mode(void);
 
 TbResult load_small_font_for_current_ingame_mode(void);
+
+void srm_scanner_size_update(void);
+void init_scanner_colour(void);
+void init_scanner(void);
 
 /** Returns if a game panel is active, considering the target which it controls.
  */

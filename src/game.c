@@ -2078,60 +2078,6 @@ void init_outro(void)
     setup_heaps(SHSC_GameSndBestQ, language_3str);
 }
 
-void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
-{
-    short hlimit;
-
-    // Limit the height here, to make sure reduced rectangle is still put at bottom
-    hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
-    if (height >= hlimit)
-        height = hlimit - 1;
-
-    SCANNER_set_screen_box(1, lbDisplay.GraphicsScreenHeight - margin - height,
-        width, height, 24);
-}
-
-void srm_scanner_size_update(void)
-{
-    short margin, width, height;
-
-    panel_get_scanner_screen_size(&margin, &width, &height,
-      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, pop1_sprites_scale);
-    srm_scanner_set_size_at_bottom_left(margin, width, height);
-}
-
-void init_scanner_colour(void)
-{
-    sbyte panperm;
-    ubyte col;
-
-    panperm = ingame.PanelPermutation;
-    if ((panperm == 2) || (panperm == -3)) {
-        col = 1;
-    } else
-    if ((panperm == 0) || (panperm == -1)) {
-        col = 2;
-    } else {
-        col = 2;
-    }
-    SCANNER_set_colour(col);
-    SCANNER_fill_in();
-}
-
-void init_scanner(void)
-{
-    init_scanner_colour();
-    dword_1AA5C4 = 0;
-    dword_1AA5C8 = 0;
-    ingame.Scanner.Brightness = 8;
-    ingame.Scanner.Contrast = 5;
-    SCANNER_width = ingame.Scanner.Width;
-    ingame.Scanner.Zoom = 128;
-    ingame.Scanner.Angle = 0;
-    srm_scanner_size_update();
-    SCANNER_init();
-}
-
 /**
  * Updates engine parameters for best display for current video mode within the tactical mission.
  */
@@ -2144,6 +2090,7 @@ TbBool adjust_mission_engine_to_video_mode(void)
     // Set scale 15% over the min, to create a nice pan effect
     overall_scale = (get_overall_scale_min() * 295) >> 8;
 
+    // loads sprites for the panel, but also panel config file, and stretches to actual resolution
     if (load_pop_sprites_for_current_mode() == Lb_FAIL)
         ret = false;
     if (load_mouse_pointers_sprites_for_current_mode() == Lb_FAIL)

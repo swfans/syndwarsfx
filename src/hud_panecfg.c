@@ -122,6 +122,8 @@ const struct TbNamedEnum panels_conf_panel_type[] = {
   {"WeaponEnergy",	PanT_WeaponEnergy + 1},
   {"UNKN09",		PanT_UNKN09 + 1},
   {"Grouping",		PanT_Grouping + 1},
+  {"Scanner",		PanT_Scanner + 1},
+  {"Objective",		PanT_Objective + 1},
   {NULL,			0},
 };
 
@@ -373,7 +375,7 @@ void panel_strech_height_to_res(short detail)
             p_panel->SprHeight += p_spr->SHeight;
         }
 
-        // Compute adjusted size, bot better fit the panel size
+        // Compute adjusted size, to better fit the panel size
         adjusted_base_height = base_height;
         adjusted_curr_height = curr_height;
         for (owpanl = 0; owpanl < GAME_PANELS_LIMIT; owpanl++)

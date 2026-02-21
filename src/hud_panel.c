@@ -99,7 +99,7 @@ TbBool panel_any_visible(void)
     return ((ingame.Flags & GamF_HUDPanel) != 0);
 }
 
-TbBool panel_for_speciifc_agent(short panel)
+TbBool panel_for_specific_agent(short panel)
 {
     struct GamePanel *p_panel;
 
@@ -181,6 +181,111 @@ void update_dropped_item_under_agent_exists(short agent)
     if ((p_pickup == NULL) || (p_pickup->Type != SmTT_DROPPED_ITEM)) {
         p_agent->Flag &= ~TngF_Unkn08000000;
     }
+}
+
+//TODO old code - remove when scanner panel is in all conf files
+void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
+{
+    short hlimit;
+
+    // Limit the height here, to make sure reduced rectangle is still put at bottom
+    hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
+    if (height >= hlimit)
+        height = hlimit - 1;
+
+    SCANNER_set_screen_box(1, lbDisplay.GraphicsScreenHeight - margin - height,
+        width, height, 24);
+}
+
+/** Set scanner size to given panel size, but limit both to what the scanner supports.
+ */
+void srm_scanner_set_size_to_panel_with_limit(struct GamePanel *p_panel)
+{
+    short hlimit;
+
+    // Limit the height here, to make sure reduced rectangle is still put at bottom
+    hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
+    if (p_panel->dyn.Height >= hlimit) {
+        short delta_d, delta_p;
+
+        delta_d = p_panel->dyn.Height - hlimit;
+        delta_p = p_panel->dyn.Y - p_panel->pos.Y;
+        p_panel->dyn.Y += delta_d;
+        p_panel->dyn.Height = hlimit - 1;
+        p_panel->pos.Y = p_panel->dyn.Y - delta_p;
+        p_panel->pos.Height -= delta_d;
+    }
+
+    SCANNER_set_screen_box(p_panel->dyn.X, p_panel->dyn.Y,
+        p_panel->dyn.Width, p_panel->dyn.Height, 24);
+}
+
+void srm_scanner_size_update(void)
+{
+    short margin, width, height, border;
+    short panel;
+
+    panel_get_scanner_screen_size(&margin, &width, &height,
+      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, pop1_sprites_scale);
+    border = 1;
+
+    struct GamePanel *p_panel;
+
+    for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
+    {
+        p_panel = &game_panel[panel];
+        if (p_panel->Type == PanT_Scanner)
+            break;
+    }
+
+    if (panel >= GAME_PANELS_LIMIT) {
+        srm_scanner_set_size_at_bottom_left(margin, width, height);
+        return;
+    }
+
+    p_panel->dyn.X = 0;
+    p_panel->dyn.Y = lbDisplay.GraphicsScreenHeight - margin - height;
+    p_panel->dyn.Width = width;
+    p_panel->dyn.Height = height;
+
+    p_panel->pos.X = p_panel->dyn.X - border;
+    p_panel->pos.Y = p_panel->dyn.Y - border;
+    p_panel->pos.Width = p_panel->dyn.Width + 2 * border;
+    p_panel->pos.Height = p_panel->dyn.Height + 2 * border;
+
+    srm_scanner_set_size_to_panel_with_limit(p_panel);
+}
+
+void init_scanner_colour(void)
+{
+    sbyte panperm;
+    ubyte col;
+
+    panperm = ingame.PanelPermutation;
+    if ((panperm == 2) || (panperm == -3)) {
+        col = 1;
+    } else
+    if ((panperm == 0) || (panperm == -1)) {
+        col = 2;
+    } else {
+        col = 2;
+    }
+    SCANNER_set_colour(col);
+    SCANNER_fill_in();
+}
+
+void init_scanner(void)
+{
+    init_scanner_colour();
+    dword_1AA5C4 = 0;
+    dword_1AA5C8 = 0;
+    ingame.Scanner.Brightness = 8;
+    ingame.Scanner.Contrast = 5;
+    SCANNER_width = ingame.Scanner.Width;
+    ingame.Scanner.Zoom = 128;
+    ingame.Scanner.Angle = 0;
+    srm_scanner_size_update();
+    SCANNER_init();
 }
 
 void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int a7)
@@ -2034,7 +2139,7 @@ void draw_new_panel(void)
           break;
         lbDisplay.DrawFlags = 0;
 
-        if (!panel_for_speciifc_agent(panel))
+        if (!panel_for_specific_agent(panel))
         {
             is_visible = (p_panel->Spr[0] != 0);
             is_blinking = false;
