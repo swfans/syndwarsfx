@@ -183,20 +183,6 @@ void update_dropped_item_under_agent_exists(short agent)
     }
 }
 
-//TODO old code - remove when scanner panel is in all conf files
-void srm_scanner_set_size_at_bottom_left(short margin, short width, short height)
-{
-    short hlimit;
-
-    // Limit the height here, to make sure reduced rectangle is still put at bottom
-    hlimit = sizeof(ingame.Scanner.Width)/sizeof(ingame.Scanner.Width[0]);
-    if (height >= hlimit)
-        height = hlimit - 1;
-
-    SCANNER_set_screen_box(1, lbDisplay.GraphicsScreenHeight - margin - height,
-        width, height, 24);
-}
-
 /** Set scanner size to given panel size, but limit both to what the scanner supports.
  */
 void srm_scanner_set_size_to_panel_with_limit(struct GamePanel *p_panel)
@@ -239,7 +225,7 @@ void srm_scanner_size_update(void)
     }
 
     if (panel >= GAME_PANELS_LIMIT) {
-        srm_scanner_set_size_at_bottom_left(margin, width, height);
+        SCANNER_set_screen_box(0, 0, 0, 0, 0);
         return;
     }
 
