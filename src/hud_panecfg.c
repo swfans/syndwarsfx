@@ -152,6 +152,7 @@ const struct TbNamedEnum panels_conf_any_bool[] = {
 };
 
 struct GamePanel game_panel_custom[GAME_PANELS_LIMIT];
+struct PanelStyle game_panel_custom_style;
 struct TbPoint game_panel_custom_shifts[48];
 
 // Original sizes of scanner in low res 64x62, high res 129x119
@@ -541,6 +542,7 @@ void size_panels_for_detail(short detail)
     panel_strech_width_to_res(detail);
     panel_strech_height_to_res(detail);
     game_panel = game_panel_custom;
+    game_panel_style = &game_panel_custom_style;
     game_panel_shifts = game_panel_custom_shifts;
 }
 

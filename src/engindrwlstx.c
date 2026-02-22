@@ -50,6 +50,7 @@
 #include "game_speed.h"
 #include "game_sprts.h"
 #include "game.h"
+#include "hud_panel.h"
 #include "packet.h"
 #include "player.h"
 #include "scandraw.h"
@@ -488,19 +489,20 @@ void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
 
 void number_player(struct Thing *p_person, ubyte n)
 {
+    struct PanelStyle *p_style;
     int shift_x, shift_y;
     ushort ani_mdsh, ani_base;
     ushort frm;
+    ushort screen_scale;
     TbBool unscaled;
 
-    if (lbDisplay.GraphicsScreenHeight < 400)
-        ani_mdsh = 0;
-    else
-        ani_mdsh = 4;
-    if (byte_1DB2E9 == 1) // green or blue
-        ani_base = 1528;
-    else
-        ani_base = 1520;
+    p_style = game_panel_style;
+
+    ani_base = p_style->AgentNumAnim;
+    screen_scale = min(lbDisplay.GraphicsScreenHeight / 200, p_style->AgentNumDetails);
+    if (screen_scale > 0)
+        screen_scale--;
+    ani_mdsh = 4 * screen_scale;
 
     frm = nstart_ani[ani_base + ani_mdsh + n];
     {

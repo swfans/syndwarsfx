@@ -81,6 +81,7 @@ enum PanelMomentaryFlags {
 };
 
 struct GamePanel *game_panel;
+struct PanelStyle *game_panel_style;
 struct TbPoint *game_panel_shifts;
 
 TbBool panel_exists(short panel)
@@ -226,6 +227,35 @@ void srm_scanner_size_update(void)
     srm_scanner_set_size_to_panel_with_limit(p_panel);
 }
 
+void panel_set_default_colours(ubyte col)
+{
+    struct PanelStyle *p_style;
+
+    p_style = game_panel_style;
+    switch (col)
+    {
+    case 1:
+        p_style->Colours[PanColr_Unkn2] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Text] = LbPaletteFindColour(display_palette, 19,22,17);
+        p_style->Colours[PanColr_Unkn1] = LbPaletteFindColour(display_palette, 22,22,22);
+        p_style->Colours[PanColr_Frame] = LbPaletteFindColour(display_palette, 19,22,17);
+        p_style->Colours[PanColr_Unkn3] = LbPaletteFindColour(display_palette, 38,44,34);
+        p_style->AgentNumAnim = 1528;
+        break;
+    case 2:
+        p_style->Colours[PanColr_Unkn2] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Text] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Unkn1] = LbPaletteFindColour(display_palette, 22,22,22);
+        p_style->Colours[PanColr_Frame] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Unkn3] = colour_lookup[ColLU_CYAN];//RGB(0,63,63)
+        p_style->AgentNumAnim = 1520;
+        break;
+    default:
+        break;
+    }
+    p_style->AgentNumDetails = 2;
+}
+
 void init_scanner_colour(void)
 {
     sbyte panperm;
@@ -240,7 +270,8 @@ void init_scanner_colour(void)
     } else {
         col = 2;
     }
-    SCANNER_set_colour(col);
+    panel_set_default_colours(col);
+    SCANNER_set_colours(game_panel_style);
     SCANNER_fill_in();
 }
 

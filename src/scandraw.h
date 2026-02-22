@@ -39,7 +39,6 @@ enum ScannerColours {
 #pragma pack()
 /******************************************************************************/
 extern ubyte SCANNER_colour[5];
-extern ubyte byte_1DB2E9;
 extern ubyte net_player_colours[8];
 extern TbPixel SCANNER_people_colours[15];
 

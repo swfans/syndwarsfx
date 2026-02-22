@@ -101,6 +101,14 @@ enum PanelShift {
     PaSh_WEP_FOURPACK_SLOTS = 27,
 };
 
+enum PanelColour {
+    PanColr_Text = 0,
+    PanColr_Unkn1,
+    PanColr_Unkn2,
+    PanColr_Unkn3,
+    PanColr_Frame,
+};
+
 struct GamePanel
 {
     /** Rectange representing area active for mouse events and sprite drawing. */
@@ -121,12 +129,23 @@ struct GamePanel
     ubyte Type;
 };
 
+struct PanelStyle
+{
+    /** Colors used for various parts of the panel. */
+    TbPixel Colours[5];
+    /** Agent number animations, beginning of an array with 4 entries for each detail level. */
+    ushort AgentNumAnim;
+    /** Amount of detail levels for the agent number animations */
+    ushort AgentNumDetails;
+};
+
 struct Thing;
 struct TbPoint;
 
 #pragma pack()
 /******************************************************************************/
 extern struct GamePanel *game_panel;
+extern struct PanelStyle *game_panel_style;
 extern struct TbPoint *game_panel_shifts;
 extern ubyte byte_153198;
 extern long scanner_unkn370;

@@ -124,31 +124,16 @@ void SCANNER_init(void)
 #endif
 }
 
-void SCANNER_set_colour(ubyte col)
+void SCANNER_set_colours(struct PanelStyle *p_style)
 {
     TbPixel bcol1;
-    switch (col)
-    {
-    case 1:
-        bcol1 = LbPaletteFindColour(display_palette, 13,7,30);
-        SCANNER_colour[ScnClr_Text] = LbPaletteFindColour(display_palette, 19,22,17);
-        SCANNER_colour[ScnClr_Unkn1] = LbPaletteFindColour(display_palette, 22,22,22);
-        SCANNER_colour[ScnClr_Unkn2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + bcol1];
-        SCANNER_colour[ScnClr_Frame] = LbPaletteFindColour(display_palette, 19,22,17);
-        SCANNER_colour[ScnClr_Unkn3] = LbPaletteFindColour(display_palette, 38,44,34);
-        break;
-    case 2:
-        bcol1 = LbPaletteFindColour(display_palette, 13,7,30);
-        SCANNER_colour[ScnClr_Text] = LbPaletteFindColour(display_palette, 13,7,30);
-        SCANNER_colour[ScnClr_Unkn1] = LbPaletteFindColour(display_palette, 22,22,22);
-        SCANNER_colour[ScnClr_Unkn2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + bcol1];
-        SCANNER_colour[ScnClr_Frame] = LbPaletteFindColour(display_palette, 13,7,30);
-        SCANNER_colour[ScnClr_Unkn3] = colour_lookup[ColLU_CYAN];//RGB(0,63,63)
-        break;
-    default:
-        break;
-    }
-    byte_1DB2E9 = col;
+
+    bcol1 = p_style->Colours[PanColr_Unkn2];
+    SCANNER_colour[ScnClr_Text] = p_style->Colours[PanColr_Text];
+    SCANNER_colour[ScnClr_Unkn1] = p_style->Colours[PanColr_Unkn1];
+    SCANNER_colour[ScnClr_Unkn2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + bcol1];
+    SCANNER_colour[ScnClr_Unkn3] = p_style->Colours[PanColr_Unkn3];
+    SCANNER_colour[ScnClr_Frame] = p_style->Colours[PanColr_Frame];
 }
 
 void SCANNER_fill_in(void)
