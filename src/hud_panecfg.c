@@ -217,26 +217,6 @@ int panel_get_objective_info_height(short screen_height)
     return h;
 }
 
-void panel_get_scanner_screen_size(short *p_margin, short *p_width, short *p_height,
-  short screen_width, short screen_height, short spr_scale)
-{
-    int margin, width, height;
-
-    width = screen_width * scanner_width_pct / 100;
-    height = screen_height * scanner_height_pct / 100;
-    margin = panel_get_objective_info_height(screen_height) + 2;
-    if (screen_width >= 640) {
-        width = width * 101 / 100;
-        height = height * 99 / 100;
-    } else {
-        // width without change
-        height = height * 124 / 100;
-    }
-    *p_margin = margin;
-    *p_width = width;
-    *p_height = height;
-}
-
 void panel_strech_width_to_res(short detail)
 {
     short base_width;

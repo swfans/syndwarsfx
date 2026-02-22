@@ -26,6 +26,7 @@
 #include "bfscrcopy.h"
 #include "ssampply.h"
 
+#include "bigmap.h"
 #include "campaign.h"
 #include "femail.h"
 #include "femain.h"
@@ -41,6 +42,7 @@
 #include "lvobjctv.h"
 #include "mydraw.h"
 #include "scanner.h"
+#include "scandraw.h"
 #include "sound.h"
 #include "wadfile.h"
 #include "wrcities.h"
@@ -359,8 +361,9 @@ ubyte input_citymap_city_selection(struct ScreenBox *p_box)
 
 ubyte input_citymap_scanner(struct ScreenBox *p_box)
 {
-    int dx, dy;
-    short sdx, sdy;
+    int dx, dz;
+    short sdx_s, sdx_c;
+    short sdz_s, sdz_c;
     ubyte ret;
 
     ret = 0;
@@ -403,7 +406,7 @@ ubyte input_citymap_scanner(struct ScreenBox *p_box)
             dword_1C47E0++;
     }
     dx = 0;
-    dy = 0;
+    dz = 0;
     ingame.Scanner.Angle = ((dword_1C47E0 >> 2) + ingame.Scanner.Angle) & 0x7FF;
     if (is_key_pressed(KC_RIGHT, KMod_DONTCARE)) {
         dx++;
@@ -414,26 +417,19 @@ ubyte input_citymap_scanner(struct ScreenBox *p_box)
         ret = 1;
     }
     if (is_key_pressed(KC_UP, KMod_DONTCARE)) {
-        dy--;
+        dz--;
         ret = 1;
     }
     if (is_key_pressed(KC_DOWN, KMod_DONTCARE)) {
-        dy++;
+        dz++;
         ret = 1;
     }
-    ingame.Scanner.MX += dx * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2] >> 13;
-    ingame.Scanner.MX += dy * lbSinTable[ingame.Scanner.Angle] >> 13;
-    sdx = dx * lbSinTable[ingame.Scanner.Angle] >> 13;
-    sdy = dy * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2] >> 13;
-    ingame.Scanner.MZ += sdx - sdy;
-    if (ingame.Scanner.MX < 0)
-        ingame.Scanner.MX = 0;
-    if (ingame.Scanner.MZ < 0)
-        ingame.Scanner.MZ = 0;
-    if (ingame.Scanner.MX > 256)
-        ingame.Scanner.MX = 256;
-    if (ingame.Scanner.MZ > 256)
-        ingame.Scanner.MZ = 256;
+    sdx_s = dz * lbSinTable[ingame.Scanner.Angle] >> 6;
+    sdx_c = dx * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2] >> 6;
+    sdz_s = dx * lbSinTable[ingame.Scanner.Angle] >> 6;
+    sdz_c = dz * lbSinTable[ingame.Scanner.Angle + LbFPMath_PI/2] >> 6;
+    SCANNER_shift_center_point(sdx_s + sdx_c, sdz_s - sdz_c);
+
     return ret;
 }
 
@@ -696,9 +692,7 @@ ubyte show_mission_screen(void)
 
 void init_brief_screen_scanner(void)
 {
-    ingame.Scanner.MX = 127;
-    ingame.Scanner.MZ = 127;
-    ingame.Scanner.Angle = 0;
+    SCANNER_set_center_point(MAP_COORD_WIDTH/2, MAP_COORD_HEIGHT/2, 0);
     ingame.Scanner.Zoom = 256;
 
     SCANNER_set_screen_box(brief_graphical_box.X + 1, brief_graphical_box.Y + 1,

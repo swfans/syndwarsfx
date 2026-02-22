@@ -43,6 +43,9 @@ extern ubyte byte_1DB2E9;
 extern ubyte net_player_colours[8];
 extern TbPixel SCANNER_people_colours[15];
 
+void SCANNER_set_center_point(int cor_x, int cor_z, int anglexz);
+void SCANNER_shift_center_point(int dt_cor_x, int dt_cor_z);
+
 void unkn_draw_transformed_point(short x, short y, long ptX, long ptY, long ptZ, ubyte colour);
 void draw_objective_point(long x, long y, ThingIdx thing, short a4, ubyte colour);
 void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, TbPixel colour);

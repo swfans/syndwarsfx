@@ -2111,7 +2111,7 @@ void draw_new_panel(void)
 
         if (!panel_for_specific_agent(panel))
         {
-            is_visible = (p_panel->Spr[0] != 0);
+            is_visible = (p_panel->Spr[0] != 0) || (p_panel->Type == PanT_Scanner);
             is_blinking = false;
             is_disabled = false;
             is_subordnt = false;
@@ -2318,6 +2318,10 @@ void draw_new_panel(void)
             draw_agent_grouping_bars(panel);
             draw_panel_thermal_button(panel);
             break;
+        case PanT_Scanner:
+            SCANNER_set_center_point(engn_xc, engn_zc, (2*LbFPMath_PI - 1) - ((engn_anglexz >> 5) & LbFPMath_AngleMask));
+            SCANNER_draw_new_transparent();
+            break;
         }
     }
 
@@ -2338,11 +2342,6 @@ void draw_new_panel(void)
             }
         }
     }
-
-    ingame.Scanner.MX = engn_xc >> 7;
-    ingame.Scanner.MZ = engn_zc >> 7;
-    ingame.Scanner.Angle = (2*LbFPMath_PI - 1) - ((engn_anglexz >> 5) & LbFPMath_AngleMask);
-    SCANNER_draw_new_transparent();
 
     draw_panel_objective_info();
 }
