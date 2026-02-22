@@ -73,6 +73,12 @@ enum PanelFlags {
     PanF_RESIZE_PROPOR_HORIZ = 0x4000,
     /** Strech the panel to new resolution vertically. */
     PanF_RESIZE_PROPOR_VERTC = 0x8000,
+    /** Strech the panel vertically, but only to values for displaying a line of text. */
+    PanF_RESIZE_TEXT_ONLY_VERTC = 0x00010000,
+    /** When resizing the panel vertically, keep the bottom position unchanged. */
+    PanF_RESIZE_ANCHOR_END_VERTC = 0x00040000,
+    /** After resizing all the other panels vertically, make this panel fill the remaining space. */
+    PanF_FILL_REMAINING_VERTC = 0x00080000,
 };
 
 enum PanelShift {
@@ -110,7 +116,7 @@ struct GamePanel
     short SprWidth;
     short SprHeight;
     ushort Use;
-    ushort Flags;
+    u32 Flags;
     ubyte ID;
     ubyte Type;
 };

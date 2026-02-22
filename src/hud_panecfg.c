@@ -139,6 +139,9 @@ const struct TbNamedEnum panels_conf_panel_flags[] = {
   {"StrechToParentSize",	PanF_STRECH_TO_PARENT_SIZE},
   {"ResizeProporHoriz",		PanF_RESIZE_PROPOR_HORIZ},
   {"ResizeProporVertc",		PanF_RESIZE_PROPOR_VERTC},
+  {"ResizeTextOnlyVertc",	PanF_RESIZE_TEXT_ONLY_VERTC},
+  {"ResizeAnchorEndVertc",	PanF_RESIZE_ANCHOR_END_VERTC},
+  {"FillRemainingVertc",	PanF_FILL_REMAINING_VERTC},
   {NULL,					0},
 };
 
@@ -324,21 +327,68 @@ void panel_strech_width_to_res(short detail)
 
 void panel_strech_height_to_res(short detail)
 {
-    short scan_margin, scan_width, scan_height;
     short base_height, curr_height;
     short panel;
+    short remain_panel[3];
 
     if (detail == 0) {
-        panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height, 320, 200, 1);
-        base_height = (200 - (scan_height + scan_margin)) * (detail + 1);
+        base_height = 200 * (detail + 1);
     } else {
-        panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height, 640, 480, 2);
-        base_height = (240 - (scan_height + scan_margin)/2) * (detail + 1);
+        base_height = 240 * (detail + 1);
     }
 
-    panel_get_scanner_screen_size(&scan_margin, &scan_width, &scan_height,
-      lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight, detail + 1);
-    curr_height = lbDisplay.GraphicsScreenHeight - (scan_height + scan_margin);
+    curr_height = lbDisplay.GraphicsScreenHeight;
+
+    remain_panel[1] = -1;
+    // Find panel which is supposed to gather remaining size
+    for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
+    {
+        struct GamePanel *p_panel;
+
+        p_panel = &game_panel_custom[panel];
+        if (p_panel->Spr[0] == -1)
+            break;
+        if ((p_panel->Flags & PanF_FILL_REMAINING_VERTC) != 0)
+        {
+            remain_panel[1] = panel;
+            break;
+        }
+    }
+    // Find panels before and after the remain panel
+    remain_panel[0] = -1;
+    remain_panel[2] = -1;
+    if (remain_panel[1] >= 0)
+    {
+        struct GamePanel *p_rmpane;
+        short dt_before, dt_after;
+
+        p_rmpane = &game_panel_custom[remain_panel[1]];
+        dt_before = INT16_MAX;
+        dt_after = INT16_MAX;
+        for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
+        {
+            struct GamePanel *p_panel;
+            short dt;
+
+            p_panel = &game_panel_custom[panel];
+            if (p_panel->Spr[0] == -1)
+                break;
+            if (panel == remain_panel[1])
+                continue;
+            dt = p_rmpane->pos.Y - (p_panel->pos.Y + p_panel->pos.Height);
+            if ((dt >= 0) && (dt < dt_before))
+            {
+                dt_before = dt;
+                remain_panel[0] = panel;
+            }
+            dt = p_panel->pos.Y - (p_rmpane->pos.Y + p_rmpane->pos.Height);
+            if ((dt >= 0) && (dt < dt_after))
+            {
+                dt_after = dt;
+                remain_panel[2] = panel;
+            }
+        }
+    }
 
     for (panel = 0; panel < GAME_PANELS_LIMIT; panel++)
     {
@@ -358,22 +408,9 @@ void panel_strech_height_to_res(short detail)
             p_panel->SprHeight = p_spr->SHeight;
         }
 
-        if (p_panel->Type == PanT_Scanner) //TODO use scaling flags rather than consitions on specific type
-        {
-            short border;
-            border = 1;
-
-            p_panel->dyn.Y = lbDisplay.GraphicsScreenHeight - scan_margin - scan_height;
-            p_panel->dyn.Height = scan_height;
-
-            p_panel->pos.Y = p_panel->dyn.Y - border;
-            p_panel->pos.Height = p_panel->dyn.Height + 2 * border;
-            continue;
-        }
-
         if (p_panel->Spr[1] == -1)
             continue;
-        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_VERTC|PanF_REPOSITION_VERTC)) == 0)
+        if ((p_panel->Flags & (PanF_SPRITES_IN_LINE_VERTC|PanF_REPOSITION_VERTC|PanF_RESIZE_PROPOR_VERTC|PanF_RESIZE_TEXT_ONLY_VERTC)) == 0)
             continue;
 
         if (p_panel->Spr[1] > 0)
@@ -414,6 +451,12 @@ void panel_strech_height_to_res(short detail)
                 adjusted_curr_height -= adj_height;
             }
         }
+        // Any panel to fill the remaining space, may be severely affected by shrinking
+        // So if there is such panel, and we are shrinking - shrink more than what is mandatory
+        if ((remain_panel[1] >= 0) && (adjusted_curr_height < adjusted_base_height * 7 / 8))
+        {
+            adjusted_curr_height = adjusted_curr_height * 7 / 8;
+        }
 
         dt_y = 0;
         dt_height = 0;
@@ -422,7 +465,12 @@ void panel_strech_height_to_res(short detail)
             new_dim = p_panel->pos.Y * adjusted_curr_height / adjusted_base_height;
             dt_y = new_dim - p_panel->pos.Y;
         }
-        if ((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0)
+        if ((p_panel->Flags & PanF_RESIZE_TEXT_ONLY_VERTC) != 0) {
+            new_dim = panel_get_objective_info_height(curr_height);
+            dt_height = new_dim - p_panel->pos.Height;
+        }
+        else if ((((p_panel->Flags & PanF_RESIZE_MIDDLE_SPR) != 0) && ((p_panel->Flags & PanF_SPRITES_IN_LINE_VERTC) != 0))
+          || ((p_panel->Flags & PanF_RESIZE_PROPOR_VERTC) != 0))
         {
             if ((p_panel->Flags & PanF_REPOSITION_VERTC) != 0) {
                 new_dim = p_panel->pos.Height * adjusted_curr_height / adjusted_base_height;
@@ -430,6 +478,13 @@ void panel_strech_height_to_res(short detail)
                 new_dim = p_panel->pos.Height * (adjusted_curr_height - p_panel->pos.Y) / (adjusted_base_height - p_panel->pos.Y);
             }
             dt_height = new_dim - p_panel->pos.Height;
+            if ((p_panel->Flags & PanF_RESIZE_ANCHOR_END_VERTC) != 0) {
+                dt_y -= dt_height;
+            }
+        }
+        if ((p_panel->pos.Y + dt_y + p_panel->pos.Height + dt_height >= curr_height)
+          || (p_panel->pos.Y + p_panel->pos.Height == base_height)) {
+            dt_y = curr_height - (p_panel->pos.Height + dt_height) - p_panel->pos.Y;
         }
 
         p_panel->pos.Y += dt_y;
@@ -461,6 +516,31 @@ void panel_strech_height_to_res(short detail)
                 p_owpanl->dyn.Height += dt_height;
             }
         }
+    }
+
+    // Now after all panels are resized, do the same to remain panel
+    if (remain_panel[1] >= 0)
+    {
+        struct GamePanel *p_rmpane;
+        struct GamePanel *p_panel;
+        short dt_y, dt_height;
+
+        p_rmpane = &game_panel_custom[remain_panel[1]];
+        dt_y = 0;
+        dt_height = 0;
+
+        if (remain_panel[0] >= 0) {
+            p_panel = &game_panel_custom[remain_panel[0]];
+            dt_y = p_panel->pos.Y + p_panel->pos.Height - p_rmpane->pos.Y;
+        }
+        if (remain_panel[2] >= 0) {
+            p_panel = &game_panel_custom[remain_panel[2]];
+            dt_height = p_panel->pos.Y - (p_rmpane->pos.Y + dt_y + p_rmpane->pos.Height);
+        }
+        p_rmpane->pos.Y += dt_y;
+        p_rmpane->dyn.Y += dt_y;
+        p_rmpane->pos.Height += dt_height;
+        p_rmpane->dyn.Height += dt_height;
     }
 }
 
