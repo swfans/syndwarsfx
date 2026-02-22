@@ -2100,6 +2100,7 @@ TbBool adjust_mission_engine_to_video_mode(void)
 
     render_area_a = render_area_b = \
       get_render_area_for_zoom(user_zoom_min);
+    init_scanner_colour();
     srm_scanner_size_update();
 
     return ret;
@@ -5463,8 +5464,8 @@ ubyte do_user_interface(void)
     {
         clear_key_pressed(KC_F9);
         game_option_inc(GOpt_PanelPermutation);
-        init_scanner_colour();
         load_pop_sprites_for_current_mode();
+        init_scanner_colour();
         did_inp |= GINPUT_DIRECT;
     }
 
@@ -5477,8 +5478,8 @@ ubyte do_user_interface(void)
             game_option_set(GOpt_PanelPermutation, -ingame.PanelPermutation-1);
         else
             game_option_set(GOpt_PanelPermutation, -ingame.PanelPermutation-1);
-        init_scanner_colour();
         load_pop_sprites_for_current_mode();
+        init_scanner_colour();
         did_inp |= GINPUT_DIRECT;
     }
 

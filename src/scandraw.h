@@ -30,9 +30,9 @@ extern "C" {
 
 enum ScannerColours {
     ScnClr_Text = 0,
-    ScnClr_Unkn1,
-    ScnClr_Unkn2,
-    ScnClr_Unkn3,
+    ScnClr_Roadway,
+    ScnClr_LiquidDk,
+    ScnClr_Outline,
     ScnClr_Frame,
 };
 

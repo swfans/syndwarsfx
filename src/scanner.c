@@ -128,11 +128,11 @@ void SCANNER_set_colours(struct PanelStyle *p_style)
 {
     TbPixel bcol1;
 
-    bcol1 = p_style->Colours[PanColr_Unkn2];
+    bcol1 = p_style->Colours[PanColr_Liquid];
     SCANNER_colour[ScnClr_Text] = p_style->Colours[PanColr_Text];
-    SCANNER_colour[ScnClr_Unkn1] = p_style->Colours[PanColr_Unkn1];
-    SCANNER_colour[ScnClr_Unkn2] = pixmap.fade_table[10 * PALETTE_8b_COLORS + bcol1];
-    SCANNER_colour[ScnClr_Unkn3] = p_style->Colours[PanColr_Unkn3];
+    SCANNER_colour[ScnClr_Roadway] = p_style->Colours[PanColr_Roadway];
+    SCANNER_colour[ScnClr_LiquidDk] = pixmap.fade_table[10 * PALETTE_8b_COLORS + bcol1];
+    SCANNER_colour[ScnClr_Outline] = p_style->Colours[PanColr_Outline];
     SCANNER_colour[ScnClr_Frame] = p_style->Colours[PanColr_Frame];
 }
 
@@ -182,9 +182,9 @@ void SCANNER_fill_in_a_little_bit(int x1, int z1, int x2, int z2)
             if (sc_col == 0)
                 col1 = SCANNER_colour[ScnClr_Text];
             else if (sc_col == 1)
-                col1 = SCANNER_colour[ScnClr_Unkn1];
+                col1 = SCANNER_colour[ScnClr_Roadway];
             else if (sc_col == 2)
-                col1 = SCANNER_colour[ScnClr_Unkn2];
+                col1 = SCANNER_colour[ScnClr_LiquidDk];
 
             alt1 = alt_at_point(cor_z, cor_x + 128);
             alt2 = alt_at_point(cor_z, cor_x - 128);

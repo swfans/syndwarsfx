@@ -103,10 +103,11 @@ enum PanelShift {
 
 enum PanelColour {
     PanColr_Text = 0,
-    PanColr_Unkn1,
-    PanColr_Unkn2,
-    PanColr_Unkn3,
+    PanColr_Roadway,
+    PanColr_Liquid,
+    PanColr_Outline,
     PanColr_Frame,
+    PanColr_TOTAL_COUNT,
 };
 
 struct GamePanel
@@ -132,7 +133,7 @@ struct GamePanel
 struct PanelStyle
 {
     /** Colors used for various parts of the panel. */
-    TbPixel Colours[5];
+    TbPixel Colours[PanColr_TOTAL_COUNT];
     /** Agent number animations, beginning of an array with 4 entries for each detail level. */
     ushort AgentNumAnim;
     /** Amount of detail levels for the agent number animations */

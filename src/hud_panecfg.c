@@ -22,9 +22,12 @@
 #include "bfini.h"
 #include "bfmemory.h"
 #include "bfmemut.h"
+#include "bfpalette.h"
 #include "bfplanar.h"
 #include "bfscreen.h"
 #include "bfsprite.h"
+
+#include "engincolour.h"
 
 #include "game.h"
 #include "game_data.h"
@@ -36,10 +39,21 @@
 
 enum PanelsCommonConfigCmd {
     PnComnCmd_PanelsCount = 1,
+    PnComnCmd_AgentNumberAnim,
 };
 
 const struct TbNamedEnum panels_conf_common_cmnds[] = {
   {"PanelsCount",	PnComnCmd_PanelsCount},
+  {"AgentNumberAnim",	PnComnCmd_AgentNumberAnim},
+  {NULL,			0},
+};
+
+const struct TbNamedEnum panels_conf_colour_cmnds[] = {
+  {"Text",			PanColr_Text + 1},
+  {"PlanRoadway",	PanColr_Roadway + 1},
+  {"PlanLiquid",	PanColr_Liquid + 1},
+  {"Outline",		PanColr_Outline + 1},
+  {"Frame",			PanColr_Frame + 1},
   {NULL,			0},
 };
 
@@ -537,6 +551,7 @@ void size_panels_for_detail(short detail)
     }
     // Currently we use the same config for all styles
     styleno = 0;
+    LOGDBG("Begin for \"%s\" style=%d", name, (int)styleno);
     read_panel_config(name, styleno, detail);
     update_panel_derivative_shifts(detail);
     panel_strech_width_to_res(detail);
@@ -546,13 +561,53 @@ void size_panels_for_detail(short detail)
     game_panel_shifts = game_panel_custom_shifts;
 }
 
+void panel_set_default_colours(struct PanelStyle *p_style)
+{
+    sbyte panperm;
+    ubyte col;
+
+    panperm = ingame.PanelPermutation;
+    if ((panperm == 2) || (panperm == -3)) {
+        col = 1;
+    } else
+    if ((panperm == 0) || (panperm == -1)) {
+        col = 2;
+    } else {
+        col = 2;
+    }
+
+    switch (col)
+    {
+    case 1:
+        p_style->Colours[PanColr_Liquid] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Text] = LbPaletteFindColour(display_palette, 19,22,17);
+        p_style->Colours[PanColr_Roadway] = LbPaletteFindColour(display_palette, 22,22,22);
+        p_style->Colours[PanColr_Frame] = LbPaletteFindColour(display_palette, 19,22,17);
+        p_style->Colours[PanColr_Outline] = LbPaletteFindColour(display_palette, 38,44,34);
+        p_style->AgentNumAnim = 1528;
+        break;
+    case 2:
+        p_style->Colours[PanColr_Liquid] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Text] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Roadway] = LbPaletteFindColour(display_palette, 22,22,22);
+        p_style->Colours[PanColr_Frame] = LbPaletteFindColour(display_palette, 13,7,30);
+        p_style->Colours[PanColr_Outline] = LbPaletteFindColour(display_palette, 0,63,63);
+        p_style->AgentNumAnim = 1520;
+        break;
+    default:
+        break;
+    }
+    p_style->AgentNumDetails = 2;
+}
+
 TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
 {
+    struct PanelStyle *p_style;
     PathInfo *pinfo;
     TbFileHandle conf_fh;
     TbBool done;
     int i, n;
-    long k, m;
+    long k, m, p;
     char *conf_buf;
     struct TbIniParser parser;
     char conf_fname[DISKPATH_SIZE];
@@ -560,6 +615,7 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
     short pop_panel_count, panel;
 
     pinfo = &game_dirs[DirPlace_Config];
+    p_style = &game_panel_custom_style;
     snprintf(conf_fname, DISKPATH_SIZE-1, "%s/%s%hu-%hu.ini", pinfo->directory, name, styleno, detail);
     conf_fh = LbFileOpen(conf_fname, Lb_FILE_MODE_READ_ONLY);
     if (conf_fh != INVALID_FILE) {
@@ -606,6 +662,15 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
             }
             pop_panel_count = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)pop_panel_count);
+            break;
+        case PnComnCmd_AgentNumberAnim:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_style->AgentNumAnim = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)p_style->AgentNumAnim);
             break;
         case 0: // comment
             break;
@@ -673,6 +738,63 @@ TbBool read_panel_config(const char *name, ushort styleno, ushort detail)
             p_shift->x = k;
             p_shift->y = m;
             CONFDBGLOG("%s (%d,%d)", COMMAND_TEXT(cmd_num), (int)p_shift->x, (int)p_shift->y);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+
+    // Parse the [colour] section of loaded file
+    if (conf_len > 0) {
+        panel_set_default_colours(p_style);
+    }
+    done = false;
+    if (LbIniFindSection(&parser, "colour") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section.", "colour");
+        done = true;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(panels_conf_colour_cmnds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, panels_conf_colour_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case PanColr_Text + 1:
+        case PanColr_Roadway + 1:
+        case PanColr_Liquid + 1:
+        case PanColr_Outline + 1:
+        case PanColr_Frame + 1:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command 1st parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            i = LbIniValueGetLongInt(&parser, &m);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            i = LbIniValueGetLongInt(&parser, &p);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command 2nd parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            p_style->Colours[cmd_num - 1] = LbPaletteFindColour(display_palette, k>>2, m>>2, p>>2);
+            CONFDBGLOG("%s (%d)", COMMAND_TEXT(cmd_num), (int)p_style->Colours[cmd_num - 1]);
             break;
         case 0: // comment
             break;
