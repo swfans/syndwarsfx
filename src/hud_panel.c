@@ -258,14 +258,65 @@ void init_scanner(void)
     SCANNER_init();
 }
 
-void SCANNER_unkn_func_203(int a1, int a2, int a3, int a4, ubyte a5, int a6, int a7)
+void SCANNER_unkn_func_203(int scr_x1, int scr_y1, int scr_x2, int scr_y2, ubyte col1, int a6, int base_bri)
 {
+#if 0
     asm volatile (
       "push %6\n"
       "push %5\n"
       "push %4\n"
       "call ASM_SCANNER_unkn_func_203\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6), "g" (a7));
+        : : "a" (scr_x1), "d" (scr_y1), "b" (scr_x2), "c" (scr_y2), "g" (col1), "g" (a6), "g" (base_bri));
+#endif
+    ubyte *o;
+    ubyte bri;
+
+    if (scr_y1 == scr_y2)
+    {
+        int x1, x2;
+        int k, k0;
+        int i;
+
+        if (scr_x2 < scr_x1) {
+            x1 = scr_x2;
+            x2 = scr_x1;
+        } else {
+            x1 = scr_x1;
+            x2 = scr_x2;
+        }
+        o = &lbDisplay.WScreen[scr_y1 * lbDisplay.PhysicalScreenWidth + x1];
+        k0 = (low_trans_grey_pal_bright[col1] >> 1) + base_bri;
+        for (i = 0; i <= x2 - x1; i++)
+        {
+            k = (low_trans_grey_pal_bright[*o] >> 1) + k0;
+            bri = low_trans_grey_bright_limit[k];
+            *o = pixmap.fade_table[256 * bri + col1];
+            o++;
+        }
+    }
+    else
+    {
+        int y1, y2;
+        int k, k0;
+        int i;
+
+        if (scr_y2 < scr_y1) {
+            y1 = scr_y2;
+            y2 = scr_y1;
+        } else {
+            y1 = scr_y1;
+            y2 = scr_y2;
+        }
+        o = &lbDisplay.WScreen[y1 * lbDisplay.PhysicalScreenWidth + scr_x1];
+        k0 = (low_trans_grey_pal_bright[col1] >> 1) + base_bri;
+        for (i = 0; i <= y2 - y1; i++)
+        {
+            k = (low_trans_grey_pal_bright[*o] >> 1) + k0;
+            bri = low_trans_grey_bright_limit[k];
+            *o = pixmap.fade_table[256 * bri + col1];
+            o += lbDisplay.PhysicalScreenWidth;
+        }
+    }
 }
 
 int SCANNER_text_draw(const char *text, int start_x, int height)
