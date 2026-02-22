@@ -3553,19 +3553,19 @@ msgstr ""
 #: guitext:581
 msgctxt "Panel flavor"
 msgid "Oceanic Translucency"
-msgstr "Oceaniczna Przezroczystość"
+msgstr "Przenikający Ocean"
 
 #. Colour and style of HUD panels within mission.
 #: guitext:582
 msgctxt "Panel flavor"
 msgid "Metal Lightning"
-msgstr "Metaliczna Błyskawica"
+msgstr "Metaliczny Grom"
 
 #. Colour and style of HUD panels within mission.
 #: guitext:583
 msgctxt "Panel flavor"
 msgid "Veiled Darkness"
-msgstr "Spowita Ciemnością"
+msgstr "Szmaragdowy Mrok"
 
 #. Colour of agents trenchcoats within mission.
 #: guitext:584
@@ -4033,7 +4033,7 @@ msgstr "Przełącz Superosłonę"
 #: guitext:850
 msgctxt "Controls"
 msgid "Toggle Thermal View"
-msgstr "Przełącz Widok Termiczny"
+msgstr "Prz. Widok Termiczny"
 
 #. Key for future use; does nothing currently.
 #: guitext:851 guitext:852 guitext:853 guitext:854 guitext:855
