@@ -488,11 +488,6 @@ void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
 
 void number_player(struct Thing *p_person, ubyte n)
 {
-#if 0
-    asm volatile ("call ASM_number_player\n"
-        : : "a" (p_person), "d" (n));
-    return;
-#endif
     int shift_x, shift_y;
     ushort ani_mdsh, ani_base;
     ushort frm;

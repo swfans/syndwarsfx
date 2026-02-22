@@ -126,10 +126,6 @@ void SCANNER_init(void)
 
 void SCANNER_set_colour(ubyte col)
 {
-#if 0
-    asm volatile ("call ASM_SCANNER_set_colour\n"
-        :  : "a" ((long)col));
-#endif
     TbPixel bcol1;
     switch (col)
     {
