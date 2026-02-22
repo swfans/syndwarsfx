@@ -410,46 +410,50 @@ void draw_players_chat_talk(int x, int y)
     }
 }
 
-void SCANNER_draw_objective_info(int x, int y, int width)
+void draw_objective_info_background(int scr_x, int scr_y, int width, int height)
 {
-    int v48;
-    int end_pos;
-    struct TbAnyWindow bkpwnd;
-    int height;
+    int y;
     int i;
 
-    height = panel_get_objective_info_height(lbDisplay.GraphicsScreenHeight);
-    v48 = y;
+    y = scr_y;
     for (i = 0; i < height; i++)
     {
-        SCANNER_unkn_func_203(x, v48, x + width - 1, v48, SCANNER_colour[ScnClr_Text],
+        SCANNER_unkn_func_203(scr_x, y, scr_x + width - 1, y, SCANNER_colour[ScnClr_Text],
           ingame.Scanner.Brightness, ingame.Scanner.Contrast);
-        ++v48;
+        ++y;
     }
+}
+
+void draw_objective_info_text(int scr_x, int scr_y, int width, int height)
+{
+    struct TbAnyWindow bkpwnd;
+    int end_pos;
 
     LbScreenStoreGraphicsWindow(&bkpwnd);
-    LbScreenSetGraphicsWindow(x + 1, y, width - 2, height);
+    LbScreenSetGraphicsWindow(scr_x + 1, scr_y, width - 2, height);
 
     end_pos = SCANNER_text_draw(scroll_text, scanner_unkn3CC, height);
 
-    SCANNER_move_objective_info(width, height, end_pos);
-
     LbScreenLoadGraphicsWindow(&bkpwnd);
 
-    // TODO it would make sense to move this to higher level function
-    if (in_network_game)
-    {
-        short x, y;
+    SCANNER_move_objective_info(width, height, end_pos);
+}
 
-        if (lbDisplay.GraphicsScreenHeight >= 400) {
-            x = 22;
-            y = 51;
-        } else {
-            x = 11;
-            y = 26;
-        }
-        draw_players_chat_talk(x, y);
+void draw_players_chat(void)
+{
+    short x, y;
+
+    if (!in_network_game)
+        return;
+
+    if (lbDisplay.GraphicsScreenHeight >= 400) {
+        x = 22;
+        y = 51;
+    } else {
+        x = 11;
+        y = 26;
     }
+    draw_players_chat_talk(x, y);
 }
 
 void SCANNER_unkn_func_205(void)
@@ -1924,21 +1928,30 @@ void draw_panel_thermal_button(short panel)
 
 /** Objective text, or net players list.
  */
-void draw_panel_objective_info(void)
+void draw_panel_objective_info(short panel)
 {
-    int x, y, w;
-    x = ingame.Scanner.X1 - 1;
-    if (x < 0)
-        x = 0;
-    y = lbDisplay.GraphicsScreenHeight - panel_get_objective_info_height(lbDisplay.GraphicsScreenHeight);
+    struct GamePanel *p_panel;
+    short bkgd_x, text_x;
+    short bkgd_w, text_w;
+
+    p_panel = &game_panel[panel];
+
     if (in_network_game) {
         SCANNER_unkn_func_205();
-        w = lbDisplay.GraphicsScreenWidth;
+        bkgd_x = 0;
+        text_x = bkgd_x + 1;
+        bkgd_w = lbDisplay.GraphicsScreenWidth;
+        text_w = bkgd_w - 2;
     } else {
         // original width 67 low res, 132 high res
-        w = ingame.Scanner.X2 - ingame.Scanner.X1 + 3;
+        bkgd_x = p_panel->pos.X;
+        text_x = p_panel->dyn.X;
+        bkgd_w = p_panel->pos.Width;
+        text_w = p_panel->dyn.Width;
     }
-    SCANNER_draw_objective_info(x, y, w);
+
+    draw_objective_info_background(bkgd_x, p_panel->pos.Y, bkgd_w, p_panel->pos.Height);
+    draw_objective_info_text(text_x, p_panel->dyn.Y, text_w, p_panel->dyn.Height);
 }
 
 void draw_weapon_energy_bar(short panel)
@@ -2111,7 +2124,7 @@ void draw_new_panel(void)
 
         if (!panel_for_specific_agent(panel))
         {
-            is_visible = (p_panel->Spr[0] != 0) || (p_panel->Type == PanT_Scanner);
+            is_visible = (p_panel->Spr[0] != 0) || (p_panel->Type == PanT_Scanner) || (p_panel->Type == PanT_Objective);
             is_blinking = false;
             is_disabled = false;
             is_subordnt = false;
@@ -2322,8 +2335,13 @@ void draw_new_panel(void)
             SCANNER_set_center_point(engn_xc, engn_zc, (2*LbFPMath_PI - 1) - ((engn_anglexz >> 5) & LbFPMath_AngleMask));
             SCANNER_draw_new_transparent();
             break;
+        case PanT_Objective:
+            draw_panel_objective_info(panel);
+            break;
         }
     }
+
+    draw_players_chat();
 
     lbDisplay.DrawFlags = 0;
 
@@ -2342,8 +2360,6 @@ void draw_new_panel(void)
             }
         }
     }
-
-    draw_panel_objective_info();
 }
 
 TbBool process_panel_state_one_agent_weapon(ushort agent)
