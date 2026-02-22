@@ -545,12 +545,12 @@ void size_panels_for_detail(short detail)
     short styleno;
 
     if (ingame.PanelPermutation >= 0) {
+        styleno = ingame.PanelPermutation;
         name = "panel";
     } else {
+        styleno = -ingame.PanelPermutation - 1;
         name = "pop";
     }
-    // Currently we use the same config for all styles
-    styleno = 0;
     LOGDBG("Begin for \"%s\" style=%d", name, (int)styleno);
     read_panel_config(name, styleno, detail);
     update_panel_derivative_shifts(detail);
@@ -563,40 +563,12 @@ void size_panels_for_detail(short detail)
 
 void panel_set_default_colours(struct PanelStyle *p_style)
 {
-    sbyte panperm;
-    ubyte col;
-
-    panperm = ingame.PanelPermutation;
-    if ((panperm == 2) || (panperm == -3)) {
-        col = 1;
-    } else
-    if ((panperm == 0) || (panperm == -1)) {
-        col = 2;
-    } else {
-        col = 2;
-    }
-
-    switch (col)
-    {
-    case 1:
-        p_style->Colours[PanColr_Liquid] = LbPaletteFindColour(display_palette, 13,7,30);
-        p_style->Colours[PanColr_Text] = LbPaletteFindColour(display_palette, 19,22,17);
-        p_style->Colours[PanColr_Roadway] = LbPaletteFindColour(display_palette, 22,22,22);
-        p_style->Colours[PanColr_Frame] = LbPaletteFindColour(display_palette, 19,22,17);
-        p_style->Colours[PanColr_Outline] = LbPaletteFindColour(display_palette, 38,44,34);
-        p_style->AgentNumAnim = 1528;
-        break;
-    case 2:
-        p_style->Colours[PanColr_Liquid] = LbPaletteFindColour(display_palette, 13,7,30);
-        p_style->Colours[PanColr_Text] = LbPaletteFindColour(display_palette, 13,7,30);
-        p_style->Colours[PanColr_Roadway] = LbPaletteFindColour(display_palette, 22,22,22);
-        p_style->Colours[PanColr_Frame] = LbPaletteFindColour(display_palette, 13,7,30);
-        p_style->Colours[PanColr_Outline] = LbPaletteFindColour(display_palette, 0,63,63);
-        p_style->AgentNumAnim = 1520;
-        break;
-    default:
-        break;
-    }
+    p_style->Colours[PanColr_Liquid] = LbPaletteFindColour(display_palette, 13,7,30);
+    p_style->Colours[PanColr_Text] = p_style->Colours[PanColr_Liquid];
+    p_style->Colours[PanColr_Roadway] = LbPaletteFindColour(display_palette, 22,22,22);
+    p_style->Colours[PanColr_Frame] = p_style->Colours[PanColr_Liquid];
+    p_style->Colours[PanColr_Outline] = LbPaletteFindColour(display_palette, 0,63,63);
+    p_style->AgentNumAnim = 1520;
     p_style->AgentNumDetails = 2;
 }
 
