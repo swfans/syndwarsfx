@@ -3580,8 +3580,25 @@ void person_goto_point_rel(struct Thing *p_person)
 
 void person_init_drop(struct Thing *p_person, ThingIdx item)
 {
+#if 0
     asm volatile ("call ASM_person_init_drop\n"
         : : "a" (p_person), "d" (item));
+#endif
+    ubyte PrevAnimMode;
+
+    if ((p_person->Flag & (TngF_Unkn40000000|TngF_WepRecoil|TngF_StationrSht|TngF_Destroyed)) != 0) {
+        return;
+    }
+
+    p_person->U.UPerson.TempWeapon = item;
+    p_person->Flag |= TngF_Unkn0001;
+    p_person->State = PerSt_DROP_ITEM;
+    p_person->U.UPerson.Timer2 = 3;
+
+    PrevAnimMode = p_person->U.UPerson.AnimMode;
+    p_person->U.UPerson.AnimMode = 13;
+    p_person->U.UPerson.OldAnimMode = PrevAnimMode;
+    reset_person_frame(p_person);
 }
 
 void person_init_pickup(struct Thing *p_person, ThingIdx item)
@@ -3732,7 +3749,7 @@ void person_go_sleep(struct Thing *p_person)
     else
     {
         ubyte PrevAnimMode;
-        p_person->Flag |= 0x0001;
+        p_person->Flag |= TngF_Unkn0001;
 
         PrevAnimMode = p_person->U.UPerson.AnimMode;
         if (PrevAnimMode != ANIM_PERS_PUSH_BACK)
