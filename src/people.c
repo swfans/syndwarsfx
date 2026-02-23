@@ -4393,10 +4393,59 @@ void thing_shoot_at_thing(struct Thing *p_thing, short target)
 
 void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, int face)
 {
+#if 0
     asm volatile (
       "push %4\n"
       "call ASM_person_init_plant_mine\n"
         : : "a" (p_person), "d" (x), "b" (y), "c" (z), "g" (face));
+#endif
+    if ((p_person->Flag & TngF_Unkn0001) != 0) {
+        return;
+    }
+    if ((p_person->Flag & (TngF_StationrSht|TngF_Destroyed)) != 0) {
+        return;
+    }
+
+    p_person->Flag2 &= ~(TgF2_Unkn00020000|TgF2_Unkn0040);
+
+    if (p_person->U.UPerson.PathIndex != 0)
+        remove_path(p_person);
+    if (face != 0) {
+        build_navigate_path_to_face_xz(p_person, -face, x, z);
+    } else {
+        build_navigate_path(p_person, x, z, 0);
+    }
+
+    if ((p_person->Flag2 & TgF2_Unkn0040) == 0)
+    {
+        p_person->State = PerSt_GO_PLANT_MINE;
+        p_person->U.UPerson.ComTimer = -1;
+        p_person->SubState = 0;
+        p_person->U.UPerson.ComRange = 1;
+        p_person->Flag2 |= TgF2_Unkn00800000;
+        p_person->U.UPerson.GotoX = x;
+        p_person->U.UPerson.GotoZ = z;
+    }
+}
+
+void person_init_plant_mine_fast(struct Thing *p_thing, short x, short y, short z, int face)
+{
+#if 0
+    asm volatile (
+      "push %4\n"
+      "call ASM_person_init_plant_mine_fast\n"
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (face));
+#endif
+    if ((p_thing->Flag & TngF_Unkn0001) != 0) {
+        return;
+    }
+
+    person_init_plant_mine(p_thing, x, y, z, face);
+
+    if ((p_thing->Flag2 & TgF2_Unkn0040) == 0)
+    {
+        set_person_animmode_run(p_thing);
+    }
 }
 
 ubyte thing_select_specific_weapon(struct Thing *p_person, WeaponType wtype, ubyte flag)
@@ -4598,14 +4647,6 @@ int limit_mood(struct Thing *p_thing, short mood)
     asm volatile ("call ASM_limit_mood\n"
         : "=r" (ret) : "a" (p_thing), "d" (mood));
     return ret;
-}
-
-void person_init_plant_mine_fast(struct Thing *p_thing, short x, short y, short z, int face)
-{
-    asm volatile (
-      "push %4\n"
-      "call ASM_person_init_plant_mine_fast\n"
-        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (face));
 }
 
 void person_self_destruct(struct Thing *p_person)
