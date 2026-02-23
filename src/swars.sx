@@ -24329,7 +24329,7 @@ person_drops_weapons:	/* 0x0479C0 */
 		inc    %eax
 		mov    %ax,0x9e(%esi)
 		mov    %esi,%eax
-		call   plant_mine
+		call   ac_plant_mine
 	jump_47a2f:
 		mov    (%esp),%edi
 		inc    %edi
@@ -36426,7 +36426,7 @@ GLOBAL_FUNC(ASM_person_init_plant_mine)	/* 0x050140 */
 
 
 /*----------------------------------------------------------------*/
-plant_mine:	/* 0x0501F0 */
+GLOBAL_FUNC(ASM_plant_mine)	/* 0x0501F0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -36602,7 +36602,7 @@ GLOBAL_FUNC(ASM_person_drop_item)	/* 0x0502F8 */
 		jne    jump_5040c
 	jump_503ff:
 		mov    %esi,%eax
-		call   plant_mine
+		call   ac_plant_mine
 		movw   $0x32,0x68(%esi)
 	jump_5040c:
 		andb   $0x7f,0x46(%esi)

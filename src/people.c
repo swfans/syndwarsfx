@@ -5186,6 +5186,12 @@ void person_pickup(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+void plant_mine(struct Thing *p_person)
+{
+    asm volatile ("call ASM_plant_mine\n"
+        : : "a" (p_person));
+}
+
 void person_drop_item(struct Thing *p_person)
 {
     asm volatile ("call ASM_person_drop_item\n"
