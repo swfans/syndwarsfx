@@ -1090,6 +1090,8 @@ TbBool thing_intersects_circle(ThingIdx thing, short X, short Z, ushort R);
  */
 TbBool thing_intersects_cylinder(ThingIdx thing, short X, short Y, short Z, ushort R, ushort H);
 
+struct SimpleThing *create_item(int x, int y, int z, ushort frame, ubyte subtype);
+
 struct SimpleThing *create_scale_effect(int x, int y, int z, ushort frame, short timer);
 
 struct SimpleThing *create_sound_effect(int x, int y, int z, ushort sample, int vol, int loop);

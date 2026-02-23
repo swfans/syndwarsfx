@@ -1030,7 +1030,7 @@ GLOBAL_FUNC(ASM_simulated_level)	/* 0x0116A4 */
 		push   %eax
 		mov    %ebp,%edx
 		mov    %esi,%eax
-		call   create_item
+		call   ac_create_item
 		test   %eax,%eax
 		je     jump_1178a
 		mov    0xc(%esp),%ebp
@@ -24427,7 +24427,7 @@ person_drops_weapons:	/* 0x0479C0 */
 		push   %eax
 		mov    %edi,%ebx
 		mov    %ebp,%eax
-		call   create_item
+		call   ac_create_item
 		test   %eax,%eax
 		je     jump_47a2f
 		mov    0x6e(%esi),%dx
@@ -36445,7 +36445,7 @@ GLOBAL_FUNC(ASM_plant_mine)	/* 0x0501F0 */
 		mov    0x18(%esi),%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   create_item
+		call   ac_create_item
 		mov    %eax,%ebx
 		mov    %eax,%edi
 		test   %eax,%eax
@@ -36618,7 +36618,7 @@ GLOBAL_FUNC(ASM_person_drop_item)	/* 0x0502F8 */
 		mov    0x18(%esi),%eax
 		sar    $0x8,%edx
 		sar    $0x8,%eax
-		call   create_item
+		call   ac_create_item
 		mov    %eax,%edx
 		movw   $0x32,0x68(%esi)
 		test   %eax,%eax
@@ -75835,7 +75835,7 @@ vtable_757c0:
 
 
 /*----------------------------------------------------------------*/
-create_item:	/* 0x075828 */
+GLOBAL_FUNC(ASM_create_item)	/* 0x075828 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -174824,7 +174824,7 @@ func_e06d8:
 		push   %eax
 		sar    $0x8,%edx
 		mov    %esi,%eax
-		call   create_item
+		call   ac_create_item
 		mov    %eax,%edx
 		test   %eax,%eax
 		je     jump_e08d6

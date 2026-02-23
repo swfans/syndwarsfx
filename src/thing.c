@@ -1888,6 +1888,16 @@ void refresh_old_thing_format(struct Thing *p_thing, struct ThingOldV9 *p_oldthi
     }
 }
 
+struct SimpleThing *create_item(int x, int y, int z, ushort frame, ubyte subtype)
+{
+    struct SimpleThing *ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_create_item\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (subtype));
+    return ret;
+}
+
 struct SimpleThing *create_scale_effect(int x, int y, int z, ushort frame, short timer)
 {
     struct SimpleThing *ret;
