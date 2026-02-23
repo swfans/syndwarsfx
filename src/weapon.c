@@ -4372,27 +4372,6 @@ TbBool person_weapons_remove_one(struct Thing *p_person, WeaponType wtype)
     return done;
 }
 
-void person_weapons_reset_previous(struct Thing *p_person)
-{
-    PlayerInfo *p_player;
-    ushort plagent;
-
-    p_player = NULL;
-    plagent = 0;
-    if ((p_person->Flag & TngF_PlayerAgent) != 0)
-    {
-        PlayerIdx plyr;
-        plyr = (p_person->U.UPerson.ComCur & 0x1C) >> 2;
-        plagent = p_person->U.UPerson.ComCur & 3;
-        p_player = &players[plyr];
-    }
-
-    if (p_player != NULL) {
-        p_player->PrevWeapon[plagent] = find_nth_weapon_held(p_person->ThingOffset, 1);
-    }
-
-}
-
 void process_automedkit(struct Thing *p_person)
 {
     if (!weapons_has_weapon(p_person->U.UPerson.WeaponsCarried, WEP_MEDI2))

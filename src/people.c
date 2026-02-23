@@ -595,6 +595,34 @@ TbBool person_carries_any_medikit(ThingIdx person)
     return person_carries_weapon(p_person, WEP_MEDI2) || person_carries_weapon(p_person, WEP_MEDI1);
 }
 
+void person_weapons_reset_previous(struct Thing *p_person)
+{
+    PlayerIdx plyr;
+    ushort plagent;
+
+    if ((p_person->Flag & TngF_PlayerAgent) == 0) {
+        return;
+    }
+
+    plyr = p_person->U.UPerson.ComCur >> 2;
+    plagent = p_person->U.UPerson.ComCur & 3;
+    player_agent_reset_prev_weapon(plyr, plagent);
+}
+
+void person_weapons_update_previous(struct Thing *p_person)
+{
+    PlayerIdx plyr;
+    ushort plagent;
+
+    if ((p_person->Flag & TngF_PlayerAgent) == 0) {
+        return;
+    }
+
+    plyr = p_person->U.UPerson.ComCur >> 2;
+    plagent = p_person->U.UPerson.ComCur & 3;
+    player_agent_update_prev_weapon(plyr, plagent);
+}
+
 TbBool person_can_accept_control(ThingIdx person)
 {
     return !person_is_dead_or_dying(person)
@@ -4498,7 +4526,7 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, WeaponType wtype, uby
         if ((p_person->Flag & TngF_PlayerAgent) != 0 &&
           (p_person->Flag2 & TgF2_Unkn0800) == 0 &&
           p_person->U.UPerson.CurrentWeapon != WEP_NULL) {
-            player_agent_update_prev_weapon(p_person);
+            person_weapons_update_previous(p_person);
         }
         p_person->U.UPerson.CurrentWeapon = WEP_NULL;
 
@@ -4528,7 +4556,7 @@ ubyte thing_select_best_weapon_for_range(struct Thing *p_person, int range)
 
 ubyte thing_deselect_weapon(struct Thing *p_person)
 {
-    player_agent_update_prev_weapon(p_person);
+    person_weapons_update_previous(p_person);
     p_person->U.UPerson.CurrentWeapon = WEP_NULL;
     p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
     reset_person_frame(p_person);
@@ -5188,8 +5216,37 @@ void person_pickup(struct Thing *p_person)
 
 void plant_mine(struct Thing *p_person)
 {
+#if 1
     asm volatile ("call ASM_plant_mine\n"
         : : "a" (p_person));
+#else
+    struct SimpleThing *p_item;
+
+    p_item = create_item(PRCCOORD_TO_MAPCOORD(p_person->X),
+      PRCCOORD_TO_MAPCOORD(p_person->Y),
+      PRCCOORD_TO_MAPCOORD(p_person->Z),
+      1004, p_person->U.UPerson.TempWeapon);
+    if (p_item == NULL) {
+        return;
+    }
+
+    p_item->Timer1 = 140;
+    p_item->StartTimer1 = 140;
+    p_item->Owner2 = p_person->ThingOffset;
+    p_item->U.UWeapon.Ammo = 7;
+    p_item->U.UWeapon.OnFace = p_person->U.UPerson.OnFace;
+
+    give_take_me_weapon(p_person, p_person->U.UPerson.TempWeapon, -1, p_item->ThingOffset);
+
+    if (!person_carries_weapon(p_person, p_person->U.UPerson.CurrentWeapon))
+    {
+      if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) == 0))
+          person_weapons_reset_previous(p_person);
+
+      p_person->U.UPerson.CurrentWeapon = WEP_NULL;
+    }
+    p_item->Radius = 50;
+#endif
 }
 
 void person_drop_item(struct Thing *p_person)

@@ -290,6 +290,16 @@ TbBool person_carries_weapon(struct Thing *p_person, WeaponType wtype);
  */
 TbBool person_carries_any_medikit(ThingIdx person);
 
+/** Reset previous weapon, ignoring one currently in hand.
+ *
+ * Resets previously selected weapon visible in the players panel.
+ */
+void person_weapons_reset_previous(struct Thing *p_person);
+
+/** Update previous weapon, either to one in hand or another carried one.
+ */
+void person_weapons_update_previous(struct Thing *p_person);
+
 TbBool person_can_accept_control(ThingIdx person);
 
 TbBool person_can_use_medikit(ThingIdx person);

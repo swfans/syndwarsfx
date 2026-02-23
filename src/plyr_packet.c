@@ -307,9 +307,7 @@ void person_give_all_weapons(struct Thing *p_person)
         p_person->U.UPerson.WeaponsCarried |= wepflg;
     }
     player_agent_set_weapon_quantities_max(p_person);
-    if ((p_person->Flag & TngF_PlayerAgent) != 0) {
-        player_agent_update_prev_weapon(p_person);
-    }
+    person_weapons_update_previous(p_person);
 }
 
 void mark_all_weapons_researched(void)

@@ -1241,7 +1241,8 @@ TbBool panel_update_weapon_current(PlayerIdx plyr, short nagent, ubyte flags)
 
     curwep = p_agent->U.UPerson.CurrentWeapon;
     prevwep = p_player->PrevWeapon[nagent];
-    if (curwep == 0 && prevwep == 0) {
+    if (curwep == WEP_NULL && prevwep == WEP_NULL) {
+        //TODO this is not a correct place to update this player property, move outside this function
         prevwep = find_nth_weapon_held(p_agent->ThingOffset, 1);
         p_player->PrevWeapon[nagent] = prevwep;
     }
