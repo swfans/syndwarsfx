@@ -5216,7 +5216,7 @@ void person_pickup(struct Thing *p_person)
 
 void plant_mine(struct Thing *p_person)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_plant_mine\n"
         : : "a" (p_person));
 #else
@@ -5240,9 +5240,10 @@ void plant_mine(struct Thing *p_person)
 
     if (!person_carries_weapon(p_person, p_person->U.UPerson.CurrentWeapon))
     {
-      if (((p_person->Flag & 0x2000) != 0) && ((p_person->Flag2 & 0x0800) == 0))
+      if (((p_person->Flag & TngF_PlayerAgent) != 0) &&
+        ((p_person->Flag2 & TgF2_Unkn0800) == 0)) {
           person_weapons_reset_previous(p_person);
-
+      }
       p_person->U.UPerson.CurrentWeapon = WEP_NULL;
     }
     p_item->Radius = 50;
