@@ -525,9 +525,9 @@ ubyte input_user_control_agent(ushort plyr, short dmuser)
     {
         ushort flg;
         if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
-            flg = 0x8000;
+            flg = PActF_TriggerUse;
         else
-            flg = 0x0;
+            flg = PActF_None;
         loc_build_packet(p_pckt, PAct_NONE | flg, dcthing, dx, dy, dz);
         return GINPUT_PACKET;
     }
@@ -538,9 +538,9 @@ ubyte input_user_control_agent(ushort plyr, short dmuser)
     {
         ushort flg;
         if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
-            flg = 0x8000;
+            flg = PActF_TriggerUse;
         else
-            flg = 0x0;
+            flg = PActF_None;
         loc_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_REL_FF | flg, dcthing, dx, dy, dz);
         return GINPUT_PACKET;
     }
@@ -548,9 +548,9 @@ ubyte input_user_control_agent(ushort plyr, short dmuser)
     {
         ushort flg;
         if ((p_player->UserInput[dmuser].Bits & SpUIn_DoTrigger) != 0)
-            flg = 0x8000;
+            flg = PActF_TriggerUse;
         else
-            flg = 0x0;
+            flg = PActF_None;
         loc_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_REL | flg, dcthing, dx, dy, dz);
         return GINPUT_PACKET;
     }

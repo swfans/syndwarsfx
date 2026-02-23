@@ -3503,7 +3503,7 @@ void init_fire_weapon(struct Thing *p_person)
             play_dist_sample(p_person, 36, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 2);
             p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
             if ((p_person->Flag & TngF_PlayerAgent) == 0)
-                choose_best_weapon_for_range(p_person, 1280);
+                choose_best_weapon_for_range(p_person, 5 * 256);
             break;
         case WEP_FLAMER:
             p_person->U.UPerson.Energy -= wdef->EnergyUsed;

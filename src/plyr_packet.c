@@ -655,7 +655,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
     short result;
 
     result = PARes_EBADRQC;
-    switch (p_pckt->Action & 0x7FFF)
+    switch (p_pckt->Action & ~PActF_All)
     {
     case PAct_MISSN_ABORT:
         if (in_network_game) {
@@ -1395,7 +1395,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
 
         snprint_packet(locstr, sizeof(locstr), p_pckt);
 
-        if ((p_pckt->Action & 0x7FFF) == PAct_NONE)
+        if ((p_pckt->Action & ~PActF_All) == PAct_NONE)
             ; // no logging for empty packet
         else if (result <= PARes_SUCCESS)
             LOGSYNC_F("Player %d packet %s: %s", (int)plyr,
@@ -1432,7 +1432,7 @@ void process_packets(void)
 
             if (p_thing != INVALID_THING)
             {
-                if ((packet->Action & 0x8000) == 0)
+                if ((packet->Action & PActF_TriggerUse) == 0)
                     p_thing->Flag &= ~TngF_TriggerUse;
                 else
                     p_thing->Flag |= TngF_TriggerUse;

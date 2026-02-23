@@ -106,6 +106,16 @@ enum PacketActions
     PAct_AGENT_SELF_DESTRUCT = 0xFF,
 };
 
+enum PacketActionFlags
+{
+    PActF_None = 0x0000,
+    PActF_TriggerUse = 0x8000,
+};
+
+/** All flags placed at top of action field.
+ */
+#define PActF_All (PActF_TriggerUse)
+
 enum PacketCheatAllAgents
 {
     PCheatAA_RESURRECT_AND_WEPAPN = 0,
