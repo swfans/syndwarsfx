@@ -2405,6 +2405,28 @@ StateChRes person_close_dome(struct Thing *p_person, short dome)
     return StCh_ACCEPTED;
 }
 
+StateChRes person_drop_item_where_standing(struct Thing *p_person, ThingIdx item)
+{
+    StateChRes res;
+
+    if ((item >= 0) && (item < WEP_TYPES_COUNT))
+    {
+        person_init_drop(p_person, item);
+        res = (p_person->State == PerSt_DROP_ITEM) ? StCh_ACCEPTED : StCh_DENIED;
+    }
+    else if ((item < 0) && thing_is_pickup_item(item))
+    {
+        person_init_drop(p_person, item);
+        res = (p_person->State == PerSt_DROP_ITEM) ? StCh_ACCEPTED : StCh_DENIED;
+    }
+    else
+    {
+        LOGWARN("Drop called for unsupported item %d", (int)item);
+        res = StCh_UNATTAIN;
+    }
+    return res;
+}
+
 StateChRes person_lock_building(struct Thing *p_person, short bldng)
 {
     struct Thing *p_building;
@@ -2765,8 +2787,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = person_close_dome(p_person, p_cmd->OtherThing);
         break;
     case PCmd_DROP_WEAPON:
-        person_init_drop(p_person, p_cmd->OtherThing);
-        res = StCh_ACCEPTED;
+        res = person_drop_item_where_standing(p_person, p_cmd->OtherThing);
         break;
     case PCmd_CATCH_FERRY:
         res = person_init_catch_ferry(p_person, p_cmd->X, p_cmd->Z, p_cmd->Arg1);
@@ -3578,6 +3599,11 @@ void person_goto_point_rel(struct Thing *p_person)
         : : "a" (p_person));
 }
 
+/** Initialize drop item state.
+ *
+ * @param item The item to drop, SimpleThing if < 0 (mark in Flag2 required),
+ *   weapon type in hand if 0, carried weapon type if > 0
+ */
 void person_init_drop(struct Thing *p_person, ThingIdx item)
 {
 #if 0

@@ -175,6 +175,12 @@ TbBool thing_type_is_simple(short ttype)
      (ttype == SmTT_TEMP_LIGHT);
 }
 
+TbBool thing_type_is_pickup_item(short ttype)
+{
+    return (ttype == SmTT_DROPPED_ITEM) ||
+      (ttype == SmTT_CARRIED_ITEM);
+}
+
 struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype)
 {
     struct Thing *p_thing;
@@ -1342,6 +1348,17 @@ TbBool thing_is_destroyed(ThingIdx thing)
         p_sthing = &sthings[thing];
         return ((p_sthing->Flag & TngF_Destroyed) != 0);
     }
+}
+
+TbBool thing_is_pickup_item(ThingIdx thing)
+{
+    struct SimpleThing *p_sthing;
+
+    if (thing >= 0)
+        return false;
+
+    p_sthing = &sthings[thing];
+    return thing_type_is_pickup_item(p_sthing->Type);
 }
 
 TbResult delete_node(struct Thing *p_thing)

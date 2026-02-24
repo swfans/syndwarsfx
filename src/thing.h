@@ -991,6 +991,10 @@ void snprint_sthing(char *buf, ulong buflen, struct SimpleThing *p_sthing);
  */
 TbBool thing_type_is_simple(short ttype);
 
+/** Returns if given type represents a thing which can be (or is) picked up by a person.
+ */
+TbBool thing_type_is_pickup_item(short ttype);
+
 /** Given thing index, sets its position in map coordinates to three variables.
  *
  * Different kinds of things have different quirks in regard to position on map.
@@ -1020,6 +1024,10 @@ void things_debug_hud(void);
 void navi_onscreen_debug(TbBool a1);
 
 TbBool thing_is_destroyed(ThingIdx thing);
+
+/** Returns if given thing can be (or is) picked up by a person.
+ */
+TbBool thing_is_pickup_item(ThingIdx thing);
 
 struct Thing *effective_owner_of_thing(struct Thing *p_thing);
 
