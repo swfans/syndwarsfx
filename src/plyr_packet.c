@@ -344,8 +344,11 @@ void resurrect_any_dead_agents(PlayerIdx plyr)
         p_agent = p_player->MyAgent[i];
         if (p_agent->Type != TT_PERSON)
             continue;
+
         if ((p_agent->Flag & TngF_Destroyed) != 0)
             person_resurrect(p_agent);
+        else if (p_agent->State == PerSt_PERSON_BURNING)
+            person_burning_stifle_fire(p_agent);
     }
 }
 

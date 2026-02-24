@@ -943,14 +943,23 @@ void person_finish_executing_commands(struct Thing *p_person)
     }
 }
 
+void person_burning_stifle_fire(struct Thing *p_person)
+{
+    p_person->Flag &= ~TngF_Unkn40000000;
+    p_person->State = PerSt_WAIT;
+    remove_path(p_person);
+    person_reset_default_anim_mode(p_person);
+}
+
 void person_resurrect(struct Thing *p_person)
 {
     p_person->Flag &= ~TngF_Destroyed;
     p_person->Flag &= ~TngF_Unkn02000000;
+    p_person->Flag &= ~TngF_Unkn40000000;
     p_person->State = PerSt_WAIT;
     remove_path(p_person);
     p_person->Health = p_person->U.UPerson.MaxHealth * 3 / 4;
-    set_person_anim_mode(p_person, ANIM_PERS_WEPLIGHT_IDLE);
+    person_reset_default_anim_mode(p_person);
 }
 
 void person_set_persuade_power__to_allow_all(struct Thing *p_person)
@@ -1301,6 +1310,17 @@ void unpersuade_my_peeps(struct Thing *p_owntng)
     word_1531DA = count;
 }
 
+void person_reset_default_anim_mode(struct Thing *p_person)
+{
+    ushort animode;
+
+    if (p_person->U.UPerson.CurrentWeapon != WEP_NULL)
+        animode = gun_out_anim(p_person, 0);
+    else
+        animode = ANIM_PERS_IDLE;
+    set_person_anim_mode(p_person, animode);
+}
+
 struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
 {
 #if 0
@@ -1382,8 +1402,7 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
     p_person->SubType = ptype;
     p_person->U.UPerson.Group = ptype + 4;
     p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
-    p_person->U.UPerson.AnimMode = (p_person->U.UPerson.CurrentWeapon != WEP_NULL) ? ANIM_PERS_WEPLIGHT_IDLE : ANIM_PERS_IDLE;
-    reset_person_frame(p_person);
+    person_reset_default_anim_mode(p_person);
     init_person_thing(p_person);
     p_person->U.UPerson.WeaponsCarried = 0;
     if (p_person->U.UPerson.CurrentWeapon)

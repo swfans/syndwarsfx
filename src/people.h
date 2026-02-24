@@ -375,6 +375,10 @@ void process_random_speech(struct Thing *p_person, ubyte a2);
  */
 void person_resurrect(struct Thing *p_person);
 
+/** Bring burning person back to life.
+ */
+void person_burning_stifle_fire(struct Thing *p_person);
+
 /** Artificially increases health and max health of a person to maximal reasonable value.
  */
 void person_set_helath_to_max_limit(struct Thing *p_person);
@@ -395,6 +399,10 @@ void switch_person_anim_mode(struct Thing *p_person, ubyte animode);
 /** Sets new AnimMode of a person, replacing the old frame number.
  */
 void set_person_anim_mode(struct Thing *p_person, ubyte animode);
+
+/** Resets AnimMode of a person, to some default based on state.
+ */
+void person_reset_default_anim_mode(struct Thing *p_person);
 
 /** Sets new direction angle of a person, replacing the old frame number.
  */
