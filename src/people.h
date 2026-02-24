@@ -57,6 +57,8 @@ enum PersonState {
   PerSt_WAIT = 0x5,
   PerSt_AGENT_DEFENSIVE = 0x6,
   PerSt_PICKUP_ITEM = 0x7,
+  /** Drop or plant an item (weapon or carried item) where standing.
+   */
   PerSt_DROP_ITEM = 0x8,
   PerSt_SHOOT_PERSON_WITH_BGUN = 0x9,
   PerSt_SHOOT_BGUN_AT = 0xA,
@@ -102,6 +104,8 @@ enum PersonState {
   PerSt_WAIT_TRAIN = 0x32,
   PerSt_DESTROY_BUILDING = 0x33,
   PerSt_WANDER_DRIVE = 0x34,
+  /** Go to target position, and plant the mine currently in hand.
+   */
   PerSt_GO_PLANT_MINE = 0x35,
   PerSt_WAIT_TO_EXIT_VEHICLE = 0x36,
   PerSt_CATCH_FERRY = 0x37,
@@ -433,7 +437,9 @@ int person_hit_by_bullet(struct Thing *p_person, short hp,
 TbBool person_use_medikit(struct Thing *p_person, PlayerIdx plyr);
 
 void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, ushort energy);
-void person_init_drop(struct Thing *p_person, ThingIdx item);
+
+StateChRes person_init_drop_item_where_standing(struct Thing *p_person, ThingIdx item);
+StateChRes person_init_plant_mine_where_standing(struct Thing *p_person, WeaponType wtype);
 void person_init_pickup(struct Thing *p_person, ThingIdx item);
 
 TbBool person_is_in_a_vehicle(struct Thing *p_person);

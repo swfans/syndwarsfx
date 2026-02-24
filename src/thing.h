@@ -182,7 +182,9 @@ enum ThingFlags2 {
      * is stored in OldSubType property.
      */
     TgF2_AlteredSubType = 0x00400000,
-    TgF2_Unkn00800000 = 0x00800000,
+    /** When dropping an item, activate it (ie. arm the explosive).
+     */
+    TgF2_DroppedActivate = 0x00800000,
     /** The thing is not added to map content lists and is invisible.
      *
      * If set, the thing is invisible and on-map things cannot affect it.
@@ -207,8 +209,6 @@ enum StateChangeResult {
     StCh_DENIED,        /**< The current state of either target or other world elements prevents entering the state at this time. */
     StCh_UNATTAIN,      /**< The current state of the world elements makes it impossible to ever enter that state, ie. target does not exist. */
 };
-
-typedef ubyte StateChRes;
 
 struct M33;
 

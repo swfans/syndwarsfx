@@ -1821,6 +1821,40 @@ void build_navigate_path_to_face_xz(struct Thing *p_thing, short face, int x, in
         : : "a" (p_thing), "d" (face), "b" (x), "c" (z));
 }
 
+/** Initialize drop item state.
+ *
+ * @param item The item to drop, SimpleThing if < 0 (mark in Flag2 required),
+ *   weapon type in hand if 0, carried weapon type if > 0
+ */
+void person_init_drop(struct Thing *p_person, ThingIdx item)
+{
+#if 0
+    asm volatile ("call ASM_person_init_drop\n"
+        : : "a" (p_person), "d" (item));
+#endif
+    ubyte PrevAnimMode;
+
+    if ((p_person->Flag & (TngF_Unkn40000000|TngF_WepRecoil|TngF_StationrSht|TngF_Destroyed)) != 0) {
+        return;
+    }
+
+    p_person->U.UPerson.TempWeapon = item;
+    p_person->Flag |= TngF_Unkn0001;
+    p_person->State = PerSt_DROP_ITEM;
+    p_person->U.UPerson.Timer2 = 3;
+
+    PrevAnimMode = p_person->U.UPerson.AnimMode;
+    p_person->U.UPerson.AnimMode = ANIM_PERS_Unkn13;
+    p_person->U.UPerson.OldAnimMode = PrevAnimMode;
+    reset_person_frame(p_person);
+}
+
+void person_init_pickup(struct Thing *p_person, ThingIdx item)
+{
+    asm volatile ("call ASM_person_init_pickup\n"
+        : : "a" (p_person), "d" (item));
+}
+
 void check_weapon(struct Thing *p_person, int range)
 {
     asm volatile ("call ASM_check_weapon\n"
@@ -2405,7 +2439,7 @@ StateChRes person_close_dome(struct Thing *p_person, short dome)
     return StCh_ACCEPTED;
 }
 
-StateChRes person_drop_item_where_standing(struct Thing *p_person, ThingIdx item)
+StateChRes person_init_drop_item_where_standing(struct Thing *p_person, ThingIdx item)
 {
     StateChRes res;
 
@@ -2425,6 +2459,27 @@ StateChRes person_drop_item_where_standing(struct Thing *p_person, ThingIdx item
         res = StCh_UNATTAIN;
     }
     return res;
+}
+
+StateChRes person_init_plant_mine_where_standing(struct Thing *p_person, WeaponType wtype)
+{
+    struct WeaponDef *wdef;
+
+    if (!weapon_is_for_planting(wtype)) {
+        LOGWARN("Weapon %s is not desgined for planting",
+          weapon_codename(wtype));
+        return StCh_UNATTAIN;
+    }
+    person_init_drop(p_person, wtype);
+
+    if (p_person->State != PerSt_DROP_ITEM) {
+        return StCh_DENIED;
+    }
+    wdef = &weapon_defs[wtype];
+    p_person->Flag2 |= TgF2_DroppedActivate;
+    p_person->U.UPerson.Energy -= wdef->EnergyUsed;
+    p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+    return StCh_ACCEPTED;
 }
 
 StateChRes person_lock_building(struct Thing *p_person, short bldng)
@@ -2787,7 +2842,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = person_close_dome(p_person, p_cmd->OtherThing);
         break;
     case PCmd_DROP_WEAPON:
-        res = person_drop_item_where_standing(p_person, p_cmd->OtherThing);
+        res = person_init_drop_item_where_standing(p_person, p_cmd->OtherThing);
         break;
     case PCmd_CATCH_FERRY:
         res = person_init_catch_ferry(p_person, p_cmd->X, p_cmd->Z, p_cmd->Arg1);
@@ -3597,40 +3652,6 @@ void person_goto_point_rel(struct Thing *p_person)
 {
     asm volatile ("call ASM_person_goto_point_rel\n"
         : : "a" (p_person));
-}
-
-/** Initialize drop item state.
- *
- * @param item The item to drop, SimpleThing if < 0 (mark in Flag2 required),
- *   weapon type in hand if 0, carried weapon type if > 0
- */
-void person_init_drop(struct Thing *p_person, ThingIdx item)
-{
-#if 0
-    asm volatile ("call ASM_person_init_drop\n"
-        : : "a" (p_person), "d" (item));
-#endif
-    ubyte PrevAnimMode;
-
-    if ((p_person->Flag & (TngF_Unkn40000000|TngF_WepRecoil|TngF_StationrSht|TngF_Destroyed)) != 0) {
-        return;
-    }
-
-    p_person->U.UPerson.TempWeapon = item;
-    p_person->Flag |= TngF_Unkn0001;
-    p_person->State = PerSt_DROP_ITEM;
-    p_person->U.UPerson.Timer2 = 3;
-
-    PrevAnimMode = p_person->U.UPerson.AnimMode;
-    p_person->U.UPerson.AnimMode = 13;
-    p_person->U.UPerson.OldAnimMode = PrevAnimMode;
-    reset_person_frame(p_person);
-}
-
-void person_init_pickup(struct Thing *p_person, ThingIdx item)
-{
-    asm volatile ("call ASM_person_init_pickup\n"
-        : : "a" (p_person), "d" (item));
 }
 
 void vehicle_passenger_list_add_first(struct Thing *p_vehicle, ThingIdx passngr)
@@ -4493,7 +4514,8 @@ void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, i
         p_person->U.UPerson.ComTimer = -1;
         p_person->SubState = 0;
         p_person->U.UPerson.ComRange = 1;
-        p_person->Flag2 |= TgF2_Unkn00800000;
+        // The flag is raised again when planting, so this is just for early hint
+        p_person->Flag2 |= TgF2_DroppedActivate;
         p_person->U.UPerson.GotoX = x;
         p_person->U.UPerson.GotoZ = z;
     }
@@ -4829,15 +4851,9 @@ void person_go_plant_mine(struct Thing *p_person)
     person_goto_point(p_person);
     if (p_person->State == PerSt_NONE)
     {
-        WeaponType wtype;
-
-        wtype = p_person->U.UPerson.CurrentWeapon;
-        if (weapon_is_for_planting(wtype)) {
-            person_init_drop(p_person, wtype);
-        } else {
-            LOGWARN("Weapon %s is not desgined for planting",
-              weapon_codename(wtype));
-        }
+        person_init_plant_mine_where_standing(p_person, p_person->U.UPerson.CurrentWeapon);
+        if ((p_person->Flag & TngF_PlayerAgent) != 0)
+            set_player_weapon_turn(p_person, p_person->U.UPerson.WeaponTurn);
     }
 }
 

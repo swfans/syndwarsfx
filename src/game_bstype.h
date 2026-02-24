@@ -38,6 +38,10 @@ typedef long SGameTurn;
  */
 typedef short ThingIdx;
 
+/** Type which stores result of thing state change request.
+ */
+typedef ubyte StateChRes;
+
 /** Type which stores index/offset of a Player.
  *
  * The value is a valid index in players[] array.

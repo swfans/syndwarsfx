@@ -3349,12 +3349,30 @@ void give_take_me_weapon(struct Thing *p_person, int item, int giveortake, short
         : : "a" (p_person), "d" (item), "b" (giveortake), "c" (id));
 }
 
-ushort set_player_weapon_turn(struct Thing *p_person, ushort time)
+ushort set_player_weapon_turn(struct Thing *p_person, ushort delay_turns)
 {
+#if 0
     ushort ret;
     asm volatile ("call ASM_set_player_weapon_turn\n"
-        : "=r" (ret) : "a" (p_person), "d" (time));
+        : "=r" (ret) : "a" (p_person), "d" (delay_turns));
     return ret;
+#endif
+    PlayerIdx plyr;
+    ushort plagent;
+    WeaponType wtype;
+
+    if ((p_person->Flag2 & TngF_TriggerUse) != 0) {
+        return 0;
+    }
+
+    wtype = p_person->U.UPerson.CurrentWeapon;
+    plyr = p_person->U.UPerson.ComCur >> 2;
+    plagent = p_person->U.UPerson.ComCur & 3;
+
+    player_agent_set_weapon_delay(plyr, plagent, wtype, delay_turns);
+    p_person->U.UPerson.WeaponTurn = delay_turns;
+
+    return 0;
 }
 
 void init_fire_weapon(struct Thing *p_person)
@@ -3537,12 +3555,9 @@ void init_fire_weapon(struct Thing *p_person)
             break;
         case WEP_ELEMINE:
         case WEP_EXPLMINE:
-            if ((p_person->Flag2 & TgF2_Unkn00800000) == 0)
+            if ((p_person->Flag2 & TgF2_DroppedActivate) == 0)
             {
-                p_person->Flag2 |= TgF2_Unkn00800000;
-                person_init_drop(p_person, wtype);
-                p_person->U.UPerson.Energy -= wdef->EnergyUsed;
-                p_person->U.UPerson.WeaponTurn = wdef->ReFireDelay;
+                person_init_plant_mine_where_standing(p_person, wtype);
             }
             break;
         case WEP_LONGRANGE:

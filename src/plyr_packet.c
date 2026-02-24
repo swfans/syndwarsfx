@@ -210,17 +210,20 @@ void player_agent_weapon_switch(PlayerIdx plyr, ThingIdx person, short shift)
     }
 }
 
-void player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ushort weapon)
+StateChRes player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, ThingIdx item)
 {
-    if ((weapon == 0) || (weapon == p_person->U.UPerson.CurrentWeapon)) {
+    StateChRes res;
+    if ((item == 0) || (item == p_person->U.UPerson.CurrentWeapon)) {
         p_person->U.UPerson.AnimMode = ANIM_PERS_IDLE;
         reset_person_frame(p_person);
     }
     if (p_person->State == PerSt_PROTECT_PERSON)
         p_person->Flag2 |= TgF2_Unkn10000000;
-    person_init_drop(p_person, weapon);
-    //TODO we've just initiated the drop, the weapon is not subractewd yet; a bit early for speed recalc?
+
+    res = person_init_drop_item_where_standing(p_person, item);
+    //TODO we've just initiated the drop, the weapon is not subtracted yet; a bit early for speed recalc?
     p_person->Speed = calc_person_speed(p_person);
+    return res;
 }
 
 void person_grp_switch_to_specific_weapon(struct Thing *p_person, PlayerIdx plyr,
