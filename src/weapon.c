@@ -1420,6 +1420,11 @@ ThingIdx thing_fire_shot_finish_position_toward_target(struct M31 *prc_fin_pt,
         height = 20;
     else if (wtype == WEP_STASISFLD)
         height = 0;
+    else if ((p_target->Flag & TngF_Destroyed) != 0)
+        height = 0;
+    else if ((p_target->Type == TT_PERSON) &&
+      ((p_target->Flag2 & TgF2_KnockedOut) != 0))
+        height = 0;
     else
         height = 10;
 
