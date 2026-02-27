@@ -4438,12 +4438,13 @@ void process_move_while_firing(struct Thing *p_person)
     struct Thing *p_vehicle;
     WeaponType wtype;
 
-    if ((p_person->Flag & TngF_TriggerUse) == 0)
+    if (((p_person->Flag & TngF_TriggerUse) == 0) &&
+      ((p_person->Flag & TngF_WepCharging) == 0))
         return;
 
     wtype = p_person->U.UPerson.CurrentWeapon;
-    if (wtype != WEP_NULL && !weapon_is_for_spreading_on_ground(wtype)
-      && (p_person->Flag2 & TgF2_Unkn00080000) != 0)
+    if (wtype != WEP_NULL && !weapon_is_for_spreading_on_ground(wtype) &&
+      (p_person->Flag2 & TgF2_Unkn00080000) != 0)
     {
         p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
         reset_person_frame(p_person);
@@ -4460,7 +4461,9 @@ void process_move_while_firing(struct Thing *p_person)
     else
     {
         if ((p_person->Flag & TngF_ShootAtPos) == 0)
+        {
             check_persons_target(p_person);
+        }
         if (p_person->U.UPerson.Target2 != 0)
         {
             check_persons_target2(p_person);

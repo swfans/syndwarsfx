@@ -1446,12 +1446,19 @@ void check_persons_target(struct Thing *p_person)
     {
         if (p_person->Type == TT_MINE)
             p_person->PTarget = NULL;
+
         if ((p_person->Flag & TngF_Unkn1000) == 0)
             p_person->Flag &= ~TngF_TriggerUse;
     }
 
-    // If lost target or stopped shooting, no need for any more checks
-    if ((p_target == NULL) || ((p_person->Flag & TngF_TriggerUse) == 0)) {
+    // If lost target, no need for any more checks
+    if (p_target == NULL) {
+        return;
+    }
+
+    // If stopped shooting, no need for any more checks
+    if (((p_person->Flag & TngF_TriggerUse) == 0) &&
+      ((p_person->Flag & TngF_WepCharging) == 0)) {
         return;
     }
 
