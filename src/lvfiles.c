@@ -768,12 +768,12 @@ void level_perform_deep_fix(void)
             if (nx_group >= 0)
                 lp_group = find_unused_group_id(true);
             if (lp_group >= 0) {
-                thing_group_copy(pv_group, nx_group, 0x01|0x02|0x04);
-                n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 0, 4);
+                groups_copy(pv_group, nx_group, 0x01|0x02|0x04);
+                n = group_to_group_transfer_people(nx_group, lp_group, SubTT_PERS_AGENT, 0, 4);
                 if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 0, 4);
+                    n = group_to_group_transfer_people(nx_group, lp_group, SubTT_PERS_ZEALOT, 0, 4);
                 if (n <= 0)
-                    n = thing_group_transfer_people(nx_group, lp_group, -1, 0, 4);
+                    n = group_to_group_transfer_people(nx_group, lp_group, -1, 0, 4);
                 if (n > 0) {
                     LOGWARN("Local player group %d has no team; switching to new group %d based on %d",
                       (int)pv_group, (int)lp_group, (int)nx_group);
@@ -800,8 +800,8 @@ void level_perform_deep_fix(void)
         LOGWARN("Local player group is %d; switching to %d",
           (int)pv_group, (int)nx_group);
         if (nx_group > 0) {
-            thing_group_copy(pv_group, nx_group, 0x01|0x02);
-            thing_group_transfer_people(pv_group, nx_group, -1, 0, 4);
+            groups_copy(pv_group, nx_group, 0x01|0x02);
+            group_to_group_transfer_people(pv_group, nx_group, -1, 0, 4);
         }
     }
 #endif

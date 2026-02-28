@@ -41,6 +41,7 @@
 #include "matrix.h"
 #include "network.h"
 #include "thing.h"
+#include "pepgroup.h"
 #include "player.h"
 #include "research.h"
 #include "thing_search.h"
@@ -1836,7 +1837,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
         return;
 
     range = get_persons_weapon_range(p_person, wtype);
-    group = p_target->U.UPerson.EffectiveGroup & 0x1F;
+    group = p_target->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
     init_laser(p_person, timer);
 
     n_targets = 0;

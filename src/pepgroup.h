@@ -38,16 +38,16 @@ struct Thing;
 struct WarFlag { // sizeof=40
  /** Bitfields of groups whose members are attacked  on sight.
   */
-  ulong KillOnSight;
+  u32 KillOnSight;
  /** Bitfields of groups whose members are attacked if wielding visible weapons.
   */
-  ulong KillIfWeaponOut;
+  u32 KillIfWeaponOut;
  /** Bitfields of groups whose members are attacked if have any weapons, even concealed.
   */
-  ulong KillIfArmed;
+  u32 KillIfArmed;
  /** Bitfields of groups whose members are not attacked.
   */
-  ulong Truce;
+  u32 Truce;
   ubyte Guardians[8];
   long ugfld_24;
   long ugfld_28;
@@ -56,8 +56,8 @@ struct WarFlag { // sizeof=40
 };
 
 struct GroupAction {
-  ulong FiredOn;
-  ulong Hit;
+  u32 FiredOn;
+  u32 Hit;
   short Dead;
   short Alive;
   short Persuaded;
@@ -69,13 +69,13 @@ struct GroupAction {
 extern struct WarFlag war_flags[PEOPLE_GROUPS_COUNT];
 extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT+1];
 
-/** Checks the two thing groups are equal.
- */
-TbBool thing_group_equal(short grp1, short grp2);
-
 /** Checks if two things have equal effective groups.
  */
 TbBool things_check_same_group(ThingIdx tng1, ThingIdx tng2);
+
+/** Checks the two thing groups are equal.
+ */
+TbBool groups_equal(short grp1, short grp2);
 
 /** Finds Group ID for which there are no things created.
  */
@@ -89,23 +89,27 @@ ushort count_people_in_group(ushort group, short subtype);
 
 /** Copy all properties of one group into another group.
  */
-void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill);
+void groups_copy(short pv_group, short nx_group, ubyte allow_kill);
 
-TbBool thing_group_have_kill_if_weapon_out(short check_grp, short target_grp);
+/** Returns if given group has any guardians set.
+ */
+TbBool group_has_guardians(short check_grp);
 
-TbBool thing_group_have_kill_if_armed(short check_grp, short target_grp);
+TbBool groups_have_kill_if_weapon_out(short check_grp, short target_grp);
 
-TbBool thing_group_have_kill_on_sight(short check_grp, short target_grp);
-void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state);
+TbBool groups_have_kill_if_armed(short check_grp, short target_grp);
 
-TbBool thing_group_have_truce(short check_grp, short target_grp);
-void thing_group_set_truce(short mod_grp, short target_grp, TbBool state);
+TbBool groups_have_kill_on_sight(short check_grp, short target_grp);
+void groups_set_kill_on_sight(short mod_grp, short target_grp, TbBool state);
+
+TbBool groups_have_truce(short check_grp, short target_grp);
+void groups_set_truce(short mod_grp, short target_grp, TbBool state);
 
 /** Transfer some people of given subtype from one group to the other.
  * Skips `stay_limit` of people, then transfers the next `tran_limit`.
  */
-int thing_group_transfer_people(short pv_group, short nx_group, short subtype,
-  int stay_limit, int tran_limit);
+int group_to_group_transfer_people(short pv_group, short nx_group,
+  short subtype, int stay_limit, int tran_limit);
 
 void thing_groups_clear_all_actions(void);
 

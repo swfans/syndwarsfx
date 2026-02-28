@@ -84,7 +84,7 @@ ushort count_people_in_group(ushort group, short subtype)
     return count;
 }
 
-TbBool thing_group_equal(short grp1, short grp2)
+TbBool groups_equal(short grp1, short grp2)
 {
     // TODO why are we disallowing outranged groups to be treated as same?
     return ((grp1 == grp2) && (grp1 < PEOPLE_GROUPS_COUNT) && (grp2 < PEOPLE_GROUPS_COUNT));
@@ -113,10 +113,10 @@ TbBool things_check_same_group(ThingIdx tng1, ThingIdx tng2)
 
     grp1 = p_thing1->U.UObject.EffectiveGroup & 0x7F;
     grp2 = p_thing2->U.UObject.EffectiveGroup & 0x7F;
-    return thing_group_equal(grp1, grp2);
+    return groups_equal(grp1, grp2);
 }
 
-void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
+void groups_copy(short pv_group, short nx_group, ubyte allow_kill)
 {
     int i;
 
@@ -178,25 +178,31 @@ void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
     }
 }
 
-TbBool thing_group_have_kill_if_weapon_out(short check_grp, short target_grp)
+TbBool group_has_guardians(short check_grp)
+{
+    check_grp &= PEOPLE_GROUPS_INDEX_MASK;
+    return (war_flags[check_grp].Guardians[0] != 0);
+}
+
+TbBool groups_have_kill_if_weapon_out(short check_grp, short target_grp)
 {
     check_grp &= PEOPLE_GROUPS_INDEX_MASK;
     return (war_flags[check_grp].KillIfWeaponOut & (1 << target_grp)) != 0;
 }
 
-TbBool thing_group_have_kill_if_armed(short check_grp, short target_grp)
+TbBool groups_have_kill_if_armed(short check_grp, short target_grp)
 {
     check_grp &= PEOPLE_GROUPS_INDEX_MASK;
     return (war_flags[check_grp].KillIfArmed & (1 << target_grp)) != 0;
 }
 
-TbBool thing_group_have_kill_on_sight(short check_grp, short target_grp)
+TbBool groups_have_kill_on_sight(short check_grp, short target_grp)
 {
     check_grp &= PEOPLE_GROUPS_INDEX_MASK;
     return (war_flags[check_grp].KillOnSight & (1 << target_grp)) != 0;
 }
 
-void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state)
+void groups_set_kill_on_sight(short mod_grp, short target_grp, TbBool state)
 {
     mod_grp &= PEOPLE_GROUPS_INDEX_MASK;
     if (state)
@@ -205,13 +211,13 @@ void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state
         war_flags[mod_grp].KillOnSight &= ~(1 << target_grp);
 }
 
-TbBool thing_group_have_truce(short check_grp, short target_grp)
+TbBool groups_have_truce(short check_grp, short target_grp)
 {
     check_grp &= PEOPLE_GROUPS_INDEX_MASK;
     return (war_flags[check_grp].Truce & (1 << target_grp)) != 0;
 }
 
-void thing_group_set_truce(short mod_grp, short target_grp, TbBool state)
+void groups_set_truce(short mod_grp, short target_grp, TbBool state)
 {
     mod_grp &= PEOPLE_GROUPS_INDEX_MASK;
     if (state)
@@ -220,7 +226,7 @@ void thing_group_set_truce(short mod_grp, short target_grp, TbBool state)
         war_flags[mod_grp].Truce &= ~(1 << target_grp);
 }
 
-int thing_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
+int group_to_group_transfer_people(short pv_group, short nx_group, short subtype, int stay_limit, int tran_limit)
 {
     ThingIdx thing;
     struct Thing *p_thing;

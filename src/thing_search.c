@@ -1024,7 +1024,7 @@ struct Thing *check_for_radius_hit_person(int prc_x, int prc_y, int prc_z,
                   group = 99;
               if ((p_thing->U.UPerson.EffectiveGroup != group) || (group >= 100))
               {
-                if (!thing_group_have_truce(group, p_thing->U.UPerson.EffectiveGroup)
+                if (!groups_have_truce(group, p_thing->U.UPerson.EffectiveGroup)
                   && (p_thing->Type == TT_PERSON) && (p_thing != p_owner))
                 {
                     if ((p_thing->State != PerSt_DEAD) && (p_thing->State != PerSt_PERSON_BURNING) && (p_thing->Flag & TngF_Destroyed) == 0)

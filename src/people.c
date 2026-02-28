@@ -1197,9 +1197,9 @@ TbBool can_i_enter_vehicle(struct Thing *p_me, struct Thing *p_vehicle)
 
     tngroup = p_thing->U.UObject.EffectiveGroup & 0x7F;
     mygroup = p_me->U.UObject.EffectiveGroup & 0x7F;
-    if (thing_group_equal(tngroup, mygroup))
+    if (groups_equal(tngroup, mygroup))
         return true;
-    if (thing_group_have_truce(tngroup, mygroup) || thing_group_have_truce(mygroup, tngroup))
+    if (groups_have_truce(tngroup, mygroup) || groups_have_truce(mygroup, tngroup))
         return true;
 
     return false;
@@ -1506,6 +1506,7 @@ void check_persons_target2(struct Thing *p_person)
         return;
     }
 
+    // Handle shooting allies
     if (things_check_same_group(p_person->ThingOffset, p_target->ThingOffset))
     {
         p_person->U.UPerson.Target2 = 0;
@@ -2812,7 +2813,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         break;
     case PCmd_KILL_ALL_GROUP:
         othertng = find_nearest_from_group(p_person, p_cmd->OtherThing, 0);
-        thing_group_set_kill_on_sight(p_person->U.UPerson.Group, p_cmd->OtherThing, true);
+        groups_set_kill_on_sight(p_person->U.UPerson.Group, p_cmd->OtherThing, true);
         res = person_init_kill_person(p_person, othertng);
         break;
     case PCmd_PERSUADE_PERSON:
@@ -2995,7 +2996,7 @@ TbBool person_init_specific_command(struct Thing *p_person, ushort cmd)
         res = StCh_ACCEPTED;
         break;
     case PCmd_UNTRUCE_GROUP:
-        thing_group_set_truce(p_person->U.UPerson.Group, p_cmd->OtherThing, false);
+        groups_set_truce(p_person->U.UPerson.Group, p_cmd->OtherThing, false);
         p_person->State = PerSt_NONE;
         res = StCh_ACCEPTED;
         break;
@@ -3415,7 +3416,7 @@ TbBool persons_have_truce(struct Thing *p_person1, struct Thing *p_person2)
     pers1grp = p_person1->U.UPerson.EffectiveGroup & 0x7F;
     pers2grp = p_person2->U.UPerson.EffectiveGroup & 0x7F;
 
-    return thing_group_have_truce(pers1grp, pers2grp);
+    return groups_have_truce(pers1grp, pers2grp);
 }
 
 void persons_set_groups_kill_on_sight(struct Thing *p_attacker, struct Thing *p_victim)
@@ -3437,7 +3438,7 @@ void persons_set_groups_kill_on_sight(struct Thing *p_attacker, struct Thing *p_
       p_victim->SubType == SubTT_PERS_WHIT_BLOND_F || p_victim->SubType == SubTT_PERS_LETH_JACKT_M) {
         return;
     }
-    thing_group_set_kill_on_sight(attack_grp, victim_grp, true);
+    groups_set_kill_on_sight(attack_grp, victim_grp, true);
 }
 
 int mods_affect_hit_points(struct Thing *p_thing, ushort type, int hp)
@@ -3581,7 +3582,7 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
               if ( victim_grp <= 0x63u && attack_grp <= 0x63u && victim_grp != attack_grp )
               {
                 if ((p_thing->Flag & TngF_Persuaded) == 0)
-                    thing_group_set_kill_on_sight(victim_grp, attack_grp, true);
+                    groups_set_kill_on_sight(victim_grp, attack_grp, true);
                 if (((p_thing->Flag & TngF_Persuaded) == 0) && war_flags[victim_grp].Guardians[0])
                     find_and_alert_guardian(p_thing, p_attacker);
               }
@@ -4358,10 +4359,10 @@ void alert_peeps_on_mapwho_tile(short tile_x, short tile_z, struct Thing *p_madm
                     target_grp = p_madman->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
                     if (check_grp != target_grp)
                     {
-                        if (!thing_group_have_truce(check_grp, target_grp) &&
-                          (thing_group_have_kill_on_sight(check_grp, target_grp) ||
-                          thing_group_have_kill_if_armed(check_grp, target_grp) ||
-                          thing_group_have_kill_if_weapon_out(check_grp, target_grp)))
+                        if (!groups_have_truce(check_grp, target_grp) &&
+                          (groups_have_kill_on_sight(check_grp, target_grp) ||
+                          groups_have_kill_if_armed(check_grp, target_grp) ||
+                          groups_have_kill_if_weapon_out(check_grp, target_grp)))
                         {
                             set_interrupt_target(p_thing, p_madman);
                         }
@@ -4716,7 +4717,8 @@ void thing_shoot_at_thing(struct Thing *p_thing, short target)
         short full_angle;
         ubyte angl;
 
-        full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
+        full_angle = angle_between_points(
+          PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
           PRCCOORD_TO_MAPCOORD(p_targetng->X), PRCCOORD_TO_MAPCOORD(p_targetng->Z));
         angl = (((ushort)(full_angle + 128) >> 8) + 8) & 7;
         change_player_angle(p_thing, angl);
