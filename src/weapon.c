@@ -1481,6 +1481,52 @@ int bul_path_end(int x1, int y1, int z1, int *x2, int *y2, int *z2,
     return ret;
 }
 
+/** Shot causes people in area around destination to be alert.
+ *
+ * To be used for all non-scanline weapons.
+ */
+void shot_alerts_peeps(struct Thing *p_shot)
+{
+    struct Thing *p_owner;
+    MapCoord cor_x, cor_y, cor_z;
+
+    if (p_shot->Owner <= 0)
+        return;
+    p_owner = &things[p_shot->Owner];
+
+    if ((p_owner->Flag2 & TgF2_ExistsOffMap) != 0)
+        return;
+
+    switch (p_shot->Type)
+    {
+    case TT_LASER_ELEC:
+    case TT_LASER11:
+    case TT_LASER29:
+    case TT_LASER38:
+        cor_x = p_shot->VX;
+        cor_y = p_shot->VY;
+        cor_z = p_shot->VZ;
+        alert_peeps(cor_x, cor_y, cor_z, p_owner);
+        break;
+    case TT_ROCKET:
+    case TT_GRENADE:
+        cor_x = p_shot->U.UEffect.GotoX;
+        cor_y = p_shot->U.UEffect.GotoY;
+        cor_z = p_shot->U.UEffect.GotoZ;
+        alert_peeps(cor_x, cor_y, cor_z, p_owner);
+        break;
+    case TT_LASER_GUIDED:
+        cor_x = PRCCOORD_TO_MAPCOORD(p_shot->PTarget->X);
+        cor_y = PRCCOORD_TO_MAPCOORD(p_shot->PTarget->Y);
+        cor_z = PRCCOORD_TO_MAPCOORD(p_shot->PTarget->Z);
+        alert_peeps(cor_x, cor_y, cor_z, p_owner);
+        break;
+    case TT_AIR_STRIKE:
+    default:
+        break;
+    }
+}
+
 /** Creates given amount of sparks or sprouts from given point, with given velocity factor.
  *
  * @param is_red Makes red blood sprouts instead of yellow sparks.
@@ -1659,6 +1705,9 @@ void init_laser(struct Thing *p_owner, ushort start_age)
         p_shot->Flag |= TngF_Unkn1000;
     else
         p_shot->Flag &= ~TngF_Unkn1000;
+
+    if (damage > 0)
+        shot_alerts_peeps(p_shot);
 }
 
 void init_mgun_laser(struct Thing *p_owner, ushort start_age)
@@ -1766,6 +1815,9 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
     p_shot->Flag = TngF_Unkn0004;
     p_shot->Type = TT_LASER11;
     add_node_thing(p_shot->ThingOffset);
+
+    if (damage > 0)
+        shot_alerts_peeps(p_shot);
 }
 
 void init_laser_6shot(struct Thing *p_person, ushort timer)
@@ -1922,6 +1974,8 @@ void init_rocket(struct Thing *p_owner)
         p_shot->Timer1 = 32;
     }
     play_dist_sample(p_shot, 0x18u, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
+
+    shot_alerts_peeps(p_shot);
 }
 
 void init_razor_wire(struct Thing *p_person, ubyte flag)
@@ -2154,6 +2208,9 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte stype)
         quick_crater(MAPCOORD_TO_TILE(p_shot->VX), MAPCOORD_TO_TILE(p_shot->VZ), 0);
         break;
     }
+
+    if (damage > 0)
+        shot_alerts_peeps(p_shot);
 }
 
 void init_laser_guided(struct Thing *p_owner, ushort count)
@@ -2231,6 +2288,8 @@ void init_laser_guided(struct Thing *p_owner, ushort count)
         p_shot->PTarget = p_target;
         add_node_thing(p_shot->ThingOffset);
         p_shot->Type = TT_LASER_GUIDED;
+
+        shot_alerts_peeps(p_shot);
     }
 }
 
@@ -2451,6 +2510,9 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
     p_shot->Type = TT_LASER_ELEC;
     p_shot->State = 0;
     add_node_thing(p_shot->ThingOffset);
+
+    if (damage > 0)
+        shot_alerts_peeps(p_shot);
 }
 
 void init_laser_q_sep(struct Thing *p_owner, ushort count)
@@ -2600,6 +2662,9 @@ void init_uzi(struct Thing *p_owner)
 
     if (make_sparks_sprouts)
         init_sparks(cor_fin_x, cor_fin_y, cor_fin_z, 3, 2, blood_sprout);
+
+    if ((wdef->HitDamage > 0) && ((p_owner->Flag2 & TgF2_ExistsOffMap) == 0))
+        alert_peeps(cor_fin_x, cor_fin_y, cor_fin_z, p_owner);
 }
 
 void init_minigun(struct Thing *p_owner)
@@ -2743,10 +2808,14 @@ void init_minigun(struct Thing *p_owner)
         short vel = blood_sprout ? 2 : 3;
         init_sparks(cor_fin_x, cor_fin_y, cor_fin_z, 4, vel, blood_sprout);
     }
+
+    if ((wdef->HitDamage > 0) && ((p_owner->Flag2 & TgF2_ExistsOffMap) == 0))
+        alert_peeps(cor_fin_x, cor_fin_y, cor_fin_z, p_owner);
 }
 
 void init_flamer(struct Thing *p_owner)
 {
+    //TODO add alerting people
     asm volatile ("call ASM_init_flamer\n"
         : : "a" (p_owner));
 }
@@ -2891,6 +2960,9 @@ void init_long_range(struct Thing *p_owner)
         short vel = blood_sprout ? 2 : 4;
         init_sparks(cor_fin_x, cor_fin_y, cor_fin_z, 3, vel, blood_sprout);
     }
+
+    if ((wdef->HitDamage > 0) && ((p_owner->Flag2 & TgF2_ExistsOffMap) == 0))
+        alert_peeps(cor_fin_x, cor_fin_y, cor_fin_z, p_owner);
 }
 
 void init_air_strike(struct Thing *p_owner)
@@ -2925,6 +2997,8 @@ void init_air_strike(struct Thing *p_owner)
     p_thing->U.UEffect.Group = grp;
 
     play_dist_sample(p_thing, 66, FULL_VOL, EQUL_PAN, NORM_PTCH, 990, 3);
+
+    shot_alerts_peeps(p_thing);
 }
 
 void init_stasis_gun(struct Thing *p_owner)
@@ -3147,6 +3221,8 @@ void init_grenade(struct Thing *p_owner, ushort gtype)
     p_shot->Type = TT_GRENADE;
     p_shot->Radius = 50;
     p_shot->SubType = gtype;
+
+    shot_alerts_peeps(p_shot);
 }
 
 void init_v_rocket(struct Thing *p_owner)
@@ -3251,6 +3327,8 @@ void init_v_rocket(struct Thing *p_owner)
     add_node_thing(p_shot->ThingOffset);
 
     play_dist_sample(p_shot, 24, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
+
+    shot_alerts_peeps(p_shot);
 #endif
 }
 
@@ -3345,6 +3423,8 @@ void init_mech_rocket(struct Thing *p_owner, struct Thing *p_mech, int x, int y,
     add_node_thing(p_shot->ThingOffset);
 
     play_dist_sample(p_shot, 24, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
+
+    shot_alerts_peeps(p_shot);
 }
 
 void give_take_me_weapon(struct Thing *p_person, int item, int giveortake, short id)
@@ -4751,11 +4831,21 @@ void process_wielded_weapon_fire(struct Thing *p_person, WeaponType wtype)
         }
         break;
     default:
-        if (((p_person->Flag & TngF_TriggerUse) != 0) && (p_person->U.UPerson.CurrentWeapon != WEP_NULL)
-            && (p_person->U.UPerson.WeaponTurn == 0) && ((p_person->Flag & TngF_WepCharging) == 0))
+        if (((p_person->Flag & TngF_TriggerUse) != 0) &&
+          (p_person->U.UPerson.WeaponTurn == 0) &&
+          ((p_person->Flag & TngF_WepCharging) == 0))
         {
-            process_weapon_recoil(p_person);
-            init_fire_weapon(p_person);
+            if (p_person->U.UPerson.CurrentWeapon != WEP_NULL)
+            {
+                process_weapon_recoil(p_person);
+                init_fire_weapon(p_person);
+            }
+            else
+            {
+                short tng_x, tng_y, tng_z;
+                get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_person->ThingOffset);
+                alert_peeps(tng_x, tng_y, tng_z, p_person);
+            }
         }
         break;
     }

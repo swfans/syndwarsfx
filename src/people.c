@@ -4426,14 +4426,9 @@ void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint
     map_limit_distance_to_target_fast(src_x, src_y, src_z,
       &x, &y, &z, weapon_range);
 
-    if ((p_thing->Flag2 & TgF2_ExistsOffMap) == 0)
-        alert_peeps(x, y, z, p_thing);
-
     if ((p_thing->Flag & TngF_PlayerAgent) != 0)
     {
-        p_player->UserVX[plagent] = x;
-        p_player->UserVZ[plagent] = z;
-        p_player->UserVY[plagent] = y;
+        player_set_user_vect(plyr, plagent, x, y, z);
     }
     else
     {
