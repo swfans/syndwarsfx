@@ -3421,8 +3421,6 @@ TbBool persons_have_truce(struct Thing *p_person1, struct Thing *p_person2)
 
 void persons_set_groups_kill_on_sight(struct Thing *p_attacker, struct Thing *p_victim)
 {
-    ubyte attack_grp, victim_grp;
-
     if ((p_attacker == NULL) || ((p_attacker->Flag & TngF_PlayerAgent) == 0)) {
         return;
     }
@@ -3431,14 +3429,12 @@ void persons_set_groups_kill_on_sight(struct Thing *p_attacker, struct Thing *p_
         return;
     }
 
-    attack_grp = p_attacker->U.UPerson.EffectiveGroup & 0x7F;
-    victim_grp = p_victim->U.UPerson.EffectiveGroup & 0x7F;
-
     if (p_victim->SubType == SubTT_PERS_BRIEFCASE_M || p_victim->SubType == SubTT_PERS_WHITE_BRUN_F ||
       p_victim->SubType == SubTT_PERS_WHIT_BLOND_F || p_victim->SubType == SubTT_PERS_LETH_JACKT_M) {
         return;
     }
-    groups_set_kill_on_sight(attack_grp, victim_grp, true);
+
+    thing_groups_set_kill_on_sight_one_way(p_attacker->ThingOffset, p_victim->ThingOffset);
 }
 
 int mods_affect_hit_points(struct Thing *p_thing, ushort type, int hp)
@@ -3560,6 +3556,7 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
           if (persons_have_truce(p_attacker, p_thing)) {
               return 1;
           }
+          // Make attacker group aggressive toward the victim group
           persons_set_groups_kill_on_sight(p_attacker, p_thing);
           hp1 = mods_affect_hit_points(p_thing, type, hp);
 
@@ -3576,15 +3573,16 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
             && !persons_have_truce(p_attacker, p_thing)
             && (((p_attacker->Flag & TngF_Unkn1000) != 0) || ((p_thing == p_attacker->PTarget) && (p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)))
           {
-              ubyte attack_grp, victim_grp;
-              victim_grp = p_thing->U.UPerson.EffectiveGroup;
-              attack_grp = p_attacker->U.UPerson.EffectiveGroup;
-              if ( victim_grp <= 0x63u && attack_grp <= 0x63u && victim_grp != attack_grp )
+              if (!things_check_same_group(p_thing->ThingOffset, p_attacker->ThingOffset))
               {
-                if ((p_thing->Flag & TngF_Persuaded) == 0)
-                    groups_set_kill_on_sight(victim_grp, attack_grp, true);
-                if (((p_thing->Flag & TngF_Persuaded) == 0) && war_flags[victim_grp].Guardians[0])
-                    find_and_alert_guardian(p_thing, p_attacker);
+                  ubyte attack_grp, victim_grp;
+                  victim_grp = p_thing->U.UPerson.EffectiveGroup;
+                  attack_grp = p_attacker->U.UPerson.EffectiveGroup;
+                  if ((p_thing->Flag & TngF_Persuaded) == 0)
+                      // Make victim group aggressive back toward the attacker group
+                      groups_set_kill_on_sight(victim_grp, attack_grp, true);
+                  if (((p_thing->Flag & TngF_Persuaded) == 0) && thing_group_has_guardians(p_thing->ThingOffset))
+                      find_and_alert_guardian(p_thing, p_attacker);
               }
           }
           energy_decr = 0;

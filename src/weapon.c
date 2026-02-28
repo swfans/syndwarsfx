@@ -4151,7 +4151,7 @@ TbBool person_can_be_persuaded_now(ThingIdx attacker, ThingIdx target,
 
     // Cannot persuade people from own group
     if (((target_select == PTargSelect_Persuader) || (target_select == PTargSelect_PersuadeAdv)) &&
-      (p_target->U.UPerson.EffectiveGroup == p_attacker->U.UPerson.EffectiveGroup))
+      things_check_same_group(p_target->ThingOffset, p_attacker->ThingOffset))
         return false;
 
     // Holding a taser prevents both persuasion and soul harvest

@@ -73,6 +73,22 @@ extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT+1];
  */
 TbBool things_check_same_group(ThingIdx tng1, ThingIdx tng2);
 
+/** Checks if first thing group it truced with 2nd thing group.
+ */
+TbBool things_check_have_truce_one_way(ThingIdx tng1, ThingIdx tng2);
+
+/** Checks if groups of the two things have truce, in any direction.
+ */
+TbBool things_check_have_truce_any_way(ThingIdx tng1, ThingIdx tng2);
+
+/** Set thing 1 group to kill thing 2 group members on sight.
+ */
+void thing_groups_set_kill_on_sight_one_way(ThingIdx tng1, ThingIdx tng2);
+
+/** Checks if if thing group has any guardians set.
+ */
+TbBool thing_group_has_guardians(ThingIdx tng);
+
 /** Checks the two thing groups are equal.
  */
 TbBool groups_equal(short grp1, short grp2);

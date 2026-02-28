@@ -29,6 +29,125 @@
 #include "game_options.h"
 /******************************************************************************/
 
+TbBool things_check_same_group(ThingIdx tng1, ThingIdx tng2)
+{
+    struct Thing *p_thing1;
+    struct Thing *p_thing2;
+    short grp1, grp2;
+
+    if (tng1 <= 0) {
+        return false;
+    }
+    if (tng2 <= 0) {
+        return false;
+    }
+    p_thing1 = &things[tng1];
+    p_thing2 = &things[tng2];
+
+    // This function can be called for objects, people, vehicles, mguns and rockets
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UPerson.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UVehicle.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UMGun.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UEffect.EffectiveGroup));
+
+    grp1 = p_thing1->U.UObject.EffectiveGroup & 0x7F;
+    grp2 = p_thing2->U.UObject.EffectiveGroup & 0x7F;
+    return groups_equal(grp1, grp2);
+}
+
+TbBool things_check_have_truce_one_way(ThingIdx tng1, ThingIdx tng2)
+{
+    struct Thing *p_thing1;
+    struct Thing *p_thing2;
+    short grp1, grp2;
+
+    if (tng1 <= 0) {
+        return false;
+    }
+    if (tng2 <= 0) {
+        return false;
+    }
+    p_thing1 = &things[tng1];
+    p_thing2 = &things[tng2];
+
+    // This function can be called for objects, people, vehicles, mguns and rockets
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UPerson.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UVehicle.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UMGun.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UEffect.EffectiveGroup));
+
+    grp1 = p_thing1->U.UObject.EffectiveGroup & 0x7F;
+    grp2 = p_thing2->U.UObject.EffectiveGroup & 0x7F;
+    return groups_have_truce(grp1, grp2);
+}
+
+TbBool things_check_have_truce_any_way(ThingIdx tng1, ThingIdx tng2)
+{
+    struct Thing *p_thing1;
+    struct Thing *p_thing2;
+    short grp1, grp2;
+
+    if (tng1 <= 0) {
+        return false;
+    }
+    if (tng2 <= 0) {
+        return false;
+    }
+    p_thing1 = &things[tng1];
+    p_thing2 = &things[tng2];
+
+    // This function can be called for objects, people, vehicles, mguns and rockets
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UPerson.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UVehicle.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UMGun.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UEffect.EffectiveGroup));
+
+    grp1 = p_thing1->U.UObject.EffectiveGroup & 0x7F;
+    grp2 = p_thing2->U.UObject.EffectiveGroup & 0x7F;
+    return groups_have_truce(grp1, grp2) || groups_have_truce(grp2, grp1);
+}
+
+TbBool thing_group_has_guardians(ThingIdx tng)
+{
+    struct Thing *p_thing;
+    short grp;
+
+    if (tng <= 0) {
+        return false;
+    }
+    p_thing = &things[tng];
+
+    // This function can be called for objects, people, vehicles, mguns and rockets
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UPerson.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UVehicle.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UMGun.EffectiveGroup));
+    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UEffect.EffectiveGroup));
+
+    grp = p_thing->U.UObject.EffectiveGroup & 0x7F;
+    return group_has_guardians(grp);
+}
+
+void thing_groups_set_kill_on_sight_one_way(ThingIdx tng1, ThingIdx tng2)
+{
+    struct Thing *p_thing1;
+    struct Thing *p_thing2;
+    short grp1, grp2;
+
+    if (tng1 <= 0) {
+        return;
+    }
+    if (tng2 <= 0) {
+        return;
+    }
+    p_thing1 = &things[tng1];
+    p_thing2 = &things[tng2];
+
+    grp1 = p_thing1->U.UObject.EffectiveGroup & 0x7F;
+    grp2 = p_thing2->U.UObject.EffectiveGroup & 0x7F;
+
+    groups_set_kill_on_sight(grp1, grp2, true);
+}
+
 short find_unused_group_id(TbBool largest)
 {
     ThingIdx thing;
@@ -88,32 +207,6 @@ TbBool groups_equal(short grp1, short grp2)
 {
     // TODO why are we disallowing outranged groups to be treated as same?
     return ((grp1 == grp2) && (grp1 < PEOPLE_GROUPS_COUNT) && (grp2 < PEOPLE_GROUPS_COUNT));
-}
-
-TbBool things_check_same_group(ThingIdx tng1, ThingIdx tng2)
-{
-    struct Thing *p_thing1;
-    struct Thing *p_thing2;
-    short grp1, grp2;
-
-    if (tng1 <= 0) {
-        return false;
-    }
-    if (tng2 <= 0) {
-        return false;
-    }
-    p_thing1 = &things[tng1];
-    p_thing2 = &things[tng2];
-
-    // This function can be called for objects, people, vehicles, mguns and rockets
-    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UPerson.EffectiveGroup));
-    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UVehicle.EffectiveGroup));
-    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UMGun.EffectiveGroup));
-    assert(offsetof(struct Thing, U.UObject.EffectiveGroup) == offsetof(struct Thing, U.UEffect.EffectiveGroup));
-
-    grp1 = p_thing1->U.UObject.EffectiveGroup & 0x7F;
-    grp2 = p_thing2->U.UObject.EffectiveGroup & 0x7F;
-    return groups_equal(grp1, grp2);
 }
 
 void groups_copy(short pv_group, short nx_group, ubyte allow_kill)
