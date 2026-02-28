@@ -60,6 +60,8 @@
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
+#define ALERT_PEEPS_RANGE 4
+
 struct PeepStat peep_type_stats[] = {
     {   0,    0,    0,    0,   0, 0,   0, 0, 0, 0},
     {1000, 1024, 2048, 1024,  20, 5, 512, 0, 0, 0},
@@ -4300,11 +4302,103 @@ void person_catch_ferry(struct Thing *p_person)
     p_person->U.UPerson.Vehicle = veh;
 }
 
-void alert_peeps(int x, int y, int z, struct Thing *p_madman)
+void make_peep_flee(int b_x, int b_z, struct Thing *p_person)
 {
+    asm volatile ("call ASM_make_peep_flee\n"
+        : : "a" (b_x), "d" (b_z), "b" (p_person));
+}
+
+void alert_peeps_on_mapwho_tile(short tile_x, short tile_z, struct Thing *p_madman)
+{
+    ThingIdx thing;
+    ulong k;
+
+    k = 0;
+    thing = get_mapwho_thing_index(tile_x, tile_z);
+    while (thing != 0)
+    {
+        if (thing <= 0)
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[thing];
+            thing = p_sthing->Next;
+        }
+        else
+        {
+            struct Thing *p_thing;
+            p_thing = &things[thing];
+            // Per thing code start
+            if (p_thing->Type == TT_PERSON && (p_thing->Flag & (TngF_PlayerAgent|TngF_Destroyed)) == 0)
+            {
+                ubyte subType;
+
+                if ((p_thing->Flag2 & TgF2_AlteredSubType) != 0)
+                    subType = p_thing->U.UPerson.OldSubType;
+                else
+                    subType = p_thing->SubType;
+
+                if (subType == SubTT_PERS_BRIEFCASE_M
+                  || subType == SubTT_PERS_WHITE_BRUN_F
+                  || subType == SubTT_PERS_WHIT_BLOND_F
+                  || subType == SubTT_PERS_LETH_JACKT_M)
+                {
+                    if (((p_thing->Flag2 & TgF2_IgnoreEnemies) == 0) && (person_mod_brain_level(p_thing) < 3) &&
+                      (!persons_have_truce(p_thing, p_madman)))
+                    {
+                        short dx, dz;
+                        dx = PRCCOORD_TO_MAPCOORD(p_thing->X) - TILE_TO_MAPCOORD(tile_x, p_thing->ThingOffset & 0xFF);
+                        dz = PRCCOORD_TO_MAPCOORD(p_thing->Z) - TILE_TO_MAPCOORD(tile_z, (p_thing->ThingOffset >> 2) & 0xFF);
+                        make_peep_flee(dx, dz, p_thing);
+                    }
+                }
+                else
+                {
+                    short check_grp, target_grp;
+                    check_grp = p_thing->U.UPerson.EffectiveGroup & 0x1F;
+                    target_grp = p_madman->U.UPerson.EffectiveGroup & 0x1F;
+                    if ( check_grp != target_grp )
+                    {
+                        if (!thing_group_have_truce(check_grp, target_grp) &&
+                          (thing_group_have_kill_on_sight(check_grp, target_grp) ||
+                          thing_group_have_kill_if_armed(check_grp, target_grp) ||
+                          thing_group_have_kill_if_weapon_out(check_grp, target_grp)))
+                        {
+                            set_interrupt_target(p_thing, p_madman);
+                        }
+                    }
+                }
+            }
+            // Per thing code end
+            thing = p_thing->Next;
+        }
+        k++;
+        if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
+            LOGERR("Infinite loop in mapwho things list");
+            break;
+        }
+    }
+    return;
+}
+
+void alert_peeps(int cor_x, int cor_y, int cor_z, struct Thing *p_madman)
+{
+#if 0
     asm volatile (
       "call ASM_alert_peeps\n"
-        : : "a" (x), "d" (y), "b" (z), "c" (p_madman));
+        : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (p_madman));
+#endif
+    short tile_x, tile_z;
+    short dx, dz;
+
+    tile_x = MAPCOORD_TO_TILE(cor_x);
+    tile_z = MAPCOORD_TO_TILE(cor_z);
+    for (dx = -ALERT_PEEPS_RANGE; dx <= ALERT_PEEPS_RANGE; dx++)
+    {
+        for (dz = -ALERT_PEEPS_RANGE; dz <= ALERT_PEEPS_RANGE; dz++)
+        {
+            alert_peeps_on_mapwho_tile(tile_x + dx, tile_z + dz, p_madman);
+        }
+    }
 }
 
 void person_attempt_to_leave_ferry(struct Thing *p_person)

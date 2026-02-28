@@ -24523,7 +24523,7 @@ scare_civs:	/* 0x047BD4 */
 		sar    $0x8,%edx
 		sar    $0x8,%eax
 		mov    %esi,%ebx
-		call   make_peep_flee
+		call   ac_make_peep_flee
 	jump_47cb4:
 		mov    0x2(%esi),%ax
 		jmp    jump_47cc8
@@ -24656,7 +24656,7 @@ GLOBAL_FUNC(ASM_alert_peeps)	/* 0x047D40 */
 		sub    %ecx,%edx
 		sub    %ebx,%eax
 		mov    %esi,%ebx
-		call   make_peep_flee
+		call   ac_make_peep_flee
 		jmp    jump_47e8e
 	jump_47e45:
 		mov    0x51(%esi),%al
@@ -69710,7 +69710,7 @@ check_unlock_target:	/* 0x06B8C0 */
 
 
 /*----------------------------------------------------------------*/
-make_peep_flee:	/* 0x06B98C */
+GLOBAL_FUNC(ASM_make_peep_flee)	/* 0x06B98C */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		testb  $0x18,0x44(%ebx)
@@ -69875,7 +69875,7 @@ search_for_danger:	/* 0x06B9E8 */
 		mov    0x4(%esp),%edx
 		mov    (%esp),%eax
 		mov    %edi,%ebx
-		call   make_peep_flee
+		call   ac_make_peep_flee
 		mov    $0x1,%eax
 		jmp    jump_6bb6d
 	jump_6bb6b:

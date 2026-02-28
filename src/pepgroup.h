@@ -29,6 +29,7 @@ extern "C" {
 #pragma pack(1)
 
 #define PEOPLE_GROUPS_COUNT 32
+#define PEOPLE_GROUPS_INDEX_MASK 0x1F
 
 struct Thing;
 
@@ -90,6 +91,11 @@ ushort count_people_in_group(ushort group, short subtype);
  */
 void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill);
 
+TbBool thing_group_have_kill_if_weapon_out(short check_grp, short target_grp);
+
+TbBool thing_group_have_kill_if_armed(short check_grp, short target_grp);
+
+TbBool thing_group_have_kill_on_sight(short check_grp, short target_grp);
 void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state);
 
 TbBool thing_group_have_truce(short check_grp, short target_grp);

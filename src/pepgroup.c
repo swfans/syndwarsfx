@@ -178,9 +178,27 @@ void thing_group_copy(short pv_group, short nx_group, ubyte allow_kill)
     }
 }
 
+TbBool thing_group_have_kill_if_weapon_out(short check_grp, short target_grp)
+{
+    check_grp &= PEOPLE_GROUPS_INDEX_MASK;
+    return (war_flags[check_grp].KillIfWeaponOut & (1 << target_grp)) != 0;
+}
+
+TbBool thing_group_have_kill_if_armed(short check_grp, short target_grp)
+{
+    check_grp &= PEOPLE_GROUPS_INDEX_MASK;
+    return (war_flags[check_grp].KillIfArmed & (1 << target_grp)) != 0;
+}
+
+TbBool thing_group_have_kill_on_sight(short check_grp, short target_grp)
+{
+    check_grp &= PEOPLE_GROUPS_INDEX_MASK;
+    return (war_flags[check_grp].KillOnSight & (1 << target_grp)) != 0;
+}
+
 void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state)
 {
-    mod_grp &= 0x1F;
+    mod_grp &= PEOPLE_GROUPS_INDEX_MASK;
     if (state)
         war_flags[mod_grp].KillOnSight |= 1 << target_grp;
     else
@@ -189,13 +207,13 @@ void thing_group_set_kill_on_sight(short mod_grp, short target_grp, TbBool state
 
 TbBool thing_group_have_truce(short check_grp, short target_grp)
 {
-    check_grp &= 0x1F;
+    check_grp &= PEOPLE_GROUPS_INDEX_MASK;
     return (war_flags[check_grp].Truce & (1 << target_grp)) != 0;
 }
 
 void thing_group_set_truce(short mod_grp, short target_grp, TbBool state)
 {
-    mod_grp &= 0x1F;
+    mod_grp &= PEOPLE_GROUPS_INDEX_MASK;
     if (state)
         war_flags[mod_grp].Truce |= 1 << target_grp;
     else
