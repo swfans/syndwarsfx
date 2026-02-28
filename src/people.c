@@ -4354,9 +4354,9 @@ void alert_peeps_on_mapwho_tile(short tile_x, short tile_z, struct Thing *p_madm
                 else
                 {
                     short check_grp, target_grp;
-                    check_grp = p_thing->U.UPerson.EffectiveGroup & 0x1F;
-                    target_grp = p_madman->U.UPerson.EffectiveGroup & 0x1F;
-                    if ( check_grp != target_grp )
+                    check_grp = p_thing->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
+                    target_grp = p_madman->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
+                    if (check_grp != target_grp)
                     {
                         if (!thing_group_have_truce(check_grp, target_grp) &&
                           (thing_group_have_kill_on_sight(check_grp, target_grp) ||
@@ -4461,7 +4461,6 @@ void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint
     short face;
     PlayerIdx plyr;
     ushort plagent;
-    ushort angle;
 
     face = 0;
     if ((fast_flag & 0x02) != 0)
@@ -4483,21 +4482,31 @@ void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint
         p_vehicle->Flag |= TngF_Unkn01000000;
     }
 
-    if ((p_thing->Flag & (TngF_Unkn40000000|TngF_StationrSht|TngF_Destroyed)) != 0)
+    if ((p_thing->Flag & (TngF_Unkn40000000|TngF_StationrSht|TngF_Destroyed)) != 0) {
         return;
+    }
 
-    if ((p_thing->Flag2 & TgF2_Unkn0001) != 0)
+    if ((p_thing->Flag2 & TgF2_Unkn0001) != 0) {
         finalise_razor_wire(p_thing);
+    }
 
     if (p_thing->State == PerSt_DROP_ITEM || p_thing->State == PerSt_PICKUP_ITEM ||
-      p_thing->State == PerSt_DEAD || p_thing->State == PerSt_DIEING)
+      p_thing->State == PerSt_DEAD || p_thing->State == PerSt_DIEING) {
         return;
-    if ((p_thing->Flag & TngF_Destroyed) != 0)
+    }
+    if ((p_thing->Flag & TngF_Destroyed) != 0) {
         return;
+    }
 
-    angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_thing->X),
-      PRCCOORD_TO_MAPCOORD(p_thing->Z), x, z);
-    change_player_angle(p_thing, (((angle + 128) >> 8) + 8) & 7);
+    {
+        short full_angle;
+        ubyte angl;
+
+        full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_thing->X),
+          PRCCOORD_TO_MAPCOORD(p_thing->Z), x, z);
+        angl = (((full_angle + 128) >> 8) + 8) & 7;
+        change_player_angle(p_thing, angl);
+    }
 
     p_thing->PTarget = NULL;
     p_thing->Flag |= TngF_ShootAtPos|TngF_TriggerUse;
@@ -4592,10 +4601,126 @@ void call_unprotect(struct Thing *p_thing, ushort plyr, ubyte flag)
         : : "a" (p_thing), "d" (plyr), "b" (flag));
 }
 
+TbBool weapon_can_target_enemy_thing(WeaponType wtype)
+{
+    switch (wtype)
+    {
+    case WEP_ELEMINE:
+    case WEP_EXPLMINE:
+    case WEP_MEDI1:
+    case WEP_MEDI2:
+    case WEP_RAZORWIRE:
+    case WEP_EXPLWIRE:
+        return false;
+
+    case WEP_NULL:
+    case WEP_NUCLGREN:
+    case WEP_H2HTASER:
+    case WEP_CRAZYGAS:
+    case WEP_KOGAS:
+    case WEP_NAPALMMINE:
+    case WEP_AIRSTRIKE:
+    case WEP_ENERGYSHLD:
+    case WEP_CEREBUSIFF:
+    case WEP_CLONESHLD:
+    default:
+        return true;
+    }
+}
+
+void thing_shoot_at_target_position(struct Thing *p_thing, ThingIdx target)
+{
+    struct Thing *p_targetng;
+    MapCoord cor_x, cor_y, cor_z;
+
+    p_targetng = &things[target];
+    cor_x = PRCCOORD_TO_MAPCOORD(p_targetng->X);
+    cor_y = PRCCOORD_TO_MAPCOORD(p_targetng->Y);
+    cor_z = PRCCOORD_TO_MAPCOORD(p_targetng->Z);
+    thing_shoot_at_point(p_thing, cor_x, cor_y, cor_z, 0);
+}
+
 void thing_shoot_at_thing(struct Thing *p_thing, short target)
 {
+#if 0
     asm volatile ("call ASM_thing_shoot_at_thing\n"
         : : "a" (p_thing), "d" (target));
+#endif
+    struct Thing *p_targetng;
+
+    if ((p_thing->Flag & (TngF_Unkn40000000|TngF_Destroyed)) != 0)
+        return;
+    p_targetng = &things[target];
+
+    if (!weapon_can_target_enemy_thing(p_thing->U.UPerson.CurrentWeapon))
+    {
+        thing_shoot_at_target_position(p_thing, target);
+        return;
+    }
+
+    p_thing->Flag |= TngF_TriggerUse;
+    if ((p_thing->Flag & TngF_InVehicle) != 0) {
+        struct Thing *p_vehicle;
+        p_vehicle = &things[p_thing->U.UPerson.Vehicle];
+        p_vehicle->Flag |= TngF_Unkn01000000;
+    }
+    if ((p_thing->Flag2 & TgF2_Unkn0001) != 0) {
+        finalise_razor_wire(p_thing);
+    }
+
+    if (p_thing->State == PerSt_DROP_ITEM || p_thing->State == PerSt_PICKUP_ITEM ||
+      p_thing->State == PerSt_DEAD || p_thing->State == PerSt_DIEING) {
+        return;
+    }
+    if ((p_thing->Flag & TngF_Destroyed) != 0) {
+        return;
+    }
+
+    if (((p_thing->Flag & TngF_InVehicle) != 0) &&
+      (p_targetng->ThingOffset == p_thing->U.UPerson.Vehicle)) {
+        struct Thing *p_vehicle;
+        p_vehicle = &things[p_thing->U.UPerson.Vehicle];
+        p_vehicle->Flag &= ~TngF_ShootAtPos;
+        return;
+    }
+
+    {
+        int dist_x, dist_y, dist_z, range;
+        dist_x = PRCCOORD_TO_MAPCOORD(p_targetng->X) - PRCCOORD_TO_MAPCOORD(p_thing->X);
+        dist_y = PRCCOORD_TO_MAPCOORD(p_targetng->Y) - PRCCOORD_TO_MAPCOORD(p_thing->Y);
+        dist_z = PRCCOORD_TO_MAPCOORD(p_targetng->Z) - PRCCOORD_TO_MAPCOORD(p_thing->Z);
+        range = get_weapon_range(p_thing);
+        if (dist_x * dist_x + dist_y * dist_y + dist_z * dist_z > range * range) {
+            thing_shoot_at_target_position(p_thing, target);
+            return;
+        }
+    }
+    p_thing->Flag &= ~(TngF_ShootAtPos|TngF_TriggerUse);
+
+    p_thing->Flag |= TngF_TriggerUse;
+    p_thing->PTarget = &things[target];
+
+    p_targetng = p_thing->PTarget;
+    if ((p_targetng->Flag & TngF_Destroyed) != 0)
+    {
+        if (weapon_can_be_charged(p_thing->U.UPerson.CurrentWeapon))
+            p_thing->Flag2 |= TngF_Unkn00200000;
+    }
+    if ((p_thing->Flag & TngF_PlayerAgent) != 0)
+        p_thing->U.UPerson.ComTimer = -1;
+    else
+        p_thing->State = PerSt_NONE;
+
+    if (p_targetng != NULL)
+    {
+        short full_angle;
+        ubyte angl;
+
+        full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
+          PRCCOORD_TO_MAPCOORD(p_targetng->X), PRCCOORD_TO_MAPCOORD(p_targetng->Z));
+        angl = (((ushort)(full_angle + 128) >> 8) + 8) & 7;
+        change_player_angle(p_thing, angl);
+    }
 }
 
 void person_init_plant_mine(struct Thing *p_person, short x, short y, short z, int face)
@@ -5166,8 +5291,6 @@ void process_protect_person(struct Thing *p_person)
             short face_cor_x, face_cor_y, face_cor_z;
             int weapon_range;
             PlayerIdx prot_plyr;
-            short full_angle;
-            ubyte angl;
 
             p_person->Flag |= TngF_ShootAtPos;
             prot_plyr = p_leadtng->U.UPerson.ComCur >> 2;
@@ -5196,11 +5319,15 @@ void process_protect_person(struct Thing *p_person)
                 things[p_person->U.UPerson.Vehicle].Flag |= TngF_Unkn01000000;
             }
 
-            full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_person->X),
-              PRCCOORD_TO_MAPCOORD(p_person->Z), face_cor_x, face_cor_z);
-            angl = (((ushort)(full_angle + 128) >> 8) + 8) & 7;
-            if (angl != p_person->U.UPerson.Angle)
+            {
+                short full_angle;
+                ubyte angl;
+
+                full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_person->X),
+                  PRCCOORD_TO_MAPCOORD(p_person->Z), face_cor_x, face_cor_z);
+                angl = (((ushort)(full_angle + 128) >> 8) + 8) & 7;
                 change_player_angle(p_person, angl);
+            }
         }
     }
     else
@@ -6169,13 +6296,13 @@ void process_avoid_group(struct Thing *p_person)
 
     if (person_move(p_person))
     {
-        ubyte oangle;
+        ubyte angl;
         sbyte change;
         // Select changed, but not to opposite direction - only one of: -2,-1,1,2
         change = (LbRandomAnyShort() & 3) - 2;
         if (change >= 0) change++;
-        oangle = (p_person->U.UPerson.Angle + change) & 7;
-        change_player_angle(p_person, oangle);
+        angl = (p_person->U.UPerson.Angle + change) & 7;
+        change_player_angle(p_person, angl);
     }
 
     p_person->Timer1 -= fifties_per_gameturn;
