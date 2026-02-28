@@ -1449,7 +1449,7 @@ void check_persons_target(struct Thing *p_person)
         if (p_person->Type == TT_MINE)
             p_person->PTarget = NULL;
 
-        if ((p_person->Flag & TngF_Unkn1000) == 0)
+        if ((p_person->Flag & TngF_SelectedAgent) == 0)
             p_person->Flag &= ~TngF_TriggerUse;
     }
 
@@ -3528,7 +3528,7 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
     persons_set_groups_kill_on_sight_if_player_attacked(p_attacker, p_thing);
     hp1 = mods_affect_hit_points(p_thing, type, hp);
 
-    if ((p_attacker != NULL) && (type != DMG_ELSTRAND) && ((p_thing->Flag & TngF_Unkn1000) == 0)
+    if ((p_attacker != NULL) && (type != DMG_ELSTRAND) && ((p_thing->Flag & TngF_SelectedAgent) == 0)
       && ((p_thing->Flag & TngF_Destroyed) == 0) && ((p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)
       && ((p_thing->Flag2 & TgF2_KnockedOut) == 0))
     {
@@ -3543,7 +3543,7 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
         // No action
     } else if (things_have_same_group(p_attacker, p_thing) || persons_have_truce(p_attacker, p_thing)) {
         // No action
-    } else if (((p_attacker->Flag & TngF_Unkn1000) != 0) ||
+    } else if (((p_attacker->Flag & TngF_SelectedAgent) != 0) ||
       ((p_thing == p_attacker->PTarget) && (p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)) {
         if ((p_thing->Flag & TngF_Persuaded) == 0)
             // Make victim group aggressive back toward the attacker group
@@ -4233,7 +4233,7 @@ void player_change_person(short thing, ushort plyr)
         short dcthing;
         dcthing = players[plyr].DirectControl[0];
         p_dcthing = &things[dcthing];
-        p_dcthing->Flag &= ~TngF_Unkn1000;
+        p_dcthing->Flag &= ~TngF_SelectedAgent;
         // Avoid shooting a target not intended for that, set for previous state
         p_dcthing->PTarget = NULL;
     }
@@ -4248,7 +4248,7 @@ void player_change_person(short thing, ushort plyr)
     }
     players[plyr].DirectControl[0] = thing;
     p_person->U.UPerson.Target2 = 0;
-    p_person->Flag |= TngF_Unkn1000;
+    p_person->Flag |= TngF_SelectedAgent;
 
     if (p_person->State == PerSt_PROTECT_PERSON)
     {
@@ -6630,7 +6630,7 @@ void process_person(struct Thing *p_person)
             process_weapon(p_person);
             return;
         }
-        if (((p_person->Flag & TngF_Unkn00040000) != 0) && ((p_person->Flag & (TngF_Unkn1000|TngF_Destroyed)) == 0))
+        if (((p_person->Flag & TngF_Unkn00040000) != 0) && ((p_person->Flag & (TngF_SelectedAgent|TngF_Destroyed)) == 0))
         {
             person_run_away(p_person);
             calc_lighting(p_person);
@@ -6725,7 +6725,7 @@ void process_person(struct Thing *p_person)
               break;
         case PerSt_GOTO_POINT:
               person_goto_point(p_person);
-              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0))
+              if ((p_person->State == 0) && ((p_person->U.UPerson.Flag3 & PrsF3_Unkn04) != 0) && ((p_person->Flag & TngF_SelectedAgent) == 0))
               {
                   p_person->State = PerSt_PROTECT_PERSON;
                   person_protect_update_follow_distance(p_person, p_person->GotoThingIndex);

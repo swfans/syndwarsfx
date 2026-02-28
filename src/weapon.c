@@ -1612,7 +1612,7 @@ void init_laser(struct Thing *p_owner, ushort start_age)
         targetng = thing_fire_shot_finish_position_toward_target(&prc_fin_pt,
           &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
     }
-    else if ((p_owner->Flag & TngF_Unkn1000) != 0)
+    else if ((p_owner->Flag & TngF_SelectedAgent) != 0)
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
           &prc_beg_pt, p_owner, wtype);
@@ -1703,9 +1703,9 @@ void init_laser(struct Thing *p_owner, ushort start_age)
     add_node_thing(p_shot->ThingOffset);
 
     if ((byte_1DD8F8 & 1) != 0)
-        p_shot->Flag |= TngF_Unkn1000;
+        p_shot->Flag |= TngF_SelectedAgent;
     else
-        p_shot->Flag &= ~TngF_Unkn1000;
+        p_shot->Flag &= ~TngF_SelectedAgent;
 
     if (damage > 0)
         shot_alerts_peeps(p_shot);
@@ -2412,7 +2412,7 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
           &prc_beg_pt, p_owner, p_owner->PTarget, wtype);
         allow_gnd_hit_eff = (targetng == 0);
     }
-    else if ((p_owner->Flag & TngF_Unkn1000) != 0)
+    else if ((p_owner->Flag & TngF_SelectedAgent) != 0)
     {
         thing_fire_shot_finish_position_straight_forward(&prc_fin_pt,
           &prc_beg_pt, p_owner, wtype);
@@ -3577,7 +3577,7 @@ void init_fire_weapon(struct Thing *p_person)
                         p_person->Flag2 |= TgF2_Unkn00200000;
                 }
             }
-            if ((p_person->Flag & TngF_Unkn1000) != 0)
+            if ((p_person->Flag & TngF_SelectedAgent) != 0)
                 play_dist_sample(p_person, 7, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_4EVER, 3);
             break;
         case WEP_ELLASER:
@@ -3591,7 +3591,7 @@ void init_fire_weapon(struct Thing *p_person)
                 }
             }
             if (((p_person->Flag2 & TgF2_ExistsOffMap) == 0)
-              && ((p_person->Flag & TngF_Unkn1000) != 0))
+              && ((p_person->Flag & TngF_SelectedAgent) != 0))
                 play_dist_sample(p_person, 7, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_4EVER, 3);
             break;
         case WEP_RAP:
@@ -3677,7 +3677,7 @@ void init_fire_weapon(struct Thing *p_person)
                         p_person->Flag2 |= TgF2_Unkn00200000;
                 }
             }
-            if ((p_person->Flag & TngF_Unkn1000) != 0)
+            if ((p_person->Flag & TngF_SelectedAgent) != 0)
                 play_dist_sample(p_person, 7, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_4EVER, 3);
             break;
         case WEP_QDEVASTATOR:
@@ -3690,7 +3690,7 @@ void init_fire_weapon(struct Thing *p_person)
                         p_person->Flag2 |= TgF2_Unkn00200000;
                 }
             }
-            if ((p_person->Flag & TngF_Unkn1000) != 0)
+            if ((p_person->Flag & TngF_SelectedAgent) != 0)
                 play_dist_sample(p_person, 7, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_4EVER, 3);
             break;
         case WEP_STASISFLD:
@@ -3851,12 +3851,12 @@ ushort player_weapon_time(struct Thing *p_person)
 
 ThingIdx person_is_non_selected_agent(struct Thing *p_person)
 {
-    return ((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag & TngF_Unkn1000) == 0);
+    return ((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag & TngF_SelectedAgent) == 0);
 }
 
 ThingIdx person_is_selected_agent(struct Thing *p_person)
 {
-    return ((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag & TngF_Unkn1000) != 0);
+    return ((p_person->Flag & TngF_PlayerAgent) != 0) && ((p_person->Flag & TngF_SelectedAgent) != 0);
 }
 
 ThingIdx get_vehicle_passenger_in_player_control(struct Thing *p_vehicle)
@@ -4501,7 +4501,7 @@ void process_energy_alarm(struct Thing *p_person)
 {
     ThingIdx dcthing;
 
-    if ((p_person->Flag & TngF_Unkn1000) == 0)
+    if ((p_person->Flag & TngF_SelectedAgent) == 0)
         return;
 
     dcthing = players[local_player_no].DirectControl[0];
@@ -4970,7 +4970,7 @@ void process_wielded_weapon(struct Thing *p_person)
                 }
                 if (p_person->U.UPerson.WeaponTimer >= resp_time)
                 {
-                    if ((p_person->Flag & TngF_Unkn1000) == 0)
+                    if ((p_person->Flag & TngF_SelectedAgent) == 0)
                         p_person->Flag &= ~TngF_TriggerUse;
                 }
             }

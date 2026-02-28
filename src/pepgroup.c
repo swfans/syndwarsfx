@@ -618,7 +618,7 @@ void reset_default_player_agent(PlayerIdx plyr, short plagent, struct Thing *p_a
     else
     {
         p_player->DirectControl[plagent] = p_agent->ThingOffset;
-        p_agent->Flag |= TngF_Unkn1000;
+        p_agent->Flag |= TngF_SelectedAgent;
         if ((plyr == local_player_no) && (plagent == 0)) {
             game_set_cam_track_thing_xz(p_agent->ThingOffset);
         }
@@ -690,7 +690,7 @@ void reset_group_member_player_agent(PlayerIdx plyr, ushort plagent, ushort high
     else
     {
         p_player->DirectControl[plagent] = p_agent->ThingOffset;
-        p_agent->Flag |= TngF_Unkn1000;
+        p_agent->Flag |= TngF_SelectedAgent;
         if ((plyr == local_player_no) && (plagent == 0)) {
             game_set_cam_track_thing_xz(p_agent->ThingOffset);
         }

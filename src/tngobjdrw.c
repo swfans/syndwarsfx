@@ -336,7 +336,7 @@ void build_laser11(struct Thing *p_thing)
     short owtng_x, owtng_y, owtng_z;
     TbPixel colour;
 
-    if ((p_thing->Flag & TngF_Unkn1000) != 0)
+    if ((p_thing->Flag & TngF_SelectedAgent) != 0)
         colour = colour_lookup[ColLU_BLUE];
     else
         colour = colour_lookup[ColLU_RED];

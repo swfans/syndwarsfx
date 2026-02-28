@@ -109,7 +109,7 @@ enum ThingFlags {
     TngF_StationrSht  = 0x0200,
     TngF_WepCharging  = 0x0400,
     TngF_TriggerUse   = 0x0800,
-    TngF_Unkn1000     = 0x1000,
+    TngF_SelectedAgent= 0x1000,
     TngF_PlayerAgent  = 0x2000,
     TngF_Unkn4000     = 0x4000,
     TngF_Unkn8000     = 0x8000,

@@ -580,7 +580,7 @@ void kill_my_players(PlayerIdx plyr)
             else
                 set_person_dead(p_agent, ANIM_PERS_Unkn12);
         }
-        p_agent->Flag &= ~(TngF_Unkn1000|TngF_PlayerAgent);
+        p_agent->Flag &= ~(TngF_SelectedAgent|TngF_PlayerAgent);
     }
 }
 

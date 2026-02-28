@@ -1529,7 +1529,7 @@ void draw_hud(int dcthing)
 
             p_agent = p_locplayer->MyAgent[plagent];
             number_player(p_agent, plagent);
-            if ((p_agent->Flag & TngF_Unkn1000) != 0)
+            if ((p_agent->Flag & TngF_SelectedAgent) != 0)
             {
                 short ctlmode;
                 ctlmode = p_locplayer->UserInput[plagent].ControlMode & ~UInpCtr_AllFlagsMask;

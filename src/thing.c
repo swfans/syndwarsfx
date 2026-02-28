@@ -1144,13 +1144,13 @@ void process_things(void)
         dcthing = p_player->DirectControl[0];
         p_dcthing = &things[dcthing];
         if (((1 << plyr) & ingame.InNetGame_UNSURE) != 0
-          && (p_dcthing->Flag & TngF_Unkn1000) == 0)
+          && (p_dcthing->Flag & TngF_SelectedAgent) == 0)
         {
 #if 0
             for (i = 0; i < playable_agents; i++)
               ;
 #endif
-            p_dcthing->Flag |= TngF_Unkn1000;
+            p_dcthing->Flag |= TngF_SelectedAgent;
         }
     }
 
@@ -1711,7 +1711,7 @@ ThingIdx new_thing_building_clone(struct Thing *p_clthing, struct M33 *p_clmatx,
             memcpy(&local_mats[p_thing->U.UObject.MatrixIndex], p_clmatx, sizeof(struct M33));
         else
             matrix_identity_fill(&local_mats[p_thing->U.UObject.MatrixIndex]);
-        p_thing->Flag |=  TngF_Unkn1000;
+        p_thing->Flag |= TngF_SelectedAgent;
     }
     p_thing->SubState = p_clthing->SubState;
     p_thing->Timer1 = p_clthing->Timer1;
