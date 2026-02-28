@@ -25540,7 +25540,7 @@ vtable_48830:
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_person_hit_by_bullet)	/* 0x048868 */
+GLOBAL_FUNC(ASM_thing_hit_by_bullet)	/* 0x048868 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -86575,7 +86575,7 @@ GLOBAL_FUNC(ASM_init_mgun_laser)	/* 0x07D100 */
 		movswl %bx,%ebx
 		sar    $0x10,%edx
 	jump_7d34b:
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 	jump_7d350:
 		mov    0xc(%esp),%eax
 		mov    %ax,0x2a(%esi)
@@ -101353,7 +101353,7 @@ process_map_crater:	/* 0x08907C */
 		mov    $0x258,%edx
 		mov    %eax,%ecx
 		mov    %edi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		mov    things,%eax
 		andb   $0xdf,0x47(%eax,%ebp,1)
 		mov    0x20(%eax,%ebp,1),%edx
@@ -145762,7 +145762,7 @@ GLOBAL_FUNC(ASM_init_uzi)	/* 0x0C1C0C */
 		mov    EXPORT_SYMBOL(sthings),%eax
 		sar    $0x10,%edx
 		add    %esi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c200b
 	jump_c1dcc:
 		push   $0x1
@@ -145782,7 +145782,7 @@ GLOBAL_FUNC(ASM_init_uzi)	/* 0x0C1C0C */
 		sar    $0x10,%esi
 		add    %edx,%eax
 		mov    %esi,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c200b
 	jump_c1e05:
 		jge    jump_c1e3b
@@ -145823,7 +145823,7 @@ GLOBAL_FUNC(ASM_init_uzi)	/* 0x0C1C0C */
 		shl    $0x3,%esi
 		mov    %edi,%edx
 		add    %esi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		mov    things,%eax
 		add    %esi,%eax
 		testb  $0x2,0xc(%eax)
@@ -146126,7 +146126,7 @@ GLOBAL_FUNC(ASM_init_long_range)	/* 0x0C2078 */
 		sar    $0x10,%edx
 		add    %ecx,%eax
 		mov    %esi,%ecx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c2455
 	jump_c221b:
 		push   $0x8
@@ -146146,7 +146146,7 @@ GLOBAL_FUNC(ASM_init_long_range)	/* 0x0C2078 */
 		sar    $0x10,%esi
 		add    %edx,%eax
 		mov    %esi,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c2455
 	jump_c2253:
 		jge    jump_c228a
@@ -146187,7 +146187,7 @@ GLOBAL_FUNC(ASM_init_long_range)	/* 0x0C2078 */
 		shl    $0x3,%esi
 		mov    %ebp,%edx
 		add    %esi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		mov    things,%eax
 		add    %esi,%eax
 		testb  $0x2,0xc(%eax)
@@ -146497,7 +146497,7 @@ GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 		mov    %esi,%ebx
 		add    %edx,%eax
 		mov    %ebp,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c28c6
 	jump_c2678:
 		push   $0x7
@@ -146519,7 +146519,7 @@ GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 		mov    %esi,%ebx
 		add    %edx,%eax
 		mov    %ebp,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c28c6
 	jump_c26b5:
 		jge    jump_c26f0
@@ -146562,7 +146562,7 @@ GLOBAL_FUNC(ASM_init_minigun)	/* 0x0C24C4 */
 		shl    $0x3,%esi
 		mov    %ebp,%edx
 		add    %esi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		mov    things,%eax
 		add    %esi,%eax
 		testb  $0x2,0xc(%eax)
@@ -147788,7 +147788,7 @@ create_growing_e_strand:	/* 0x0C33DC */
 		movswl %ax,%ebx
 		sar    $0x10,%edx
 		mov    %edi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		testb  $0x8,0xe(%edi)
 		je     jump_c35e8
 		mov    %edi,%eax
@@ -149018,7 +149018,7 @@ GLOBAL_FUNC(ASM_init_laser_elec)	/* 0x0C422C */
 		mov    %edi,%edx
 		add    %ebx,%eax
 		mov    %ebp,%ebx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c463e
 	jump_c44fb:
 		push   $0x2
@@ -149044,7 +149044,7 @@ GLOBAL_FUNC(ASM_init_laser_elec)	/* 0x0C422C */
 		movswl %cx,%ebp
 		mov    %edx,%ecx
 		mov    %ebp,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c463e
 	jump_c4544:
 		cmpw   $0x0,0x14(%esp)
@@ -149074,7 +149074,7 @@ GLOBAL_FUNC(ASM_init_laser_elec)	/* 0x0C422C */
 		shl    $0x3,%edi
 		movswl %bx,%ebx
 		add    %edi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c463e
 	jump_c459c:
 		testb  $0x1,0x47(%edi)
@@ -149575,7 +149575,7 @@ GLOBAL_FUNC(ASM_init_laser_beam)	/* 0x0C48CC */
 		movswl %dx,%ebx
 		movswl %di,%edx
 		add    %ebp,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		test   %eax,%eax
 		jge    jump_c4c52
 		jmp    jump_c4c93
@@ -149599,7 +149599,7 @@ GLOBAL_FUNC(ASM_init_laser_beam)	/* 0x0C48CC */
 		add    %ebp,%eax
 		movswl %dx,%ebx
 		movswl %di,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		test   %eax,%eax
 		jl     jump_c4c93
 	jump_c4c52:
@@ -149697,7 +149697,7 @@ GLOBAL_FUNC(ASM_init_laser_beam)	/* 0x0C48CC */
 		movswl %bx,%ebx
 		add    %edx,%eax
 		mov    %edi,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c4d92
 	jump_c4d7f:
 		mov    0x1c(%esp),%eax
@@ -155146,7 +155146,7 @@ GLOBAL_FUNC(ASM_init_laser)	/* 0x0C88A4 */
 		movswl %bx,%ebx
 		add    %edx,%eax
 		mov    %edi,%edx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c8c1a
 	jump_c8b40:
 		push   $0x4
@@ -155170,7 +155170,7 @@ GLOBAL_FUNC(ASM_init_laser)	/* 0x0C88A4 */
 		sub    %ebp,%ebx
 		add    %edi,%eax
 		movswl %bx,%ebx
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c8c1a
 	jump_c8b85:
 		jge    jump_c8bba
@@ -155215,7 +155215,7 @@ GLOBAL_FUNC(ASM_init_laser)	/* 0x0C88A4 */
 		shl    $0x3,%edi
 		movswl %bx,%ebx
 		add    %edi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c8c1a
 	jump_c8c0b:
 		testb  $0x1,0x47(%edi)
@@ -155357,7 +155357,7 @@ GLOBAL_FUNC(ASM_process_laser_guided)	/* 0x0C8D80 */
 		movswl %ax,%ebx
 		mov    $0x3e8,%edx
 		mov    %edi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 	jump_c8e3b:
 		decw   0x28(%esi)
 		mov    0x26(%esi),%eax
@@ -155934,7 +155934,7 @@ GLOBAL_FUNC(ASM_process_rocket)	/* 0x0C9100 */
 		push   %eax
 		sar    $0x10,%edx
 		mov    %edi,%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 	jump_c9480:
 		cmpb   $0x0,0x24(%esp)
 		je     jump_c98d2
@@ -156048,7 +156048,7 @@ GLOBAL_FUNC(ASM_process_rocket)	/* 0x0C9100 */
 		push   %eax
 		sar    $0x10,%edx
 		mov    0x40(%esi),%eax
-		call   ac_person_hit_by_bullet
+		call   ac_thing_hit_by_bullet
 		jmp    jump_c9480
 	jump_c95d7:
 		mov    0x34(%esi),%eax

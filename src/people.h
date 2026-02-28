@@ -437,7 +437,7 @@ void make_peeps_scatter(struct Thing *p_person, int x, int z);
  *   1 if cannot do damage permanently (ie. ally or already killed),
  *   < 0 if if dealt enough damage to destroy the thing. TODO: better return values?
  */
-int person_hit_by_bullet(struct Thing *p_person, short hp,
+int thing_hit_by_bullet(struct Thing *p_person, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, ushort type);
 
 /** Restores agents health by consuming a medikit, or just restores if no medikit available.

@@ -1666,7 +1666,7 @@ void init_laser(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+        thing_hit_by_bullet((struct Thing *)p_hitstng, damage,
           p_shot->VX - cor_x,
           p_shot->VY - cor_y,
           p_shot->VZ - cor_z, p_owner, wdmgtyp);
@@ -1677,7 +1677,7 @@ void init_laser(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, damage,
+        thing_hit_by_bullet(p_hittng, damage,
           p_shot->VX - cor_x,
           p_shot->VY - cor_y,
           p_shot->VZ - cor_z, p_owner, wdmgtyp);
@@ -1686,7 +1686,7 @@ void init_laser(struct Thing *p_owner, ushort start_age)
     {
         if (targetng != 0)
         {
-            person_hit_by_bullet(&things[targetng], damage,
+            thing_hit_by_bullet(&things[targetng], damage,
               p_shot->VX - cor_x,
               p_shot->VY - cor_y,
               p_shot->VZ - cor_z, p_owner, wdmgtyp);
@@ -1794,7 +1794,7 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
 
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+        thing_hit_by_bullet((struct Thing *)p_hitstng, damage,
           p_shot->VX - cor_x,
           p_shot->VY - cor_y,
           p_shot->VZ - cor_z, p_owner, wdmgtyp);
@@ -1806,7 +1806,7 @@ void init_mgun_laser(struct Thing *p_owner, ushort start_age)
 
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, damage,
+        thing_hit_by_bullet(p_hittng, damage,
           p_shot->VX - cor_x,
           p_shot->VY - cor_y,
           p_shot->VZ - cor_z, p_owner, wdmgtyp);
@@ -2120,7 +2120,7 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte stype)
             ThingIdx hittng;
             hittng = rhit | 0xE0000000;
             p_hitstng = &sthings[-hittng];
-            dmg_delta = person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+            dmg_delta = thing_hit_by_bullet((struct Thing *)p_hitstng, damage,
               p_shot->VX - cor_beg_x,
               p_shot->VY - cor_beg_y,
               p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
@@ -2133,7 +2133,7 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte stype)
             ThingIdx hittng;
             hittng = rhit & ~0xE0000000;
             p_hittng = &things[hittng];
-            dmg_delta = person_hit_by_bullet(p_hittng, damage,
+            dmg_delta = thing_hit_by_bullet(p_hittng, damage,
               p_shot->VX - cor_beg_x,
               p_shot->VY - cor_beg_y,
               p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
@@ -2167,7 +2167,7 @@ void init_laser_beam(struct Thing *p_owner, ushort start_age, ubyte stype)
     {
         if (targetng > 0)
         {
-          person_hit_by_bullet(&things[targetng], damage,
+          thing_hit_by_bullet(&things[targetng], damage,
             p_shot->VX - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[0]),
             p_shot->VY - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[1]),
             p_shot->VZ - PRCCOORD_TO_MAPCOORD(prc_beg_pt.R[2]),
@@ -2467,7 +2467,7 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, damage,
+        thing_hit_by_bullet((struct Thing *)p_hitstng, damage,
           p_shot->VX - cor_beg_x,
           p_shot->VY - cor_beg_y,
           p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
@@ -2478,7 +2478,7 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, damage,
+        thing_hit_by_bullet(p_hittng, damage,
           p_shot->VX - cor_beg_x,
           p_shot->VY - cor_beg_y,
           p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
@@ -2487,7 +2487,7 @@ void init_laser_elec(struct Thing *p_owner, ushort start_age)
     {
         if (targetng != 0)
         {
-            person_hit_by_bullet(&things[targetng], damage,
+            thing_hit_by_bullet(&things[targetng], damage,
               p_shot->VX - cor_beg_x,
               p_shot->VY - cor_beg_y,
               p_shot->VZ - cor_beg_z, p_owner, wdmgtyp);
@@ -2605,7 +2605,7 @@ void init_uzi(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
+        thing_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
           cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y,
           cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2616,7 +2616,7 @@ void init_uzi(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, wdef->HitDamage,
+        thing_hit_by_bullet(p_hittng, wdef->HitDamage,
           cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y,
           cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2633,7 +2633,7 @@ void init_uzi(struct Thing *p_owner)
         {
             struct Thing *p_hittng;
             p_hittng = &things[targetng];
-            person_hit_by_bullet(p_hittng, wdef->HitDamage,
+            thing_hit_by_bullet(p_hittng, wdef->HitDamage,
               cor_fin_x - cor_beg_x,
               cor_fin_y - cor_beg_y,
               cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2748,7 +2748,7 @@ void init_minigun(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
+        thing_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
           cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y,
           cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2759,7 +2759,7 @@ void init_minigun(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, wdef->HitDamage,
+        thing_hit_by_bullet(p_hittng, wdef->HitDamage,
           cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y,
           cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2776,7 +2776,7 @@ void init_minigun(struct Thing *p_owner)
         {
             struct Thing *p_hittng;
             p_hittng = &things[targetng];
-            person_hit_by_bullet(p_hittng, wdef->HitDamage,
+            thing_hit_by_bullet(p_hittng, wdef->HitDamage,
               cor_fin_x - cor_beg_x,
               cor_fin_y - cor_beg_y,
               cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2900,7 +2900,7 @@ void init_long_range(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit | 0xE0000000;
         p_hitstng = &sthings[-hittng];
-        person_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
+        thing_hit_by_bullet((struct Thing *)p_hitstng, wdef->HitDamage,
           cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y,
           cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2911,7 +2911,7 @@ void init_long_range(struct Thing *p_owner)
         ThingIdx hittng;
         hittng = rhit & ~0xE0000000;
         p_hittng = &things[hittng];
-        person_hit_by_bullet(p_hittng, wdef->HitDamage,
+        thing_hit_by_bullet(p_hittng, wdef->HitDamage,
           cor_fin_x - cor_beg_x,
           cor_fin_y - cor_beg_y,
           cor_fin_z - cor_beg_z, p_owner, wdmgtyp);
@@ -2928,7 +2928,7 @@ void init_long_range(struct Thing *p_owner)
         {
             struct Thing *p_hittng;
             p_hittng = &things[targetng];
-            person_hit_by_bullet(p_hittng, wdef->HitDamage,
+            thing_hit_by_bullet(p_hittng, wdef->HitDamage,
               cor_fin_x - cor_beg_x,
               cor_fin_y - cor_beg_y,
               cor_fin_z - cor_beg_z, p_owner, wdmgtyp);

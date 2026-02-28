@@ -3419,7 +3419,20 @@ TbBool persons_have_truce(struct Thing *p_person1, struct Thing *p_person2)
     return groups_have_truce(pers1grp, pers2grp);
 }
 
-void persons_set_groups_kill_on_sight(struct Thing *p_attacker, struct Thing *p_victim)
+TbBool things_have_same_group(struct Thing *p_thing1, struct Thing *p_thing2)
+{
+    if (p_thing1 == NULL) {
+        return false;
+    }
+
+    if (p_thing2 == NULL) {
+        return false;
+    }
+
+    return things_check_same_group(p_thing1->ThingOffset, p_thing2->ThingOffset);
+}
+
+void persons_set_groups_kill_on_sight_if_player_attacked(struct Thing *p_attacker, struct Thing *p_victim)
 {
     if ((p_attacker == NULL) || ((p_attacker->Flag & TngF_PlayerAgent) == 0)) {
         return;
@@ -3503,21 +3516,108 @@ int dead_person_hit_by_bullet(struct Thing *p_thing, short hp,
 int person_hit_by_bullet(struct Thing *p_thing, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, ushort type)
 {
+    short hp1;
+    int energy_decr;
+
+    hp1 = hp;
+
+    if (persons_have_truce(p_attacker, p_thing)) {
+        return 1;
+    }
+    // Make attacker group aggressive toward the victim group, but under some conditions
+    persons_set_groups_kill_on_sight_if_player_attacked(p_attacker, p_thing);
+    hp1 = mods_affect_hit_points(p_thing, type, hp);
+
+    if ((p_attacker != NULL) && (type != DMG_ELSTRAND) && ((p_thing->Flag & TngF_Unkn1000) == 0)
+      && ((p_thing->Flag & TngF_Destroyed) == 0) && ((p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)
+      && ((p_thing->Flag2 & TgF2_KnockedOut) == 0))
+    {
+        set_interrupt_target(p_thing, p_attacker);
+    }
+
+    if ((p_thing->Flag & TngF_Destroyed) != 0) {
+        return 1;
+    }
+
+    if ((p_attacker == NULL) || (type == DMG_ELSTRAND)) {
+        // No action
+    } else if (things_have_same_group(p_attacker, p_thing) || persons_have_truce(p_attacker, p_thing)) {
+        // No action
+    } else if (((p_attacker->Flag & TngF_Unkn1000) != 0) ||
+      ((p_thing == p_attacker->PTarget) && (p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)) {
+        if ((p_thing->Flag & TngF_Persuaded) == 0)
+            // Make victim group aggressive back toward the attacker group
+            thing_groups_set_kill_on_sight_one_way(p_thing->ThingOffset, p_attacker->ThingOffset);
+
+        if (((p_thing->Flag & TngF_Persuaded) == 0) && thing_group_has_guardians(p_thing->ThingOffset))
+            find_and_alert_guardian(p_thing, p_attacker);
+    }
+
+    energy_decr = 0;
+    if ((p_thing->Flag & TngF_Unkn00200000) != 0)
+    {
+        p_thing->U.UPerson.ShieldEnergy -= hp1;
+        p_thing->U.UPerson.ShieldGlowTimer = 4;
+        if (p_thing->U.UPerson.ShieldEnergy >= 0)
+        {
+            if (p_thing->U.UPerson.ShieldEnergy > PERSON_MAX_SHIELD)
+                p_thing->U.UPerson.ShieldEnergy = PERSON_MAX_SHIELD;
+            return 0;
+        }
+        p_thing->Health += p_thing->U.UPerson.ShieldEnergy;
+        energy_decr = -p_thing->U.UPerson.ShieldEnergy;
+    }
+    else
+    {
+        if (p_thing->U.UPerson.RecoilTimer <= 1)
+        {
+            ushort smpl_no;
+
+            switch (person_sex(p_thing))
+            {
+            case PERSON_FEMALE:
+                smpl_no = sfx_woman_shot[(gameturn + p_thing->ThingOffset) & 1];
+                break;
+            case PERSON_MALE:
+            default:
+                smpl_no = sfx_man_shot[(gameturn + p_thing->ThingOffset) & 7];
+                break;
+            }
+            play_dist_sample(p_thing, smpl_no, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 2);
+        }
+        p_thing->Health -= hp1;
+        p_thing->U.UPerson.ShieldEnergy -= hp1;
+    }
+
+    if (p_thing->Health <= 0)
+    {
+        int prev_health;
+        prev_health = p_thing->Health + hp1 + energy_decr;
+        person_start_dying(p_thing, hp1 + energy_decr, type);
+        person_update_kill_stats(p_attacker, p_thing);
+        return prev_health;
+    }
+
+    if ((p_thing->Flag2 & TgF2_KnockedOut) == 0)
+    {
+        init_recoil(p_thing, vx, vy, vz, type);
+    }
+    return 0;
+}
+
+int thing_hit_by_bullet(struct Thing *p_thing, short hp,
+  int vx, int vy, int vz, struct Thing *p_attacker, ushort type)
+{
 #if 0
     int ret;
     asm volatile (
       "push %7\n"
       "push %6\n"
       "push %5\n"
-      "call ASM_person_hit_by_bullet\n"
+      "call ASM_thing_hit_by_bullet\n"
         : "=r" (ret) : "a" (p_thing), "d" (hp), "b" (vx), "c" (vy), "g" (vz), "g" (p_attacker), "g" (type));
     return ret;
 #endif
-    short hp1;
-    int energy_decr;
-
-    hp1 = hp;
-
     if ((p_thing->Flag & TngF_Unkn40000000) != 0)
         return 1;
 
@@ -3553,94 +3653,11 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
     case TT_VEHICLE:
         return vehicle_hit_by_bullet(p_thing, hp, vx, vy, vz, p_attacker, type);
     case TT_PERSON:
-          if (persons_have_truce(p_attacker, p_thing)) {
-              return 1;
-          }
-          // Make attacker group aggressive toward the victim group
-          persons_set_groups_kill_on_sight(p_attacker, p_thing);
-          hp1 = mods_affect_hit_points(p_thing, type, hp);
-
-          if ((p_attacker != NULL) && (type != DMG_ELSTRAND) && ((p_thing->Flag & TngF_Unkn1000) == 0)
-            && ((p_thing->Flag & TngF_Destroyed) == 0) && ((p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)
-            && ((p_thing->Flag2 & TgF2_KnockedOut) == 0))
-          {
-              set_interrupt_target(p_thing, p_attacker);
-          }
-          if ((p_thing->Flag & TngF_Destroyed) != 0) {
-              return 1;
-          }
-          if ((p_attacker != NULL) && (type != DMG_ELSTRAND)
-            && !persons_have_truce(p_attacker, p_thing)
-            && (((p_attacker->Flag & TngF_Unkn1000) != 0) || ((p_thing == p_attacker->PTarget) && (p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)))
-          {
-              if (!things_check_same_group(p_thing->ThingOffset, p_attacker->ThingOffset))
-              {
-                  ubyte attack_grp, victim_grp;
-                  victim_grp = p_thing->U.UPerson.EffectiveGroup;
-                  attack_grp = p_attacker->U.UPerson.EffectiveGroup;
-                  if ((p_thing->Flag & TngF_Persuaded) == 0)
-                      // Make victim group aggressive back toward the attacker group
-                      groups_set_kill_on_sight(victim_grp, attack_grp, true);
-                  if (((p_thing->Flag & TngF_Persuaded) == 0) && thing_group_has_guardians(p_thing->ThingOffset))
-                      find_and_alert_guardian(p_thing, p_attacker);
-              }
-          }
-          energy_decr = 0;
-          if ((p_thing->Flag & TngF_Unkn00200000) != 0)
-          {
-              p_thing->U.UPerson.ShieldEnergy -= hp1;
-              p_thing->U.UPerson.ShieldGlowTimer = 4;
-              if (p_thing->U.UPerson.ShieldEnergy >= 0)
-              {
-                  if (p_thing->U.UPerson.ShieldEnergy > PERSON_MAX_SHIELD)
-                      p_thing->U.UPerson.ShieldEnergy = PERSON_MAX_SHIELD;
-                  return 0;
-              }
-              p_thing->Health += p_thing->U.UPerson.ShieldEnergy;
-              energy_decr = -p_thing->U.UPerson.ShieldEnergy;
-          }
-          else
-          {
-              if (p_thing->U.UPerson.RecoilTimer <= 1)
-              {
-                  ushort smpl_no;
-
-                  switch (person_sex(p_thing))
-                  {
-                  case PERSON_FEMALE:
-                      smpl_no = sfx_woman_shot[(gameturn + p_thing->ThingOffset) & 1];
-                      break;
-                  case PERSON_MALE:
-                  default:
-                      smpl_no = sfx_man_shot[(gameturn + p_thing->ThingOffset) & 7];
-                      break;
-                  }
-                  play_dist_sample(p_thing, smpl_no, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 2);
-              }
-              p_thing->Health -= hp1;
-              p_thing->U.UPerson.ShieldEnergy -= hp1;
-          }
-
-        if (p_thing->Health <= 0)
-        {
-            int prev_health;
-            prev_health = p_thing->Health + hp1 + energy_decr;
-            person_start_dying(p_thing, hp1 + energy_decr, type);
-            person_update_kill_stats(p_attacker, p_thing);
-            return prev_health;
-        }
-
-        if ((p_thing->Flag2 & TgF2_KnockedOut) == 0)
-        {
-            init_recoil(p_thing, vx, vy, vz, type);
-            return 0;
-        }
-        break;
+        return person_hit_by_bullet(p_thing, hp, vx, vy, vz, p_attacker, type);
     case TT_BUILDING:
         return building_hit_by_bullet(p_thing, hp, vx, vy, vz, p_attacker, type);
     case TT_MINE:
         return mine_hit_by_bullet(p_thing, hp, vx, vy, vz, p_attacker, type);
-        break;
     default:
         break;
     }
