@@ -1524,6 +1524,11 @@ void check_persons_target2(struct Thing *p_person)
     }
 }
 
+TbBool person_is_other_players_agent(struct Thing *p_person, PlayerIdx plyr)
+{
+    return (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->U.UPerson.ComCur >> 2 != plyr));
+}
+
 void process_stamina(struct Thing *p_person)
 {
     asm volatile ("call ASM_process_stamina\n"

@@ -107,7 +107,8 @@ extern TbPixel deep_radar_line_col;
 extern ubyte engine_render_lights;
 
 extern ScreenTriangleRenderCallback screen_position_face_render_cb;
-extern ScreenSortSpriteRenderCallback screen_sorted_sprite_render_cb;
+extern ScreenSortSpriteRenderCallback screen_sorted_sprite_statc_render_cb;
+extern ScreenSortSpriteRenderCallback screen_sorted_sprite_persn_render_cb;
 
 /******************************************************************************/
 

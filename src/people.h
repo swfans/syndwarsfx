@@ -428,6 +428,10 @@ TbBool person_is_persuaded(ThingIdx thing);
 TbBool person_is_persuaded_by_person(ThingIdx thing, ThingIdx owntng);
 TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
 
+/** Check if a person is an agent controlled by a player different than given.
+ */
+TbBool person_is_other_players_agent(struct Thing *p_person, PlayerIdx plyr);
+
 void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
 

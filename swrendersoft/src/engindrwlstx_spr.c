@@ -53,7 +53,8 @@ extern long sprite_over_16x16;
 extern struct TbSprite *m_sprites;
 extern struct TbSprite *m_sprites_end;
 
-ScreenSortSpriteRenderCallback screen_sorted_sprite_render_cb = NULL;
+ScreenSortSpriteRenderCallback screen_sorted_sprite_statc_render_cb = NULL;
+ScreenSortSpriteRenderCallback screen_sorted_sprite_persn_render_cb = NULL;
 
 /******************************************************************************/
 
@@ -129,6 +130,8 @@ void draw_hud_frame_on_screen(short scr_x, short scr_y, ushort frm, int sscale)
     ushort el;
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
     el = p_frm->FirstElement;
     for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
     {
@@ -164,6 +167,8 @@ void draw_hud_frame_on_screen_unscaled_but_scale_pos(short scr_x, short scr_y, u
     ushort el;
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
     el = p_frm->FirstElement;
     for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
     {
@@ -191,6 +196,8 @@ void draw_frame_on_screen(short scr_x, short scr_y, ushort frm)
     ushort el;
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
     el = p_frm->FirstElement;
     for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
     {
@@ -224,6 +231,8 @@ void draw_frame_unscaled_alpha_force(short scr_x, short scr_y, ushort frm, ubyte
     ushort el;
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
     el = p_frm->FirstElement;
     for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
     {
@@ -258,6 +267,8 @@ void draw_frame_unscaled_alpha(short scr_x, short scr_y, ubyte *frv, ushort frm,
     ushort el;
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
     el = p_frm->FirstElement;
     for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
     {
@@ -299,6 +310,8 @@ void draw_frame_glb_scale_alpha(int scr_x, int scr_y, ushort frm)
       dword_176CEC, dword_176CF0, dword_176CF4);
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
     el = p_frm->FirstElement;
     for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
     {
@@ -333,6 +346,8 @@ void draw_frame_glb_scale_alpha_frv(int scr_x, int scr_y, ubyte *frv, ushort frm
       dword_176CEC, dword_176CF0, dword_176CF4);
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
     el = p_frm->FirstElement;
     for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
     {
@@ -372,6 +387,7 @@ void draw_frame_scaled_alpha(int scr_x, int scr_y, ushort frm,
     int swidth, sheight;
 
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
     lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
     //TODO would probably make more sense to set the ghost ptr somewhere during game setup
     render_ghost = &pixmap.ghost_table[0*PALETTE_8b_COLORS];
@@ -421,6 +437,7 @@ void draw_frame_scaled_alpha_frv(short x, short y, ubyte *frv, ushort frm,
     min_x = 99999;
     min_y = 99999;
     p_frm = &frame[frm];
+    assert(p_frm < frame_end);
 
     for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani;
       p_elem = &melement_ani[p_elem->Next])
@@ -556,7 +573,7 @@ void draw_sort_sprite1a(ushort sspr)
     word_1A5834 = 120;
     word_1A5836 = 120;
     draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
-    screen_sorted_sprite_render_cb(sspr);
+    screen_sorted_sprite_statc_render_cb(sspr);
 }
 
 /**

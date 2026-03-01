@@ -71,10 +71,6 @@ ushort next_special_face4 = 1;
 
 extern long dword_176CC4;
 
-extern struct Thing *dword_176CC8;
-extern int dword_176CCC;
-extern int dword_176CD0;
-
 extern ubyte byte_176D49;
 
 extern short word_1A5834;
@@ -170,184 +166,6 @@ void reset_drawlist(void)
     dword_176CC4 = 0;
 }
 
-ubyte check_mouse_overlap(ushort sspr)
-{
-#if 0
-    ubyte ret;
-    asm volatile (
-      "call ASM_check_mouse_overlap\n"
-        : "=r" (ret) : "a" (sspr));
-    return ret;
-#endif
-    struct ScreenBoxBase box;
-    struct SortSprite *p_sspr;
-    struct Frame *p_frm;
-
-    p_sspr = &game_sort_sprites[sspr];
-    box.X = p_sspr->X + ((overall_scale * word_1A5834) >> 8);
-    box.Y = p_sspr->Y + ((overall_scale * word_1A5836) >> 8);
-
-    p_frm = &frame[p_sspr->Frame];
-    box.Width = (overall_scale * p_frm->SWidth) >> 9;
-    box.Height = (overall_scale * p_frm->SHeight) >> 9;
-
-    if (box.Width < 16)
-    {
-        box.X -= ((16 + 1 - box.Width) >> 1);
-        box.Width = 16;
-    }
-    if (box.Height < 20) {
-        box.Y -= ((20 + 1 - box.Height) >> 1);
-        box.Height = 20;
-    }
-
-    if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
-    {
-        PlayerInfo *p_locplayer;
-        struct Thing *p_thing;
-        p_thing = (struct Thing *)p_sspr->SrcItem;
-        p_locplayer = &players[local_player_no];
-        p_locplayer->Target = p_thing->ThingOffset;
-        p_locplayer->TargetType = TrgTp_Unkn7;
-        return 1;
-    }
-    return 0;
-}
-
-ubyte check_mouse_overlap_item(ushort sspr)
-{
-#if 0
-    asm volatile (
-      "call ASM_check_mouse_overlap_item\n"
-        : : "a" (sspr));
-    return 0;
-#endif
-    struct ScreenBoxBase box;
-    struct SortSprite *p_sspr;
-    struct Frame *p_frm;
-    PlayerInfo *p_locplayer;
-
-    p_sspr = &game_sort_sprites[sspr];
-    box.X = p_sspr->X + ((overall_scale * word_1A5834) >> 8);
-    box.Y = p_sspr->Y + ((overall_scale * word_1A5836) >> 8);
-
-    p_frm = &frame[p_sspr->Frame];
-    box.Width = (overall_scale * p_frm->SWidth) >> 9;
-    box.Height = (overall_scale * p_frm->SHeight) >> 9;
-
-    p_locplayer = &players[local_player_no];
-    if (p_locplayer->TargetType == TrgTp_DroppedTng)
-    {
-        struct Thing *p_thing;
-        ushort VX;
-        p_thing = (struct Thing *)p_sspr->SrcItem;
-        VX = p_thing->VX;
-        if ( VX )
-        {
-            if (VX < 12 || VX > 13)
-                return 0;
-            box.X -= (box.Width >> 1);
-            box.Y -= (box.Height >> 1);
-            box.Width *= 2;
-            box.Height *= 2;
-        }
-    }
-    if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
-    {
-        struct Thing *p_thing;
-        p_thing = (struct Thing *)p_sspr->SrcItem;
-        p_locplayer->Target = p_thing->ThingOffset;
-        p_locplayer->TargetType = TrgTp_DroppedTng;
-        return 1;
-    }
-    return 0;
-}
-
-ubyte check_mouse_overlap_corpse(ushort sspr)
-{
-#if 0
-    ubyte ret;
-    asm volatile (
-      "call ASM_check_mouse_overlap_corpse\n"
-        : "=r" (ret) : "a" (sspr));
-    return ret;
-#endif
-    struct ScreenBoxBase box;
-    struct SortSprite *p_sspr;
-    struct Frame *p_frm;
-    PlayerInfo *p_locplayer;
-
-    p_sspr = &game_sort_sprites[sspr];
-    box.X = p_sspr->X + ((overall_scale * word_1A5834) >> 8);
-    box.Y = p_sspr->Y + ((overall_scale * word_1A5836) >> 8);
-
-    p_frm = &frame[p_sspr->Frame];
-    box.Width = (overall_scale * p_frm->SWidth) >> 9;
-    box.Height = (overall_scale * p_frm->SHeight) >> 9;
-
-    p_locplayer = &players[local_player_no];
-    if (box.Width < 16)
-    {
-        box.X -= ((17 - box.Width) >> 1);
-        box.Width = 16;
-    }
-    if (box.Height < 20) {
-        box.Y -= ((21 - box.Height) >> 1);
-        box.Height = 20;
-    }
-
-    if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
-    {
-        struct Thing *p_thing;
-        p_thing = (struct Thing *)p_sspr->SrcItem;
-        p_locplayer->Target = p_thing->ThingOffset;
-        p_locplayer->TargetType = TrgTp_Unkn1;
-        return 1;
-    }
-    return 0;
-}
-
-ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
-{
-#if 0
-    ubyte ret;
-    asm volatile (
-      "call ASM_check_mouse_over_unkn2\n"
-        : "=r" (ret) : "a" (sspr), "d" (p_thing));
-    return ret;
-#endif
-    struct ScreenBoxBase box;
-    struct SortSprite *p_sspr;
-    struct Frame *p_frm;
-
-    p_sspr = &game_sort_sprites[sspr];
-    box.X = p_sspr->X + ((overall_scale * word_1A5834) >> 8);
-    box.Y = p_sspr->Y + ((overall_scale * word_1A5836) >> 8);
-
-    p_frm = &frame[p_sspr->Frame];
-    box.Width = (overall_scale * p_frm->SWidth) >> 9;
-    box.Height = (overall_scale * p_frm->SHeight) >> 9;
-
-    if (box.Width < 16)
-    {
-        box.X -= ((17 - box.Width) >> 1);
-        box.Width = 16;
-    }
-    if (box.Height < 20) {
-        box.Y -= ((21 - box.Height) >> 1);
-        box.Height = 20;
-    }
-
-    if (in_box(lbDisplay.MMouseX, lbDisplay.MMouseY, box.X, box.Y, box.Width, box.Height))
-    {
-        dword_176CC8 = p_thing;
-        dword_176CD0 = box.Y - 8;
-        dword_176CCC = box.X + (box.Height >> 1);
-        return 1;
-    }
-    return 0;
-}
-
 short person_shield_glow_brightness(struct Thing *p_thing)
 {
     short br_inc;
@@ -367,13 +185,6 @@ short person_shield_glow_brightness(struct Thing *p_thing)
     return br_inc;
 }
 
-/** Check if a person is an agent controlled by a player different than given.
- */
-TbBool person_is_other_players_agent(struct Thing *p_person, PlayerIdx plyr)
-{
-    return (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->U.UPerson.ComCur >> 2 != plyr));
-}
-
 void draw_sort_sprite_pers_e(int sspr)
 {
     struct SortSprite *p_sspr;
@@ -383,6 +194,7 @@ void draw_sort_sprite_pers_e(int sspr)
 
     p_sspr = &game_sort_sprites[sspr];
     p_thing = (struct Thing *)p_sspr->SrcItem;
+    // TODO kind of redundant, as we have asserts if below frame_end; but check for count of frames instead of hard-coded val
     if (p_sspr->Frame > 10000)
         return;
 
@@ -414,42 +226,7 @@ void draw_sort_sprite_pers_e(int sspr)
         draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, bright, p_sspr->Angle);
     }
 
-    if (p_thing->U.UPerson.EffectiveGroup != ingame.MyGroup)
-    {
-        PlayerInfo *p_locplayer;
-
-        p_locplayer = &players[local_player_no];
-        if ((p_thing->Flag & TngF_Destroyed) != 0)
-        {
-            if (p_locplayer->TargetType < TrgTp_Unkn1)
-                check_mouse_overlap_corpse(sspr);
-        }
-        else
-        {
-            if (p_locplayer->TargetType < TrgTp_Unkn7)
-                check_mouse_overlap(sspr);
-        }
-    }
-
-    if (in_network_game)
-    {
-        struct Thing *p_owntng;
-
-        p_owntng = NULL;
-        if (person_is_other_players_agent(p_thing, local_player_no))
-        {
-            p_owntng = p_thing;
-        }
-        else if ((p_thing->Flag & TngF_Persuaded) != 0)
-        {
-            p_owntng = &things[p_thing->Owner];
-            if (!person_is_other_players_agent(p_owntng, local_player_no))
-                p_owntng = NULL;
-        }
-        if ((p_owntng != NULL) && (p_owntng->U.UPerson.CurrentWeapon != WEP_CLONESHLD)) {
-            check_mouse_over_unkn2(sspr, p_owntng);
-        }
-    }
+    screen_sorted_sprite_persn_render_cb(sspr);
 
     if (br_inc != 0)
     {
@@ -638,7 +415,8 @@ void draw_drawitem_2(ushort dihead)
     ushort i;
 
     assert(screen_position_face_render_cb != NULL);
-    assert(screen_sorted_sprite_render_cb != NULL);
+    assert(screen_sorted_sprite_statc_render_cb != NULL);
+    assert(screen_sorted_sprite_persn_render_cb != NULL);
 
     i = 0;
     for (iidx = dihead; iidx != 0; iidx = itm->Child)
@@ -727,5 +505,4 @@ void draw_drawitem_2(ushort dihead)
       }
     }
 }
-
 /******************************************************************************/

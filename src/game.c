@@ -154,6 +154,7 @@
 #include "thing.h"
 #include "thing_search.h"
 #include "thing_onface.h"
+#include "thing_ovmous.h"
 #include "tngcolisn.h"
 #include "tngobjdrw.h"
 #include "vehicle.h"
@@ -1782,7 +1783,7 @@ void screen_position_face_render_callback(
     }
 }
 
-void screen_sorted_sprite_1a_render_callback(ushort sspr)
+void screen_sorted_sprite_statc_render_callback(ushort sspr)
 {
     struct Thing *p_thing;
     PlayerInfo *p_locplayer;
@@ -1803,6 +1804,50 @@ void screen_sorted_sprite_1a_render_callback(ushort sspr)
     }
 }
 
+void screen_sorted_sprite_persn_render_callback(ushort sspr)
+{
+    struct Thing *p_thing;
+
+    p_thing = (struct Thing *)game_sort_sprites[sspr].SrcItem;
+
+    if (p_thing->U.UPerson.EffectiveGroup != ingame.MyGroup)
+    {
+        PlayerInfo *p_locplayer;
+
+        p_locplayer = &players[local_player_no];
+        if ((p_thing->Flag & TngF_Destroyed) != 0)
+        {
+            if (p_locplayer->TargetType < TrgTp_Unkn1)
+                check_mouse_overlap_corpse(sspr);
+        }
+        else
+        {
+            if (p_locplayer->TargetType < TrgTp_Unkn7)
+                check_mouse_overlap(sspr);
+        }
+    }
+
+    if (in_network_game)
+    {
+        struct Thing *p_owntng;
+
+        p_owntng = NULL;
+        if (person_is_other_players_agent(p_thing, local_player_no))
+        {
+            p_owntng = p_thing;
+        }
+        else if ((p_thing->Flag & TngF_Persuaded) != 0)
+        {
+            p_owntng = &things[p_thing->Owner];
+            if (!person_is_other_players_agent(p_owntng, local_player_no))
+                p_owntng = NULL;
+        }
+        if ((p_owntng != NULL) && (p_owntng->U.UPerson.CurrentWeapon != WEP_CLONESHLD)) {
+            check_mouse_over_unkn2(sspr, p_owntng);
+        }
+    }
+}
+
 void process_engine_unk3(void)
 {
     PlayerInfo *p_locplayer;
@@ -1811,7 +1856,8 @@ void process_engine_unk3(void)
 
     reset_drawlist();
     screen_position_face_render_cb = screen_position_face_render_callback;
-    screen_sorted_sprite_render_cb = screen_sorted_sprite_1a_render_callback;
+    screen_sorted_sprite_statc_render_cb = screen_sorted_sprite_statc_render_callback;
+    screen_sorted_sprite_persn_render_cb = screen_sorted_sprite_persn_render_callback;
     player_target_clear(local_player_no);
     mech_unkn_dw_1DC880 = mech_unkn_tile_x1;
     mech_unkn_dw_1DC884 = mech_unkn_tile_y1;
