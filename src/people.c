@@ -3513,6 +3513,43 @@ int dead_person_hit_by_bullet(struct Thing *p_thing, short hp,
     return 1;
 }
 
+/** Returns if given agent holds a weapon different than weapon of selected agent.
+ *
+ * Very specific function, expected to be required in exactly one situation - to
+ * decide whether we should search around hit position for neutral factions to
+ * antagonize due to the shooting.
+ *
+ * Usually the selected agent will shoot as well as the rest, so we do not care
+ * for antagonizing check to be repeated. But if selected agent has shorter range
+ * weapon, or just different weapon - then we should repeat the search, as very
+ * likely it will be at different destination.
+ *
+ * Can the whole condition be removed instead, to always check all agents shot
+ * target - maybe. Not sure it it would have other consequences.
+ */
+TbBool player_agent_selected_holds_different_weapon_than(struct Thing *p_person)
+{
+    struct Thing *p_dcthing;
+    ThingIdx dcthing;
+    PlayerIdx plyr;
+
+    if ((p_person->Flag & TngF_PlayerAgent) == 0) {
+        return false;
+    }
+    if (p_person->U.UPerson.CurrentWeapon == WEP_NULL) {
+        return false;
+    }
+
+    plyr = p_person->U.UPerson.ComCur >> 2;
+    dcthing = (ThingIdx)players[plyr].DirectControl[0];
+    if (dcthing <= 0) {
+        return false;
+    }
+    p_dcthing = &things[dcthing];
+
+    return (p_dcthing->U.UPerson.CurrentWeapon != p_person->U.UPerson.CurrentWeapon);
+}
+
 int person_hit_by_bullet(struct Thing *p_thing, short hp,
   int vx, int vy, int vz, struct Thing *p_attacker, ushort type)
 {
@@ -3543,7 +3580,7 @@ int person_hit_by_bullet(struct Thing *p_thing, short hp,
         // No action
     } else if (things_have_same_group(p_attacker, p_thing) || persons_have_truce(p_attacker, p_thing)) {
         // No action
-    } else if (((p_attacker->Flag & TngF_SelectedAgent) != 0) ||
+    } else if ((((p_attacker->Flag & TngF_SelectedAgent) != 0) || player_agent_selected_holds_different_weapon_than(p_attacker)) ||
       ((p_thing == p_attacker->PTarget) && (p_attacker->Flag2 & TgF2_ExistsOffMap) == 0)) {
         if ((p_thing->Flag & TngF_Persuaded) == 0)
             // Make victim group aggressive back toward the attacker group
