@@ -45,7 +45,8 @@ enum DrawItemType {
     DrIT_NONE = 0x0,
     DrIT_Unkn1 = 0x1,
     DrIT_Unkn2 = 0x2,
-    DrIT_Unkn3 = 0x3,
+    /** Frame of sprite elements, representing a static thing. */
+    DrIT_SFrmStatc = 0x3,
     DrIT_Unkn4 = 0x4,
     DrIT_Unkn5 = 0x5,
     DrIT_Unkn6 = 0x6,
@@ -55,7 +56,8 @@ enum DrawItemType {
     DrIT_Unkn10 = 0xA,
     DrIT_Unkn11 = 0xB,
     DrIT_Unkn12 = 0xC,
-    DrIT_SprPersE = 0xD,
+    /** Frame of sprite elements with version selections, representing a person thing. */
+    DrIT_SFrmPersV = 0xD,
     DrIT_Unkn14 = 0xE,
     DrIT_Unkn15 = 0xF,
     DrIT_Unkn16 = 0x10,
@@ -68,8 +70,14 @@ enum DrawItemType {
     DrIT_Unkn23 = 0x17,
     DrIT_Unkn24 = 0x18,
     DrIT_Unkn25 = 0x19,
+    /** Numeric value written is simple (non-sprite) font. */
     DrIT_Number,
+    /** Short text message (without extra buffer) written is simple (non-sprite) font. */
     DrIT_ShortText,
+    /** Frame of sprite elements with basic properties, representing a person thing. */
+    DrIT_SFrmPersB,
+    /** Frame of sprite elements with version selections, representing an effect or overlay for a thing. */
+    DrIT_SFrmEfctV,
 };
 
 #pragma pack()

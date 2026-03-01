@@ -37,6 +37,7 @@
 #include "enginshrapn.h"
 #include "enginprops.h"
 #include "engintrns.h"
+#include "frame_sprani.h"
 #include "game.h"
 #include "game_data.h"
 #include "game_options.h"
@@ -47,6 +48,9 @@
 #include "vehicle.h"
 /******************************************************************************/
 #pragma pack(1)
+
+/** Packs sprite frame versions into one, 16-bit field */
+#define SPR_FRAME_VERSIONS_PACK(v0, v1, v2, v3, v4) ((v0 << 0) + (v1 << 3) + (v2 << 6) + (v3 << 9) + (v4 << 12))
 
 struct BulStart {
     sbyte OffsetX;
@@ -71,6 +75,28 @@ extern short word_1AA5F8;
 extern short word_1AA5FA;
 
 extern ushort zig_zag[55];
+
+ubyte pers_shield_spr_vers[] = {
+  0, 1, 2, 0, 0,
+  0, 2, 1, 0, 0,
+  0, 1, 1, 0, 0,
+  1, 2, 0, 0, 0,
+  1, 1, 0, 0, 0,
+  2, 0, 1, 0, 0,
+  2, 0, 2, 0, 0,
+  2, 0, 2, 0, 0,
+};
+
+ushort pers_shield_spr_vers_packed[] = {
+  SPR_FRAME_VERSIONS_PACK(0, 1, 2, 0, 0),
+  SPR_FRAME_VERSIONS_PACK(0, 2, 1, 0, 0),
+  SPR_FRAME_VERSIONS_PACK(0, 1, 1, 0, 0),
+  SPR_FRAME_VERSIONS_PACK(1, 2, 0, 0, 0),
+  SPR_FRAME_VERSIONS_PACK(1, 1, 0, 0, 0),
+  SPR_FRAME_VERSIONS_PACK(2, 0, 1, 0, 0),
+  SPR_FRAME_VERSIONS_PACK(2, 0, 2, 0, 0),
+  SPR_FRAME_VERSIONS_PACK(2, 0, 2, 0, 0),
+};
 
 ubyte byte_152EF0[] = {
    0, 10,  5, 10,  7,  7,  8, 10,
@@ -181,15 +207,17 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
 
     transform_shpoint(&sp2, x2, 8 * y2 - 8 * engn_yc, z2);
 
-    if ((sp2.Flags & sp1.Flags & 0xF) != 0)
+    if ((sp2.Flags & sp1.Flags & 0xF) != 0) {
         return 0;
+    }
 
     bckt = BUCKET_MID + sp1.Depth;
 
     sline = next_sort_line;
     p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
-    if (p_sline == NULL)
+    if (p_sline == NULL) {
         return 0;
+    }
 
     p_sline->Shade = 32;
     p_sline->Flags = 0;
@@ -224,12 +252,14 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     transform_shpoint(&sp1, x1, 8 * y1 - 8 * engn_yc, z1);
     transform_shpoint(&sp3, x3, 8 * y3 - 8 * engn_yc, z3);
 
-    if ((sp3.Flags & sp1.Flags & 0xF) != 0)
+    if ((sp3.Flags & sp1.Flags & 0xF) != 0) {
         return;
+    }
 
     p_sline = draw_item_add_line(DrIT_Unkn11, BUCKET_MID + sp1.Depth);
-    if (p_sline == NULL)
+    if (p_sline == NULL) {
         return;
+    }
 
     p_sline->Shade = 32;
     p_sline->Flags = 0;
@@ -255,9 +285,10 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
     if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
         scr_depth += BUCKETS_COUNT;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn3, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL)
+    p_sspr = draw_item_add_sprite(DrIT_SFrmStatc, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
         return;
+    }
 
     p_sspr->X = sp.X;
     p_sspr->Y = sp.Y;
@@ -282,8 +313,9 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
     scr_depth = sp.Depth - (((radius - 100) * overall_scale) >> 8);
 
     p_sspr = draw_item_add_sprite(DrIT_Unkn15, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL)
+    if (p_sspr == NULL) {
         return;
+    }
 
     p_sspr->X = sp.X;
     p_sspr->Y = sp.Y;
@@ -294,14 +326,97 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
     p_sspr->SrcItem = (intptr_t)NULL;
 }
 
+void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_Unkn19, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL)
+        return;
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->SrcItem = (intptr_t)p_thing;
+}
+
+void draw_pers_frame_basic(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmPersB, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->Frame = frame;
+    p_sspr->SrcItem = (intptr_t)p_thing;
+    p_sspr->Brightness = bright;
+    p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
+    p_sspr->Scale = 256;
+}
+
+void draw_pers_frame_versioned(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
+{
+    struct SortSprite *p_sspr;
+    ubyte *frv;
+
+    if ((p_thing->U.UPerson.AnimMode == ANIM_PERS_Unkn12) || ((ingame.Flags & GamF_ThermalView) != 0))
+        bright = 32;
+    if (((p_thing->Flag2 & TgF2_Unkn00080000) != 0) && (p_thing->SubType == SubTT_PERS_ZEALOT))
+        bright = 32;
+    frv = p_thing->U.UPerson.FrameId.Version;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmPersV, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->Frame = frame;
+    p_sspr->SrcItem = (intptr_t)p_thing;
+    p_sspr->Brightness = bright;
+    p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
+    p_sspr->Scale = SPR_FRAME_VERSIONS_PACK(frv[0], frv[1], frv[2], frv[3], frv[4]);
+}
+
+void draw_pers_shield(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, short bright)
+{
+    struct SortSprite *p_sspr;
+    ushort frame, k;
+
+    frame = shield_frm[p_thing->ThingOffset & 3];
+    k = ((gameturn + 16 * p_thing->ThingOffset) >> 2) & 7;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmEfctV, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->Frame = frame;
+    p_sspr->SrcItem = (intptr_t)p_thing;
+    p_sspr->Brightness = bright;
+    p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
+    p_sspr->Scale = pers_shield_spr_vers_packed[k]; // The shield has versioned sprites
+}
+
 void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity)
 {
     struct ShEnginePoint sp;
-    struct SortSprite *p_sspr;
     int scr_depth;
-    ubyte bri;
+    short br_inc;
+    short bri;
 
     bri = byte_152EF0[p_thing->SubType] + intensity;
+    br_inc = person_shield_glow_brightness(p_thing);
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
         y += waft_table[gameturn & 0x1F] >> 3;
@@ -323,28 +438,30 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
             scr_depth = -BUCKETS_COUNT;
     }
 
-    p_sspr = draw_item_add_sprite(DrIT_SprPersE, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL)
-        return;
+    if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) && (ingame.DisplayMode == 50))
+    {
+        if ((ingame.Flags & GamF_ThermalView) != 0) {
+            ushort frm;
+            frm = nstart_ani[1066];
+            bri = 32;
+            draw_pers_frame_basic(p_thing, sp.X, sp.Y, scr_depth, frm, bri);
+        }
+    }
+    else
+    {
+        draw_pers_frame_versioned(p_thing, sp.X, sp.Y, scr_depth, frame, bri + br_inc);
+    }
 
-    p_sspr->X = sp.X;
-    p_sspr->Y = sp.Y;
-    p_sspr->Z = 0;
-    p_sspr->Frame = frame;
-    p_sspr->SrcItem = (intptr_t)p_thing;
-    p_sspr->Brightness = bri;
-    p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
+    if (br_inc > 0) {
+        draw_pers_shield(p_thing, sp.X, sp.Y, scr_depth - 1, br_inc);
+    }
 
-    if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) || p_thing->U.UPerson.OnFace || (p_thing->SubType == SubTT_PERS_MECH_SPIDER))
-        return;
-
-    p_sspr = draw_item_add_sprite(DrIT_Unkn19, BUCKET_MID + scr_depth - ((200 * overall_scale) >> 8));
-    if (p_sspr == NULL)
-        return;
-
-    p_sspr->X = sp.X;
-    p_sspr->Y = sp.Y;
-    p_sspr->SrcItem = (intptr_t)p_thing;
+    if (((p_thing->Flag2 & TgF2_InsideBuilding) == 0) &&
+      (p_thing->U.UPerson.OnFace == 0) &&
+      (p_thing->SubType != SubTT_PERS_MECH_SPIDER))
+    {
+        draw_pers_shadow(p_thing, sp.X, sp.Y, scr_depth - ((200 * overall_scale) >> 8));
+    }
 }
 
 void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy, int num, int radius, TbPixel colour)
