@@ -166,25 +166,6 @@ void reset_drawlist(void)
     dword_176CC4 = 0;
 }
 
-short person_shield_glow_brightness(struct Thing *p_thing)
-{
-    short br_inc;
-
-    br_inc = 0;
-    if ((p_thing->Flag & TngF_Destroyed) == 0)
-    {
-        if ((p_thing->Flag & TngF_Unkn00200000) != 0)
-        {
-            br_inc += 16;
-            if (p_thing->U.UPerson.ShieldGlowTimer) {
-                br_inc += 16;
-            }
-        }
-    }
-
-    return br_inc;
-}
-
 void draw_sort_sprite_pers_e(int sspr)
 {
     struct SortSprite *p_sspr;

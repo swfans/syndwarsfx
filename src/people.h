@@ -432,6 +432,8 @@ TbBool person_is_persuaded_by_player(ThingIdx thing, ushort plyr);
  */
 TbBool person_is_other_players_agent(struct Thing *p_person, PlayerIdx plyr);
 
+short person_shield_glow_brightness(struct Thing *p_thing);
+
 void player_change_person(short thing, ushort plyr);
 void make_peeps_scatter(struct Thing *p_person, int x, int z);
 

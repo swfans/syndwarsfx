@@ -1529,6 +1529,25 @@ TbBool person_is_other_players_agent(struct Thing *p_person, PlayerIdx plyr)
     return (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->U.UPerson.ComCur >> 2 != plyr));
 }
 
+short person_shield_glow_brightness(struct Thing *p_thing)
+{
+    short br_inc;
+
+    br_inc = 0;
+    if ((p_thing->Flag & TngF_Destroyed) == 0)
+    {
+        if ((p_thing->Flag & TngF_Unkn00200000) != 0)
+        {
+            br_inc += 16;
+            if (p_thing->U.UPerson.ShieldGlowTimer) {
+                br_inc += 16;
+            }
+        }
+    }
+
+    return br_inc;
+}
+
 void process_stamina(struct Thing *p_person)
 {
     asm volatile ("call ASM_process_stamina\n"
