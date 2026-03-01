@@ -36,6 +36,14 @@
 #include "frame_sprani.h"
 #include "privrdlog.h"
 /******************************************************************************/
+/** Unpacks sprite frame versions from one integer to an array */
+#define SPR_FRAME_VERSIONS_UNPACK(varr, vpck) \
+    (varr)[0] = (((ushort)vpck) >> 0) & 0x07; \
+    (varr)[1] = (((ushort)vpck) >> 3) & 0x07; \
+    (varr)[2] = (((ushort)vpck) >> 6) & 0x07; \
+    (varr)[3] = (((ushort)vpck) >> 9) & 0x07; \
+    (varr)[4] = (((ushort)vpck) >> 12) & 0x07
+
 extern long dword_176CE0;
 extern long dword_176CE4;
 extern long dword_176CE8;
@@ -574,6 +582,49 @@ void draw_sort_sprite1a(ushort sspr)
     word_1A5836 = 120;
     draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
     screen_sorted_sprite_statc_render_cb(sspr);
+}
+
+void draw_sort_sprite_frame_pers_v(int sspr)
+{
+    struct SortSprite *p_sspr;
+    ubyte frv[5];
+
+    p_sspr = &game_sort_sprites[sspr];
+
+    word_1A5834 = 120;
+    word_1A5836 = 120;
+
+    SPR_FRAME_VERSIONS_UNPACK(frv, p_sspr->Scale);
+
+    draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, p_sspr->Angle);
+
+    screen_sorted_sprite_persn_render_cb(sspr);
+}
+
+void draw_sort_sprite_frame_pers_b(int sspr)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = &game_sort_sprites[sspr];
+
+    word_1A5834 = 120;
+    word_1A5836 = 120;
+
+    draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
+
+    screen_sorted_sprite_persn_render_cb(sspr);
+}
+
+void draw_sort_sprite_frame_efct_v(int sspr)
+{
+    struct SortSprite *p_sspr;
+    ubyte frv[5];
+
+    p_sspr = &game_sort_sprites[sspr];
+
+    SPR_FRAME_VERSIONS_UNPACK(frv, p_sspr->Scale);
+
+    draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, 0);
 }
 
 /**

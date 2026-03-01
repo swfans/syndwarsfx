@@ -59,14 +59,6 @@
 #include "vehicle.h"
 /******************************************************************************/
 
-/** Packs sprite frame versions into one, 16-bit field */
-#define SPR_FRAME_VERSIONS_UNPACK(varr, vpck) \
-    (varr)[0] = (((ushort)vpck) >> 0) & 0x07; \
-    (varr)[1] = (((ushort)vpck) >> 3) & 0x07; \
-    (varr)[2] = (((ushort)vpck) >> 6) & 0x07; \
-    (varr)[3] = (((ushort)vpck) >> 9) & 0x07; \
-    (varr)[4] = (((ushort)vpck) >> 12) & 0x07
-
 extern ushort tnext_screen_point;
 extern ushort tnext_draw_item;
 extern ushort tnext_sort_sprite;
@@ -102,11 +94,12 @@ TbPixel deep_radar_line_col = 0x64;
 /******************************************************************************/
 // from engindrwlstx_spr
 void draw_sort_line1a(ushort sln);
-void draw_sorted_sprite1b(ubyte *frv, ushort frm, short x, short y,
-  ubyte bri, ubyte angle);
 void draw_sort_sprite1c(ushort sspr);
 void draw_hud_frame_on_screen_unscaled_but_scale_pos(short scr_x, short scr_y, ushort frm, int sscale);
 void draw_hud_frame_on_screen(short scr_x, short scr_y, ushort frm, int sscale);
+void draw_sort_sprite_frame_pers_v(int sspr);
+void draw_sort_sprite_frame_pers_b(int sspr);
+void draw_sort_sprite_frame_efct_v(int sspr);
 void draw_phwoar(ushort ph);
 void draw_sort_sprite_long_prop_bar(short sspr);
 void draw_sort_sprite_number(ushort sspr);
@@ -162,57 +155,6 @@ void reset_drawlist(void)
     next_floor_tile = 1;
 
     dword_176CC4 = 0;
-}
-
-void draw_sort_sprite_frame_pers_v(int sspr)
-{
-    struct SortSprite *p_sspr;
-    ubyte frv[5];
-
-    p_sspr = &game_sort_sprites[sspr];
-
-    // TODO kind of redundant, as we have asserts if below frame_end; but check for count of frames instead of hard-coded val
-    if (p_sspr->Frame > 10000)
-        return;
-
-    word_1A5834 = 120;
-    word_1A5836 = 120;
-
-    SPR_FRAME_VERSIONS_UNPACK(frv, p_sspr->Scale);
-
-    draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, p_sspr->Angle);
-
-    screen_sorted_sprite_persn_render_cb(sspr);
-}
-
-void draw_sort_sprite_frame_pers_b(int sspr)
-{
-    struct SortSprite *p_sspr;
-
-    p_sspr = &game_sort_sprites[sspr];
-
-    // TODO kind of redundant, as we have asserts if below frame_end; but check for count of frames instead of hard-coded val
-    if (p_sspr->Frame > 10000)
-        return;
-
-    word_1A5834 = 120;
-    word_1A5836 = 120;
-
-    draw_sorted_sprite1a(p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness);
-
-    screen_sorted_sprite_persn_render_cb(sspr);
-}
-
-void draw_sort_sprite_frame_efct_v(int sspr)
-{
-    struct SortSprite *p_sspr;
-    ubyte frv[5];
-
-    p_sspr = &game_sort_sprites[sspr];
-
-    SPR_FRAME_VERSIONS_UNPACK(frv, p_sspr->Scale);
-
-    draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, p_sspr->Brightness, 0);
 }
 
 ushort number_player_get_frame(struct Thing *p_person, ubyte n)
