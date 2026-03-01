@@ -641,6 +641,24 @@ void draw_horiz_level_bar(short scr_x, short scr_y, ushort w, ushort h,
     LbDrawBox(scr_x - bar_w / 2, scr_y + (bar_h - range_h) / 2, level_x, range_h, lvl_col);
 }
 
+/**
+ * Draw long property bar, like health of a vehicle.
+ *
+ * @param sspr Index of SortSprite instance which stores bar properties.
+ */
+void draw_sort_sprite_long_prop_bar(short sspr)
+{
+    struct SortSprite *p_sspr;
+    TbPixel lvl_col, bar_col;
+
+    p_sspr = &game_sort_sprites[sspr];
+    lvl_col = p_sspr->Brightness;
+    bar_col = p_sspr->Angle;
+
+    draw_horiz_level_bar(p_sspr->X, p_sspr->Y, 44, 5, p_sspr->Scale,
+      p_sspr->Frame, lvl_col, bar_col);
+}
+
 void draw_sort_sprite_number(ushort sspr)
 {
     char locstr[50];

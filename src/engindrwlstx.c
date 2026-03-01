@@ -114,8 +114,7 @@ void draw_sort_sprite1c(ushort sspr);
 void draw_hud_frame_on_screen_unscaled_but_scale_pos(short scr_x, short scr_y, ushort frm, int sscale);
 void draw_hud_frame_on_screen(short scr_x, short scr_y, ushort frm, int sscale);
 void draw_phwoar(ushort ph);
-void draw_horiz_level_bar(short scr_x, short scr_y, ushort w, ushort h,
-  short lvl, ushort max_lvl, TbPixel lvl_col, TbPixel bar_col);
+void draw_sort_sprite_long_prop_bar(short sspr);
 void draw_sort_sprite_number(ushort sspr);
 void draw_sort_sprite_short_text(ushort sspr);
 void draw_fire_flame(ushort flm);
@@ -349,6 +348,32 @@ ubyte check_mouse_over_unkn2(ushort sspr, struct Thing *p_thing)
     return 0;
 }
 
+short person_shield_glow_brightness(struct Thing *p_thing)
+{
+    short br_inc;
+
+    br_inc = 0;
+    if ((p_thing->Flag & TngF_Destroyed) == 0)
+    {
+        if ((p_thing->Flag & TngF_Unkn00200000) != 0)
+        {
+            br_inc += 16;
+            if (p_thing->U.UPerson.ShieldGlowTimer) {
+                br_inc += 16;
+            }
+        }
+    }
+
+    return br_inc;
+}
+
+/** Check if a person is an agent controlled by a player different than given.
+ */
+TbBool person_is_other_players_agent(struct Thing *p_person, PlayerIdx plyr)
+{
+    return (((p_person->Flag & TngF_PlayerAgent) != 0) && (p_person->U.UPerson.ComCur >> 2 != plyr));
+}
+
 void draw_sort_sprite_pers_e(int sspr)
 {
     struct SortSprite *p_sspr;
@@ -361,21 +386,7 @@ void draw_sort_sprite_pers_e(int sspr)
     if (p_sspr->Frame > 10000)
         return;
 
-    br_inc = 0;
-    bright = p_sspr->Brightness;
-    if ((p_thing->Flag & TngF_Destroyed) == 0)
-    {
-        if ((p_thing->Flag & TngF_Unkn00200000) != 0)
-        {
-            br_inc += 16;
-            if (p_thing->U.UPerson.ShieldGlowTimer) {
-                br_inc += 16;
-            }
-        }
-    }
-    bright += br_inc;
-    if ((p_thing->U.UPerson.AnimMode == ANIM_PERS_Unkn12) || ((ingame.Flags & GamF_ThermalView) != 0))
-        bright = 32;
+    br_inc = person_shield_glow_brightness(p_thing);
 
     word_1A5834 = 120;
     word_1A5836 = 120;
@@ -383,17 +394,23 @@ void draw_sort_sprite_pers_e(int sspr)
     if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) && (ingame.DisplayMode == 50))
     {
         if ((ingame.Flags & GamF_ThermalView) != 0) {
-            ushort fr;
-            fr = nstart_ani[1066];
-            draw_sorted_sprite1a(fr, p_sspr->X, p_sspr->Y, 32);
+            ushort frm;
+            frm = nstart_ani[1066];
+            bright = 32;
+            draw_sorted_sprite1a(frm, p_sspr->X, p_sspr->Y, bright);
         }
     }
     else
     {
         ubyte *frv;
-        if (((p_thing->Flag2 & TgF2_Unkn00080000) != 0) && (p_thing->SubType == 2))
+
+        bright = p_sspr->Brightness + br_inc;
+        if ((p_thing->U.UPerson.AnimMode == ANIM_PERS_Unkn12) || ((ingame.Flags & GamF_ThermalView) != 0))
+            bright = 32;
+        if (((p_thing->Flag2 & TgF2_Unkn00080000) != 0) && (p_thing->SubType == SubTT_PERS_ZEALOT))
             bright = 32;
         frv = p_thing->U.UPerson.FrameId.Version;
+
         draw_sorted_sprite1b(frv, p_sspr->Frame, p_sspr->X, p_sspr->Y, bright, p_sspr->Angle);
     }
 
@@ -419,17 +436,17 @@ void draw_sort_sprite_pers_e(int sspr)
         struct Thing *p_owntng;
 
         p_owntng = NULL;
-        if (((p_thing->Flag & TngF_PlayerAgent) != 0) && (p_thing->U.UPerson.ComCur >> 2 != local_player_no))
+        if (person_is_other_players_agent(p_thing, local_player_no))
         {
             p_owntng = p_thing;
         }
         else if ((p_thing->Flag & TngF_Persuaded) != 0)
         {
             p_owntng = &things[p_thing->Owner];
-            if (((p_owntng->Flag & TngF_PlayerAgent) == 0) || (p_owntng->U.UPerson.ComCur >> 2 == local_player_no))
+            if (!person_is_other_players_agent(p_owntng, local_player_no))
                 p_owntng = NULL;
         }
-        if ((p_owntng != NULL) && (p_owntng->U.UPerson.CurrentWeapon != 30)) {
+        if ((p_owntng != NULL) && (p_owntng->U.UPerson.CurrentWeapon != WEP_CLONESHLD)) {
             check_mouse_over_unkn2(sspr, p_owntng);
         }
     }
@@ -437,64 +454,21 @@ void draw_sort_sprite_pers_e(int sspr)
     if (br_inc != 0)
     {
         ubyte *frv;
-        ushort fr, k;
-        fr = shield_frm[p_thing->ThingOffset & 3];
+        ushort frm, k;
+        frm = shield_frm[p_thing->ThingOffset & 3];
         k = ((gameturn + 16 * p_thing->ThingOffset) >> 2) & 7;
         frv = byte_15399C + 5 * k;
-        draw_sorted_sprite1b(frv, fr, p_sspr->X, p_sspr->Y, br_inc, 0);
+
+        draw_sorted_sprite1b(frv, frm, p_sspr->X, p_sspr->Y, br_inc, 0);
     }
 }
 
-/**
- * Draw long property bar, like health of a vehicle.
- *
- * @param sspr Index of SortSprite instance which stores bar properties.
- */
-void draw_sort_sprite_long_prop_bar(short sspr)
-{
-    struct SortSprite *p_sspr;
-    TbPixel lvl_col, bar_col;
-
-    p_sspr = &game_sort_sprites[sspr];
-    lvl_col = p_sspr->Brightness;
-    bar_col = p_sspr->Angle;
-
-    draw_horiz_level_bar(p_sspr->X, p_sspr->Y, 44, 5, p_sspr->Scale,
-      p_sspr->Frame, lvl_col, bar_col);
-}
-
-void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
-  short scr_sh_x, short scr_sh_y, ushort frm, TbBool unscaled)
-{
-    struct ShEnginePoint sp;
-    int cor_dt_x, cor_dt_y, cor_dt_z;
-
-    cor_dt_x = cor_x - engn_xc;
-    cor_dt_y = cor_y;
-    cor_dt_z = cor_z - engn_zc;
-    if ((cor_dt_x > TILE_TO_MAPCOORD(render_area_a,0)) ||
-      (cor_dt_z > TILE_TO_MAPCOORD(render_area_b,0))) {
-        return;
-    }
-
-    transform_shpoint(&sp, cor_dt_x, 8 * cor_dt_y - 8 * engn_yc, cor_dt_z);
-    sp.X += ((overall_scale * scr_sh_x) >> 8);
-    sp.Y += ((overall_scale * scr_sh_y) >> 8);
-
-    if (unscaled)
-        draw_hud_frame_on_screen_unscaled_but_scale_pos(sp.X, sp.Y, frm, overall_scale);
-    else
-        draw_hud_frame_on_screen(sp.X, sp.Y, frm, overall_scale);
-}
-
-void number_player(struct Thing *p_person, ubyte n)
+ushort number_player_get_frame(struct Thing *p_person, ubyte n)
 {
     struct PanelStyle *p_style;
-    int shift_x, shift_y;
     ushort ani_mdsh, ani_base;
     ushort frm;
     ushort screen_scale;
-    TbBool unscaled;
 
     p_style = game_panel_style;
 
@@ -522,11 +496,45 @@ void number_player(struct Thing *p_person, ubyte n)
             }
         }
     }
+    return frm;
+}
+
+void draw_frame_on_map_coords(MapCoord cor_x, MapCoord cor_y, MapCoord cor_z,
+  short scr_sh_x, short scr_sh_y, ushort frm, TbBool unscaled)
+{
+    struct ShEnginePoint sp;
+    int cor_dt_x, cor_dt_y, cor_dt_z;
+
+    cor_dt_x = cor_x - engn_xc;
+    cor_dt_y = cor_y;
+    cor_dt_z = cor_z - engn_zc;
+    if ((cor_dt_x > TILE_TO_MAPCOORD(render_area_a,0)) ||
+      (cor_dt_z > TILE_TO_MAPCOORD(render_area_b,0))) {
+        return;
+    }
+
+    transform_shpoint(&sp, cor_dt_x, 8 * cor_dt_y - 8 * engn_yc, cor_dt_z);
+    sp.X += ((overall_scale * scr_sh_x) >> 8);
+    sp.Y += ((overall_scale * scr_sh_y) >> 8);
+
+    //TODO switch to drawlists
+    if (unscaled)
+        draw_hud_frame_on_screen_unscaled_but_scale_pos(sp.X, sp.Y, frm, overall_scale);
+    else
+        draw_hud_frame_on_screen(sp.X, sp.Y, frm, overall_scale);
+}
+
+void number_player(struct Thing *p_person, ubyte n)
+{
+    int tng_cor_x, tng_cor_y, tng_cor_z;
+    int shift_x, shift_y;
+    ushort frm;
+    TbBool unscaled;
+
+    frm = number_player_get_frame(p_person, n);
 
     if ((p_person->Flag2 & TgF2_Unkn0002) != 0)
         return;
-
-    int tng_cor_x, tng_cor_y, tng_cor_z;
 
     if (person_is_in_a_train(p_person))
     {
@@ -555,7 +563,9 @@ void number_player(struct Thing *p_person, ubyte n)
     }
     else
     {
-        shift_x = -lbSinTable[256 * ((p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7) + LbFPMath_PI/2] >> 14;
+        ubyte angl;
+        angl = (p_person->U.UObject.Angle + 2 - byte_176D49 + 8) & 7;
+        shift_x = -lbSinTable[256 * angl + LbFPMath_PI/2] >> 14;
         if ((p_person->Flag2 & TgF2_Unkn00080000) == 0)
             shift_x /= 2;
     }
