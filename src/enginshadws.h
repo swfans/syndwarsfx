@@ -30,7 +30,7 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
-void draw_person_shadow(ushort face);
+void draw_sort_sprite_person_shadow(ushort sspr);
 void draw_vehicle_shadow(ushort veh, ushort sort);
 
 void generate_shadows_for_multicolor_sprites(void);

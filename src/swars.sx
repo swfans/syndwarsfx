@@ -6499,7 +6499,7 @@ GLOBAL_FUNC(ASM_check_mouse_overlap_item)	/* 0x25624 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_draw_person_shadow)	/* 0x026CD0 */
+GLOBAL_FUNC(ASM_draw_sort_sprite_person_shadow)	/* 0x026CD0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

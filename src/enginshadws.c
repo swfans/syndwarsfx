@@ -168,86 +168,62 @@ int alt_at_point_under_height(int x, int z, int h)
     return alt_best;
 }
 
-void draw_person_shadow(ushort sspr)
+void draw_person_shadow(short scr_x, short scr_y, ushort frm, ushort shpak, ubyte shangl, ubyte angl, short strng)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_person_shadow\n"
-        : : "a" (sspr));
-    return;
-#endif
-    struct Thing *p_thing;
-    ushort fr, anmode;
-    ushort shpak;
-    int frgrp;
-    ubyte k;
     int ssh_y, ssh_x;
     int sh_x, sh_y;
     int sc_a, sc_b;
-    short strng;
+    int frgrp;
+    ubyte k;
 
-    struct SortSprite *p_sspr;
     struct EnginePoint point4;
     struct EnginePoint point2;
     struct EnginePoint point1;
     struct EnginePoint point3;
 
-    p_sspr = &game_sort_sprites[sspr];
-    p_thing = (struct Thing *)p_sspr->SrcItem;
     vec_mode = 10;
     assert(vec_tmap[ingame.LastTmap] != NULL);
     vec_map = vec_tmap[ingame.LastTmap];
 
-    fr = p_thing->Frame - nstart_ani[p_thing->StartFrame + 1 + p_thing->U.UObject.Angle];
-    anmode = p_thing->U.UPerson.AnimMode;
-    if ((anmode == ANIM_PERS_WEPHEAVY_IDLE) || (anmode == ANIM_PERS_WEPHEAVY_Unkn15) || (anmode == ANIM_PERS_WEPHEAVY_Unkn07))
-        shpak = 12;
-    else if ((anmode == ANIM_PERS_WEPLIGHT_IDLE) || (anmode == ANIM_PERS_Unkn14) || (anmode == ANIM_PERS_Unkn06))
-        shpak = byte_154F2C[2 * p_thing->SubType + 1];
-    else
-        shpak = byte_154F2C[2 * p_thing->SubType + 0];
-
-    frgrp =  8 * shpak + (((p_thing->U.UPerson.Shadows[0] >> 5) - p_thing->U.UObject.Angle + 8) & 7);
-    point3.pp.U = sprshadow_EE90[6 * frgrp + fr] << 16;
-    point3.pp.V = sprshadow_F5E0[6 * frgrp + fr] << 16;
-    point4.pp.U = sprshadow_F370[6 * frgrp + fr] << 16;
+    frgrp =  8 * shpak + (((shangl >> 5) - angl + 8) & 7);
+    point3.pp.U = sprshadow_EE90[6 * frgrp + frm] << 16;
+    point3.pp.V = sprshadow_F5E0[6 * frgrp + frm] << 16;
+    point4.pp.U = sprshadow_F370[6 * frgrp + frm] << 16;
     point4.pp.V = point3.pp.V;
     point1.pp.U = point4.pp.U;
-    point1.pp.V = sprshadow_F100[6 * frgrp + fr] << 16;
+    point1.pp.V = sprshadow_F100[6 * frgrp + frm] << 16;
     point2.pp.U = point3.pp.U;
     point2.pp.V = point1.pp.V;
 
-    k = p_thing->U.UPerson.Shadows[0] - (engn_anglexz >> 8);
+    k = shangl - (engn_anglexz >> 8);
     ssh_x = sprshadow_F850[2 * k + 1];
     ssh_y = -sprshadow_F850[2 * k + 0];
     sh_y = (6 * ssh_y + 64) >> 7;
     sh_x = (6 * ssh_x + 64) >> 7; // We will reverse the sign later
     sh_x = (overall_scale * sh_x) >> 8;
     sh_y = (overall_scale * sh_y) >> 8;
-    strng = p_thing->U.UPerson.Shadows[1];
+
     if (strng > 128)
         strng = 128;
-    vec_colour = (strng >> 3) + 16;
+    vec_colour = 16 + (strng >> 3);
     sc_a = (strng * sh_y) >> 6;
     sc_b = (strng * sh_x) >> 6;
     sh_x = -sh_x;
 
-    p_sspr = &game_sort_sprites[sspr];
-    point3.pp.X = p_sspr->X - sh_x;
-    point3.pp.Y = p_sspr->Y - sh_y;
-    point4.pp.X = p_sspr->X + sh_x;
-    point4.pp.Y = p_sspr->Y + sh_y;
+    point3.pp.X = scr_x - sh_x;
+    point3.pp.Y = scr_y - sh_y;
+    point4.pp.X = scr_x + sh_x;
+    point4.pp.Y = scr_y + sh_y;
 
     if (strng > 64) {
         sh_x = (sh_x * strng) >> 6;
         sh_y = (sh_y * strng) >> 6;
     }
 
-    p_sspr = &game_sort_sprites[sspr];
-    point1.pp.X = 4 * sc_a + p_sspr->X + sh_x;
-    point1.pp.Y = 4 * sc_b + p_sspr->Y + sh_y;
-    point2.pp.X = 4 * sc_a + p_sspr->X - sh_x;
-    point2.pp.Y = 4 * sc_b + p_sspr->Y - sh_y;
+    point1.pp.X = 4 * sc_a + scr_x + sh_x;
+    point1.pp.Y = 4 * sc_b + scr_y + sh_y;
+    point2.pp.X = 4 * sc_a + scr_x - sh_x;
+    point2.pp.Y = 4 * sc_b + scr_y - sh_y;
 
     dword_176D4C++;
     if (vec_mode == 2)
@@ -257,6 +233,46 @@ void draw_person_shadow(ushort sspr)
     if (vec_mode == 2)
         vec_mode = 27;
     draw_trigpoly(&point2.pp, &point1.pp, &point3.pp);
+}
+
+void draw_sort_sprite_person_shadow(ushort sspr)
+{
+#if 0
+    asm volatile (
+      "call ASM_draw_sort_sprite_person_shadow\n"
+        : : "a" (sspr));
+    return;
+#endif
+    struct Thing *p_thing;
+    ushort frm, anmode;
+    ushort shpak;
+    short strng;
+    ubyte shangl, angl;
+
+    struct SortSprite *p_sspr;
+
+    p_sspr = &game_sort_sprites[sspr];
+    p_thing = (struct Thing *)p_sspr->SrcItem;
+
+    angl = p_thing->U.UObject.Angle;
+    frm = p_thing->Frame - nstart_ani[p_thing->StartFrame + 1 + angl];
+
+    anmode = p_thing->U.UPerson.AnimMode;
+    if ((anmode == ANIM_PERS_WEPHEAVY_IDLE) ||
+      (anmode == ANIM_PERS_WEPHEAVY_Unkn15) ||
+      (anmode == ANIM_PERS_WEPHEAVY_Unkn07))
+        shpak = 12;
+    else if ((anmode == ANIM_PERS_WEPLIGHT_IDLE) ||
+      (anmode == ANIM_PERS_Unkn14) ||
+      (anmode == ANIM_PERS_Unkn06))
+        shpak = byte_154F2C[2 * p_thing->SubType + 1];
+    else
+        shpak = byte_154F2C[2 * p_thing->SubType + 0];
+
+    shangl = p_thing->U.UPerson.Shadows[0];
+    strng = p_thing->U.UPerson.Shadows[1];
+
+    draw_person_shadow(p_sspr->X, p_sspr->Y, frm, shpak, shangl, angl, strng);
 }
 
 void draw_vehicle_shadow(ushort veh, ushort sort)

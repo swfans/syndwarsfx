@@ -403,7 +403,7 @@ void draw_drawitem_2(ushort dihead)
           draw_object_face4_reflect(itm->Offset);
           break;
       case DrIT_Unkn19:
-          draw_person_shadow(itm->Offset);
+          draw_sort_sprite_person_shadow(itm->Offset);
           break;
       case DrIT_Unkn20:
           draw_shrapnel(itm->Offset);
