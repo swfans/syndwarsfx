@@ -62,9 +62,6 @@ WINBASEAPI VOID WINAPI GlobalMemoryStatus(LPMEMORYSTATUS);
 
 #endif // defined(WIN32)
 
-#define AVAILABLE_LOW_MEMORY (512*1024)
-#define AVAILABLE_MEMORY (16*1024*1024)
-
 #pragma pack(1)
 
 struct TbMemoryAvailable { // sizeof=20
@@ -423,13 +420,13 @@ TbResult LbMemorySetup(void)
     memset(&memory_arenas, 0, sizeof (memory_arenas));
 
     // Simulated extended memory block
-    memory_blocks[0].Pointer = malloc(AVAILABLE_MEMORY);
-    memory_blocks[0].Size    = AVAILABLE_MEMORY;
+    memory_blocks[0].Pointer = malloc(LB_MEMORY_AVAILABLE * 1024);
+    memory_blocks[0].Size    = LB_MEMORY_AVAILABLE * 1024;
     memory_blocks[0].Selector = 0;
 
     // Simulated conventional memory block
-    memory_blocks[1].Pointer = malloc(AVAILABLE_LOW_MEMORY);
-    memory_blocks[1].Size    = AVAILABLE_LOW_MEMORY;
+    memory_blocks[1].Pointer = malloc(LB_MEMORY_LOW_AVAILABLE * 1024);
+    memory_blocks[1].Size    = LB_MEMORY_LOW_AVAILABLE * 1024;
     memory_blocks[1].Selector = 1;
 
     assert(memory_blocks[0].Pointer != NULL);

@@ -54,6 +54,32 @@ AS_IF([test "$lb_shadow_colour" = "yes"], [
         [Define to 1 if the bflibrary should define and use lbDisplay.ShadowColour property])
 ])
 
+AC_ARG_ENABLE([lb-memory-arenas],
+    AS_HELP_STRING([--disable-lb-memory-arenas],
+        [make the bflibrary to not maintain list of memory blocks and arenas, rely on standard C malloc instead]),
+    [lb_memory_arenas=$enableval], [lb_memory_arenas=yes])
+
+AS_IF([test "$lb_memory_arenas" = "yes"], [
+    AC_DEFINE([MEMORY_ARENAS], 1,
+        [Define to 1 if the bflibrary should maintain list of memory blocks and arenas within the library, rather than relying on standard C memory allocation interface])
+])
+
+AC_ARG_WITH([lb-memory-available],
+    [AS_HELP_STRING([--with-lb-memory-available=N],
+        [set amount of memory available for allocations in above 1MB arena to N KB (default: 16384)])],
+    [lb_memory_available="$withval"], [lb_memory_available=16384])
+
+AC_DEFINE_UNQUOTED([MEMORY_AVAILABLE], [$lb_memory_available],
+    [Set to amount of memory available for allocations in above 1MB arena, in kilobytes; only used in memory arenas mode])
+
+AC_ARG_WITH([lb-memory-low-available],
+    [AS_HELP_STRING([--with-lb-memory-low-available=N],
+        [set amount of memory available for allocations in below 1MB arena to N KB (default: 512)])],
+    [lb_memory_low_available="$withval"], [lb_memory_low_available=512])
+
+AC_DEFINE_UNQUOTED([MEMORY_LOW_AVAILABLE], [$lb_memory_low_available],
+    [Set to amount of memory available for allocations in below 1MB arena, in kilobytes; only used in memory arenas mode])
+
 AC_ARG_ENABLE([lb-mouse-wheel],
     AS_HELP_STRING([--disable-lb-mouse-wheel],
         [make the bflibrary to not define mouse wheel properties within lbDisplay]),

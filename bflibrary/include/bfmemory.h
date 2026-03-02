@@ -26,12 +26,29 @@
 extern "C" {
 #endif
 
-//TODO change to build system param
-// Enable defining list of memory blocks and arenas within the library,
-// rather than relying on standard C memory allocation interface.
-// Using the arenas, basically changes LbMemoryAlloc() into sub-allocator
-// which returns parts of a larger memory area designated for the app.
-#define LB_MEMORY_ARENAS 1
+/*
+ * This memory allocation wrapper can operate in two modes: wrapping the
+ * standard C memory allocation routines, or defining its own memory
+ * arenas and allocating parts of these arenas.
+ *
+ * If memory arenas option is disabled, each allocation call causes
+ * a call to malloc, so is fully is relying on standard C memory allocation
+ * interface provided by the OS.
+ *
+ * If memory arenas option is enabled, list of memory blocks and arenas are
+ * defined and maintained within the library. Depending on implementation,
+ * the underlying storage is either taken by malloc() call, or by other
+ * hardware-specific means. If applicable by hardware, allocation methods then
+ * differ between conventional (below 1MB) and extended (above 1MB) arenas.
+ *
+ * On modern OSes which allow for linear address space for applications, using
+ * the arenas basically changes LbMemoryAlloc() into sub-allocator
+ * which returns parts of a larger memory area designated for the app.
+ * It may still be beneficial to use it though, as it provides less deviation
+ * in allocation time, and less calls to the OS. In case of games, using
+ * this method may result in more predictable frame rate, especially during
+ * first seconds after engine initialization.
+ */
 
 /** Type for storing memory allocation routine
  */
