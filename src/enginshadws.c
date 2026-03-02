@@ -90,7 +90,6 @@ struct ShadowTexture shadowtexture[] = {
   {  0,   0,   0,   0,   0,   0},
 };
 
-extern const ubyte byte_154F2C[32];
 extern const ushort word_154F4C[14];
 
 extern ubyte sprshadow_EE90[24];
@@ -168,7 +167,8 @@ int alt_at_point_under_height(int x, int z, int h)
     return alt_best;
 }
 
-void draw_person_shadow(short scr_x, short scr_y, ushort frm, ushort shpak, ubyte shangl, ubyte angl, short strng)
+void draw_person_shadow(short scr_x, short scr_y, ushort frm,
+  ushort shpak, ubyte shangl, ubyte angl, short strng)
 {
     int ssh_y, ssh_x;
     int sh_x, sh_y;
@@ -243,36 +243,18 @@ void draw_sort_sprite_person_shadow(ushort sspr)
         : : "a" (sspr));
     return;
 #endif
-    struct Thing *p_thing;
-    ushort frm, anmode;
+    struct SortSprite *p_sspr;
     ushort shpak;
     short strng;
-    ubyte shangl, angl;
-
-    struct SortSprite *p_sspr;
+    ubyte shangl;
 
     p_sspr = &game_sort_sprites[sspr];
-    p_thing = (struct Thing *)p_sspr->SrcItem;
 
-    angl = p_thing->U.UObject.Angle;
-    frm = p_thing->Frame - nstart_ani[p_thing->StartFrame + 1 + angl];
-
-    anmode = p_thing->U.UPerson.AnimMode;
-    if ((anmode == ANIM_PERS_WEPHEAVY_IDLE) ||
-      (anmode == ANIM_PERS_WEPHEAVY_Unkn15) ||
-      (anmode == ANIM_PERS_WEPHEAVY_Unkn07))
-        shpak = 12;
-    else if ((anmode == ANIM_PERS_WEPLIGHT_IDLE) ||
-      (anmode == ANIM_PERS_Unkn14) ||
-      (anmode == ANIM_PERS_Unkn06))
-        shpak = byte_154F2C[2 * p_thing->SubType + 1];
-    else
-        shpak = byte_154F2C[2 * p_thing->SubType + 0];
-
-    shangl = p_thing->U.UPerson.Shadows[0];
-    strng = p_thing->U.UPerson.Shadows[1];
-
-    draw_person_shadow(p_sspr->X, p_sspr->Y, frm, shpak, shangl, angl, strng);
+    shpak = p_sspr->Z;
+    shangl = p_sspr->Brightness;
+    strng = p_sspr->Scale;
+    draw_person_shadow(p_sspr->X, p_sspr->Y, p_sspr->Frame,
+      shpak, shangl, p_sspr->Angle, strng);
 }
 
 void draw_vehicle_shadow(ushort veh, ushort sort)

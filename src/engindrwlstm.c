@@ -67,6 +67,8 @@ extern long dword_176CAC;
 extern long dword_176CB0;
 extern long dword_152E4C;
 
+extern const ubyte byte_154F2C[32];
+
 extern struct BulStart bul_starts[4000];
 
 extern short word_1AA5F4;
@@ -329,15 +331,41 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
 void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth)
 {
     struct SortSprite *p_sspr;
+    ushort frm, anmode;
+    ushort shpak;
+    short strng;
+    ubyte shangl, angl;
 
-    p_sspr = draw_item_add_sprite(DrIT_Unkn19, BUCKET_MID + scr_depth);
+    angl = p_thing->U.UObject.Angle;
+    frm = p_thing->Frame - nstart_ani[p_thing->StartFrame + 1 + angl];
+
+    anmode = p_thing->U.UPerson.AnimMode;
+    if ((anmode == ANIM_PERS_WEPHEAVY_IDLE) ||
+      (anmode == ANIM_PERS_WEPHEAVY_Unkn15) ||
+      (anmode == ANIM_PERS_WEPHEAVY_Unkn07))
+        shpak = 12;
+    else if ((anmode == ANIM_PERS_WEPLIGHT_IDLE) ||
+      (anmode == ANIM_PERS_Unkn14) ||
+      (anmode == ANIM_PERS_Unkn06))
+        shpak = byte_154F2C[2 * p_thing->SubType + 1];
+    else
+        shpak = byte_154F2C[2 * p_thing->SubType + 0];
+
+    shangl = p_thing->U.UPerson.Shadows[0];
+    strng = p_thing->U.UPerson.Shadows[1];
+
+    p_sspr = draw_item_add_sprite(DrIT_SPersShdw, BUCKET_MID + scr_depth);
     if (p_sspr == NULL)
         return;
 
     p_sspr->X = scr_x;
     p_sspr->Y = scr_y;
-    p_sspr->Z = 0;
+    p_sspr->Z = shpak;
+    p_sspr->Frame = frm;
     p_sspr->SrcItem = (intptr_t)p_thing;
+    p_sspr->Brightness = shangl;
+    p_sspr->Angle = angl;
+    p_sspr->Scale = strng;
 }
 
 void draw_pers_frame_basic(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)

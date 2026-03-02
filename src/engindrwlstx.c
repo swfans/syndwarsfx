@@ -402,7 +402,7 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn18:
           draw_object_face4_reflect(itm->Offset);
           break;
-      case DrIT_Unkn19:
+      case DrIT_SPersShdw:
           draw_sort_sprite_person_shadow(itm->Offset);
           break;
       case DrIT_Unkn20:
