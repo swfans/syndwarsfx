@@ -43,6 +43,7 @@
 #include "render_gpoly.h"
 #include "thing.h"
 #include "swlog.h"
+#include "vehicle.h"
 /******************************************************************************/
 struct ShadowTexture {
     ushort Width;
@@ -335,21 +336,14 @@ ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1, struct SortMapPoint *p
     return face;
 }
 
-void draw_vehicle_shadow(ushort veh, ushort sort)
+void get_vehicle_shadow_bound_points(struct SortMapPoint *p_cor1,
+  struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
+  struct SortMapPoint *p_cor4, const struct SortMapPoint *p_tngcor,
+  const struct ShadowTexture *p_shtextr, short matx, ubyte alt_under_real_y)
 {
     struct M31 vec_inp;
     struct M31 vec_rot;
-    struct Thing *p_vehicle;
-    struct ShadowTexture *p_shtextr;
     int shd_w, shd_l;
-    struct SortMapPoint cor1, cor2, cor3, cor4;
-    short matx;
-
-    p_vehicle = &things[veh];
-    matx = p_vehicle->U.UVehicle.MatrixIndex;
-    p_shtextr = &shadowtexture[p_vehicle->StartFrame];
-    if (p_shtextr->Width == 0)
-        return;
 
     shd_w = p_shtextr->Width;
     shd_l = p_shtextr->Length;
@@ -359,44 +353,76 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     vec_inp.R[1] = 0;
     assert(matx < next_local_mat);
     matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    cor1.X = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    cor1.Z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    p_cor1->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
+    p_cor1->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
 
     vec_inp.R[1] = 0;
     vec_inp.R[0] = shd_w;
     vec_inp.R[2] = -shd_l;
     assert(matx < next_local_mat);
     matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    cor2.X = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    cor2.Z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    p_cor2->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
+    p_cor2->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
 
     vec_inp.R[0] = p_shtextr->Width;
     vec_inp.R[1] = 0;
     vec_inp.R[2] = shd_l;
     assert(matx < next_local_mat);
     matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    cor3.X = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    cor3.Z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    p_cor3->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
+    p_cor3->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
 
     vec_inp.R[0] = -p_shtextr->Width;
     vec_inp.R[1] = 0;
     vec_inp.R[2] = shd_l;
     assert(matx < next_local_mat);
     matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    cor4.X = (p_vehicle->X >> 8) - engn_xc + (vec_rot.R[0] >> 15);
-    cor4.Z = (p_vehicle->Z >> 8) - engn_zc + (vec_rot.R[2] >> 15);
+    p_cor4->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
+    p_cor4->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
 
-    if (p_vehicle->SubType == 40) {
-        cor1.Y = alt_at_point_under_height(engn_xc + cor1.X, engn_zc + cor1.Z, p_vehicle->Y) >> 8;
-        cor2.Y = alt_at_point_under_height(engn_xc + cor2.X, engn_zc + cor2.Z, p_vehicle->Y) >> 8;
-        cor3.Y = alt_at_point_under_height(engn_xc + cor3.X, engn_zc + cor3.Z, p_vehicle->Y) >> 8;
-        cor4.Y = alt_at_point_under_height(engn_xc + cor4.X, engn_zc + cor4.Z, p_vehicle->Y) >> 8;
+    if (alt_under_real_y) {
+        p_cor1->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
+          engn_xc + p_cor1->X, engn_zc + p_cor1->Z,
+          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
+        p_cor2->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
+          engn_xc + p_cor2->X, engn_zc + p_cor2->Z,
+          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
+        p_cor3->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
+          engn_xc + p_cor3->X, engn_zc + p_cor3->Z,
+          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
+        p_cor4->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
+          engn_xc + p_cor4->X, engn_zc + p_cor4->Z,
+          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
     } else {
-        cor1.Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor1.X, engn_zc + cor1.Z));
-        cor2.Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor2.X, engn_zc + cor2.Z));
-        cor3.Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor3.X, engn_zc + cor3.Z));
-        cor4.Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + cor4.X, engn_zc + cor4.Z));
+        p_cor1->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor1->X, engn_zc + p_cor1->Z));
+        p_cor2->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor2->X, engn_zc + p_cor2->Z));
+        p_cor3->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor3->X, engn_zc + p_cor3->Z));
+        p_cor4->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor4->X, engn_zc + p_cor4->Z));
     }
+}
+
+void draw_vehicle_shadow(ushort veh, ushort sort)
+{
+    struct SortMapPoint tngcor;
+    struct SortMapPoint cor1, cor2, cor3, cor4;
+    struct Thing *p_vehicle;
+    struct ShadowTexture *p_shtextr;
+    short matx;
+    ubyte alt_under_real_y;
+
+    p_vehicle = &things[veh];
+    p_shtextr = &shadowtexture[p_vehicle->StartFrame];
+    if (p_shtextr->Width == 0)
+        return;
+
+    matx = p_vehicle->U.UVehicle.MatrixIndex;
+    tngcor.X = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
+    tngcor.Y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
+    tngcor.Z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
+    alt_under_real_y = (p_vehicle->SubType == SubTT_VEH_GROUND);
+
+    get_vehicle_shadow_bound_points(&cor1, &cor2, &cor3, &cor4,
+      &tngcor, p_shtextr, matx, alt_under_real_y);
 
     draw_shadow_at_coords(&cor1, &cor2, &cor3, &cor4, p_shtextr, sort);
 }
