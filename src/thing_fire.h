@@ -32,6 +32,7 @@ struct SimpleThing;
 extern "C" {
 #endif
 /******************************************************************************/
+void FIRE_new(int x, int y, int z, ubyte type);
 
 void set_static_on_fire(struct SimpleThing *p_static);
 

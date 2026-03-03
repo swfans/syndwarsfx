@@ -24,7 +24,6 @@
 #include "bfmemut.h"
 #include "bfutility.h"
 
-#include "bigmap.h"
 #include "bmbang.h"
 #include "enginbckt.h"
 #include "engincam.h"
@@ -34,10 +33,10 @@
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "frame_sprani.h"
+
+#include "bigmap.h"
 #include "scanner.h"
-#include "sound.h"
-#include "swlog.h"
-#include "thing.h"
+#include "thing_fire.h"
 /******************************************************************************/
 #pragma pack(1)
 
@@ -66,7 +65,6 @@ extern s32 dword_1AA5DC;
 extern s32 dword_1AA5E0;
 extern s32 dword_1AA5E4;
 
-extern ushort word_1E08B8;
 extern s32 dword_1E08BC;
 
 /******************************************************************************/
@@ -91,21 +89,6 @@ void init_free_explode_faces(void)
 
     dont_bother_with_explode_faces = 1;
 #endif
-}
-
-void FIRE_add_flame(ThingIdx firetng, ushort fflame)
-{
-    struct SimpleThing *p_fire;
-    struct FireFlame *p_fflame;
-
-    if (fflame == 0) {
-        return;
-    }
-    p_fire = &sthings[firetng];
-    p_fflame = &FIRE_flame[fflame];
-
-    p_fflame->next = p_fire->U.UFire.flame;
-    p_fire->U.UFire.flame = fflame;
 }
 
 ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangemsk, ushort fbig, ushort ftype, ushort count)
@@ -190,267 +173,6 @@ ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangems
         p_fflame->fcount = LbRandomAnyShort() & 0x7F;
     }
     return fflame;
-}
-
-void FIRE_new(int x, int y, int z, ubyte type)
-{
-#if 0
-    asm volatile ("call ASM_FIRE_new\n"
-        : : "a" (x), "d" (y), "b" (z), "c" (type));
-#endif
-    struct SimpleThing *p_fire;
-    struct MyMapElement *p_mapel;
-    int cor_x, cor_z;
-    int cor_y;
-    ThingIdx firetng;
-    ushort fflame;
-    short tile_x, tile_z;
-    short sib_tl_x, sib_tl_z;
-    ubyte flame_count;
-
-    if ((PRCCOORD_TO_MAPCOORD(x) >= MAP_COORD_WIDTH)
-      || (PRCCOORD_TO_MAPCOORD(z) >= MAP_COORD_HEIGHT)) {
-        return;
-    }
-    if (word_1E08B8 == 0) {
-        return;
-    }
-
-    firetng = get_new_sthing();
-    if (firetng == 0) {
-        return;
-    }
-
-    p_fire = &sthings[firetng];
-    p_fire->Type = SmTT_FIRE;
-    p_fire->U.UFire.flame = 0;
-    p_fire->Z = z;
-    p_fire->Y = y;
-    p_fire->X = x;
-    play_dist_ssample(p_fire, 0x10u, 0x7Fu, 0x40u, 100, -1, 1);
-
-    cor_x = x >> 8;
-    cor_z = z >> 8;
-    cor_y = y;
-
-    switch (type)
-    {
-    case 1u:
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 18 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 4, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 24 + (LbRandomAnyShort() & 0xF);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 5, flame_count);
-        FIRE_add_flame(firetng, fflame);
-        break;
-    case 2u:
-        flame_count = 2;
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 30, 10, flame_count);
-        FIRE_add_flame(firetng, fflame);
-        break;
-    case 3u:
-        tile_z = cor_z >> 8;
-        tile_x = cor_x >> 8;
-        p_mapel = &game_my_big_map[128 * (z >> 16) + (cor_x >> 8)];
-        p_mapel->Flags2 &= ~0x80;
-
-        sib_tl_z = tile_z - 1;
-        sib_tl_x = tile_x - 1;
-        if ( sib_tl_x <= 0x7F && sib_tl_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0x70;
-        }
-        sib_tl_z = tile_z - 1;
-        if ( tile_x <= 0x7F && sib_tl_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[128 * sib_tl_z + tile_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0x50;
-        }
-        sib_tl_x = tile_x + 1;
-        sib_tl_z = tile_z - 1;
-        if ( (tile_x + 1) >= 0 && sib_tl_x <= 127 && sib_tl_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0x30;
-        }
-        sib_tl_x = tile_x + 1;
-        if ( (tile_x + 1) >= 0 && sib_tl_x <= 127 && tile_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[128 * tile_z + sib_tl_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0x10;
-        }
-        sib_tl_z = tile_z + 1;
-        sib_tl_x = tile_x + 1;
-        if ( (tile_x + 1) >= 0 && sib_tl_x <= 127 && sib_tl_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0xF0;
-        }
-        sib_tl_z = tile_z + 1;
-        if ( tile_x <= 0x7F && sib_tl_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[128 * sib_tl_z + tile_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0xD0;
-        }
-        sib_tl_z = tile_z + 1;
-        sib_tl_x = tile_x - 1;
-        if ( (tile_x - 1) >= 0 && sib_tl_x <= 127 && sib_tl_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[128 * sib_tl_z + sib_tl_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0xB0;
-        }
-        sib_tl_x = tile_x - 1;
-        if ( sib_tl_x <= 0x7F && tile_z <= 0x7F )
-        {
-          p_mapel = &game_my_big_map[(tile_z << 7) + sib_tl_x];
-          p_mapel->Flags2 &= 0xF;
-          p_mapel->Flags2 |= 0x90;
-        }
-
-        flame_count = 43 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 6, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 43 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 6, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 43 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 100, 6, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 43 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 7, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 43 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 7, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 43 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 30, 7, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 53 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 8, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 53 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 8, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 53 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0xFF, 100, 8, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 53 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 9, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 53 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 9, flame_count);
-        FIRE_add_flame(firetng, fflame);
-
-        flame_count = 53 - (LbRandomAnyShort() & 3);
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x1FF, 30, 9, flame_count);
-        FIRE_add_flame(firetng, fflame);
-        break;
-    case 4u:
-        flame_count = 6;
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 30, 21, flame_count);
-        FIRE_add_flame(firetng, fflame);
-        goto LABEL_184;
-    case 5u:
-LABEL_184:
-        flame_count = 12;
-        fflame = FIRE_spawn_flame(cor_x, cor_y, cor_z, 0x3F, 30, 21, flame_count);
-        FIRE_add_flame(firetng, fflame);
-        break;
-    default:
-        break;
-    }
-    add_node_sthing(firetng);
 }
 
 static void explode_face_delete(int exface)
@@ -746,13 +468,52 @@ static void animate_explode_face3_tri(int exface)
     explode_face_delete(exface);
 }
 
-static void animate_explode_face3_quad(int exface)
+static void explode_face3_quad_move_above_ground(struct ExplodeFace3 *p_exface)
 {
-    struct ExplodeFace3 *p_exface;
-    struct ExplodeFace3 *p_neface;
     int rndv;
-    int cor_x, cor_y, cor_z;
-    int dist_x, dist_y, dist_z;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y0 > rndv)
+    {
+        p_exface->X0 -= p_exface->DX;
+        p_exface->Z0 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y0 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y1 > rndv)
+    {
+        p_exface->X1 -= p_exface->DX;
+        p_exface->Z1 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y1 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y2 > rndv)
+    {
+        p_exface->X2 -= p_exface->DX;
+        p_exface->Z2 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 0x7;
+    p_exface->Y2 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y3 > rndv)
+    {
+        p_exface->X3 -= p_exface->DX;
+        p_exface->Z3 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y3 += p_exface->DY - rndv;
+    if (p_exface->DY > -120)
+        p_exface->DY -= 3;
+}
+
+static void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
+{
+    struct ExplodeFace3 *p_neface;
     int avg_x0, avg_y0, avg_z0;
     int avg_x1, avg_y1, avg_z1;
     int avg_x2, avg_y2, avg_z2;
@@ -760,91 +521,6 @@ static void animate_explode_face3_quad(int exface)
     int avg_x4, avg_y4, avg_z4;
     int eface;
 
-    p_exface = &ex_faces[exface];
-
-    cor_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
-    if (p_exface->Y0 >= cor_y
-        && p_exface->Y1 >= cor_y
-        && p_exface->Y2 >= cor_y
-        && p_exface->Y3 >= cor_y)
-    {
-        rndv = LbRandomAnyShort() & 0x3FF;
-        if (p_exface->Y0 > rndv)
-        {
-            p_exface->X0 -= p_exface->DX;
-            p_exface->Z0 -= p_exface->DZ;
-        }
-        rndv = LbRandomAnyShort() & 7;
-        p_exface->Y0 += p_exface->DY - rndv;
-
-        rndv = LbRandomAnyShort() & 0x3FF;
-        if (p_exface->Y1 > rndv)
-        {
-            p_exface->X1 -= p_exface->DX;
-            p_exface->Z1 -= p_exface->DZ;
-        }
-        rndv = LbRandomAnyShort() & 7;
-        p_exface->Y1 += p_exface->DY - rndv;
-
-        rndv = LbRandomAnyShort() & 0x3FF;
-        if (p_exface->Y2 > rndv)
-        {
-            p_exface->X2 -= p_exface->DX;
-            p_exface->Z2 -= p_exface->DZ;
-        }
-        rndv = LbRandomAnyShort() & 0x7;
-        p_exface->Y2 += p_exface->DY - rndv;
-
-        rndv = LbRandomAnyShort() & 0x3FF;
-        if (p_exface->Y3 > rndv)
-        {
-            p_exface->X3 -= p_exface->DX;
-            p_exface->Z3 -= p_exface->DZ;
-        }
-        rndv = LbRandomAnyShort() & 7;
-        p_exface->Y3 += p_exface->DY - rndv;
-        if (p_exface->DY > -120)
-            p_exface->DY -= 3;
-        return;
-    }
-    dist_x = abs(p_exface->X2 - p_exface->X0) + abs(p_exface->X1 - p_exface->X0);
-    dist_y = abs(p_exface->Y2 - p_exface->Y0) + abs(p_exface->Y1 - p_exface->Y0);
-    dist_z = abs(p_exface->Z2 - p_exface->Z0) + abs(p_exface->Z1 - p_exface->Z0);
-    if ((dist_y + dist_x + dist_z) < minimum_explode_size)
-    {
-        int base_x, base_z;
-        int tile_x, tile_z;
-
-        p_exface->Timer = 0;
-        explode_face_delete(exface);
-
-        rndv = LbRandomAnyShort() & 0x1FF;
-        base_x = rndv + p_exface->X0 - 255;
-        rndv = LbRandomAnyShort() & 0x1FF;
-        base_z = p_exface->Z0 + rndv - 255;
-        bang_new4(base_x << 8, 32 * cor_y, base_z << 8, 65);
-
-        cor_x = base_x - 16 * p_exface->DX;
-        cor_z = base_z - 16 * p_exface->DZ;
-        tile_x = cor_x >> 8;
-        tile_z = cor_z >> 8;
-        if (tile_x >= 0 && tile_x < 128)
-        {
-          if (tile_z >= 0 && tile_z < 128)
-          {
-              if ((minimum_explode_and & LbRandomAnyShort()) == 0)
-              {
-                  quick_crater(tile_x, tile_z, minimum_explode_depth);
-                  bang_new4(cor_x << 8, 32 * cor_y, cor_z << 8, 20);
-                  if ((LbRandomAnyShort() & 7) == 0)
-                  {
-                      FIRE_new(cor_x << 8, cor_y, cor_z << 8, 3u);
-                  }
-              }
-          }
-        }
-        return;
-    }
     avg_y0 = (p_exface->Y1 + p_exface->Y0) >> 1;
     avg_z0 = (p_exface->Z1 + p_exface->Z0) >> 1;
     avg_x1 = (p_exface->X3 + p_exface->X1) >> 1;
@@ -976,6 +652,68 @@ static void animate_explode_face3_quad(int exface)
         p_neface->DZ = p_exface->DZ;
         p_neface->Timer = 1;
     }
+}
+
+static void animate_explode_face3_quad(int exface)
+{
+    struct ExplodeFace3 *p_exface;
+    int cor_x, cor_y, cor_z;
+    int dist_x, dist_y, dist_z;
+
+    p_exface = &ex_faces[exface];
+
+    cor_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
+    if (p_exface->Y0 >= cor_y &&
+      p_exface->Y1 >= cor_y &&
+      p_exface->Y2 >= cor_y &&
+      p_exface->Y3 >= cor_y)
+    {
+        explode_face3_quad_move_above_ground(p_exface);
+        return;
+    }
+
+    dist_x = abs(p_exface->X2 - p_exface->X0) + abs(p_exface->X1 - p_exface->X0);
+    dist_y = abs(p_exface->Y2 - p_exface->Y0) + abs(p_exface->Y1 - p_exface->Y0);
+    dist_z = abs(p_exface->Z2 - p_exface->Z0) + abs(p_exface->Z1 - p_exface->Z0);
+    if ((dist_y + dist_x + dist_z) < minimum_explode_size)
+    {
+        int base_x, base_z;
+        int tile_x, tile_z;
+        int rndv;
+
+        p_exface->Timer = 0;
+        explode_face_delete(exface);
+
+        rndv = LbRandomAnyShort() & 0x1FF;
+        base_x = rndv + p_exface->X0 - 255;
+        rndv = LbRandomAnyShort() & 0x1FF;
+        base_z = p_exface->Z0 + rndv - 255;
+        bang_new4(base_x << 8, 32 * cor_y, base_z << 8, 65);
+
+        cor_x = base_x - 16 * p_exface->DX;
+        cor_z = base_z - 16 * p_exface->DZ;
+        tile_x = cor_x >> 8;
+        tile_z = cor_z >> 8;
+        if (tile_x >= 0 && tile_x < 128)
+        {
+          if (tile_z >= 0 && tile_z < 128)
+          {
+              if ((minimum_explode_and & LbRandomAnyShort()) == 0)
+              {
+                  quick_crater(tile_x, tile_z, minimum_explode_depth);
+                  bang_new4(cor_x << 8, 32 * cor_y, cor_z << 8, 20);
+                  if ((LbRandomAnyShort() & 7) == 0)
+                  {
+                      FIRE_new(cor_x << 8, cor_y, cor_z << 8, 3u);
+                  }
+              }
+          }
+        }
+        return;
+    }
+
+    explode_face3_quad_divide_face(p_exface);
+
     p_exface->Timer = 0;
     explode_face_delete(exface);
 }

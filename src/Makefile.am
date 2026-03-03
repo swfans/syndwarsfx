@@ -39,6 +39,8 @@ syndwarsfx_SOURCES = \
 	../swrendersoft/include/enginpritxtr.h \
 	../swrendersoft/src/enginsngobjs.c \
 	../swrendersoft/include/enginsngobjs.h \
+	../swrendersoft/src/enginshrapn.c \
+	../swrendersoft/include/enginshrapn.h \
 	../swrendersoft/src/engintrns.c \
 	../swrendersoft/include/engintrns.h \
 	../swrendersoft/src/engintxtrmap.c \
@@ -111,8 +113,6 @@ syndwarsfx_SOURCES = \
 	engindrwlstx_tng.h \
 	enginfexpl.c \
 	enginfexpl.h \
-	enginshrapn.c \
-	enginshrapn.h \
 	enginshadws.c \
 	enginshadws.h \
 	engintext.c \
