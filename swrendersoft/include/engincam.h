@@ -37,6 +37,9 @@ extern s32 engn_anglexz;
 
 extern s32 engn_x_vel;
 extern s32 engn_y_vel;
+
+extern ushort overall_scale;
+extern ubyte game_perspective;
 /******************************************************************************/
 
 void camera_setup_view(int *p_pos_beg_x, int *p_pos_beg_z,

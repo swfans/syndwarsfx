@@ -24,9 +24,9 @@
 #include "bfscreen.h"
 
 #include "frame_sprani.h"
+#include "engincam.h"
 #include "engindrwlstx.h"
 
-#include "engindrwlstm.h"
 #include "guiboxes.h"
 #include "player.h"
 #include "swlog.h"

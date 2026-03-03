@@ -27,7 +27,7 @@
 
 #include "campaign.h"
 #include "command.h"
-#include "engindrwlstm.h"
+#include "engincam.h"
 #include "engindrwlstx.h"
 #include "enginfloor.h"
 #include "enginlights.h"

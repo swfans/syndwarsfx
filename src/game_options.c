@@ -21,7 +21,7 @@
 #include <assert.h>
 
 #include "display.h"
-#include "engindrwlstm.h"
+#include "engincam.h"
 #include "engindrwlstx.h"
 #include "femain.h"
 #include "game.h"

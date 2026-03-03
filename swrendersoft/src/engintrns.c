@@ -19,7 +19,6 @@
 #include "engintrns.h"
 
 #include "engincam.h"
-#include "engindrwlstm.h"
 #include "enginzoom.h"
 /******************************************************************************/
 #define SCREEN_POINT_COORD_MIN (-MAX_SUPPORTED_SCREEN_WIDTH)

@@ -29,8 +29,8 @@
 #include "insspr.h"
 
 #include "drawtext.h"
+#include "engincam.h"
 #include "engincolour.h"
-#include "engindrwlstm.h"
 #include "enginshrapn.h"
 #include "enginzoom.h"
 #include "frame_sprani.h"

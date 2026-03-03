@@ -27,7 +27,7 @@
 #include <stdlib.h>
 
 #include "bfjoyst.h"
-#include "engindrwlstm.h"
+#include "engincam.h"
 #include "femain.h"
 #include "feshared.h"
 #include "guiboxes.h"

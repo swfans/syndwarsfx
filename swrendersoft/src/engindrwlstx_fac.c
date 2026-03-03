@@ -24,6 +24,7 @@
 #include "bfgentab.h"
 #include "poly.h"
 
+#include "engincam.h"
 #include "engincolour.h"
 #include "enginfexpl.h"
 #include "enginfloor.h"
@@ -36,8 +37,6 @@
 #include "engintxtrmap.h"
 #include "render_gpoly.h"
 #include "privrdlog.h"
-
-#include "engindrwlstm.h"
 /******************************************************************************/
 #define SINGLE_TEXTURE_DIM 32
 
