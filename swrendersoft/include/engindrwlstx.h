@@ -62,6 +62,17 @@ struct SortLine {
     ubyte Flags;
 };
 
+/** Map coordinates storage used when handling drawlists.
+ *
+ * The game should have its own types for map coordinates, this one is for
+ * the rendering only.
+ */
+struct SortMapPoint {
+    s32 X;
+    s32 Y;
+    s32 Z;
+};
+
 struct TbSprite;
 struct PolyPoint;
 

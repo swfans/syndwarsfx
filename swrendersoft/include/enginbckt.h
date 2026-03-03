@@ -55,7 +55,7 @@ enum DrawItemType {
     DrIT_Unkn9 = 0x9,
     DrIT_Unkn10 = 0xA,
     DrIT_Unkn11 = 0xB,
-    DrIT_Unkn12 = 0xC,
+    DrIT_SpObFace4 = 0xC,
     /** Frame of sprite elements with version selections, representing a person thing. */
     DrIT_SFrmPersV = 0xD,
     DrIT_Unkn14 = 0xE,

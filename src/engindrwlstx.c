@@ -309,7 +309,7 @@ void draw_drawitem_1(ushort dihead)
       case DrIT_Unkn11:
           draw_sort_line1a(itm->Offset);
           break;
-      case DrIT_Unkn12:
+      case DrIT_SpObFace4:
           draw_special_object_face4(itm->Offset);
           break;
       case DrIT_SFrmPersV:
@@ -375,7 +375,7 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn11:
           draw_sort_line1a(itm->Offset);
           break;
-      case DrIT_Unkn12:
+      case DrIT_SpObFace4:
           draw_special_object_face4(itm->Offset);
           break;
       case DrIT_SFrmPersV:

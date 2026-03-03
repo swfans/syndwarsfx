@@ -206,7 +206,6 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
     ushort sline;
 
     transform_shpoint(&sp1, x1, 8 * y1 - 8 * engn_yc, z1);
-
     transform_shpoint(&sp2, x2, 8 * y2 - 8 * engn_yc, z2);
 
     if ((sp2.Flags & sp1.Flags & 0xF) != 0) {
@@ -232,10 +231,8 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
     return sline;
 }
 
-void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
+ushort draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
 {
-    struct ShEnginePoint sp1, sp3;
-    struct SortLine *p_sline;
     int dt_x, dt_y, dt_z;
     int dist;
     int x3, y3, z3;
@@ -251,25 +248,7 @@ void draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int le
     z3 = z1 + dt_z * len / dist;
     x3 = x1 + dt_x * len / dist;
 
-    transform_shpoint(&sp1, x1, 8 * y1 - 8 * engn_yc, z1);
-    transform_shpoint(&sp3, x3, 8 * y3 - 8 * engn_yc, z3);
-
-    if ((sp3.Flags & sp1.Flags & 0xF) != 0) {
-        return;
-    }
-
-    p_sline = draw_item_add_line(DrIT_Unkn11, BUCKET_MID + sp1.Depth);
-    if (p_sline == NULL) {
-        return;
-    }
-
-    p_sline->Shade = 32;
-    p_sline->Flags = 0;
-    p_sline->X1 = sp1.X;
-    p_sline->Y1 = sp1.Y;
-    p_sline->X2 = sp3.X;
-    p_sline->Y2 = sp3.Y;
-    p_sline->Col = col;
+    return draw_mapwho_vect(x1, y1, z1, x3, y3, z3, col);
 }
 
 void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing)
@@ -798,7 +777,7 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
     word_1AA5FA = y2 - scal_dx2;
     word_1AA5F4 = x2 + scal_dy2;
 
-    draw_item_add(DrIT_Unkn12, face, sort_key);
+    draw_item_add(DrIT_SpObFace4, face, sort_key);
     return p_face4;
 }
 
@@ -1077,7 +1056,7 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
     p_face4->Flags = 0x08 | 0x01;
     p_face4->GFlags = 1;
 
-    draw_item_add(DrIT_Unkn12, face, bckt);
+    draw_item_add(DrIT_SpObFace4, face, bckt);
 
     return p_face4;
 }
@@ -2103,7 +2082,7 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
         p_specpt1->X = nxt_x;
         p_specpt1->Y = nxt_y;
 
-        if (!draw_item_add(DrIT_Unkn12, face, sort_key))
+        if (!draw_item_add(DrIT_SpObFace4, face, sort_key))
             break;
 
         cur_x = nxt_x;
@@ -2180,6 +2159,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         sin_angl = lbSinTable[(half_angl & 0x7FF)];
         hlf_x = pp_X + ((scrad1 * cos_angl) >> 16);
         hlf_y = pp_Y + ((scrad1 * sin_angl) >> 16);
+
         cos_angl = lbSinTable[(angle & 0x7FF) + LbFPMath_PI/2];
         sin_angl = lbSinTable[angle & 0x7FF];
         nxt_x = pp_X + ((scrad1 * cos_angl) >> 16);
@@ -2215,7 +2195,7 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         p_specpt1->X = nxt_x;
         p_specpt1->Y = nxt_y;
 
-        if (!draw_item_add(DrIT_Unkn12, face, bckt))
+        if (!draw_item_add(DrIT_SpObFace4, face, bckt))
             break;
 
         cur_x = nxt_x;
