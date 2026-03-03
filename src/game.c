@@ -3625,6 +3625,75 @@ void compute_scanner_zoom(void)
     SCANNER_set_zoom(zoom);
 }
 
+void calc_mouse_pos(void)
+{
+    int cor_dx, cor_dy, cor_dz;
+    int fctr_xz;
+    int chk_x, chk_y, chk_z;
+    short mag;
+    short i;
+
+    cor_dy = (dword_176D18 >> 8);
+    fctr_xz = (dword_176D1C >> 8);
+    cor_dx = (fctr_xz * dword_176D10) >> 16;
+    cor_dz = (fctr_xz * dword_176D14) >> 16;
+
+    chk_x = 200 * cor_dx + 16 * mouse_map_x;
+    chk_y = 200 * cor_dy;
+    chk_z = 200 * cor_dz + 16 * mouse_map_z;
+
+    mag = 0;
+    for (i = 0; i < 400; i++)
+    {
+        if ( chk_y >> 4 < PRCCOORD_TO_YCOORD(alt_at_point(chk_x >> 4, chk_z >> 4)))
+            mag = i;
+        chk_x -= cor_dx;
+        chk_y -= cor_dy;
+        chk_z -= cor_dz;
+    }
+
+    if (mag != 0)
+    {
+        mag -= 200;
+        mouse_map_x -= (mag * cor_dx) >> 4;
+        mouse_map_z -= (mag * cor_dz) >> 4;
+        mouse_map_y = alt_at_point(mouse_map_x, mouse_map_z) >> 8;
+    }
+}
+
+void process_engine_unk2(void)
+{
+    short msx, msy;
+    int offs_y;
+    int scr_x, scr_y;
+    int map_dxc, map_dzc;
+
+    if (ingame.DisplayMode == DpM_ENGINEPLY)
+      offs_y = overall_scale * engn_yc >> 8;
+    else
+      offs_y = 0;
+    msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
+    msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+    if (lbDisplay.GraphicsScreenHeight < 400)
+    {
+        scr_y = (msy >> 1) - offs_y;
+        scr_x = msx >> 1;
+    }
+    else
+    {
+        scr_y = msy - offs_y;
+        scr_x = msx;
+    }
+
+    transform_screen_to_map_isometric(&map_dxc, &map_dzc, scr_x, scr_y);
+
+    mouse_map_x = engn_xc + map_dxc;
+    mouse_map_z = engn_zc + map_dzc;
+    if (ingame.DisplayMode == DpM_ENGINEPLY)
+        calc_mouse_pos();
+}
+
 void show_game_engine(void)
 {
     PlayerInfo *p_locplayer;
@@ -3638,7 +3707,6 @@ void show_game_engine(void)
     process_engine_unk1();
     process_engine_unk2();
     process_engine_unk3();
-    setup_engine_nullsub4();
 }
 
 void gproc3_unknsub2(void)

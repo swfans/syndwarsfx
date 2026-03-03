@@ -101,9 +101,9 @@ void transform_shpoint_fpv(struct ShEnginePoint *p_sp, int dxc, int dyc, int dzc
  */
 int transform_shpoint_y(int dxc, int dyc, int dzc);
 
+void transform_screen_to_map_isometric(int *dxc, int *dzc, int scr_x, int scr_y);
+
 void process_engine_unk1(void);
-void process_engine_unk2(void);
-void setup_engine_nullsub4(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

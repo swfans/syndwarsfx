@@ -18,13 +18,9 @@
 /******************************************************************************/
 #include "engintrns.h"
 
-#include "bigmap.h"
 #include "engincam.h"
 #include "engindrwlstm.h"
 #include "enginzoom.h"
-#include "game.h"
-#include "game_options.h"
-#include "swlog.h"
 /******************************************************************************/
 #define SCREEN_POINT_COORD_MIN (-MAX_SUPPORTED_SCREEN_WIDTH)
 #define SCREEN_POINT_COORD_MAX (2 * MAX_SUPPORTED_SCREEN_WIDTH)
@@ -294,46 +290,6 @@ void process_engine_unk1(void)
     dword_176D1C = lbSinTable[angle + LbFPMath_PI/2];
 }
 
-void setup_engine_nullsub4(void)
-{
-}
-
-void calc_mouse_pos(void)
-{
-    int cor_dx, cor_dy, cor_dz;
-    int fctr_xz;
-    int chk_x, chk_y, chk_z;
-    short mag;
-    short i;
-
-    cor_dy = (dword_176D18 >> 8);
-    fctr_xz = (dword_176D1C >> 8);
-    cor_dx = (fctr_xz * dword_176D10) >> 16;
-    cor_dz = (fctr_xz * dword_176D14) >> 16;
-
-    chk_x = 200 * cor_dx + 16 * mouse_map_x;
-    chk_y = 200 * cor_dy;
-    chk_z = 200 * cor_dz + 16 * mouse_map_z;
-
-    mag = 0;
-    for (i = 0; i < 400; i++)
-    {
-        if ( chk_y >> 4 < PRCCOORD_TO_YCOORD(alt_at_point(chk_x >> 4, chk_z >> 4)))
-            mag = i;
-        chk_x -= cor_dx;
-        chk_y -= cor_dy;
-        chk_z -= cor_dz;
-    }
-
-    if (mag != 0)
-    {
-        mag -= 200;
-        mouse_map_x -= (mag * cor_dx) >> 4;
-        mouse_map_z -= (mag * cor_dz) >> 4;
-        mouse_map_y = alt_at_point(mouse_map_x, mouse_map_z) >> 8;
-    }
-}
-
 void transform_screen_to_map_isometric(int *dxc, int *dzc, int scr_x, int scr_y)
 {
     int fctr_a, fctr_b_part;
@@ -353,40 +309,6 @@ void transform_screen_to_map_isometric(int *dxc, int *dzc, int scr_x, int scr_y)
 
     *dxc =  ((dword_176D14 * fctr_a - dword_176D10 * fctr_b_part) >> 16);
     *dzc = -((dword_176D10 * fctr_a + dword_176D14 * fctr_b_part) >> 16);
-}
-
-void process_engine_unk2(void)
-{
-    short msx, msy;
-    int offs_y;
-    int scr_x, scr_y;
-    int map_dxc, map_dzc;
-
-    if (ingame.DisplayMode == DpM_ENGINEPLY)
-      offs_y = overall_scale * engn_yc >> 8;
-    else
-      offs_y = 0;
-    msx = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-    msy = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-
-    if (lbDisplay.GraphicsScreenHeight < 400)
-    {
-        scr_y = (msy >> 1) - offs_y;
-        scr_x = msx >> 1;
-    }
-    else
-    {
-        scr_y = msy - offs_y;
-        scr_x = msx;
-    }
-
-    transform_screen_to_map_isometric(&map_dxc, &map_dzc, scr_x, scr_y);
-
-    mouse_map_x = engn_xc + map_dxc;
-    mouse_map_z = engn_zc + map_dzc;
-    if (ingame.DisplayMode == DpM_ENGINEPLY)
-        calc_mouse_pos();
-    setup_engine_nullsub4();
 }
 
 /******************************************************************************/
