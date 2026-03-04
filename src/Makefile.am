@@ -24,6 +24,8 @@ syndwarsfx_SOURCES = \
 	../swrendersoft/include/engincam.h \
 	../swrendersoft/src/engincolour.c \
 	../swrendersoft/include/engincolour.h \
+	../swrendersoft/src/enginfexpl.c \
+	../swrendersoft/include/enginfexpl.h \
 	../swrendersoft/src/enginfloor.c \
 	../swrendersoft/include/enginfloor.h \
 	../swrendersoft/src/engindrwlstx_fac.c \
@@ -111,8 +113,6 @@ syndwarsfx_SOURCES = \
 	engindrwlstm.h \
 	engindrwlstx.c \
 	engindrwlstx_tng.h \
-	enginfexpl.c \
-	enginfexpl.h \
 	enginshadws.c \
 	enginshadws.h \
 	engintext.c \
