@@ -4,60 +4,6 @@ bindir = $(prefix)/$(PACKAGE)
 MKW = $(PYTHON) $(top_srcdir)/util/mkwrappers
 
 syndwarsfx_SOURCES = \
-	../swrendersoft/src/app_gengh.c \
-	../swrendersoft/include/app_gentab.h \
-	../swrendersoft/src/app_spr_init.c \
-	../swrendersoft/src/ap_gspr_map.c \
-	../swrendersoft/src/ap_spr_smap.c \
-	../swrendersoft/include/app_sprite.h \
-	../swrendersoft/src/app_text_cw.c \
-	../swrendersoft/include/app_text_cw.h \
-	../swrendersoft/src/app_text_sf.c \
-	../swrendersoft/include/app_text_sf.h \
-	../swrendersoft/src/drawshape.c \
-	../swrendersoft/include/drawshape.h \
-	../swrendersoft/src/drawtext.c \
-	../swrendersoft/include/drawtext.h \
-	../swrendersoft/src/enginbckt.c \
-	../swrendersoft/include/enginbckt.h \
-	../swrendersoft/src/engincam.c \
-	../swrendersoft/include/engincam.h \
-	../swrendersoft/src/engincolour.c \
-	../swrendersoft/include/engincolour.h \
-	../swrendersoft/src/enginfexpl.c \
-	../swrendersoft/include/enginfexpl.h \
-	../swrendersoft/src/enginfloor.c \
-	../swrendersoft/include/enginfloor.h \
-	../swrendersoft/src/engindrwlstx_fac.c \
-	../swrendersoft/src/engindrwlstx_spr.c \
-	../swrendersoft/include/engindrwlstx.h \
-	../swrendersoft/src/enginlights.c \
-	../swrendersoft/include/enginlights.h \
-	../swrendersoft/src/enginpeff.c \
-	../swrendersoft/include/enginpeff.h \
-	../swrendersoft/src/enginpriobjs.c \
-	../swrendersoft/include/enginpriobjs.h \
-	../swrendersoft/src/enginpritxtr.c \
-	../swrendersoft/include/enginpritxtr.h \
-	../swrendersoft/src/enginsngobjs.c \
-	../swrendersoft/include/enginsngobjs.h \
-	../swrendersoft/src/enginshrapn.c \
-	../swrendersoft/include/enginshrapn.h \
-	../swrendersoft/src/engintrns.c \
-	../swrendersoft/include/engintrns.h \
-	../swrendersoft/src/engintxtrmap.c \
-	../swrendersoft/include/engintxtrmap.h \
-	../swrendersoft/src/enginprops.c \
-	../swrendersoft/include/enginprops.h \
-	../swrendersoft/src/enginsngtxtr.c \
-	../swrendersoft/include/enginsngtxtr.h \
-	../swrendersoft/src/enginzoom.c \
-	../swrendersoft/include/enginzoom.h \
-	../swrendersoft/src/frame_sprani.c \
-	../swrendersoft/include/frame_sprani.h \
-	../swrendersoft/include/render_gpoly.h \
-	../swrendersoft/src/render_gpoly.c \
-	../swrendersoft/include/privrdlog.h \
 	bflib_snd_mss_s.sx \
 	bflib_vidraw.c \
 	bflib_vidraw.h \
@@ -293,7 +239,7 @@ endif
 nodist_EXTRA_syndwarsfx_SOURCES = dummy.cxx
 
 # Libraries included with the project
-syndwarsfx_PROJECT_LIBS = ../lib/libbullfrog.a ../lib/libbfsound.a
+syndwarsfx_PROJECT_LIBS = ../lib/libbullfrog.a ../lib/libbfsound.a ../lib/libswrender.a
 
 $(syndwarsfx_OBJECTS) $(bin_PROGRAMS): $(syndwarsfx_PROJECT_LIBS)
 
@@ -304,6 +250,9 @@ syndwarsfx_LDADD = \
 	$(MAKE) -C $(<D) DESTDIR="../" prefix="" install
 
 ../lib/libbfsound.a: ../bfsoundlib/libbfsound.a
+	$(MAKE) -C $(<D) DESTDIR="../" prefix="" install
+
+../lib/libswrender.a: ../swrendersoft/libswrender.a
 	$(MAKE) -C $(<D) DESTDIR="../" prefix="" install
 
 $(syndwarsfx_WRAPPERS:.o=.sx): %.sx: $(top_srcdir)/conf/%.conf

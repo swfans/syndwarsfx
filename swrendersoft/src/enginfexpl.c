@@ -31,7 +31,7 @@
 #include "enginshrapn.h"
 #include "engintrns.h"
 #include "frame_sprani.h"
-
+#include "privrdlog.h"
 /******************************************************************************/
 u32 next_ex_face = 1;
 

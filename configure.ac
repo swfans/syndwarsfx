@@ -13,7 +13,7 @@ m4_define([syndwarsfx_version],
 
 AC_INIT([Syndicate Wars Fan Expansion], [syndwarsfx_version], [unavowed@vexillium.org], [syndwarsfx])
 
-AC_CONFIG_SUBDIRS([bflibrary bfsoundlib])
+AC_CONFIG_SUBDIRS([bflibrary bfsoundlib swrendersoft])
 
 AC_CONFIG_SRCDIR([src/main.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -214,6 +214,9 @@ AC_SUBST(BFLIBRARY_CFLAGS, "-I\"\$(top_builddir)/include/bullfrog\"  -I\"\$(top_
 AC_SUBST(BFSOUNDLIB_LIBS, "-L\"\$(top_builddir)/lib\" -lbfsound")
 AC_SUBST(BFSOUNDLIB_CFLAGS, "-I\"\$(top_builddir)/include/bfsound\"")
 
+AC_SUBST(SWRENDERLIB_LIBS, "-L\"\$(top_builddir)/lib\" -lswrender")
+AC_SUBST(SWRENDERLIB_CFLAGS, "-I\"\$(top_builddir)/include/swrender\"")
+
 # Variables
 
 AS_IF([test "$have_darwin" = "no"], [
@@ -252,6 +255,9 @@ LIBS="$LIBS $BFLIBRARY_LIBS"
 
 CFLAGS="$CFLAGS $BFSOUNDLIB_CFLAGS"
 LIBS="$LIBS $BFSOUNDLIB_LIBS"
+
+CFLAGS="$CFLAGS $SWRENDERLIB_CFLAGS"
+LIBS="$LIBS $SWRENDERLIB_LIBS"
 
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
