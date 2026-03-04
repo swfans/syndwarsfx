@@ -290,70 +290,91 @@ static void animate_explode_face1_quad(int exface)
     explode_face_point_rotate(&p_exface->X3, &p_exface->Y3, &p_exface->Z3);
 }
 
-static void animate_explode_face3_tri(int exface)
+static void explode_face3_tri_move_above_ground(struct ExplodeFace3 *p_exface)
 {
-    struct ExplodeFace3 *p_exface;
-    struct ExplodeFace3 *p_neface;
     int rndv;
-    int cor_x, cor_y, cor_z;
-    int dist_x, dist_y, dist_z;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y0 > rndv)
+    {
+        p_exface->X0 -= p_exface->DX;
+        p_exface->Z0 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y0 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y1 > rndv)
+    {
+        p_exface->X1 -= p_exface->DX;
+        p_exface->Z1 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y1 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y2 > rndv)
+    {
+        p_exface->X2 -= p_exface->DX;
+        p_exface->Z2 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 0x7;
+    p_exface->Y2 += p_exface->DY - rndv;
+
+    if (p_exface->DY > -120)
+        p_exface->DY -= 3;
+}
+
+static void explode_face3_quad_move_above_ground(struct ExplodeFace3 *p_exface)
+{
+    int rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y0 > rndv)
+    {
+        p_exface->X0 -= p_exface->DX;
+        p_exface->Z0 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y0 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y1 > rndv)
+    {
+        p_exface->X1 -= p_exface->DX;
+        p_exface->Z1 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y1 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y2 > rndv)
+    {
+        p_exface->X2 -= p_exface->DX;
+        p_exface->Z2 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 0x7;
+    p_exface->Y2 += p_exface->DY - rndv;
+
+    rndv = LbRandomAnyShort() & 0x3FF;
+    if (p_exface->Y3 > rndv)
+    {
+        p_exface->X3 -= p_exface->DX;
+        p_exface->Z3 -= p_exface->DZ;
+    }
+    rndv = LbRandomAnyShort() & 7;
+    p_exface->Y3 += p_exface->DY - rndv;
+    if (p_exface->DY > -120)
+        p_exface->DY -= 3;
+}
+
+static void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface)
+{
+    struct ExplodeFace3 *p_neface;
     int avg_x0, avg_y0, avg_z0;
     int avg_x1, avg_y1, avg_z1;
     int avg_x2, avg_y2, avg_z2;
     int eface;
-
-    p_exface = &ex_faces[exface];
-
-    cor_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
-    if (p_exface->Y0 >= cor_y && p_exface->Y1 >= cor_y && p_exface->Y2 >= cor_y)
-    {
-        rndv = LbRandomAnyShort() & 0x3FF;
-        if (p_exface->Y0 > rndv)
-        {
-            p_exface->X0 -= p_exface->DX;
-            p_exface->Z0 -= p_exface->DZ;
-        }
-        rndv = LbRandomAnyShort() & 7;
-        p_exface->Y0 += p_exface->DY - rndv;
-
-        rndv = LbRandomAnyShort() & 0x3FF;
-        if (p_exface->Y1 > rndv)
-        {
-            p_exface->X1 -= p_exface->DX;
-            p_exface->Z1 -= p_exface->DZ;
-        }
-        rndv = LbRandomAnyShort() & 7;
-        p_exface->Y1 += p_exface->DY - rndv;
-
-        rndv = LbRandomAnyShort() & 0x3FF;
-        if (p_exface->Y2 > rndv)
-        {
-            p_exface->X2 -= p_exface->DX;
-            p_exface->Z2 -= p_exface->DZ;
-        }
-        rndv = LbRandomAnyShort() & 0x7;
-        p_exface->Y2 += p_exface->DY - rndv;
-
-        if (p_exface->DY > -120)
-            p_exface->DY -= 3;
-        return;
-    }
-
-    dist_x = abs(p_exface->X2 - p_exface->X0) + abs(p_exface->X1 - p_exface->X0);
-    dist_y = abs(p_exface->Y2 - p_exface->Y0) + abs(p_exface->Y1 - p_exface->Y0);
-    dist_z = abs(p_exface->Z2 - p_exface->Z0) + abs(p_exface->Z1 - p_exface->Z0);
-    if ((dist_y + dist_x + dist_z) < 400)
-    {
-        p_exface->Timer = 0;
-        explode_face_delete(exface);
-
-        rndv = LbRandomAnyShort() & 0x3F;
-        cor_z = (p_exface->Z0 + rndv - 31) << 8;
-        rndv = LbRandomAnyShort() & 0x3F;
-        cor_x = (p_exface->X0 + rndv - 31) << 8;
-        bang_new4(cor_x, 32 * cor_y, cor_z, 65);
-        return;
-    }
 
     avg_y0 = (p_exface->Y1 + p_exface->Y0) >> 1;
     avg_z0 = (p_exface->Z1 + p_exface->Z0) >> 1;
@@ -464,51 +485,6 @@ static void animate_explode_face3_tri(int exface)
         p_neface->DZ = p_exface->DZ;
         p_neface->Timer = 1;
     }
-    p_exface->Timer = 0;
-    explode_face_delete(exface);
-}
-
-static void explode_face3_quad_move_above_ground(struct ExplodeFace3 *p_exface)
-{
-    int rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y0 > rndv)
-    {
-        p_exface->X0 -= p_exface->DX;
-        p_exface->Z0 -= p_exface->DZ;
-    }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y0 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y1 > rndv)
-    {
-        p_exface->X1 -= p_exface->DX;
-        p_exface->Z1 -= p_exface->DZ;
-    }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y1 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y2 > rndv)
-    {
-        p_exface->X2 -= p_exface->DX;
-        p_exface->Z2 -= p_exface->DZ;
-    }
-    rndv = LbRandomAnyShort() & 0x7;
-    p_exface->Y2 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y3 > rndv)
-    {
-        p_exface->X3 -= p_exface->DX;
-        p_exface->Z3 -= p_exface->DZ;
-    }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y3 += p_exface->DY - rndv;
-    if (p_exface->DY > -120)
-        p_exface->DY -= 3;
 }
 
 static void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
@@ -654,19 +630,104 @@ static void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
     }
 }
 
-static void animate_explode_face3_quad(int exface)
+static void explode_face3_tri_final_ground_hit(int exface, int cor_gnd_y)
 {
     struct ExplodeFace3 *p_exface;
-    int cor_x, cor_y, cor_z;
+    int cor_x, cor_z;
+    int rndv;
+
+    p_exface = &ex_faces[exface];
+
+    rndv = LbRandomAnyShort() & 0x3F;
+    cor_z = (p_exface->Z0 + rndv - 31) << 8;
+    rndv = LbRandomAnyShort() & 0x3F;
+    cor_x = (p_exface->X0 + rndv - 31) << 8;
+    bang_new4(cor_x, 32 * cor_gnd_y, cor_z, 65);
+}
+
+static void explode_face3_quad_final_ground_hit(int exface, int cor_gnd_y)
+{
+    struct ExplodeFace3 *p_exface;
+    int cor_x, cor_z;
+    int base_x, base_z;
+    short tile_x, tile_z;
+    int rndv;
+
+    p_exface = &ex_faces[exface];
+
+    rndv = LbRandomAnyShort() & 0x1FF;
+    base_x = rndv + p_exface->X0 - 255;
+    rndv = LbRandomAnyShort() & 0x1FF;
+    base_z = p_exface->Z0 + rndv - 255;
+    bang_new4(base_x << 8, 32 * cor_gnd_y, base_z << 8, 65);
+
+    cor_x = base_x - 16 * p_exface->DX;
+    cor_z = base_z - 16 * p_exface->DZ;
+    tile_x = cor_x >> 8;
+    tile_z = cor_z >> 8;
+    if (tile_x >= 0 && tile_x < 128)
+    {
+      if (tile_z >= 0 && tile_z < 128)
+      {
+          if ((minimum_explode_and & LbRandomAnyShort()) == 0)
+          {
+              quick_crater(tile_x, tile_z, minimum_explode_depth);
+              bang_new4(cor_x << 8, 32 * cor_gnd_y, cor_z << 8, 20);
+              if ((LbRandomAnyShort() & 7) == 0)
+              {
+                  FIRE_new(cor_x << 8, cor_gnd_y, cor_z << 8, 3u);
+              }
+          }
+      }
+    }
+}
+
+static void animate_explode_face3_tri(int exface)
+{
+    struct ExplodeFace3 *p_exface;
+    int cor_gnd_y;
     int dist_x, dist_y, dist_z;
 
     p_exface = &ex_faces[exface];
 
-    cor_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
-    if (p_exface->Y0 >= cor_y &&
-      p_exface->Y1 >= cor_y &&
-      p_exface->Y2 >= cor_y &&
-      p_exface->Y3 >= cor_y)
+    cor_gnd_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
+    if (p_exface->Y0 >= cor_gnd_y &&
+      p_exface->Y1 >= cor_gnd_y &&
+      p_exface->Y2 >= cor_gnd_y)
+    {
+        explode_face3_tri_move_above_ground(p_exface);
+        return;
+    }
+
+    dist_x = abs(p_exface->X2 - p_exface->X0) + abs(p_exface->X1 - p_exface->X0);
+    dist_y = abs(p_exface->Y2 - p_exface->Y0) + abs(p_exface->Y1 - p_exface->Y0);
+    dist_z = abs(p_exface->Z2 - p_exface->Z0) + abs(p_exface->Z1 - p_exface->Z0);
+    if ((dist_y + dist_x + dist_z) < 400)
+    {
+        explode_face3_tri_final_ground_hit(exface, cor_gnd_y);
+    }
+    else
+    {
+        explode_face3_tri_divide_face(p_exface);
+    }
+
+    p_exface->Timer = 0;
+    explode_face_delete(exface);
+}
+
+static void animate_explode_face3_quad(int exface)
+{
+    struct ExplodeFace3 *p_exface;
+    int cor_gnd_y;
+    int dist_x, dist_y, dist_z;
+
+    p_exface = &ex_faces[exface];
+
+    cor_gnd_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
+    if (p_exface->Y0 >= cor_gnd_y &&
+      p_exface->Y1 >= cor_gnd_y &&
+      p_exface->Y2 >= cor_gnd_y &&
+      p_exface->Y3 >= cor_gnd_y)
     {
         explode_face3_quad_move_above_ground(p_exface);
         return;
@@ -677,42 +738,12 @@ static void animate_explode_face3_quad(int exface)
     dist_z = abs(p_exface->Z2 - p_exface->Z0) + abs(p_exface->Z1 - p_exface->Z0);
     if ((dist_y + dist_x + dist_z) < minimum_explode_size)
     {
-        int base_x, base_z;
-        int tile_x, tile_z;
-        int rndv;
-
-        p_exface->Timer = 0;
-        explode_face_delete(exface);
-
-        rndv = LbRandomAnyShort() & 0x1FF;
-        base_x = rndv + p_exface->X0 - 255;
-        rndv = LbRandomAnyShort() & 0x1FF;
-        base_z = p_exface->Z0 + rndv - 255;
-        bang_new4(base_x << 8, 32 * cor_y, base_z << 8, 65);
-
-        cor_x = base_x - 16 * p_exface->DX;
-        cor_z = base_z - 16 * p_exface->DZ;
-        tile_x = cor_x >> 8;
-        tile_z = cor_z >> 8;
-        if (tile_x >= 0 && tile_x < 128)
-        {
-          if (tile_z >= 0 && tile_z < 128)
-          {
-              if ((minimum_explode_and & LbRandomAnyShort()) == 0)
-              {
-                  quick_crater(tile_x, tile_z, minimum_explode_depth);
-                  bang_new4(cor_x << 8, 32 * cor_y, cor_z << 8, 20);
-                  if ((LbRandomAnyShort() & 7) == 0)
-                  {
-                      FIRE_new(cor_x << 8, cor_y, cor_z << 8, 3u);
-                  }
-              }
-          }
-        }
-        return;
+        explode_face3_quad_final_ground_hit(exface, cor_gnd_y);
     }
-
-    explode_face3_quad_divide_face(p_exface);
+    else
+    {
+        explode_face3_quad_divide_face(p_exface);
+    }
 
     p_exface->Timer = 0;
     explode_face_delete(exface);
