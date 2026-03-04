@@ -24,6 +24,8 @@
 #define SCREEN_POINT_COORD_MIN (-MAX_SUPPORTED_SCREEN_WIDTH)
 #define SCREEN_POINT_COORD_MAX (2 * MAX_SUPPORTED_SCREEN_WIDTH)
 
+/******************************************************************************/
+
 short angle_between_points(int x1, int z1, int x2, int z2)
 {
   return LbArcTanAngle(x2 - x1, z1 - z2);
@@ -275,7 +277,6 @@ void process_engine_unk1(void)
     int angle;
 
     dword_176D4C = 0;
-    dword_176D64 = -70;
     dword_176D3C = vec_window_width / 2;
     dword_176D40 = vec_window_height / 2;
     engn_anglexz += cam_rotation_velocity;

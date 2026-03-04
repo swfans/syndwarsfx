@@ -24,6 +24,8 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
+s32 engn_anglexz = 0;
+
 extern long dword_176D70;
 extern long dword_176D74;
 extern long dword_176D78;

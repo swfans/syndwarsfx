@@ -62,6 +62,8 @@
 .global EXPORT_SYMBOL(people_frames);	/* 0x153D5C */
 .global EXPORT_SYMBOL(follow_dist);	/* 0x153398 */
 
+.global EXPORT_SYMBOL(engn_anglexz);	/* 0x176D58 */
+
 .global EXPORT_SYMBOL(tmaps_extra_buf);	/* 0x1810D1 */
 .global EXPORT_SYMBOL(tmaps_extra_len);	/* 0x1810D5 */
 
@@ -179136,12 +179138,7 @@ GLOBAL (engn_yc)
 		.long	0x0
 GLOBAL (cam_rotation_velocity)	/* 0x176D54 */
 		.long	0x0
-GLOBAL (engn_anglexz)	/* 0x176D58 */
-		.fill   0xc
-GLOBAL (dword_176D64)	/* 0x176D64 */
-		.long	0x0
-GLOBAL (dword_176D68)	/* 0x176D68 */
-		.long	0x0
+
 data_176d6c:
 		.long	0x0
 GLOBAL (dword_176D70)	/* 0x176D70 */

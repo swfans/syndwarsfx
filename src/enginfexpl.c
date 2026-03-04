@@ -24,10 +24,8 @@
 #include "bfmemut.h"
 #include "bfutility.h"
 
-#include "bmbang.h"
 #include "enginbckt.h"
 #include "engincam.h"
-#include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "enginprops.h"
 #include "enginshrapn.h"
@@ -38,7 +36,6 @@
 u32 next_ex_face = 1;
 
 extern ushort word_1AA5CC;
-
 
 extern s32 dword_1AA5D8;
 extern s32 dword_1AA5DC;
@@ -518,7 +515,7 @@ void draw_explode_type1(ushort exface, ushort npoints)
     if ((flags_all & 0xF) != 0)
         return;
 
-    dword_176D68++;
+    stat_drawlist_faces++;
     draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
 }
 
@@ -594,7 +591,7 @@ void draw_explode_type3(ushort exface, ushort npoints)
     if ((flags_all & 0xF) != 0)
         return;
 
-    dword_176D68++;
+    stat_drawlist_faces++;
     draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
 }
 
@@ -670,7 +667,7 @@ void draw_explode_type5(ushort exface, ushort npoints)
     if ((flags_all & 0xF) != 0)
         return;
 
-    dword_176D68++;
+    stat_drawlist_faces++;
     draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
 }
 

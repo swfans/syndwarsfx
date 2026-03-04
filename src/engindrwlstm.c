@@ -334,8 +334,9 @@ void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth
     strng = p_thing->U.UPerson.Shadows[1];
 
     p_sspr = draw_item_add_sprite(DrIT_SPersShdw, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL)
+    if (p_sspr == NULL) {
         return;
+    }
 
     p_sspr->X = scr_x;
     p_sspr->Y = scr_y;
@@ -544,8 +545,9 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
 
         p_flame->PointOffset = next_screen_point;
         p_scrpoint = draw_item_add_points(DrIT_Unkn25, flm, BUCKET_MID + sp.Depth - 50, 1);
-        if (p_scrpoint == NULL)
+        if (p_scrpoint == NULL) {
             break;
+        }
 
         p_scrpoint->X = sp.X;
         p_scrpoint->Y = sp.Y;
@@ -573,8 +575,9 @@ void draw_bang_phwoar(struct SimpleThing *p_pow)
 
         p_phwoar->PointOffset = next_screen_point;
         p_scrpoint = draw_item_add_points(DrIT_Unkn21, phw, BUCKET_MID + sp.Depth - 100, 1);
-        if (p_scrpoint == NULL)
+        if (p_scrpoint == NULL) {
             break;
+        }
 
         p_scrpoint->X = sp.X;
         p_scrpoint->Y = sp.Y;
@@ -659,8 +662,9 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
 
         p_shrapnel->PointOffset = next_screen_point;
         p_scrpoint = draw_item_add_points(DrIT_Unkn20, shrap, BUCKET_MID + scr_depth, 3);
-        if (p_scrpoint == NULL)
+        if (p_scrpoint == NULL) {
             break;
+        }
 
         p_scrpoint->X = sp1.X;
         p_scrpoint->Y = sp1.Y;
@@ -874,8 +878,9 @@ void build_wobble_line(int x1, int y1, int z1,
         bckt = BUCKET_MID + (prc_z1 >> 7);
 
         p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
-        if (p_sline == NULL)
+        if (p_sline == NULL) {
             break;
+        }
 
         p_sline->X1 = prc_cur_x1 >> 7;
         p_sline->Y1 = prc_cur_y1 >> 7;
@@ -1423,15 +1428,16 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
 
         ubyte ditype;
         if ((p_face->GFlags & 0x80u) == 0)
-            ditype = 7;
+            ditype = DrIT_Unkn7;
         else
-            ditype = 17;
+            ditype = DrIT_Unkn17;
         bckt = BUCKET_MID + depth_max - 250;
         if (bckt_max < bckt)
             bckt_max = bckt;
-        dword_176D68++;
-        if (!draw_item_add(ditype, face, bckt))
+        stat_drawlist_faces++;
+        if (!draw_item_add(ditype, face, bckt)) {
             break;
+        }
     }
 
     faces_num = point_object->NumbFaces4;
@@ -1491,9 +1497,10 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         bckt = BUCKET_MID + depth_max - 250;
         if (bckt_max < bckt)
             bckt_max = bckt;
-        dword_176D68++;
-        if (!draw_item_add(ditype, face, bckt))
+        stat_drawlist_faces++;
+        if (!draw_item_add(ditype, face, bckt)) {
             break;
+        }
     }
 
     // Plasma jumps when a vehicle got influenced by explosion or is crashing
@@ -1601,9 +1608,10 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         bckt = BUCKET_MID + depth_max - 150;
         if (bckt_max < bckt)
             bckt_max = bckt;
-        dword_176D68++;
-        if (!draw_item_add(ditype, face, bckt))
+        stat_drawlist_faces++;
+        if (!draw_item_add(ditype, face, bckt)) {
             break;
+        }
     }
 
     faces_num = point_object->NumbFaces4;
@@ -1675,9 +1683,10 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         bckt = BUCKET_MID + depth_max - 250;
         if (bckt_max < bckt)
             bckt_max = bckt;
-        dword_176D68++;
-        if (!draw_item_add(ditype, face, bckt))
+        stat_drawlist_faces++;
+        if (!draw_item_add(ditype, face, bckt)) {
             break;
+        }
     }
 
     return bckt_max;
@@ -1823,9 +1832,10 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 bckt = BUCKET_MID + depth_max;
                 if (bckt_max < bckt)
                     bckt_max = bckt;
-                dword_176D68++;
-                if (!draw_item_add(ditype, face, bckt))
+                stat_drawlist_faces++;
+                if (!draw_item_add(ditype, face, bckt)) {
                     break;
+                }
             }
             else
             {
@@ -1874,9 +1884,10 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 bckt = BUCKET_MID + depth_shift + depth_max;
                 if (bckt_max < bckt)
                     bckt_max = bckt;
-                dword_176D68++;
-                if (!draw_item_add(ditype, face, bckt))
+                stat_drawlist_faces++;
+                if (!draw_item_add(ditype, face, bckt)) {
                     break;
+                }
             }
         }
     }
@@ -1936,9 +1947,10 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 bckt = BUCKET_MID + depth_shift + depth_max;
                 if (bckt_max < bckt)
                     bckt_max = bckt;
-                dword_176D68++;
-                if (!draw_item_add(ditype, face, bckt))
+                stat_drawlist_faces++;
+                if (!draw_item_add(ditype, face, bckt)) {
                     break;
+                }
             }
         }
     }
@@ -1962,8 +1974,9 @@ void draw_vehicle_health(struct Thing *p_thing)
     scr_depth = sp.Depth - 2 * p_thing->Radius;
     bckt = BUCKET_MID + scr_depth;
     p_sspr = draw_item_add_sprite(DrIT_LongPropBar, bckt);
-    if (p_sspr == NULL)
+    if (p_sspr == NULL) {
         return;
+    }
 
     if (ingame.PanelPermutation == -3) {
         lvl_col = 33;
@@ -2082,8 +2095,9 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
         p_specpt1->X = nxt_x;
         p_specpt1->Y = nxt_y;
 
-        if (!draw_item_add(DrIT_SpObFace4, face, sort_key))
+        if (!draw_item_add(DrIT_SpObFace4, face, sort_key)) {
             break;
+        }
 
         cur_x = nxt_x;
         cur_y = nxt_y;
@@ -2195,8 +2209,9 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         p_specpt1->X = nxt_x;
         p_specpt1->Y = nxt_y;
 
-        if (!draw_item_add(DrIT_SpObFace4, face, bckt))
+        if (!draw_item_add(DrIT_SpObFace4, face, bckt)) {
             break;
+        }
 
         cur_x = nxt_x;
         cur_y = nxt_y;

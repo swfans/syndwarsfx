@@ -478,8 +478,9 @@ void lvdraw_do_floor(void)
 
             ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
             p_floortl = draw_item_add_floor_tile(ditype, BUCKET_MID + depth + dpthalt);
-            if (p_floortl == NULL)
+            if (p_floortl == NULL) {
                 break;
+            }
 
             fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
 
@@ -657,8 +658,9 @@ void lvdraw_do_floor_flyby(int cor_z_beg, int ranges_x_len, struct Range *smrang
 
             ditype = (p_mapel->Texture & 0x4000) != 0 ? DrIT_Unkn6 : DrIT_Unkn4;
             p_floortl = draw_item_add_floor_tile(ditype, BUCKET_MID + depth + dpthalt);
-            if (p_floortl == NULL)
+            if (p_floortl == NULL) {
                 break;
+            }
 
             fill_floor_tile_pos_and_shade_fading(p_floortl, p_mapel, p_spnx, 0, p_spnx);
 

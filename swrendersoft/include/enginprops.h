@@ -162,6 +162,10 @@ extern s32 prim_object_faces4_limit;
  */
 extern ubyte *scratch_buf1;
 
+/** Amount of faces for whom drawlist add was called, for statistics.
+ */
+extern u32 stat_drawlist_faces;
+
 /** Callback for debug of 3D objects primitives.
  */
 extern void (*prim_obj_mem_debug)(ubyte itm_kind, int itm_beg, int itm_end);

@@ -39,6 +39,8 @@ s32 face_textures_limit = 16;
 s32 prim_object_faces_limit = 16;
 s32 prim_object_faces4_limit = 16;
 
+u32 stat_drawlist_faces = 0;
+
 void (*prim_obj_mem_debug)(ubyte itm_kind, int itm_beg, int itm_end) = NULL;
 /******************************************************************************/
 
