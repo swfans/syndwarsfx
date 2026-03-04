@@ -62,6 +62,8 @@ struct ExplodeFace3 { // sizeof=46
 #pragma pack()
 /******************************************************************************/
 extern struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
+extern u32 next_ex_face;
+
 extern ulong dont_bother_with_explode_faces;
 extern ushort word_1E08B8;
 /******************************************************************************/
@@ -69,9 +71,13 @@ ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z,
   ushort rangemsk, ushort fbig, ushort ftype, ushort count);
 
 void init_free_explode_faces(void);
-void process_explode(void);
 void draw_explode(void);
 
+void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface);
+void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface);
+void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z);
+void set_explode_face_rotate_angle(ushort angX, ushort angY);
+void explode_face_delete(int exface);
 /******************************************************************************/
 #ifdef __cplusplus
 }

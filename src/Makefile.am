@@ -239,6 +239,8 @@ syndwarsfx_SOURCES = \
 	swlog.h \
 	thing.c \
 	thing.h \
+	thing_expld.c \
+	thing_expld.h \
 	thing_search.c \
 	thing_search.h \
 	thing_fire.c \

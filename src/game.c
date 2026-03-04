@@ -152,6 +152,7 @@
 #include "rules.h"
 #include "scandraw.h"
 #include "thing.h"
+#include "thing_expld.h"
 #include "thing_search.h"
 #include "thing_onface.h"
 #include "thing_ovmous.h"
