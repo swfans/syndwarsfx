@@ -204,49 +204,7 @@ static void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_c
     *p_cor_z = (dword_1AA5E4 * dist + dword_1AA5E0 * cor_y) >> 16;
 }
 
-static void animate_explode_face1_tri(int exface)
-{
-    struct ExplodeFace3 *p_exface;
-
-    p_exface = &ex_faces[exface];
-
-    set_explode_face_rotate_angle(4 * ((2 * exface) & 0xF) + 40, 4 * (exface & 7) + 20);
-    p_exface->Timer--;
-    if (p_exface->Timer == 0)
-    {
-        explode_face_delete(exface);
-        bang_new4(p_exface->X << 8, p_exface->Y, p_exface->Z << 8, 35);
-        return;
-    }
-    p_exface->X += p_exface->DX;
-    p_exface->Y += p_exface->DY;
-    p_exface->Z += p_exface->DZ;
-
-    if ((p_exface->X < 0) || (p_exface->Z < 0))
-    {
-        p_exface->Timer = 0;
-        explode_face_delete(exface);
-        return;
-    }
-    // bounce from ground
-    if (p_exface->DY < 0
-      && ((p_exface->Y + p_exface->Y0 < 0)
-       || (p_exface->Y + p_exface->Y1 < 0)
-       || (p_exface->Y + p_exface->Y2 < 0)))
-    {
-        p_exface->Y -= p_exface->DY;
-        p_exface->DY = -((200 * p_exface->DY) >> 8);
-        if (p_exface->Timer < 0)
-            p_exface->Timer = 10;
-    }
-    p_exface->DY -= 10;
-
-    explode_face_point_rotate(&p_exface->X0, &p_exface->Y0, &p_exface->Z0);
-    explode_face_point_rotate(&p_exface->X1, &p_exface->Y1, &p_exface->Z1);
-    explode_face_point_rotate(&p_exface->X2, &p_exface->Y2, &p_exface->Z2);
-}
-
-static void animate_explode_face1_quad(int exface)
+static void animate_explode_face1(ushort exface, ushort npoints)
 {
     struct ExplodeFace3 *p_exface;
 
@@ -275,7 +233,7 @@ static void animate_explode_face1_quad(int exface)
       && ((p_exface->Y + p_exface->Y0 < 0)
        || (p_exface->Y + p_exface->Y1 < 0)
        || (p_exface->Y + p_exface->Y2 < 0)
-       || (p_exface->Y + p_exface->Y3 < 0)))
+       || ((npoints >= 4) && (p_exface->Y + p_exface->Y3 < 0))))
     {
         p_exface->Y -= p_exface->DY;
         p_exface->DY = -((200 * p_exface->DY) >> 8);
@@ -287,83 +245,55 @@ static void animate_explode_face1_quad(int exface)
     explode_face_point_rotate(&p_exface->X0, &p_exface->Y0, &p_exface->Z0);
     explode_face_point_rotate(&p_exface->X1, &p_exface->Y1, &p_exface->Z1);
     explode_face_point_rotate(&p_exface->X2, &p_exface->Y2, &p_exface->Z2);
-    explode_face_point_rotate(&p_exface->X3, &p_exface->Y3, &p_exface->Z3);
+    if (npoints >= 4) {
+        explode_face_point_rotate(&p_exface->X3, &p_exface->Y3, &p_exface->Z3);
+    }
 }
 
-static void explode_face3_tri_move_above_ground(struct ExplodeFace3 *p_exface)
+static void explode_face3_move_above_ground(struct ExplodeFace3 *p_exface, ushort npoints)
 {
     int rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y0 > rndv)
     {
-        p_exface->X0 -= p_exface->DX;
-        p_exface->Z0 -= p_exface->DZ;
+        rndv = LbRandomAnyShort() & 0x3FF;
+        if (p_exface->Y0 > rndv)
+        {
+            p_exface->X0 -= p_exface->DX;
+            p_exface->Z0 -= p_exface->DZ;
+        }
+        rndv = LbRandomAnyShort() & 7;
+        p_exface->Y0 += p_exface->DY - rndv;
     }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y0 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y1 > rndv)
     {
-        p_exface->X1 -= p_exface->DX;
-        p_exface->Z1 -= p_exface->DZ;
+        rndv = LbRandomAnyShort() & 0x3FF;
+        if (p_exface->Y1 > rndv)
+        {
+            p_exface->X1 -= p_exface->DX;
+            p_exface->Z1 -= p_exface->DZ;
+        }
+        rndv = LbRandomAnyShort() & 7;
+        p_exface->Y1 += p_exface->DY - rndv;
     }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y1 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y2 > rndv)
     {
-        p_exface->X2 -= p_exface->DX;
-        p_exface->Z2 -= p_exface->DZ;
+        rndv = LbRandomAnyShort() & 0x3FF;
+        if (p_exface->Y2 > rndv)
+        {
+            p_exface->X2 -= p_exface->DX;
+            p_exface->Z2 -= p_exface->DZ;
+        }
+        rndv = LbRandomAnyShort() & 0x7;
+        p_exface->Y2 += p_exface->DY - rndv;
     }
-    rndv = LbRandomAnyShort() & 0x7;
-    p_exface->Y2 += p_exface->DY - rndv;
-
-    if (p_exface->DY > -120)
-        p_exface->DY -= 3;
-}
-
-static void explode_face3_quad_move_above_ground(struct ExplodeFace3 *p_exface)
-{
-    int rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y0 > rndv)
+    if (npoints >= 4)
     {
-        p_exface->X0 -= p_exface->DX;
-        p_exface->Z0 -= p_exface->DZ;
+        rndv = LbRandomAnyShort() & 0x3FF;
+        if (p_exface->Y3 > rndv)
+        {
+            p_exface->X3 -= p_exface->DX;
+            p_exface->Z3 -= p_exface->DZ;
+        }
+        rndv = LbRandomAnyShort() & 7;
+        p_exface->Y3 += p_exface->DY - rndv;
     }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y0 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y1 > rndv)
-    {
-        p_exface->X1 -= p_exface->DX;
-        p_exface->Z1 -= p_exface->DZ;
-    }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y1 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y2 > rndv)
-    {
-        p_exface->X2 -= p_exface->DX;
-        p_exface->Z2 -= p_exface->DZ;
-    }
-    rndv = LbRandomAnyShort() & 0x7;
-    p_exface->Y2 += p_exface->DY - rndv;
-
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if (p_exface->Y3 > rndv)
-    {
-        p_exface->X3 -= p_exface->DX;
-        p_exface->Z3 -= p_exface->DZ;
-    }
-    rndv = LbRandomAnyShort() & 7;
-    p_exface->Y3 += p_exface->DY - rndv;
     if (p_exface->DY > -120)
         p_exface->DY -= 3;
 }
@@ -691,11 +621,11 @@ static void animate_explode_face3_tri(int exface)
     p_exface = &ex_faces[exface];
 
     cor_gnd_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
-    if (p_exface->Y0 >= cor_gnd_y &&
-      p_exface->Y1 >= cor_gnd_y &&
-      p_exface->Y2 >= cor_gnd_y)
+    if ((p_exface->Y0 >= cor_gnd_y) &&
+      (p_exface->Y1 >= cor_gnd_y) &&
+      (p_exface->Y2 >= cor_gnd_y))
     {
-        explode_face3_tri_move_above_ground(p_exface);
+        explode_face3_move_above_ground(p_exface, 3);
         return;
     }
 
@@ -715,7 +645,7 @@ static void animate_explode_face3_tri(int exface)
     explode_face_delete(exface);
 }
 
-static void animate_explode_face3_quad(int exface)
+static void animate_explode_face3_quad(ushort exface)
 {
     struct ExplodeFace3 *p_exface;
     int cor_gnd_y;
@@ -724,12 +654,12 @@ static void animate_explode_face3_quad(int exface)
     p_exface = &ex_faces[exface];
 
     cor_gnd_y = alt_at_point(p_exface->X0, p_exface->Z0) >> 5;
-    if (p_exface->Y0 >= cor_gnd_y &&
-      p_exface->Y1 >= cor_gnd_y &&
-      p_exface->Y2 >= cor_gnd_y &&
-      p_exface->Y3 >= cor_gnd_y)
+    if ((p_exface->Y0 >= cor_gnd_y) &&
+      (p_exface->Y1 >= cor_gnd_y) &&
+      (p_exface->Y2 >= cor_gnd_y) &&
+      (p_exface->Y3 >= cor_gnd_y))
     {
-        explode_face3_quad_move_above_ground(p_exface);
+        explode_face3_move_above_ground(p_exface, 4);
         return;
     }
 
@@ -749,7 +679,7 @@ static void animate_explode_face3_quad(int exface)
     explode_face_delete(exface);
 }
 
-static void animate_explode_face5_tri(int exface)
+static void animate_explode_face5(ushort exface, ushort npoints)
 {
     struct ExplodeFace3 *p_exface;
     int rndv;
@@ -789,49 +719,9 @@ static void animate_explode_face5_tri(int exface)
     explode_face_point_rotate(&p_exface->X0, &p_exface->Y0, &p_exface->Z0);
     explode_face_point_rotate(&p_exface->X1, &p_exface->Y1, &p_exface->Z1);
     explode_face_point_rotate(&p_exface->X2, &p_exface->Y2, &p_exface->Z2);
-}
-
-static void animate_explode_face5_quad(int exface)
-{
-    struct ExplodeFace3 *p_exface;
-    int rndv;
-
-    p_exface = &ex_faces[exface];
-
-    if (p_exface->Timer > 1000)
-    {
-        p_exface->Timer--;
-        if (p_exface->Timer == 1000 && (LbRandomAnyShort() & 0x1F) == 0)
-            bang_new4(p_exface->X << 8, p_exface->Y, p_exface->Z << 8, 100);
-        return;
+    if (npoints >= 4) {
+        explode_face_point_rotate(&p_exface->X3, &p_exface->Y3, &p_exface->Z3);
     }
-    rndv = LbRandomAnyShort() & 0x3FF;
-    if ((rndv > p_exface->Timer) && (LbRandomAnyShort() & 0xF) == 0)
-    {
-        p_exface->Timer = 0;
-        bang_new4(p_exface->X << 8, p_exface->Y, p_exface->Z << 8, 35);
-        explode_face_delete(exface);
-        return;
-    }
-    set_explode_face_rotate_angle(p_exface->AngleDX, p_exface->AngleDY);
-    p_exface->Timer--;
-    p_exface->X += 8 * p_exface->DX;
-    p_exface->Y += 8 * p_exface->DY;
-    p_exface->Z += 8 * p_exface->DZ;
-    if ((p_exface->X < 0) || (p_exface->Z < 0))
-    {
-        p_exface->Timer = 0;
-        explode_face_delete(exface);
-        return;
-    }
-    p_exface->DX -= (p_exface->DX >> 5);
-    p_exface->DY -= (p_exface->DY >> 5);
-    p_exface->DZ -= (p_exface->DZ >> 5);
-
-    explode_face_point_rotate(&p_exface->X0, &p_exface->Y0, &p_exface->Z0);
-    explode_face_point_rotate(&p_exface->X1, &p_exface->Y1, &p_exface->Z1);
-    explode_face_point_rotate(&p_exface->X2, &p_exface->Y2, &p_exface->Z2);
-    explode_face_point_rotate(&p_exface->X3, &p_exface->Y3, &p_exface->Z3);
 }
 
 void animate_explode(void)
@@ -870,11 +760,11 @@ void animate_explode(void)
         switch (p_exface->Type)
         {
         case 1:
-            animate_explode_face1_tri(i);
+            animate_explode_face1(i, 3);
             break;
 
         case 2:
-            animate_explode_face1_quad(i);
+            animate_explode_face1(i, 4);
             break;
 
         case 3:
@@ -886,11 +776,11 @@ void animate_explode(void)
             break;
 
         case 5:
-            animate_explode_face5_tri(i);
+            animate_explode_face5(i, 3);
             break;
 
         case 6:
-            animate_explode_face5_quad(i);
+            animate_explode_face5(i, 4);
             break;
         }
     }
@@ -904,6 +794,234 @@ void process_explode(void)
         animate_explode();
 }
 
+void draw_explode_type1(ushort exface, ushort npoints)
+{
+    struct ShEnginePoint sp1, sp2, sp3, sp4;
+    struct ExplodeFace3 *p_exface;
+    struct SpecialPoint *p_specpt;
+    int cor_x, cor_y, cor_z;
+    ushort flags_all;
+    short depth_max;
+    ushort pt;
+
+    p_exface = &ex_faces[exface];
+
+    pt = next_screen_point;
+    p_exface->PointOffset = pt;
+    next_screen_point += npoints;
+
+    cor_x = p_exface->X + p_exface->X0 - engn_xc;
+    cor_z = p_exface->Z + p_exface->Z0 - engn_zc;
+    cor_y = p_exface->Y + p_exface->Y0 - engn_yc;
+    transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 0];
+    p_specpt->X = sp1.X;
+    p_specpt->Y = sp1.Y;
+
+    cor_x = p_exface->X + p_exface->X1 - engn_xc;
+    cor_z = p_exface->Z + p_exface->Z1 - engn_zc;
+    cor_y = p_exface->Y + p_exface->Y1 - engn_yc;
+    transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 1];
+    p_specpt->X = sp2.X;
+    p_specpt->Y = sp2.Y;
+
+    cor_x = p_exface->X + p_exface->X2 - engn_xc;
+    cor_z = p_exface->Z + p_exface->Z2 - engn_zc;
+    cor_y = p_exface->Y + p_exface->Y2 - engn_yc;
+    transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 2];
+    p_specpt->X = sp3.X;
+    p_specpt->Y = sp3.Y;
+
+    depth_max = SHRT_MIN;
+    if (depth_max < sp1.Depth)
+        depth_max = sp1.Depth;
+    if (depth_max < sp2.Depth)
+        depth_max = sp2.Depth;
+    if (depth_max < sp3.Depth)
+        depth_max = sp3.Depth;
+
+    flags_all = sp3.Flags & sp2.Flags & sp1.Flags;
+
+    if (npoints >= 4)
+    {
+        cor_x = p_exface->X + p_exface->X3 - engn_xc;
+        cor_z = p_exface->Z + p_exface->Z3 - engn_zc;
+        cor_y = p_exface->Y + p_exface->Y3 - engn_yc;
+        transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+        p_specpt = &game_screen_point_pool[pt + 3];
+        p_specpt->X = sp4.X;
+        p_specpt->Y = sp4.Y;
+
+        flags_all &= sp4.Flags;
+        if (depth_max < sp4.Depth)
+            depth_max = sp4.Depth;
+    }
+
+    if ((flags_all & 0xF) != 0)
+        return;
+
+    dword_176D68++;
+    draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
+}
+
+void draw_explode_type3(ushort exface, ushort npoints)
+{
+    struct ShEnginePoint sp1, sp2, sp3, sp4;
+    struct ExplodeFace3 *p_exface;
+    struct SpecialPoint *p_specpt;
+    int cor_x, cor_y, cor_z;
+    ushort flags_all;
+    short depth_max;
+    ushort pt;
+
+    p_exface = &ex_faces[exface];
+
+    pt = next_screen_point;
+    p_exface->PointOffset = pt;
+    next_screen_point += npoints;
+
+    cor_x = p_exface->X0 - engn_xc;
+    cor_z = p_exface->Z0 - engn_zc;
+    cor_y = p_exface->Y0 - engn_yc;
+    transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 0];
+    p_specpt->X = sp1.X;
+    p_specpt->Y = sp1.Y;
+
+    cor_x = p_exface->X1 - engn_xc;
+    cor_z = p_exface->Z1 - engn_zc;
+    cor_y = p_exface->Y1 - engn_yc;
+    transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 1];
+    p_specpt->X = sp2.X;
+    p_specpt->Y = sp2.Y;
+
+    cor_x = p_exface->X2 - engn_xc;
+    cor_z = p_exface->Z2 - engn_zc;
+    cor_y = p_exface->Y2 - engn_yc;
+    transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 2];
+    p_specpt->X = sp3.X;
+    p_specpt->Y = sp3.Y;
+
+    depth_max = SHRT_MIN;
+    if (depth_max < sp1.Depth)
+        depth_max = sp1.Depth;
+    if (depth_max < sp2.Depth)
+        depth_max = sp2.Depth;
+    if (depth_max < sp3.Depth)
+        depth_max = sp3.Depth;
+
+    flags_all = sp3.Flags & sp2.Flags & sp1.Flags;
+
+    if (npoints >= 4)
+    {
+        cor_x = p_exface->X3 - engn_xc;
+        cor_z = p_exface->Z3 - engn_zc;
+        cor_y = p_exface->Y3 - engn_yc;
+        transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+        p_specpt = &game_screen_point_pool[pt + 3];
+        p_specpt->X = sp4.X;
+        p_specpt->Y = sp4.Y;
+
+        flags_all &= sp4.Flags;
+        if (depth_max < sp4.Depth)
+            depth_max = sp4.Depth;
+    }
+
+    if ((flags_all & 0xF) != 0)
+        return;
+
+    dword_176D68++;
+    draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
+}
+
+void draw_explode_type5(ushort exface, ushort npoints)
+{
+    struct ShEnginePoint sp1, sp2, sp3, sp4;
+    struct ExplodeFace3 *p_exface;
+    struct SpecialPoint *p_specpt;
+    int cor_x, cor_y, cor_z;
+    ushort flags_all;
+    short depth_max;
+    ushort pt;
+
+    p_exface = &ex_faces[exface];
+
+    pt = next_screen_point;
+    p_exface->PointOffset = pt;
+    next_screen_point += npoints;
+
+    cor_x = p_exface->X + p_exface->X0 - engn_xc;
+    cor_z = p_exface->Z + p_exface->Z0 - engn_zc;
+    cor_y = p_exface->Y + p_exface->Y0 - engn_yc;
+    transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 0];
+    p_specpt->X = sp1.X;
+    p_specpt->Y = sp1.Y;
+
+    cor_x = p_exface->X + p_exface->X1 - engn_xc;
+    cor_z = p_exface->Z + p_exface->Z1 - engn_zc;
+    cor_y = p_exface->Y + p_exface->Y1 - engn_yc;
+    transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 1];
+    p_specpt->X = sp2.X;
+    p_specpt->Y = sp2.Y;
+
+    cor_x = p_exface->X + p_exface->X2 - engn_xc;
+    cor_z = p_exface->Z + p_exface->Z2 - engn_zc;
+    cor_y = p_exface->Y + p_exface->Y2 - engn_yc;
+    transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+    p_specpt = &game_screen_point_pool[pt + 2];
+    p_specpt->X = sp3.X;
+    p_specpt->Y = sp3.Y;
+
+    depth_max = SHRT_MIN;
+    if (depth_max < sp1.Depth)
+        depth_max = sp1.Depth;
+    if (depth_max < sp2.Depth)
+        depth_max = sp2.Depth;
+    if (depth_max < sp3.Depth)
+        depth_max = sp3.Depth;
+
+    flags_all = sp3.Flags & sp2.Flags & sp1.Flags;
+
+    if (npoints >= 4)
+    {
+        cor_x = p_exface->X + p_exface->X3 - engn_xc;
+        cor_z = p_exface->Z + p_exface->Z3 - engn_zc;
+        cor_y = p_exface->Y + p_exface->Y3 - engn_yc;
+        transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
+
+        p_specpt = &game_screen_point_pool[pt + 3];
+        p_specpt->X = sp4.X;
+        p_specpt->Y = sp4.Y;
+
+        flags_all &= sp4.Flags;
+        if (depth_max < sp4.Depth)
+            depth_max = sp4.Depth;
+    }
+
+    if ((flags_all & 0xF) != 0)
+        return;
+
+    dword_176D68++;
+    draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
+}
+
 void draw_explode(void)
 {
     ushort exface;
@@ -913,14 +1031,7 @@ void draw_explode(void)
 
     for (exface = 1; exface < EXPLODE_FACES_COUNT; exface++)
     {
-        struct ShEnginePoint sp1, sp2, sp3, sp4;
         struct ExplodeFace3 *p_exface;
-        struct SpecialPoint *p_specpt;
-        int cor_x, cor_y, cor_z;
-        ushort npoints;
-        ushort flags_all;
-        short depth_max;
-        ushort pt;
 
         p_exface = &ex_faces[exface];
 
@@ -933,202 +1044,22 @@ void draw_explode(void)
         switch (p_exface->Type)
         {
         case 1:
+            draw_explode_type1(exface, 3);
+            break;
         case 2:
-            npoints = (p_exface->Type == 2) ? 4 : 3;
-            pt = next_screen_point;
-            p_exface->PointOffset = pt;
-            next_screen_point += npoints;
-
-            cor_x = p_exface->X + p_exface->X0 - engn_xc;
-            cor_z = p_exface->Z + p_exface->Z0 - engn_zc;
-            cor_y = p_exface->Y + p_exface->Y0 - engn_yc;
-            transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 0];
-            p_specpt->X = sp1.X;
-            p_specpt->Y = sp1.Y;
-
-            cor_x = p_exface->X + p_exface->X1 - engn_xc;
-            cor_z = p_exface->Z + p_exface->Z1 - engn_zc;
-            cor_y = p_exface->Y + p_exface->Y1 - engn_yc;
-            transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 1];
-            p_specpt->X = sp2.X;
-            p_specpt->Y = sp2.Y;
-
-            cor_x = p_exface->X + p_exface->X2 - engn_xc;
-            cor_z = p_exface->Z + p_exface->Z2 - engn_zc;
-            cor_y = p_exface->Y + p_exface->Y2 - engn_yc;
-            transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 2];
-            p_specpt->X = sp3.X;
-            p_specpt->Y = sp3.Y;
-
-            depth_max = SHRT_MIN;
-            if (depth_max < sp1.Depth)
-                depth_max = sp1.Depth;
-            if (depth_max < sp2.Depth)
-                depth_max = sp2.Depth;
-            if (depth_max < sp3.Depth)
-                depth_max = sp3.Depth;
-
-            flags_all = sp3.Flags & sp2.Flags & sp1.Flags;
-
-            if (npoints > 3)
-            {
-                cor_x = p_exface->X + p_exface->X3 - engn_xc;
-                cor_z = p_exface->Z + p_exface->Z3 - engn_zc;
-                cor_y = p_exface->Y + p_exface->Y3 - engn_yc;
-                transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-                p_specpt = &game_screen_point_pool[pt + 3];
-                p_specpt->X = sp4.X;
-                p_specpt->Y = sp4.Y;
-
-                flags_all &= sp4.Flags;
-                if (depth_max < sp4.Depth)
-                    depth_max = sp4.Depth;
-            }
-
-            if ((flags_all & 0xF) != 0)
-                break;
-
-            dword_176D68++;
-            draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
+            draw_explode_type1(exface, 4);
             break;
         case 3:
+            draw_explode_type3(exface, 3);
+            break;
         case 4:
-            npoints = (p_exface->Type == 4) ? 4 : 3;
-            pt = next_screen_point;
-            p_exface->PointOffset = pt;
-            next_screen_point += npoints;
-
-            cor_x = p_exface->X0 - engn_xc;
-            cor_z = p_exface->Z0 - engn_zc;
-            cor_y = p_exface->Y0 - engn_yc;
-            transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 0];
-            p_specpt->X = sp1.X;
-            p_specpt->Y = sp1.Y;
-
-            cor_x = p_exface->X1 - engn_xc;
-            cor_z = p_exface->Z1 - engn_zc;
-            cor_y = p_exface->Y1 - engn_yc;
-            transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 1];
-            p_specpt->X = sp2.X;
-            p_specpt->Y = sp2.Y;
-
-            cor_x = p_exface->X2 - engn_xc;
-            cor_z = p_exface->Z2 - engn_zc;
-            cor_y = p_exface->Y2 - engn_yc;
-            transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 2];
-            p_specpt->X = sp3.X;
-            p_specpt->Y = sp3.Y;
-
-            depth_max = SHRT_MIN;
-            if (depth_max < sp1.Depth)
-                depth_max = sp1.Depth;
-            if (depth_max < sp2.Depth)
-                depth_max = sp2.Depth;
-            if (depth_max < sp3.Depth)
-                depth_max = sp3.Depth;
-
-            flags_all = sp3.Flags & sp2.Flags & sp1.Flags;
-
-            if (npoints > 3)
-            {
-                cor_x = p_exface->X3 - engn_xc;
-                cor_z = p_exface->Z3 - engn_zc;
-                cor_y = p_exface->Y3 - engn_yc;
-                transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-                p_specpt = &game_screen_point_pool[pt + 3];
-                p_specpt->X = sp4.X;
-                p_specpt->Y = sp4.Y;
-
-                flags_all &= sp4.Flags;
-                if (depth_max < sp4.Depth)
-                    depth_max = sp4.Depth;
-            }
-
-            if ((flags_all & 0xF) != 0)
-                break;
-
-            dword_176D68++;
-            draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
+            draw_explode_type3(exface, 4);
             break;
         case 5:
+            draw_explode_type5(exface, 3);
+            break;
         case 6:
-            npoints = (p_exface->Type == 6) ? 4 : 3;
-            pt = next_screen_point;
-            p_exface->PointOffset = pt;
-            next_screen_point += npoints;
-
-            cor_x = p_exface->X + p_exface->X0 - engn_xc;
-            cor_z = p_exface->Z + p_exface->Z0 - engn_zc;
-            cor_y = p_exface->Y + p_exface->Y0 - engn_yc;
-            transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 0];
-            p_specpt->X = sp1.X;
-            p_specpt->Y = sp1.Y;
-
-            cor_x = p_exface->X + p_exface->X1 - engn_xc;
-            cor_z = p_exface->Z + p_exface->Z1 - engn_zc;
-            cor_y = p_exface->Y + p_exface->Y1 - engn_yc;
-            transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 1];
-            p_specpt->X = sp2.X;
-            p_specpt->Y = sp2.Y;
-
-            cor_x = p_exface->X + p_exface->X2 - engn_xc;
-            cor_z = p_exface->Z + p_exface->Z2 - engn_zc;
-            cor_y = p_exface->Y + p_exface->Y2 - engn_yc;
-              transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-            p_specpt = &game_screen_point_pool[pt + 2];
-            p_specpt->X = sp3.X;
-            p_specpt->Y = sp3.Y;
-
-            depth_max = SHRT_MIN;
-            if (depth_max < sp1.Depth)
-                depth_max = sp1.Depth;
-            if (depth_max < sp2.Depth)
-                depth_max = sp2.Depth;
-            if (depth_max < sp3.Depth)
-                depth_max = sp3.Depth;
-
-            flags_all = sp3.Flags & sp2.Flags & sp1.Flags;
-
-            if (npoints > 3)
-            {
-                cor_x = p_exface->X + p_exface->X3 - engn_xc;
-                cor_z = p_exface->Z + p_exface->Z3 - engn_zc;
-                cor_y = p_exface->Y + p_exface->Y3 - engn_yc;
-                transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
-
-                p_specpt = &game_screen_point_pool[pt + 3];
-                p_specpt->X = sp4.X;
-                p_specpt->Y = sp4.Y;
-
-                flags_all &= sp4.Flags;
-                if (depth_max < sp4.Depth)
-                    depth_max = sp4.Depth;
-            }
-
-            if ((flags_all & 0xF) != 0)
-                break;
-
-            dword_176D68++;
-            draw_item_add(DrIT_Unkn5, exface, BUCKET_MID + depth_max);
+            draw_explode_type5(exface, 4);
             break;
         case 0:
         default:
