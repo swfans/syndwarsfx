@@ -21,6 +21,7 @@
 #include "bftext.h"
 #include "bffont.h"
 #include "bfutility.h"
+#include <string.h>
 
 #include "campaign.h"
 #include "display.h"
