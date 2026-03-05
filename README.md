@@ -265,11 +265,11 @@ dpkg --add-architecture i386
 Now install the dependencies - remember that some must be 32-bit (i386):
 
 ```
-sudo apt install gcc-multilib g++-multilib lib32z1
+sudo apt install gcc-multilib g++-multilib lib32z1 autoconf
 sudo apt install python3 python3-polib
 sudo apt install vorbis-tools
 sudo apt install cdparanoia
-sudo apt install libsdl2-dev:i386
+sudo apt install libsdl2-dev:i386 libpng-dev:i386
 sudo apt install libopenal-dev:i386
 sudo apt install libvorbis-dev:i386 libvorbisfile3:i386
 sudo apt install libogg-dev:i386
