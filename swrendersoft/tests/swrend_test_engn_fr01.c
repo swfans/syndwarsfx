@@ -22,6 +22,8 @@
 #include "bfwindows.h"
 #include "swrtstlog.h"
 
+#include "engincolour.h"
+
 /******************************************************************************/
 
 /** Test memory module setup and allocation.
@@ -39,6 +41,8 @@ TbBool test_engn_fr01(void)
 
     p = LbMemoryAlloc(2048);
     LbMemoryFree(p);
+
+update_unkn_changing_colors();
 
     LbMemoryReset();
     LOGSYNC("passed");

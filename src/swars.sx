@@ -66,10 +66,24 @@
 
 .global EXPORT_SYMBOL(tmaps_extra_buf);	/* 0x1810D1 */
 .global EXPORT_SYMBOL(tmaps_extra_len);	/* 0x1810D5 */
+.global EXPORT_SYMBOL(colour_mix_lookup);	/* 0x181136 */
+.global EXPORT_SYMBOL(colour_sel_grey);	/* 0x181142 */
+.global EXPORT_SYMBOL(colour_sel_green);	/* 0x181146 */
+.global EXPORT_SYMBOL(colour_sel_blue);	/* 0x18114a */
+.global EXPORT_SYMBOL(colour_sel_red);		/* 0x18114e */
+.global EXPORT_SYMBOL(colour_sel_purple);	/* 0x181152 */
 
+.global EXPORT_SYMBOL(colour_grey1);	/* 0x19CC5C */
+.global EXPORT_SYMBOL(colour_grey2);	/* 0x19CC5D */
+.global EXPORT_SYMBOL(colour_brown2); /* 0x19CC5E */
 .global EXPORT_SYMBOL(pop1_sprites);	/* 0x19CBDC */
 .global EXPORT_SYMBOL(pointer_sprites);	/* 0x1A5840 */
 .global EXPORT_SYMBOL(small_font);	/* 0x1A5848 */
+.global EXPORT_SYMBOL(display_palette);	/* 0x1A5878 */
+.global EXPORT_SYMBOL(colour_lookup);	/* 0x1A71B8 */
+
+.global EXPORT_SYMBOL(unkn_changing_color_counter1);	/* 0x1AA26C */
+.global EXPORT_SYMBOL(colour_lookup_lock);	/* 0x1AA270 */
 
 .global EXPORT_SYMBOL(NetworkServicePtr);     /* 0x1E2F40 */
 
@@ -15613,7 +15627,7 @@ GLOBAL_FUNC (ASM_change_brightness)	/* 0x03D5F0 */
 		push   %edi
 		push   %ebp
 		sub    $0x64,%esp
-		mov    display_palette,%esi
+		mov    EXPORT_SYMBOL(display_palette),%esi
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(ingame)+0x987,%al # ingame.PalType
@@ -15625,12 +15639,12 @@ GLOBAL_FUNC (ASM_change_brightness)	/* 0x03D5F0 */
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    %esp,%eax
-		mov    display_palette,%edx
+		mov    EXPORT_SYMBOL(display_palette),%edx
 		call   ac_LbFileLoadAt
 		add    %bx,EXPORT_SYMBOL(momentary_brightness)
 		mov    data_1a730e,%eax
 		sar    $0x10,%eax
-		mov    display_palette,%esi
+		mov    EXPORT_SYMBOL(display_palette),%esi
 		cmp    $0xffff8ad0,%eax
 		jge    jump_3d64f
 		movw   $0x8ad0,EXPORT_SYMBOL(momentary_brightness)
@@ -15689,9 +15703,9 @@ GLOBAL_FUNC (ASM_change_brightness)	/* 0x03D5F0 */
 		jmp    jump_3d685
 	jump_3d6cd:
 		push   %esi
-		mov    %esi,display_palette
+		mov    %esi,EXPORT_SYMBOL(display_palette)
 		call   ac_LbPaletteSet
-		mov    display_palette,%esi
+		mov    EXPORT_SYMBOL(display_palette),%esi
 		add    $0x4,%esp
 		add    $0x64,%esp
 		pop    %ebp
@@ -15725,7 +15739,7 @@ GLOBAL_FUNC (ASM_reset_user_selected_brightness)	/* 0x03D700 */
 		call   ac_sprintf
 		add    $0xc,%esp
 		mov    %esp,%eax
-		mov    display_palette,%edx
+		mov    EXPORT_SYMBOL(display_palette),%edx
 		call   ac_LbFileLoadAt
 		add    $0x64,%esp
 		pop    %edx
@@ -16632,7 +16646,7 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		push   %ecx
 		push   %edx
 		mov    $0x1,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
 		mov    %edx,EXPORT_SYMBOL(colour_lookup_lock)
@@ -16640,7 +16654,7 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
@@ -16648,53 +16662,53 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+1
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+2
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+3
 		xor    %ebx,%ebx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+4
 		xor    %ecx,%ecx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ebx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+0x05
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		call   ac_LbPaletteFindColour
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+0x06
 		mov    $0x3f,%ecx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		xor    %ebx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x32,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+7
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x1e,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+0x08
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0xa,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+0x09
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
@@ -16725,95 +16739,95 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		mov    %al,EXPORT_SYMBOL(colour_lookup)+0x0C
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    $0x30,%ebx
 		mov    $0x26,%edx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+1
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+2
 		xor    %ecx,%ecx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ebx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+3
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x20,%ecx
 		mov    $0x3f,%edx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+4
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		call   ac_LbPaletteFindColour
 		mov    $0x20,%ecx
 		mov    $0x3f,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+5
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+6
 		mov    $0x3f,%ecx
 		mov    $0x20,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ebx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x20,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+7
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    $0x20,%edx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+8
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		call   ac_LbPaletteFindColour
 		mov    $0x20,%ecx
 		mov    $0x3f,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+9
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ebx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x3f,%ecx
 		mov    $0x20,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+10
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x30,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_mix_lookup)+11
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x28,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_sel_grey)+0
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    %al,EXPORT_SYMBOL(colour_sel_grey)+1
 		mov    $0x20,%ecx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x18,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_sel_grey)+2
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
@@ -16821,35 +16835,35 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		mov    %al,EXPORT_SYMBOL(colour_sel_grey)+3
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x28,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_sel_green)+0
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x20,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_sel_green)+1
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x18,%ebx
 		mov    %al,EXPORT_SYMBOL(colour_sel_green)+2
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x30,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_sel_green)+3
 		xor    %ebx,%ebx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    %al,EXPORT_SYMBOL(colour_sel_blue)+0
 		mov    $0x28,%ecx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		xor    %ebx,%ebx
 		xor    %edx,%edx
 		call   ac_LbPaletteFindColour
@@ -16857,60 +16871,60 @@ GLOBAL_FUNC (ASM_setup_color_lookups)	/* 0x4113C */
 		mov    %al,EXPORT_SYMBOL(colour_sel_blue)+1
 		xor    %ebx,%ebx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x18,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_sel_blue)+2
 		xor    %ebx,%ebx
 		xor    %edx,%edx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x30,%edx
 		mov    %al,EXPORT_SYMBOL(colour_sel_blue)+3
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x28,%edx
 		mov    %al,EXPORT_SYMBOL(colour_sel_red)+0
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x20,%edx
 		mov    %al,EXPORT_SYMBOL(colour_sel_red)+1
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    $0x18,%edx
 		mov    %al,EXPORT_SYMBOL(colour_sel_red)+2
 		xor    %ecx,%ecx
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		call   ac_LbPaletteFindColour
 		mov    %al,EXPORT_SYMBOL(colour_sel_red)+3
 		mov    $0x30,%ecx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		xor    %ebx,%ebx
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x28,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_sel_purple)+0
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x20,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_sel_purple)+1
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    $0x18,%ecx
 		mov    %al,EXPORT_SYMBOL(colour_sel_purple)+2
 		xor    %ebx,%ebx
-		mov    display_palette,%eax
+		mov    EXPORT_SYMBOL(display_palette),%eax
 		mov    %ecx,%edx
 		call   ac_LbPaletteFindColour
 		mov    %al,EXPORT_SYMBOL(colour_sel_purple)+3
@@ -45875,7 +45889,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		mov    EXPORT_SYMBOL(ingame)+0x930,%bl # ingame.Flags+1
 		add    $0xc,%esp
 		and    $0x7f,%bl
-		mov    display_palette,%edx
+		mov    EXPORT_SYMBOL(display_palette),%edx
 		mov    %bl,EXPORT_SYMBOL(ingame)+0x930 # ingame.Flags+1
 		call   ac_LbFileLoadAt
 	jump_5751a:
@@ -123710,7 +123724,7 @@ GLOBAL_FUNC (ASM_SCANNER_init)	/* 0x0ABA1C */
 		push   %esi
 		push   %edi
 		sub    $0x4,%esp
-		mov    display_palette,%edi
+		mov    EXPORT_SYMBOL(display_palette),%edi
 		xor    %ebx,%ebx
 		xor    %esi,%esi
 		jmp    jump_aba73
@@ -123830,7 +123844,7 @@ GLOBAL_FUNC (ASM_SCANNER_init)	/* 0x0ABA1C */
 		mov    %dl,data_1db191
 		mov    %dl,data_1db199
 		mov    %dl,data_1db19a
-		mov    %edi,display_palette
+		mov    %edi,EXPORT_SYMBOL(display_palette)
 		add    $0x4,%esp
 		pop    %edi
 		pop    %esi
@@ -179363,19 +179377,7 @@ GLOBAL (game_level_unkn1)	/* 0x1810E6 */
 		.fill   0x28
 GLOBAL (game_level_unkn2)	/* 0x18110E */
 		.fill   0x28
-GLOBAL (colour_mix_lookup)	/* 0x181136 */
-		.fill   0x0c
-GLOBAL (colour_sel_grey)	/* 0x181142 */
-		.fill   0x04
-GLOBAL (colour_sel_green)	/* 0x181146 */
-		.fill   0x04
-GLOBAL (colour_sel_blue)	/* 0x18114a */
-		.fill   0x04
-GLOBAL (colour_sel_red)		/* 0x18114e */
-		.fill   0x04
-GLOBAL (colour_sel_purple)	/* 0x181152 */
-		.fill   0x04
-		.fill   0x2a
+
 data_181180:
 		.byte	0x0
 GLOBAL (login_control__State)	/* 0x181181 */
@@ -179601,12 +179603,6 @@ GLOBAL (word_19CB58)	/* 0x19CB58 */
 
 		.long	0x0
 
-GLOBAL (colour_grey1)	/* 0x19CC5C */
-		.byte	0x0
-GLOBAL (colour_grey2)	/* 0x19CC5D */
-		.byte	0x0
-GLOBAL (colour_brown2) /* 0x19CC5E */
-		.short  0x0
 GLOBAL (nsta_size)	/* 0x19CC60 */
 		.short  0x0
 data_19cc62:
@@ -179804,9 +179800,6 @@ GLOBAL (word_1A5834)
 GLOBAL (word_1A5836)
 		.short  0x0
 
-GLOBAL (display_palette)	/* 0x1A5878 */
-		.fill   0x8
-
 GLOBAL (gui_strings)	/* 0x1A5888 */
 		.fill   8000
 
@@ -179992,10 +179985,6 @@ GLOBAL (cmdln_param_bcg)
 		.byte	0x0
 		.align  4
 
-GLOBAL (colour_lookup)	/* 0x1A71B8 */
-		.fill   0x0d
-		.fill   0xf7
-
 bangdetail__circle:	/* 0x1A72BC */
 		.long	0x0
 data_1a72c0:
@@ -180040,8 +180029,6 @@ bangdetailmask:	/* 0x1A730C */
 		.short  0x0
 data_1a730e:
 		.short  0x0
-GLOBAL (momentary_brightness)	/* 0x1A7310 */
-		.long	0x0
 
 GLOBAL (prev_tick_time)	/* 0x1A7318 */
 		.long	0x0
@@ -180068,10 +180055,6 @@ data_1aa21c:
 		.short  0x0
 data_1aa21e:
 		.fill   0x4e
-GLOBAL (unkn_changing_color_counter1)	/* 0x1AA26C */
-		.long	0x0
-GLOBAL (colour_lookup_lock)	/* 0x1AA270 */
-		.long	0x0
 
 GLOBAL (data_1aa330)	/* 0x1aa330 */
 		.short  0x0

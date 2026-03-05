@@ -32,6 +32,25 @@ TbPixel fade_unaffected_colours[] = {
   254,255,
   0};
 
+ubyte *display_palette = NULL;
+
+TbPixel colour_lookup[COLOUR_LOOKUP_LENGTH];
+u32 unkn_changing_color_counter1 = 0;
+int colour_lookup_lock = 0;
+
+TbPixel colour_mix_lookup[12];
+TbPixel colour_sel_grey[4];
+TbPixel colour_sel_green[4];
+TbPixel colour_sel_blue[4];
+TbPixel colour_sel_red[4];
+TbPixel colour_sel_purple[4];
+
+TbPixel colour_grey1;
+TbPixel colour_grey2;
+TbPixel colour_brown2;
+
+/** Momentary in-game brightess; base from user settings, but with automatic adjustments. */
+short momentary_brightness = 0;
 /******************************************************************************/
 
 void update_unkn_changing_colors(void)
