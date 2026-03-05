@@ -302,6 +302,71 @@ int alt_at_point(short x, short z)
 #endif
 }
 
+int alt_at_point_under_height(int cor_x, int cor_z, int h)
+{
+#if 0
+    int ret;
+    asm volatile (
+      "call ASM_alt_at_point_under_height\n"
+        : "=r" (ret) : "a" (x), "d" (z), "b" (h));
+    return ret;
+#endif
+    short tile_x, tile_z;
+    ushort col;
+    ubyte quarter;
+
+    tile_x = MAPCOORD_TO_TILE(cor_x);
+    tile_z = MAPCOORD_TO_TILE(cor_z);
+
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
+        return 0;
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return 0;
+    {
+        struct MyMapElement *p_mapel;
+        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+        col = p_mapel->ColumnHead & 0xFFF;
+        if ((cor_x & 0x80) == 0)
+        {
+            if ((cor_z & 0x80) == 0)
+                quarter = 0;
+            else
+                quarter = 3;
+        }
+        else
+        {
+            if ((cor_z & 0x80) == 0)
+                quarter = 1;
+            else
+                quarter = 2;
+        }
+    }
+
+    int alt_curr, alt_best, h_max;
+
+    h_max = 8 * h;
+    alt_curr = 8 * alt_at_point(cor_x, cor_z);
+    alt_best = alt_curr;
+
+    if (col != 0)
+    {
+        struct ColColumn *p_col;
+        u32 mask;
+
+        p_col = &game_col_columns[col];
+
+        for (mask = 1; mask; mask *= 2)
+        {
+            if (alt_curr > h_max)
+                break;
+            if ((mask & p_col->QBits[quarter]) != 0)
+                alt_best = alt_curr;
+            alt_curr += 0x8000;
+        }
+    }
+    return alt_best;
+}
+
 int alt_change_at_tile(short tile_x, short tile_z, int *change_xz)
 {
     int alt_min, alt_max;

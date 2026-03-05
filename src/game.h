@@ -121,10 +121,6 @@ enum MissionFMVPlay {
 
 struct Thing;
 
-struct ColColumn { // sizeof=16
-    uint QBits[4];
-};
-
 struct BezierPt { // sizeof=28
     ubyte field_0[26];
     ushort field_2A;
@@ -197,8 +193,6 @@ extern ubyte game_level_unkn2[40];
 
 extern ushort word_1531E0;
 
-extern struct ColColumn *game_col_columns;
-extern ushort next_col_column;
 extern struct UnknBezEdit *bezier_pts;
 extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;

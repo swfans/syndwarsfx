@@ -42,7 +42,6 @@
 #include "matrix.h"
 #include "render_gpoly.h"
 #include "thing.h"
-#include "swlog.h"
 #include "vehicle.h"
 /******************************************************************************/
 struct ShadowTexture {
@@ -103,71 +102,6 @@ extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
 extern sbyte sprshadow_F850[512];
 
-int alt_at_point_under_height(int cor_x, int cor_z, int h)
-{
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_alt_at_point_under_height\n"
-        : "=r" (ret) : "a" (x), "d" (z), "b" (h));
-    return ret;
-#endif
-    short tile_x, tile_z;
-    ushort col;
-    ubyte quarter;
-
-    tile_x = MAPCOORD_TO_TILE(cor_x);
-    tile_z = MAPCOORD_TO_TILE(cor_z);
-
-    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
-        return 0;
-    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
-        return 0;
-    {
-        struct MyMapElement *p_mapel;
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
-        col = p_mapel->ColumnHead & 0xFFF;
-        if ((cor_x & 0x80) == 0)
-        {
-            if ((cor_z & 0x80) == 0)
-                quarter = 0;
-            else
-                quarter = 3;
-        }
-        else
-        {
-            if ((cor_z & 0x80) == 0)
-                quarter = 1;
-            else
-                quarter = 2;
-        }
-    }
-
-    int alt_curr, alt_best, h_max;
-
-    h_max = 8 * h;
-    alt_curr = 8 * alt_at_point(cor_x, cor_z);
-    alt_best = alt_curr;
-
-    if (col != 0)
-    {
-        struct ColColumn *p_col;
-        u32 mask;
-
-        p_col = &game_col_columns[col];
-
-        for (mask = 1; mask; mask *= 2)
-        {
-            if (alt_curr > h_max)
-                break;
-            if ((mask & p_col->QBits[quarter]) != 0)
-                alt_best = alt_curr;
-            alt_curr += 0x8000;
-        }
-    }
-    return alt_best;
-}
-
 void draw_person_shadow(short scr_x, short scr_y, ushort frm,
   ushort shpak, ubyte shangl, ubyte angl, short strng)
 {
@@ -177,24 +111,24 @@ void draw_person_shadow(short scr_x, short scr_y, ushort frm,
     int frgrp;
     ubyte k;
 
-    struct EnginePoint point4;
-    struct EnginePoint point2;
-    struct EnginePoint point1;
-    struct EnginePoint point3;
+    struct EnginePoint ep4;
+    struct EnginePoint ep2;
+    struct EnginePoint ep1;
+    struct EnginePoint ep3;
 
     vec_mode = 10;
     assert(vec_tmap[ingame.LastTmap] != NULL);
     vec_map = vec_tmap[ingame.LastTmap];
 
     frgrp =  8 * shpak + (((shangl >> 5) - angl + 8) & 7);
-    point3.pp.U = sprshadow_EE90[6 * frgrp + frm] << 16;
-    point3.pp.V = sprshadow_F5E0[6 * frgrp + frm] << 16;
-    point4.pp.U = sprshadow_F370[6 * frgrp + frm] << 16;
-    point4.pp.V = point3.pp.V;
-    point1.pp.U = point4.pp.U;
-    point1.pp.V = sprshadow_F100[6 * frgrp + frm] << 16;
-    point2.pp.U = point3.pp.U;
-    point2.pp.V = point1.pp.V;
+    ep3.pp.U = sprshadow_EE90[6 * frgrp + frm] << 16;
+    ep3.pp.V = sprshadow_F5E0[6 * frgrp + frm] << 16;
+    ep4.pp.U = sprshadow_F370[6 * frgrp + frm] << 16;
+    ep4.pp.V = ep3.pp.V;
+    ep1.pp.U = ep4.pp.U;
+    ep1.pp.V = sprshadow_F100[6 * frgrp + frm] << 16;
+    ep2.pp.U = ep3.pp.U;
+    ep2.pp.V = ep1.pp.V;
 
     k = shangl - (engn_anglexz >> 8);
     ssh_x = sprshadow_F850[2 * k + 1];
@@ -211,29 +145,29 @@ void draw_person_shadow(short scr_x, short scr_y, ushort frm,
     sc_b = (strng * sh_x) >> 6;
     sh_x = -sh_x;
 
-    point3.pp.X = scr_x - sh_x;
-    point3.pp.Y = scr_y - sh_y;
-    point4.pp.X = scr_x + sh_x;
-    point4.pp.Y = scr_y + sh_y;
+    ep3.pp.X = scr_x - sh_x;
+    ep3.pp.Y = scr_y - sh_y;
+    ep4.pp.X = scr_x + sh_x;
+    ep4.pp.Y = scr_y + sh_y;
 
     if (strng > 64) {
         sh_x = (sh_x * strng) >> 6;
         sh_y = (sh_y * strng) >> 6;
     }
 
-    point1.pp.X = 4 * sc_a + scr_x + sh_x;
-    point1.pp.Y = 4 * sc_b + scr_y + sh_y;
-    point2.pp.X = 4 * sc_a + scr_x - sh_x;
-    point2.pp.Y = 4 * sc_b + scr_y - sh_y;
+    ep1.pp.X = 4 * sc_a + scr_x + sh_x;
+    ep1.pp.Y = 4 * sc_b + scr_y + sh_y;
+    ep2.pp.X = 4 * sc_a + scr_x - sh_x;
+    ep2.pp.Y = 4 * sc_b + scr_y - sh_y;
 
     dword_176D4C++;
     if (vec_mode == 2)
         vec_mode = 27;
-    draw_trigpoly(&point1.pp, &point4.pp, &point3.pp);
+    draw_trigpoly(&ep1.pp, &ep4.pp, &ep3.pp);
     dword_176D4C++;
     if (vec_mode == 2)
         vec_mode = 27;
-    draw_trigpoly(&point2.pp, &point1.pp, &point3.pp);
+    draw_trigpoly(&ep2.pp, &ep1.pp, &ep3.pp);
 }
 
 void draw_sort_sprite_person_shadow(ushort sspr)
@@ -258,9 +192,10 @@ void draw_sort_sprite_person_shadow(ushort sspr)
       shpak, shangl, p_sspr->Angle, strng);
 }
 
-ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1, struct SortMapPoint *p_cor2,
-  struct SortMapPoint *p_cor3, struct SortMapPoint *p_cor4,
-  struct ShadowTexture *p_shtextr, ushort sort)
+ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
+  struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
+  struct SortMapPoint *p_cor4, struct ShadowTexture *p_shtextr,
+  ushort sort)
 {
     struct ShEnginePoint sp1, sp2, sp3, sp4;
     struct SingleObjectFace4 *p_face4;
@@ -336,10 +271,10 @@ ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1, struct SortMapPoint *p
     return face;
 }
 
-void get_vehicle_shadow_bound_points(struct SortMapPoint *p_cor1,
+void get_vehicle_shadow_bound_points_xz(struct SortMapPoint *p_cor1,
   struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
   struct SortMapPoint *p_cor4, const struct SortMapPoint *p_tngcor,
-  const struct ShadowTexture *p_shtextr, short matx, ubyte alt_under_real_y)
+  const struct ShadowTexture *p_shtextr, short matx)
 {
     struct M31 vec_inp;
     struct M31 vec_rot;
@@ -379,7 +314,12 @@ void get_vehicle_shadow_bound_points(struct SortMapPoint *p_cor1,
     matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
     p_cor4->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
     p_cor4->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
+}
 
+void get_vehicle_shadow_bound_points_y(struct SortMapPoint *p_cor1,
+  struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
+  struct SortMapPoint *p_cor4, struct SortMapPoint *p_tngcor, ubyte alt_under_real_y)
+{
     if (alt_under_real_y) {
         p_cor1->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
           engn_xc + p_cor1->X, engn_zc + p_cor1->Z,
@@ -394,10 +334,14 @@ void get_vehicle_shadow_bound_points(struct SortMapPoint *p_cor1,
           engn_xc + p_cor4->X, engn_zc + p_cor4->Z,
           MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
     } else {
-        p_cor1->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor1->X, engn_zc + p_cor1->Z));
-        p_cor2->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor2->X, engn_zc + p_cor2->Z));
-        p_cor3->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor3->X, engn_zc + p_cor3->Z));
-        p_cor4->Y = PRCCOORD_TO_YCOORD(alt_at_point(engn_xc + p_cor4->X, engn_zc + p_cor4->Z));
+        p_cor1->Y = PRCCOORD_TO_YCOORD(alt_at_point(
+          engn_xc + p_cor1->X, engn_zc + p_cor1->Z));
+        p_cor2->Y = PRCCOORD_TO_YCOORD(alt_at_point(
+          engn_xc + p_cor2->X, engn_zc + p_cor2->Z));
+        p_cor3->Y = PRCCOORD_TO_YCOORD(alt_at_point(
+          engn_xc + p_cor3->X, engn_zc + p_cor3->Z));
+        p_cor4->Y = PRCCOORD_TO_YCOORD(alt_at_point(
+          engn_xc + p_cor4->X, engn_zc + p_cor4->Z));
     }
 }
 
@@ -421,8 +365,11 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     tngcor.Z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
     alt_under_real_y = (p_vehicle->SubType == SubTT_VEH_GROUND);
 
-    get_vehicle_shadow_bound_points(&cor1, &cor2, &cor3, &cor4,
-      &tngcor, p_shtextr, matx, alt_under_real_y);
+    get_vehicle_shadow_bound_points_xz(&cor1, &cor2, &cor3, &cor4,
+      &tngcor, p_shtextr, matx);
+
+    get_vehicle_shadow_bound_points_y(&cor1, &cor2, &cor3, &cor4,
+      &tngcor, alt_under_real_y);
 
     draw_shadow_at_coords(&cor1, &cor2, &cor3, &cor4, p_shtextr, sort);
 }
@@ -497,22 +444,12 @@ struct Element *element_unkn_func_05(ushort frm, short *x1, short *x2, short *y1
     return p_el;
 }
 
-/** Prepare buffer with sprite shadows.
- * Clear the wscreen buffer before this call. Also make sure m_sprites are loaded.
- */
-void generate_shadows_for_multicolor_sprites(void)
+void draw_shadows_for_multicolor_sprites(void)
 {
-    struct ScreenBufBkp bkp;
     int shpak;
     short v23mw;
     short v23hw;
     int v25a;
-    int i;
-
-    // TODO would be better to use some back buffer instead of normal screen buf
-    screen_switch_to_custom_buffer(&bkp, lbDisplay.WScreen,
-      lbDisplay.GraphicsScreenWidth, 256);
-    LbScreenClear(0);
 
     overall_scale = 256;
 
@@ -595,8 +532,11 @@ void generate_shadows_for_multicolor_sprites(void)
             }
         }
     }
+}
 
-    copy_from_screen_ani(vec_tmap[ingame.LastTmap]);
+void generate_shadows_angle_shifts(void)
+{
+    int i;
 
     for (i = 0; i < 256; i++)
     {
@@ -617,6 +557,25 @@ void generate_shadows_for_multicolor_sprites(void)
         sprshadow_F850[2 * i + 0] = x;
         sprshadow_F850[2 * i + 1] = y;
     }
+}
+
+/** Prepare buffer with sprite shadows.
+ * Clear the wscreen buffer before this call. Also make sure m_sprites are loaded.
+ */
+void generate_shadows_for_multicolor_sprites(void)
+{
+    struct ScreenBufBkp bkp;
+
+    // TODO would be better to use some back buffer instead of normal screen buf
+    screen_switch_to_custom_buffer(&bkp, lbDisplay.WScreen,
+      lbDisplay.GraphicsScreenWidth, 256);
+    LbScreenClear(0);
+
+    draw_shadows_for_multicolor_sprites();
+
+    copy_from_screen_ani(vec_tmap[ingame.LastTmap]);
+
+    generate_shadows_angle_shifts();
 
     screen_load_backup_buffer(&bkp);
 }
