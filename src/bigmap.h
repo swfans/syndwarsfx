@@ -155,6 +155,9 @@ int alt_at_point(short x, short z);
 int alt_at_point_under_height(int cor_x, int cor_z, int h);
 ushort floor_texture_at_point(MapCoord cor_x, MapCoord cor_z);
 
+ubyte map_coord_to_collision_qbit_index(short x, short z);
+void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb);
+
 /** Computes length of vector defined by given 3 coordinates.
  * Uses some simplifications, but is fast. Requires the resulting
  * length to fit in 32-bit value, but accepts both map coords and precise coords.

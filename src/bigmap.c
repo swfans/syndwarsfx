@@ -26,6 +26,7 @@
 #include "enginprops.h"
 #include "enginsngtxtr.h"
 
+#include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
 struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
@@ -313,7 +314,7 @@ int alt_at_point_under_height(int cor_x, int cor_z, int h)
 #endif
     short tile_x, tile_z;
     ushort col;
-    ubyte quarter;
+    ubyte qb;
 
     tile_x = MAPCOORD_TO_TILE(cor_x);
     tile_z = MAPCOORD_TO_TILE(cor_z);
@@ -326,20 +327,7 @@ int alt_at_point_under_height(int cor_x, int cor_z, int h)
         struct MyMapElement *p_mapel;
         p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
         col = p_mapel->ColumnHead & 0xFFF;
-        if ((cor_x & 0x80) == 0)
-        {
-            if ((cor_z & 0x80) == 0)
-                quarter = 0;
-            else
-                quarter = 3;
-        }
-        else
-        {
-            if ((cor_z & 0x80) == 0)
-                quarter = 1;
-            else
-                quarter = 2;
-        }
+        qb = map_coord_to_collision_qbit_index(cor_x, cor_z);
     }
 
     int alt_curr, alt_best, h_max;
@@ -359,7 +347,7 @@ int alt_at_point_under_height(int cor_x, int cor_z, int h)
         {
             if (alt_curr > h_max)
                 break;
-            if ((mask & p_col->QBits[quarter]) != 0)
+            if ((mask & p_col->QBits[qb]) != 0)
                 alt_best = alt_curr;
             alt_curr += 0x8000;
         }
@@ -398,6 +386,55 @@ int alt_change_at_tile(short tile_x, short tile_z, int *change_xz)
     if (change_xz != NULL)
         *change_xz = 256;
     return abs(alt_max - alt_min);
+}
+
+ubyte map_coord_to_collision_qbit_index(short x, short z)
+{
+    ubyte qb;
+
+    if ((x & 0xFF) <= 127) {
+        if ((z & 0xFF) <= 127)
+            qb = 0;
+        else
+            qb = 3;
+    } else {
+        if ((z & 0xFF) <= 127)
+            qb = 1;
+        else
+            qb = 2;
+    }
+    return qb;
+}
+
+void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb)
+{
+    struct ColColumn *p_ccol;
+    ushort ccol;
+
+    if (setbit < 0)
+        return;
+    ccol = p_mapel->ColumnHead;
+    if (ccol == 0)
+    {
+        int limit;
+
+        limit = get_memory_ptr_allocated_count((void **)&game_col_columns);
+        if (next_col_column >= limit) {
+            LOGERR("out of col_columns");
+            return;
+        }
+        ccol = next_col_column;
+        next_col_column++;
+
+        p_mapel->ColumnHead = ccol;
+        p_ccol = &game_col_columns[ccol];
+        p_ccol->QBits[0] = 0;
+        p_ccol->QBits[1] = 0;
+        p_ccol->QBits[2] = 0;
+        p_ccol->QBits[3] = 0;
+    }
+    p_ccol = &game_col_columns[ccol];
+    p_ccol->QBits[qb] |= 1 << setbit;
 }
 
 static ushort count_tiles_around_steeper_than(short tile_x, short tile_z, short steepness)

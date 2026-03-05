@@ -1355,55 +1355,6 @@ void generate_walk_items(void)
     }
 }
 
-void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb)
-{
-    struct ColColumn *p_ccol;
-    ushort ccol;
-
-    if (setbit < 0)
-        return;
-    ccol = p_mapel->ColumnHead;
-    if (ccol == 0)
-    {
-        int limit;
-
-        limit = get_memory_ptr_allocated_count((void **)&game_col_columns);
-        if (next_col_column >= limit) {
-            LOGERR("out of col_columns");
-            return;
-        }
-        ccol = next_col_column;
-        next_col_column++;
-
-        p_mapel->ColumnHead = ccol;
-        p_ccol = &game_col_columns[ccol];
-        p_ccol->QBits[0] = 0;
-        p_ccol->QBits[1] = 0;
-        p_ccol->QBits[2] = 0;
-        p_ccol->QBits[3] = 0;
-    }
-    p_ccol = &game_col_columns[ccol];
-    p_ccol->QBits[qb] |= 1 << setbit;
-}
-
-ubyte map_coord_to_collision_qbit_index(short x, short z)
-{
-    ubyte qb;
-
-    if ((x & 0xFF) <= 127) {
-        if ((z & 0xFF) <= 127)
-            qb = 0;
-        else
-            qb = 3;
-    } else {
-        if ((z & 0xFF) <= 127)
-            qb = 1;
-        else
-            qb = 2;
-    }
-    return qb;
-}
-
 #define FACE_SWEEP_STEPS 256
 
 /** Function to find the divisor of N closest to the target

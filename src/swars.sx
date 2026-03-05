@@ -53252,7 +53252,7 @@ GLOBAL_FUNC(ASM_check_col_collision)	/* 0x05C888 */
 	jump_5ca15:
 		movswl %cx,%ebx
 		mov    %ebx,%ecx
-		mov    game_col_columns,%ebx
+		mov    EXPORT_SYMBOL(game_col_columns),%ebx
 		shl    $0x4,%ecx
 		movswl %dx,%edx
 		add    %ecx,%ebx
@@ -57655,7 +57655,7 @@ func_5fe50:
 		shl    $0x4,%ebx
 		mov    %ebx,0x4(%esp)
 		mov    0x4(%esp),%ecx
-		mov    game_col_columns,%ebx
+		mov    EXPORT_SYMBOL(game_col_columns),%ebx
 		add    %ecx,%ebx
 		mov    (%ebx),%ecx
 		or     0x4(%ebx),%ecx
@@ -57688,7 +57688,7 @@ func_5fe50:
 		and    $0xf,%bh
 		and    $0xffff,%ebx
 		je     jump_60002
-		mov    game_col_columns,%ecx
+		mov    EXPORT_SYMBOL(game_col_columns),%ecx
 		shl    $0x4,%ebx
 		add    %ecx,%ebx
 		mov    (%ebx),%ecx
@@ -57722,7 +57722,7 @@ func_5fe50:
 		and    $0xf,%bh
 		and    $0xffff,%ebx
 		je     jump_60067
-		mov    game_col_columns,%ecx
+		mov    EXPORT_SYMBOL(game_col_columns),%ecx
 		shl    $0x4,%ebx
 		add    %ecx,%ebx
 		mov    (%ebx),%ecx
@@ -78511,7 +78511,7 @@ GLOBAL_FUNC(ASM_alt_at_point_under_height)	/* 0x077624 */
 	jump_776b3:
 		cmp    %ecx,%eax
 		jg     jump_776d6
-		mov    game_col_columns,%ebx
+		mov    EXPORT_SYMBOL(game_col_columns),%ebx
 		mov    0x4(%esp),%ebp
 		add    %edi,%ebx
 		add    %ebp,%ebx
