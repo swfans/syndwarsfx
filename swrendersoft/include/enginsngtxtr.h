@@ -70,14 +70,15 @@ struct AnimTmap { // sizeof=54
 #pragma pack()
 /******************************************************************************/
 extern struct SingleFloorTexture *game_textures;
-extern struct SingleTexture *game_face_textures;
-extern struct AnimTmap *game_anim_tmaps;
-
-extern ushort next_face_texture;
 extern ushort next_floor_texture;
-extern ushort next_anim_tmap;
-
 extern ushort tnext_floor_texture;
+
+extern struct SingleTexture *game_face_textures;
+extern ushort next_face_texture;
+
+extern struct AnimTmap *game_anim_tmaps;
+extern ushort next_anim_tmap;
+/******************************************************************************/
 
 ushort floor_texture_index(struct SingleFloorTexture *p_sftex);
 

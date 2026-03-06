@@ -63,18 +63,18 @@ struct ShEnginePoint {
 /******************************************************************************/
 extern long cam_tilt;
 
-extern long dword_176D0C;
-extern long dword_176D10;
-extern long dword_176D14;
-extern long dword_176D18;
-extern long dword_176D1C;
-extern long dword_176D3C;
-extern long dword_176D40;
-extern long dword_176D44;
-extern long dword_176D4C;
-extern long cam_rotation_velocity;
-extern long dword_176D64;
+extern s32 dword_176D0C;
+extern s32 dword_176D10;
+extern s32 dword_176D14;
+extern s32 dword_176D18;
+extern s32 dword_176D1C;
+extern s32 dword_176D3C;
+extern s32 dword_176D40;
+extern s32 dword_176D44;
+extern s32 dword_176D4C;
+extern s32 cam_rotation_velocity;
 
+/******************************************************************************/
 short angle_between_points(int x1, int z1, int x2, int z2);
 
 void local_to_worldr(int *dx, int *dy, int *dz);

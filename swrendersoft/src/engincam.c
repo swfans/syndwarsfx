@@ -26,14 +26,14 @@
 
 s32 engn_anglexz = 0;
 
-extern long dword_176D70;
-extern long dword_176D74;
-extern long dword_176D78;
-extern long dword_176D7C;
-extern long dword_176D80;
-extern long dword_176D84;
-extern long dword_176D88;
-extern long dword_176D8C;
+s32 dword_176D70;
+s32 dword_176D74;
+s32 dword_176D78;
+s32 dword_176D7C;
+s32 dword_176D80;
+s32 dword_176D84;
+s32 dword_176D88;
+s32 dword_176D8C;
 
 /******************************************************************************/
 

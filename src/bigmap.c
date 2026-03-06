@@ -29,10 +29,6 @@
 #include "game_data.h"
 #include "swlog.h"
 /******************************************************************************/
-struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
-ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
-ushort spiral_dist_tiles_limit = 0;
-
 const struct Direction angle_direction[] = {
     {   0,  256},
     { 181,  181},
@@ -43,6 +39,13 @@ const struct Direction angle_direction[] = {
     {-256,    0},
     {-181,  181},
 };
+
+struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
+ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
+ushort spiral_dist_tiles_limit = 0;
+
+ushort next_col_column = 1;
+/******************************************************************************/
 
 TbBool map_coords_limit(MapCoord *cor_x, MapCoord *cor_y, MapCoord *cor_z, long map_x, long map_y, long map_z)
 {

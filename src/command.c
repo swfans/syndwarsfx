@@ -231,6 +231,7 @@ struct CommandDef command_defs[] = {
     {NULL,							NULL,				CmDF_None },
 };
 
+struct Command *game_commands = NULL;
 ushort next_command = 1;
 
 const char *command_codename(ushort cmd)

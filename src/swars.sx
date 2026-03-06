@@ -62,6 +62,17 @@
 .global EXPORT_SYMBOL(people_frames);	/* 0x153D5C */
 .global EXPORT_SYMBOL(follow_dist);	/* 0x153398 */
 
+.global EXPORT_SYMBOL(tnext_floor_texture)	/* 0x176d08 */
+.global EXPORT_SYMBOL(dword_176D0C)	/* 0x176D0C */
+.global EXPORT_SYMBOL(dword_176D10)	/* 0x176D10 */
+.global EXPORT_SYMBOL(dword_176D14)	/* 0x176D14 */
+.global EXPORT_SYMBOL(dword_176D18)	/* 0x176D18 */
+.global EXPORT_SYMBOL(dword_176D1C)	/* 0x176D1C */
+.global EXPORT_SYMBOL(dword_176D3C)	/* 0x176D3C */
+.global EXPORT_SYMBOL(dword_176D40)	/* 0x176D40 */
+.global EXPORT_SYMBOL(dword_176D44)	/* 0x176D44 */
+.global EXPORT_SYMBOL(dword_176D4C)	/* 0x176D4C */
+.global EXPORT_SYMBOL(cam_rotation_velocity)	/* 0x176D54 */
 .global EXPORT_SYMBOL(engn_anglexz);	/* 0x176D58 */
 
 .global EXPORT_SYMBOL(tmaps_extra_buf);	/* 0x1810D1 */
@@ -73,14 +84,20 @@
 .global EXPORT_SYMBOL(colour_sel_red);		/* 0x18114e */
 .global EXPORT_SYMBOL(colour_sel_purple);	/* 0x181152 */
 
-.global EXPORT_SYMBOL(colour_grey1);	/* 0x19CC5C */
-.global EXPORT_SYMBOL(colour_grey2);	/* 0x19CC5D */
-.global EXPORT_SYMBOL(colour_brown2); /* 0x19CC5E */
-.global EXPORT_SYMBOL(pop1_sprites);	/* 0x19CBDC */
-.global EXPORT_SYMBOL(pointer_sprites);	/* 0x1A5840 */
-.global EXPORT_SYMBOL(small_font);	/* 0x1A5848 */
-.global EXPORT_SYMBOL(display_palette);	/* 0x1A5878 */
-.global EXPORT_SYMBOL(colour_lookup);	/* 0x1A71B8 */
+.global EXPORT_SYMBOL(colour_grey1);		/* 0x19CC5C */
+.global EXPORT_SYMBOL(colour_grey2);		/* 0x19CC5D */
+.global EXPORT_SYMBOL(colour_brown2);		/* 0x19CC5E */
+.global EXPORT_SYMBOL(pop1_sprites);		/* 0x19CBDC */
+.global EXPORT_SYMBOL(game_anim_tmaps)		/* 0x19f510 */
+.global EXPORT_SYMBOL(game_commands)		/* 0x19f514 */
+.global EXPORT_SYMBOL(next_col_column)		/* 0x19f73a */
+.global EXPORT_SYMBOL(textwalk_data)		/* 0x19F73C */
+.global EXPORT_SYMBOL(game_textures)		/* 0x1a09d4 */
+.global EXPORT_SYMBOL(game_face_textures)	/* 0x1a09d8 */
+.global EXPORT_SYMBOL(pointer_sprites);		/* 0x1A5840 */
+.global EXPORT_SYMBOL(small_font);			/* 0x1A5848 */
+.global EXPORT_SYMBOL(display_palette);		/* 0x1A5878 */
+.global EXPORT_SYMBOL(colour_lookup);		/* 0x1A71B8 */
 
 .global EXPORT_SYMBOL(unkn_changing_color_counter1);	/* 0x1AA26C */
 .global EXPORT_SYMBOL(colour_lookup_lock);	/* 0x1AA270 */
@@ -6957,7 +6974,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd)	/* 0x027638 */
 		mov    0x7c(%esp),%edx
 		xor    %eax,%eax
 		mov    0x6(%edx),%ax
-		mov    game_face_textures,%edx
+		mov    EXPORT_SYMBOL(game_face_textures),%edx
 		shl    $0x4,%eax
 		add    %edx,%eax
 		xor    %edx,%edx
@@ -7517,7 +7534,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd)	/* 0x027D78 */
 		mov    0x8(%eax),%dx
 		lea    0x0(,%edx,8),%eax
 		add    %edx,%eax
-		mov    game_textures,%edx
+		mov    EXPORT_SYMBOL(game_textures),%edx
 		add    %eax,%eax
 		add    %eax,%edx
 		xor    %eax,%eax
@@ -8287,7 +8304,7 @@ GLOBAL_FUNC(ASM_draw_object_face4_pole)	/* 0x028800 */
 		mov    0x8(%edx),%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		add    %ebx,%eax
 		xor    %ebx,%ebx
@@ -8488,7 +8505,7 @@ GLOBAL_FUNC(ASM_draw_object_face4g_textrd)	/* 0x028AA4 */
 		mov    0x8(%ecx),%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%esi
+		mov    EXPORT_SYMBOL(game_textures),%esi
 		add    %eax,%eax
 		add    %eax,%esi
 		xor    %eax,%eax
@@ -9092,7 +9109,7 @@ GLOBAL_FUNC(ASM_draw_object_face3g_textrd)	/* 0x0292C0 */
 		je     jump_2939f
 		xor    %eax,%eax
 		mov    %dx,%ax
-		mov    game_face_textures,%edx
+		mov    EXPORT_SYMBOL(game_face_textures),%edx
 		shl    $0x4,%eax
 		add    %edx,%eax
 		xor    %edx,%edx
@@ -9653,7 +9670,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		mov    0x78(%esp),%edx
 		xor    %eax,%eax
 		mov    0x6(%edx),%ax
-		mov    game_face_textures,%edx
+		mov    EXPORT_SYMBOL(game_face_textures),%edx
 		shl    $0x4,%eax
 		add    %edx,%eax
 		xor    %edx,%edx
@@ -10022,7 +10039,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    0x8(%eax),%dx
 		lea    0x0(,%edx,8),%eax
 		add    %eax,%edx
-		mov    game_textures,%eax
+		mov    EXPORT_SYMBOL(game_textures),%eax
 		add    %edx,%edx
 		add    %edx,%eax
 		mov    %eax,0xa4(%esp)
@@ -10563,7 +10580,7 @@ GLOBAL_FUNC(ASM_draw_special_object_face4)	/* 0x02A550 */
 		mov    0x8(%ecx),%dx
 		lea    0x0(,%edx,8),%eax
 		add    %edx,%eax
-		mov    game_textures,%edx
+		mov    EXPORT_SYMBOL(game_textures),%edx
 		add    %eax,%eax
 		add    %edx,%eax
 		xor    %edx,%edx
@@ -10933,7 +10950,7 @@ func_2b60b:
 		mov    (%eax),%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		add    %ebx,%eax
 		xor    %ebx,%ebx
@@ -11056,7 +11073,7 @@ func_2b7a0:
 /*----------------------------------------------------------------*/
 		mov    (%eax),%ax
 		and    $0xffff,%eax
-		mov    game_face_textures,%ebx
+		mov    EXPORT_SYMBOL(game_face_textures),%ebx
 		shl    $0x4,%eax
 		add    %ebx,%eax
 		xor    %ebx,%ebx
@@ -11150,8 +11167,8 @@ GLOBAL_FUNC(ASM_animate_textures)	/* 0x02E318 */
 		push   %edi
 		push   %ebp
 		sub    $0x4,%esp
-		mov    game_anim_tmaps,%ebx
-		mov    game_textures,%ebp
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebp
 		mov    EXPORT_SYMBOL(fifties_per_gameturn),%ax
 		mov    %ax,(%esp)
 		mov    -0x2(%esp),%eax
@@ -11215,8 +11232,8 @@ GLOBAL_FUNC(ASM_animate_textures)	/* 0x02E318 */
 		movsw  %ds:(%esi),%es:(%edi)
 		jmp    jump_2e357
 	jump_2e3eb:
-		mov    %ebp,game_textures
-		mov    %ebx,game_anim_tmaps
+		mov    %ebp,EXPORT_SYMBOL(game_textures)
+		mov    %ebx,EXPORT_SYMBOL(game_anim_tmaps)
 		add    $0x4,%esp
 		pop    %ebp
 		pop    %edi
@@ -11265,7 +11282,7 @@ GLOBAL_FUNC(ASM_fill_floor_textures)	/* 0x0301A0 */
 		push   %edi
 		mov    EXPORT_SYMBOL(next_floor_texture),%cx
 		mov    EXPORT_SYMBOL(prim4_textures_count),%si
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		mov    $0x1,%edx
 		cmp    %dx,%cx
 		jbe    jump_3020b
@@ -11328,7 +11345,7 @@ GLOBAL_FUNC(ASM_fill_floor_textures)	/* 0x0301A0 */
 		mov    %bh,0x7(%eax)
 		jmp    jump_30217
 	jump_30260:
-		mov    %edi,game_textures
+		mov    %edi,EXPORT_SYMBOL(game_textures)
 		mov    %si,EXPORT_SYMBOL(prim4_textures_count)
 		mov    %cx,EXPORT_SYMBOL(next_floor_texture)
 		pop    %edi
@@ -11867,7 +11884,7 @@ GLOBAL_FUNC (ASM_unkn_f_pressed_func)	/* 0x030C24 */
 		push   %esi
 		push   %edi
 		push   %ebp
-		mov    game_commands,%ebx
+		mov    EXPORT_SYMBOL(game_commands),%ebx
 		mov    EXPORT_SYMBOL(same_type_head)+2,%ax
 		xor    %edi,%edi
 		test   %ax,%ax
@@ -11940,7 +11957,7 @@ GLOBAL_FUNC (ASM_unkn_f_pressed_func)	/* 0x030C24 */
 		test   %ax,%ax
 		jne    jump_30c43
 	jump_30cee:
-		mov    %ebx,game_commands
+		mov    %ebx,EXPORT_SYMBOL(game_commands)
 		pop    %ebp
 		pop    %edi
 		pop    %esi
@@ -17346,7 +17363,7 @@ GLOBAL_FUNC(ASM_find_face_texture)	/* 0x041EC0 */
 		push   %esi
 		push   %edi
 		mov    EXPORT_SYMBOL(next_face_texture),%si
-		mov    game_face_textures,%edi
+		mov    EXPORT_SYMBOL(game_face_textures),%edi
 		mov    %eax,%edx
 		mov    $0x1,%ebx
 		cmp    %bx,%si
@@ -17389,7 +17406,7 @@ GLOBAL_FUNC(ASM_find_face_texture)	/* 0x041EC0 */
 		xor    %ecx,%ecx
 	jump_41f2f:
 		mov    %ecx,%eax
-		mov    %edi,game_face_textures
+		mov    %edi,EXPORT_SYMBOL(game_face_textures)
 		mov    %si,EXPORT_SYMBOL(next_face_texture)
 		pop    %edi
 		pop    %esi
@@ -17408,7 +17425,7 @@ GLOBAL_FUNC(ASM_find_floor_texture)
 		push   %esi
 		push   %edi
 		mov    EXPORT_SYMBOL(next_floor_texture),%si
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		mov    %eax,%edx
 		mov    $0x1,%ebx
 		cmp    %bx,%si
@@ -17456,7 +17473,7 @@ GLOBAL_FUNC(ASM_find_floor_texture)
 		xor    %ecx,%ecx
 	jump_41fc4:
 		mov    %ecx,%eax
-		mov    %edi,game_textures
+		mov    %edi,EXPORT_SYMBOL(game_textures)
 		mov    %si,EXPORT_SYMBOL(next_floor_texture)
 		pop    %edi
 		pop    %esi
@@ -17769,7 +17786,7 @@ GLOBAL_FUNC(ASM_update_texture_from_anim_tmap)	/* 0x042380 */
 		push   %ebp
 		sub    $0x4,%esp
 		mov    EXPORT_SYMBOL(next_floor_texture),%bx
-		mov    game_textures,%ebp
+		mov    EXPORT_SYMBOL(game_textures),%ebp
 		mov    %eax,(%esp)
 		xor    %edx,%edx
 		jmp    jump_4239e
@@ -17783,7 +17800,7 @@ GLOBAL_FUNC(ASM_update_texture_from_anim_tmap)	/* 0x042380 */
 		xor    %esi,%esi
 		mov    (%esp),%si
 		imul   $0x36,%esi,%esi
-		mov    game_anim_tmaps,%ecx
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%ecx
 		add    %eax,%eax
 		add    %esi,%ecx
 		add    %ecx,%eax
@@ -17808,7 +17825,7 @@ GLOBAL_FUNC(ASM_update_texture_from_anim_tmap)	/* 0x042380 */
 		mov    %di,0x2(%eax)
 		jmp    jump_4239d
 	jump_423ea:
-		mov    %ebp,game_textures
+		mov    %ebp,EXPORT_SYMBOL(game_textures)
 		mov    %bx,EXPORT_SYMBOL(next_floor_texture)
 		add    $0x4,%esp
 		pop    %ebp
@@ -18088,7 +18105,7 @@ rotate_texture:	/* 0x042AB8 */
 		mov    0x2(%ebx,%eax,2),%ax
 		and    $0xffff,%eax
 		imul   $0x12,%eax,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %ebx,%eax
 		xor    %ebx,%ebx
 		mov    0x1(%eax),%bl
@@ -18113,7 +18130,7 @@ rotate_texture:	/* 0x042AB8 */
 	jump_42b2a:
 		movswl %si,%eax
 		imul   $0x36,%eax,%eax
-		mov    game_anim_tmaps,%ebx
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%ebx
 		add    %eax,%ebx
 		mov    0x20(%ebx),%ecx
 		movswl %dx,%eax
@@ -18125,7 +18142,7 @@ rotate_texture:	/* 0x042AB8 */
 		movswl %dx,%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		add    %ebx,%eax
 		mov    0x2(%eax),%dl
@@ -18264,7 +18281,7 @@ is_animating:	/* 0x042D00 */
 		push   %esi
 		push   %edi
 		mov    EXPORT_SYMBOL(next_anim_tmap),%si
-		mov    game_anim_tmaps,%edi
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%edi
 		mov    %eax,%ecx
 		test   %ax,%ax
 		je     jump_42d44
@@ -18290,7 +18307,7 @@ is_animating:	/* 0x042D00 */
 	jump_42d42:
 		xor    %eax,%eax
 	jump_42d44:
-		mov    %edi,game_anim_tmaps
+		mov    %edi,EXPORT_SYMBOL(game_anim_tmaps)
 		mov    %si,EXPORT_SYMBOL(next_anim_tmap)
 		pop    %edi
 		pop    %esi
@@ -18735,7 +18752,7 @@ func_43729:
 		mov    0xe(%ebx),%eax
 		sar    $0x10,%eax
 		imul   $0x36,%eax,%eax
-		mov    game_anim_tmaps,%edx
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%edx
 		mov    0x22(%edx,%eax,1),%al
 		and    $0xff,%eax
 		xor    %edx,%edx
@@ -18766,7 +18783,7 @@ func_43729:
 		mov    0xe(%ebx),%eax
 		sar    $0x10,%eax
 		imul   $0x36,%eax,%eax
-		mov    game_anim_tmaps,%edx
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%edx
 		mov    0x22(%edx,%eax,1),%al
 		and    $0xff,%eax
 		xor    %edx,%edx
@@ -18835,7 +18852,7 @@ func_43729:
 		cmp    %ecx,%edx
 		jge    jump_43891
 		imul   $0x36,%edx,%ecx
-		mov    game_anim_tmaps,%edx
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%edx
 		add    %ecx,%edx
 		xor    %ecx,%ecx
 		mov    (%edx),%cx
@@ -29051,7 +29068,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		mov    %cx,%ax
 		add    %ebp,%ebx
 		add    %edi,%edx
-		mov    game_commands,%ecx
+		mov    EXPORT_SYMBOL(game_commands),%ecx
 		sar    $0x8,%ebx
 		shl    $0x5,%eax
 		sar    $0x8,%edx
@@ -30378,7 +30395,7 @@ GLOBAL_FUNC(ASM_set_angle_to_avoid_group)	/* 0x04BFFC */
 		mov    %eax,%esi
 		xor    %eax,%eax
 		mov    0x54(%esi),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		mov    0x2(%edx,%eax,1),%dx
 		and    $0xffff,%edx
@@ -31004,7 +31021,7 @@ GLOBAL_FUNC(ASM_person_init_command)	/* 0x04C7AC */
 		mov    0x54(%ebp),%cx
 		mov    %ah,0xd(%ebp)
 		xor    %eax,%eax
-		mov    game_commands,%esi
+		mov    EXPORT_SYMBOL(game_commands),%esi
 		mov    %cx,%ax
 		movw   $0x0,0x8e(%ebp)
 		shl    $0x5,%eax
@@ -31027,7 +31044,7 @@ GLOBAL_FUNC(ASM_person_init_command)	/* 0x04C7AC */
 		je     func_4d9ad
 		xor    %eax,%eax
 		mov    %cx,%ax
-		mov    game_commands,%esi
+		mov    EXPORT_SYMBOL(game_commands),%esi
 		shl    $0x5,%eax
 		add    %eax,%esi
 		testb  $0x4,0x18(%esi)
@@ -31040,7 +31057,7 @@ GLOBAL_FUNC(ASM_person_init_command)	/* 0x04C7AC */
 		mov    %edx,0x4(%esp)
 		xor    %edx,%edx
 		mov    %ax,%dx
-		mov    game_commands,%edi
+		mov    EXPORT_SYMBOL(game_commands),%edi
 		shl    $0x5,%edx
 		add    %edx,%edi
 		mov    0x18(%edi),%dh
@@ -31062,7 +31079,7 @@ GLOBAL_FUNC(ASM_person_init_command)	/* 0x04C7AC */
 		xor    %edi,%edi
 		mov    %ax,%di
 		mov    %edi,%edx
-		mov    game_commands,%edi
+		mov    EXPORT_SYMBOL(game_commands),%edi
 		shl    $0x5,%edx
 		add    %edx,%edi
 		testb  $0x4,0x18(%edi)
@@ -31730,7 +31747,7 @@ func_4cee3:
 /*----------------------------------------------------------------*/
 		xor    %eax,%eax
 		mov    0x54(%ebp),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		mov    (%edx,%eax,1),%ax
 		mov    %ax,0x54(%ebp)
@@ -31751,7 +31768,7 @@ func_4ceff:
 		call   ac_add_static
 		xor    %eax,%eax
 		mov    0x54(%ebp),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		mov    (%edx,%eax,1),%ax
 		mov    %ax,0x54(%ebp)
@@ -32908,7 +32925,7 @@ GLOBAL_FUNC(ASM_person_goto_point_rel)	/* 0x04D9B8 */
 		jne    jump_4dbab
 		xor    %eax,%eax
 		mov    0x54(%ebx),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		mov    (%edx,%eax,1),%ax
 		mov    $0x3,%edx
@@ -34354,7 +34371,7 @@ GLOBAL_FUNC(ASM_person_pickup)	/* 0x04EB0C */
 		je     jump_4ecd9
 		xor    %eax,%eax
 		mov    0x54(%esi),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		mov    (%edx,%eax,1),%ax
 		mov    %ax,0x54(%esi)
@@ -38035,7 +38052,7 @@ GLOBAL_FUNC(ASM_person_kill_person)	/* 0x051590 */
 		xor    %eax,%eax
 		mov    0x54(%edx),%ax
 		mov    %eax,%ecx
-		mov    game_commands,%eax
+		mov    EXPORT_SYMBOL(game_commands),%eax
 		shl    $0x5,%ecx
 		add    %ecx,%eax
 		xor    %ecx,%ecx
@@ -41953,7 +41970,7 @@ GLOBAL_FUNC(ASM_person_attempt_to_leave_ferry)	/* 0x0545E4 */
 		mov    %eax,%esi
 		xor    %eax,%eax
 		mov    0x54(%esi),%ax
-		mov    game_commands,%edi
+		mov    EXPORT_SYMBOL(game_commands),%edi
 		shl    $0x5,%eax
 		add    %eax,%edi
 		mov    0xc(%edi),%eax
@@ -42079,7 +42096,7 @@ GLOBAL_FUNC(ASM_person_catch_train)	/* 0x054744 */
 		test   %eax,%eax
 		jne    jump_547ba
 		mov    0x54(%ebx),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		add    %eax,%edx
 		mov    0x6e(%ebx),%ax
@@ -42101,7 +42118,7 @@ GLOBAL_FUNC(ASM_person_catch_train)	/* 0x054744 */
 	jump_54795:
 		xor    %edx,%edx
 		mov    0x54(%ebx),%dx
-		mov    game_commands,%eax
+		mov    EXPORT_SYMBOL(game_commands),%eax
 		shl    $0x5,%edx
 		mov    (%edx,%eax,1),%edx
 		sar    $0x10,%edx
@@ -43776,7 +43793,7 @@ GLOBAL_FUNC(ASM_is_command_completed)	/* 0x055B60 */
 		mov    %eax,%ecx
 		xor    %esi,%esi
 		mov    0x54(%eax),%si
-		mov    game_commands,%eax
+		mov    EXPORT_SYMBOL(game_commands),%eax
 		shl    $0x5,%esi
 		add    %eax,%esi
 		mov    0xa(%esi),%al
@@ -43926,7 +43943,7 @@ GLOBAL_FUNC(ASM_person_wait_vehicle)	/* 0x055CB8 */
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    game_commands,%ebx
+		mov    EXPORT_SYMBOL(game_commands),%ebx
 		mov    %eax,%ecx
 		mov    0x5c(%eax),%edx
 		sar    $0x10,%edx
@@ -44019,11 +44036,11 @@ GLOBAL_FUNC(ASM_person_wait_vehicle)	/* 0x055CB8 */
 	jump_55db2:
 		mov    %ax,0x54(%ecx)
 		mov    %ecx,%eax
-		mov    %ebx,game_commands
+		mov    %ebx,EXPORT_SYMBOL(game_commands)
 		call   ac_person_init_command
-		mov    game_commands,%ebx
+		mov    EXPORT_SYMBOL(game_commands),%ebx
 	jump_55dc9:
-		mov    %ebx,game_commands
+		mov    %ebx,EXPORT_SYMBOL(game_commands)
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -44610,7 +44627,7 @@ GLOBAL_FUNC(ASM_process_person)	/* 0x056050 */
 		je     jump_5654d
 		xor    %eax,%eax
 		mov    0x54(%esi),%ax
-		mov    game_commands,%ecx
+		mov    EXPORT_SYMBOL(game_commands),%ecx
 		shl    $0x5,%eax
 		add    %ecx,%eax
 		testb  $0x2,0x18(%eax)
@@ -44642,7 +44659,7 @@ GLOBAL_FUNC(ASM_process_person)	/* 0x056050 */
 		mov    (%ecx),%ax
 		xor    %ecx,%ecx
 		mov    %ax,%cx
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%ecx
 		add    %edx,%ecx
 		testb  $0x4,0x18(%ecx)
@@ -44796,7 +44813,7 @@ func_5662b:
 	jump_566da:
 		xor    %eax,%eax
 		mov    0x54(%esi),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		mov    (%edx,%eax,1),%ax
 		mov    %ax,0x54(%esi)
@@ -45275,7 +45292,7 @@ apply_texture_to_face:	/* 0x056ADC */
 		lea    0x0(,%edx,8),%eax
 		xor    %ebx,%ebx
 		add    %eax,%edx
-		mov    game_textures,%eax
+		mov    EXPORT_SYMBOL(game_textures),%eax
 		add    %edx,%edx
 		mov    %si,%bx
 		add    %edx,%eax
@@ -49247,7 +49264,7 @@ GLOBAL_FUNC(ASM_person_leave_vehicle)	/* 0x05957C */
 		je     jump_59bab
 		xor    %edx,%edx
 		mov    0x54(%eax),%dx
-		mov    game_commands,%eax
+		mov    EXPORT_SYMBOL(game_commands),%eax
 		shl    $0x5,%edx
 		mov    (%edx,%eax,1),%dx
 		and    $0xffff,%edx
@@ -54285,7 +54302,7 @@ GLOBAL_FUNC(ASM_get_my_texture_bits)	/* 0x05D850 */
 		movswl %ax,%ecx
 		lea    0x0(,%ecx,8),%eax
 		add    %ecx,%eax
-		mov    game_textures,%ecx
+		mov    EXPORT_SYMBOL(game_textures),%ecx
 		add    %eax,%eax
 		add    %ecx,%eax
 		xor    %dl,%dl
@@ -54367,7 +54384,7 @@ GLOBAL_FUNC(ASM_get_my_texture_bits)	/* 0x05D850 */
 		movzbl 0x8(%eax),%ebp
 		shl    $0x6,%ebp
 		add    (%esp),%ebp
-		mov    textwalk_data(%ebp),%dh
+		mov    EXPORT_SYMBOL(textwalk_data)(%ebp),%dh
 		movzbl (%eax),%ebp
 		cmp    %ebp,%ecx
 		jne    jump_5d93a
@@ -58159,7 +58176,7 @@ GLOBAL_FUNC(ASM_copy_prim_obj_to_game_object)	/* 0x6031C */
 		shl    $0x4,%esi
 		shl    $0x4,%eax
 		add    %edi,%esi
-		mov    game_face_textures,%edi
+		mov    EXPORT_SYMBOL(game_face_textures),%edi
 		add    %eax,%edi
 		mov    EXPORT_SYMBOL(next_face_texture),%ax
 		movsl  %ds:(%esi),%es:(%edi)
@@ -58185,7 +58202,7 @@ GLOBAL_FUNC(ASM_copy_prim_obj_to_game_object)	/* 0x6031C */
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(next_anim_tmap),%ax
 		imul   $0x36,%eax,%edi
-		mov    game_anim_tmaps,%esi
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%esi
 		mov    $0xd,%ecx
 		add    %esi,%ebp
 		add    %esi,%edi
@@ -58196,7 +58213,7 @@ GLOBAL_FUNC(ASM_copy_prim_obj_to_game_object)	/* 0x6031C */
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(next_anim_tmap),%ax
 		imul   $0x36,%eax,%eax
-		mov    game_anim_tmaps,%esi
+		mov    EXPORT_SYMBOL(game_anim_tmaps),%esi
 		mov    EXPORT_SYMBOL(next_floor_texture),%cx
 		movw   $0x0,0x24(%esi,%eax,1)
 		mov    %cx,(%esi,%eax,1)
@@ -58237,7 +58254,7 @@ GLOBAL_FUNC(ASM_copy_prim_obj_to_game_object)	/* 0x6031C */
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(next_floor_texture),%ax
 		imul   $0x12,%eax,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%edi
 		mov    EXPORT_SYMBOL(next_floor_texture),%ax
 		movsl  %ds:(%esi),%es:(%edi)
@@ -66699,7 +66716,7 @@ GLOBAL_FUNC(ASM_build_time_pod)	/* 0x0681FC */
 		mov    EXPORT_SYMBOL(colour_lookup)+4,%dl
 		mov    0x20(%eax),%ebx
 		push   %edx
-		mov    game_textures,%edx
+		mov    EXPORT_SYMBOL(game_textures),%edx
 		xor    %ecx,%ecx
 		push   %edx
 		sar    $0x8,%ebx
@@ -68004,7 +68021,7 @@ GLOBAL_FUNC(ASM_build_laser_beam)	/* 0x069A34 */
 		push   $0x20
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%al
 		push   %eax
-		mov    game_textures,%eax
+		mov    EXPORT_SYMBOL(game_textures),%eax
 		push   %eax
 		mov    %edi,%eax
 		mov    $0xd,%ecx
@@ -68024,7 +68041,7 @@ GLOBAL_FUNC(ASM_build_laser_beam)	/* 0x069A34 */
 		push   $0x20
 		mov    EXPORT_SYMBOL(colour_lookup)+1,%al
 		push   %eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		push   %ebx
 		mov    $0xa,%ecx
 		mov    0x74(%esp),%edx
@@ -68652,7 +68669,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		push   $0x20
 		mov    EXPORT_SYMBOL(colour_lookup)+4,%al
 		push   %eax
-		mov    game_textures,%eax
+		mov    EXPORT_SYMBOL(game_textures),%eax
 		push   %eax
 		mov    %edi,%eax
 		mov    $0xd,%ecx
@@ -68672,7 +68689,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		push   $0x20
 		mov    EXPORT_SYMBOL(colour_lookup)+4,%al
 		push   %eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		push   %ebx
 		mov    $0xa,%ecx
 		mov    0x78(%esp),%edx
@@ -69555,7 +69572,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		mov    EXPORT_SYMBOL(tnext_floor_texture),%dx
 		lea    0x0(,%edx,8),%eax
 		add    %edx,%eax
-		mov    game_textures,%edx
+		mov    EXPORT_SYMBOL(game_textures),%edx
 		movb   $0x60,(%edx,%eax,2)
 		movb   $0x60,0x1(%edx,%eax,2)
 		movb   $0x7f,0x2(%edx,%eax,2)
@@ -75363,7 +75380,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 	jump_751ca:
 		xor    %eax,%eax
 		mov    0x52(%ebx),%ax
-		mov    game_commands,%edx
+		mov    EXPORT_SYMBOL(game_commands),%edx
 		shl    $0x5,%eax
 		mov    0xa(%edx,%eax,1),%al
 		and    $0xff,%eax
@@ -75374,7 +75391,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		call   ac_set_person_stats_type
 		xor    %edx,%edx
 		mov    0x52(%ebx),%dx
-		mov    game_commands,%eax
+		mov    EXPORT_SYMBOL(game_commands),%eax
 		shl    $0x5,%edx
 		mov    (%edx,%eax,1),%ax
 		mov    %ax,0x52(%ebx)
@@ -75382,7 +75399,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		xor    %eax,%eax
 		mov    0x52(%ebx),%ax
 		mov    %eax,%edx
-		mov    game_commands,%eax
+		mov    EXPORT_SYMBOL(game_commands),%eax
 		shl    $0x5,%edx
 		mov    0xa(%edx,%eax,1),%dl
 		and    $0xff,%edx
@@ -100193,7 +100210,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %eax,%ebx
 		shl    $0x3,%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		movb   $0x0,0x8(%ebx,%eax,2)
 		movb   $0x20,(%ebx,%eax,2)
 		movb   $0x60,0x1(%ebx,%eax,2)
@@ -100247,7 +100264,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		lea    (%ebx,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100269,7 +100286,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100290,7 +100307,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %dx,%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		movb   $0x2,0x8(%ebx,%eax,2)
 		movb   $0xc0,(%ebx,%eax,2)
 		movb   $0x60,0x1(%ebx,%eax,2)
@@ -100327,7 +100344,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100349,7 +100366,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ebx),%ecx
 		lea    0x0(,%ecx,8),%eax
 		add    %ecx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ebx,8),%eax
@@ -100370,7 +100387,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %dx,%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		add    %ebx,%eax
 		movb   $0x0,0x8(%eax)
@@ -100409,7 +100426,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%edi),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		lea    (%ebx,%eax,1),%esi
 		lea    0x0(,%edi,8),%eax
@@ -100431,7 +100448,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		mov    %ecx,%ebx
 		lea    (%edi,%eax,1),%esi
@@ -100453,7 +100470,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %dx,%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		add    %ebx,%eax
 		movb   $0x0,0x8(%eax)
@@ -100492,7 +100509,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ebx),%ecx
 		lea    0x0(,%ecx,8),%eax
 		add    %ecx,%eax
-		mov    game_textures,%ecx
+		mov    EXPORT_SYMBOL(game_textures),%ecx
 		add    %eax,%eax
 		lea    (%ecx,%eax,1),%esi
 		lea    0x0(,%ebx,8),%eax
@@ -100514,7 +100531,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ebx),%ecx
 		lea    0x0(,%ecx,8),%eax
 		add    %ecx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ebx,8),%eax
@@ -100535,7 +100552,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %dx,%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %eax,%ebx
-		mov    game_textures,%eax
+		mov    EXPORT_SYMBOL(game_textures),%eax
 		add    %ebx,%ebx
 		movb   $0x2,0x8(%ebx,%eax,1)
 		movb   $0xff,(%ebx,%eax,1)
@@ -100556,7 +100573,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100578,7 +100595,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%edi),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ecx
+		mov    EXPORT_SYMBOL(game_textures),%ecx
 		add    %eax,%eax
 		lea    (%ecx,%eax,1),%esi
 		lea    0x0(,%edi,8),%eax
@@ -100600,7 +100617,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100621,7 +100638,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %dx,%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		add    %ebx,%eax
 		movb   $0x2,0x8(%eax)
@@ -100660,7 +100677,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100682,7 +100699,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100703,7 +100720,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %dx,%bx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		add    %ebx,%eax
 		movb   $0x0,0x8(%eax)
@@ -100742,7 +100759,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%edi
+		mov    EXPORT_SYMBOL(game_textures),%edi
 		add    %eax,%eax
 		lea    (%edi,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100764,7 +100781,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%esi),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		lea    (%ebx,%eax,1),%ecx
 		lea    0x0(,%esi,8),%eax
@@ -100787,7 +100804,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		mov    %eax,%ebx
 		shl    $0x3,%eax
 		add    %eax,%ebx
-		mov    game_textures,%eax
+		mov    EXPORT_SYMBOL(game_textures),%eax
 		add    %ebx,%ebx
 		movb   $0x0,0x8(%ebx,%eax,1)
 		movb   $0xc0,(%ebx,%eax,1)
@@ -100825,7 +100842,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ecx),%ebx
 		lea    0x0(,%ebx,8),%eax
 		add    %ebx,%eax
-		mov    game_textures,%ebx
+		mov    EXPORT_SYMBOL(game_textures),%ebx
 		add    %eax,%eax
 		lea    (%ebx,%eax,1),%esi
 		lea    0x0(,%ecx,8),%eax
@@ -100847,7 +100864,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		lea    -0x1(%ebx),%ecx
 		lea    0x0(,%ecx,8),%eax
 		add    %ecx,%eax
-		mov    game_textures,%ecx
+		mov    EXPORT_SYMBOL(game_textures),%ecx
 		add    %eax,%eax
 		lea    (%ecx,%eax,1),%esi
 		lea    0x0(,%ebx,8),%eax
@@ -100932,7 +100949,7 @@ unused_func_191:	/* 0x88f14 */
 		mov    %ax,%dx
 		lea    0x0(,%edx,8),%eax
 		add    %edx,%eax
-		mov    game_textures,%edx
+		mov    EXPORT_SYMBOL(game_textures),%edx
 		add    %eax,%eax
 		add    %edx,%eax
 		mov    0x4(%eax),%dl
@@ -101040,7 +101057,7 @@ is_that_a_sea_texture:	/* 0x088FF0 */
 		mov    %eax,%edx
 		shl    $0x3,%eax
 		add    %edx,%eax
-		mov    game_textures,%edx
+		mov    EXPORT_SYMBOL(game_textures),%edx
 		add    %eax,%eax
 		add    %edx,%eax
 		xor    %ebx,%ebx
@@ -101092,7 +101109,7 @@ is_that_a_sea_texture:	/* 0x088FF0 */
 		add    %ebx,%edx
 		and    $0xff,%eax
 		shl    $0x6,%eax
-		mov    textwalk_data(%edx,%eax,1),%al
+		mov    EXPORT_SYMBOL(textwalk_data)(%edx,%eax,1),%al
 		and    $0x2,%al
 		and    $0xff,%eax
 		pop    %edx
@@ -102549,7 +102566,7 @@ GLOBAL_FUNC(ASM_sea_texture)	/* 0x08A220 */
 		mov    %eax,%edx
 		shl    $0x3,%eax
 		add    %edx,%eax
-		mov    game_textures,%edx
+		mov    EXPORT_SYMBOL(game_textures),%edx
 		add    %eax,%eax
 		add    %edx,%eax
 		xor    %ebx,%ebx
@@ -102601,7 +102618,7 @@ GLOBAL_FUNC(ASM_sea_texture)	/* 0x08A220 */
 		add    %ebx,%edx
 		and    $0xff,%eax
 		shl    $0x6,%eax
-		mov    textwalk_data(%edx,%eax,1),%al
+		mov    EXPORT_SYMBOL(textwalk_data)(%edx,%eax,1),%al
 		and    $0xff,%eax
 		and    $0x2,%eax
 		pop    %edx
@@ -119166,7 +119183,7 @@ GLOBAL_FUNC(ASM_conditional_command_state_true)	/* 0x0A6C54 */
 		xor    %dl,%dl
 		mov    %dl,0xc(%esp)
 		and    $0xffff,%eax
-		mov    game_commands,%esi
+		mov    EXPORT_SYMBOL(game_commands),%esi
 		shl    $0x5,%eax
 		add    %eax,%esi
 		testb  $0x8,0x18(%esi)
@@ -143914,7 +143931,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_person)	/* 0x0BFD00 */
 		mov    %eax,0x10(%esp)
 		sar    $0x8,%ebx
 		mov    0x10(%esp),%ebp
-		mov    game_commands,%eax
+		mov    EXPORT_SYMBOL(game_commands),%eax
 		sar    $0x8,%edx
 		add    %ebp,%eax
 		call   ac_check_person_within
@@ -179119,25 +179136,8 @@ GLOBAL (dword_176D00)	/* 0x176D00 */
 		.long	0x0
 GLOBAL (dword_176D04)	/* 0x176D04 */
 		.long	0x0
-GLOBAL (tnext_floor_texture)	/* 0x176d08 */
-		.long	0x0
-GLOBAL (dword_176D0C)	/* 0x176D0C */
-		.long	0x0
-GLOBAL (dword_176D10)	/* 0x176D10 */
-		.long	0x0
-GLOBAL (dword_176D14)	/* 0x176D14 */
-		.long	0x0
-GLOBAL (dword_176D18)	/* 0x176D18 */
-		.long	0x0
-GLOBAL (dword_176D1C)	/* 0x176D1C */
-		.long	0x0
-		.fill   0x1C
-GLOBAL (dword_176D3C)	/* 0x176D3C */
-		.long	0x0
-GLOBAL (dword_176D40)	/* 0x176D40 */
-		.long	0x0
-GLOBAL (dword_176D44)	/* 0x176D44 */
-		.long	0x0
+
+
 GLOBAL (byte_176D48)	/* 0x176D48 */
 		.byte	0x0
 GLOBAL (byte_176D49)	/* 0x176D49 */
@@ -179146,31 +179146,12 @@ GLOBAL (byte_176D4A)	/* 0x176D4A */
 		.byte	0x0
 GLOBAL (byte_176D4B)	/* 0x176D48 */
 		.byte	0x0
-GLOBAL (dword_176D4C)	/* 0x176D4C */
-		.long	0x0
 GLOBAL (engn_yc)
-		.long	0x0
-GLOBAL (cam_rotation_velocity)	/* 0x176D54 */
 		.long	0x0
 
 data_176d6c:
 		.long	0x0
-GLOBAL (dword_176D70)	/* 0x176D70 */
-		.long	0x0
-GLOBAL (dword_176D74)	/* 0x176D74 */
-		.long	0x0
-GLOBAL (dword_176D78)	/* 0x176D78 */
-		.long	0x0
-GLOBAL (dword_176D7C)	/* 0x176D7C */
-		.long	0x0
-GLOBAL (dword_176D80)	/* 0x176D80 */
-		.long	0x0
-GLOBAL (dword_176D84)	/* 0x176D84 */
-		.long	0x0
-GLOBAL (dword_176D88)	/* 0x176D88 */
-		.long	0x0
-GLOBAL (dword_176D8C)	/* 0x176D8C */
-		.long	0x0
+
 GLOBAL (thing_on_face)	/* 0x176D90 */
 		.fill   0xa8
 GLOBAL (word_176E38)
@@ -179709,10 +179690,7 @@ GLOBAL (engn_nuclear_shade_z)	/* 0x19F508 */
 GLOBAL (pktrec_mode)	/* 0x19F50C */
 		.byte	0x0
 		.align  4
-GLOBAL (game_anim_tmaps)			/* 0x19f510 */
-		.long	0x0
-GLOBAL (game_commands)				/* 0x19f514 */
-		.long	0x0
+
 GLOBAL (game_used_objectives)		/* 0x19f518 */
 		.long	0x0
 GLOBAL (game_used_lvl_objectives)	/* 0x19f51c */
@@ -179741,10 +179719,7 @@ GLOBAL (execute_commands)			/* 0x19F554 */
 GLOBAL (debug_hud_collision)	/* 0x19F738 */
 		.byte	0x0
 		.align  2
-GLOBAL (next_col_column)		/* 0x19f73a */
-		.short  0x0
-GLOBAL (textwalk_data)	/* 0x19F73C */
-		.fill   0x280
+
 GLOBAL (unkn_full_lights)	/* 0x19F9BC */
 		.short  0x0
 data_19f9be:
@@ -179771,10 +179746,7 @@ GLOBAL (game_quick_lights)			/* 0x1a09cc */
 		.long	0x0
 GLOBAL (game_full_lights)			/* 0x1a09d0 */
 		.long	0x0
-GLOBAL (game_textures)				/* 0x1a09d4 */
-		.long	0x0
-GLOBAL (game_face_textures)			/* 0x1a09d8 */
-		.long	0x0
+
 /* struct Thing *things;
  */
 GLOBAL (things)	/* 0x1A09DC */

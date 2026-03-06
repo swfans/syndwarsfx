@@ -26,15 +26,19 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
-ushort next_anim_tmap = 10;
-
+struct SingleTexture *game_face_textures = NULL;
 ushort next_face_texture = 1;
 
+struct SingleFloorTexture *game_textures = NULL;
 ushort next_floor_texture = 1;
+ushort tnext_floor_texture;
+
+struct AnimTmap *game_anim_tmaps = NULL;
+ushort next_anim_tmap = 10;
 
 /* Texture walking data.
  */
-extern ubyte textwalk_data[VEC_TMAP_LIMIT * 64];
+ubyte textwalk_data[VEC_TMAP_LIMIT * 64];
 
 /******************************************************************************/
 

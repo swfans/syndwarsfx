@@ -24,6 +24,16 @@
 #define SCREEN_POINT_COORD_MIN (-MAX_SUPPORTED_SCREEN_WIDTH)
 #define SCREEN_POINT_COORD_MAX (2 * MAX_SUPPORTED_SCREEN_WIDTH)
 
+s32 dword_176D0C;
+s32 dword_176D10;
+s32 dword_176D14;
+s32 dword_176D18;
+s32 dword_176D1C;
+s32 dword_176D3C;
+s32 dword_176D40;
+s32 dword_176D44;
+s32 dword_176D4C;
+s32 cam_rotation_velocity = 0;
 /******************************************************************************/
 
 short angle_between_points(int x1, int z1, int x2, int z2)
