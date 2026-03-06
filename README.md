@@ -259,7 +259,7 @@ it. To even allow installing packages for a different architecture, it needs
 to be added:
 
 ```
-dpkg --add-architecture i386
+sudo dpkg --add-architecture i386
 ```
 
 Now install the dependencies - remember that some must be 32-bit (i386):
@@ -277,9 +277,10 @@ sudo apt install libwildmidi-dev:i386
 ```
 
 Be warned - your package manager may assume you want to replace the architecture
-if you did not explicitly added it. If the information on screen suggests
-that the installation would remove a group of currently installed packages,
-do not proceed with the changes and find another way.
+if you either did not explicitly added it, or even if you did but there are bugs
+in dependency solving. If the information on screen suggests that the installation
+would remove a group of currently installed packages, do not proceed with
+the changes and find another way, like using a newer apt solver.
 
 Now as our host is ready, we can start working on the actual `syndwarsfx` sources.
 Go to that folder, and generate build scripts from templates using autotools:
