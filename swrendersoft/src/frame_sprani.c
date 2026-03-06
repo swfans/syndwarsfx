@@ -35,6 +35,7 @@ struct Element *mele_ani_end = NULL;
 ushort *nstart_ani = NULL;
 ushort *nstart_ani_end = NULL;
 
+ushort shield_frm[4];
 /******************************************************************************/
 
 #if 0

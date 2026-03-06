@@ -61,7 +61,7 @@ struct ShEnginePoint {
 
 #pragma pack()
 /******************************************************************************/
-extern long cam_tilt;
+extern s32 cam_tilt;
 
 extern s32 dword_176D0C;
 extern s32 dword_176D10;

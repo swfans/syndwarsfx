@@ -38,6 +38,10 @@ ushort zoom_levels[ZOOM_RANGE_BLOCKS_LIMIT+1] = {
     150, 145, 140, 135,
 };
 
+ubyte byte_19EC7A = 0;
+
+/******************************************************************************/
+
 #define RANGE1 7
 #define RANGE2 15
 #define FACTOR1 2

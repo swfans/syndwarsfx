@@ -54,6 +54,10 @@
 .global EXPORT_SYMBOL(vec_colour);
 .global EXPORT_SYMBOL(vec_mode);
 
+.global EXPORT_SYMBOL(engn_xc);				/* 0x152EE4 */
+.global EXPORT_SYMBOL(engn_zc);				/* 0x152EE8 */
+.global EXPORT_SYMBOL(cam_tilt);			/* 0x152EEC */
+
 .global EXPORT_SYMBOL(weapon_defs);	/* 0x15401C */
 .global EXPORT_SYMBOL(mod_defs);	/* 0x15441C */
 .global EXPORT_SYMBOL(static_radii);	/* 0x154216 */
@@ -62,25 +66,27 @@
 .global EXPORT_SYMBOL(people_frames);	/* 0x153D5C */
 .global EXPORT_SYMBOL(follow_dist);	/* 0x153398 */
 
-.global EXPORT_SYMBOL(tnext_floor_texture)	/* 0x176d08 */
-.global EXPORT_SYMBOL(dword_176D0C)	/* 0x176D0C */
-.global EXPORT_SYMBOL(dword_176D10)	/* 0x176D10 */
-.global EXPORT_SYMBOL(dword_176D14)	/* 0x176D14 */
-.global EXPORT_SYMBOL(dword_176D18)	/* 0x176D18 */
-.global EXPORT_SYMBOL(dword_176D1C)	/* 0x176D1C */
-.global EXPORT_SYMBOL(dword_176D3C)	/* 0x176D3C */
-.global EXPORT_SYMBOL(dword_176D40)	/* 0x176D40 */
-.global EXPORT_SYMBOL(dword_176D44)	/* 0x176D44 */
-.global EXPORT_SYMBOL(dword_176D4C)	/* 0x176D4C */
-.global EXPORT_SYMBOL(cam_rotation_velocity)	/* 0x176D54 */
-.global EXPORT_SYMBOL(engn_anglexz);	/* 0x176D58 */
-
-.global EXPORT_SYMBOL(tmaps_extra_buf);	/* 0x1810D1 */
-.global EXPORT_SYMBOL(tmaps_extra_len);	/* 0x1810D5 */
+.global EXPORT_SYMBOL(tnext_floor_texture);	/* 0x176d08 */
+.global EXPORT_SYMBOL(dword_176D0C);		/* 0x176D0C */
+.global EXPORT_SYMBOL(dword_176D10);		/* 0x176D10 */
+.global EXPORT_SYMBOL(dword_176D14);		/* 0x176D14 */
+.global EXPORT_SYMBOL(dword_176D18);		/* 0x176D18 */
+.global EXPORT_SYMBOL(dword_176D1C);		/* 0x176D1C */
+.global EXPORT_SYMBOL(dword_176D3C);		/* 0x176D3C */
+.global EXPORT_SYMBOL(dword_176D40);		/* 0x176D40 */
+.global EXPORT_SYMBOL(dword_176D44);		/* 0x176D44 */
+.global EXPORT_SYMBOL(dword_176D4C);		/* 0x176D4C */
+.global EXPORT_SYMBOL(cam_rotation_velocity);	/* 0x176D54 */
+.global EXPORT_SYMBOL(engn_anglexz);		/* 0x176D58 */
+.global EXPORT_SYMBOL(byte_176D49);			/* 0x176D49 */
+.global EXPORT_SYMBOL(engn_yc);
+.global EXPORT_SYMBOL(shield_frm);			/* 0x1777B8 */
+.global EXPORT_SYMBOL(tmaps_extra_buf);		/* 0x1810D1 */
+.global EXPORT_SYMBOL(tmaps_extra_len);		/* 0x1810D5 */
 .global EXPORT_SYMBOL(colour_mix_lookup);	/* 0x181136 */
-.global EXPORT_SYMBOL(colour_sel_grey);	/* 0x181142 */
+.global EXPORT_SYMBOL(colour_sel_grey);		/* 0x181142 */
 .global EXPORT_SYMBOL(colour_sel_green);	/* 0x181146 */
-.global EXPORT_SYMBOL(colour_sel_blue);	/* 0x18114a */
+.global EXPORT_SYMBOL(colour_sel_blue);		/* 0x18114a */
 .global EXPORT_SYMBOL(colour_sel_red);		/* 0x18114e */
 .global EXPORT_SYMBOL(colour_sel_purple);	/* 0x181152 */
 
@@ -88,12 +94,13 @@
 .global EXPORT_SYMBOL(colour_grey2);		/* 0x19CC5D */
 .global EXPORT_SYMBOL(colour_brown2);		/* 0x19CC5E */
 .global EXPORT_SYMBOL(pop1_sprites);		/* 0x19CBDC */
-.global EXPORT_SYMBOL(game_anim_tmaps)		/* 0x19f510 */
-.global EXPORT_SYMBOL(game_commands)		/* 0x19f514 */
-.global EXPORT_SYMBOL(next_col_column)		/* 0x19f73a */
-.global EXPORT_SYMBOL(textwalk_data)		/* 0x19F73C */
-.global EXPORT_SYMBOL(game_textures)		/* 0x1a09d4 */
-.global EXPORT_SYMBOL(game_face_textures)	/* 0x1a09d8 */
+.global EXPORT_SYMBOL(game_perspective);	/* 0x19EC71 */
+.global EXPORT_SYMBOL(game_anim_tmaps);		/* 0x19f510 */
+.global EXPORT_SYMBOL(game_commands);		/* 0x19f514 */
+.global EXPORT_SYMBOL(next_col_column);		/* 0x19f73a */
+.global EXPORT_SYMBOL(textwalk_data);		/* 0x19F73C */
+.global EXPORT_SYMBOL(game_textures);		/* 0x1a09d4 */
+.global EXPORT_SYMBOL(game_face_textures);	/* 0x1a09d8 */
 .global EXPORT_SYMBOL(pointer_sprites);		/* 0x1A5840 */
 .global EXPORT_SYMBOL(small_font);			/* 0x1A5848 */
 .global EXPORT_SYMBOL(display_palette);		/* 0x1A5878 */
@@ -113,12 +120,12 @@
 .global EXPORT_SYMBOL(build_packet4);
 
 /* Radica network lib */
-.global EXPORT_SYMBOL(data_1596c4)
-.global EXPORT_SYMBOL(data_15aba2)
-.global EXPORT_SYMBOL(data_15aba5)
-.global EXPORT_SYMBOL(data_15abaf)
-.global EXPORT_SYMBOL(data_15abb6)
-.global EXPORT_SYMBOL(data_15abb3)
+.global EXPORT_SYMBOL(data_1596c4);
+.global EXPORT_SYMBOL(data_15aba2);
+.global EXPORT_SYMBOL(data_15aba5);
+.global EXPORT_SYMBOL(data_15abaf);
+.global EXPORT_SYMBOL(data_15abb6);
+.global EXPORT_SYMBOL(data_15abb3);
 
 /*----------------------------------------------------------------*/
 /* int place_default_player(unsigned int player_id, __int16 a2)
@@ -1220,7 +1227,7 @@ GLOBAL_FUNC(ASM_func_13A78)	/* 0x13a78 */
 		imul   %edx,%ecx
 		xor    %ebx,%ebx
 		mov    %esp,%eax
-		mov    game_perspective,%bl
+		mov    EXPORT_SYMBOL(game_perspective),%bl
 		mov    %esi,0x14(%esp)
 		mov    %esi,%edx
 		mov    %ecx,0x18(%esp)
@@ -1260,7 +1267,7 @@ GLOBAL_FUNC(ASM_func_13A78)	/* 0x13a78 */
 		orb    $0x2,0x26(%eax)
 	jump_13c09:
 		xor    %edx,%edx
-		mov    game_perspective,%dl
+		mov    EXPORT_SYMBOL(game_perspective),%dl
 		cmp    $0x5,%edx
 		je     jump_13c24
 		mov    0x18(%eax),%ebx
@@ -1785,7 +1792,7 @@ GLOBAL_FUNC(ASM_draw_target_vehicle)	/* 0x0202C0 */
 		mov    %edi,0x14(%esp)
 		mov    %esi,0x18(%esp)
 		mov    %edi,%edx
-		movzbl game_perspective,%esi
+		movzbl EXPORT_SYMBOL(game_perspective),%esi
 		sar    $0xb,%edx
 		cmp    $0x5,%esi
 		je     jump_203e6
@@ -1819,7 +1826,7 @@ GLOBAL_FUNC(ASM_draw_target_vehicle)	/* 0x0202C0 */
 		orb    $0x2,0x26(%eax)
 	jump_20437:
 		xor    %edx,%edx
-		mov    game_perspective,%dl
+		mov    EXPORT_SYMBOL(game_perspective),%dl
 		cmp    $0x5,%edx
 		je     jump_20452
 		mov    0x18(%eax),%edx
@@ -2055,7 +2062,7 @@ GLOBAL_FUNC(ASM_draw_target_person)	/* 0x020648 */
 		mov    %ah,0x26(%esp)
 		xor    %ebx,%ebx
 		mov    %esp,%eax
-		mov    game_perspective,%bl
+		mov    EXPORT_SYMBOL(game_perspective),%bl
 		mov    %esi,0x14(%esp)
 		mov    %esi,%edx
 		mov    %edi,0x18(%esp)
@@ -2095,7 +2102,7 @@ GLOBAL_FUNC(ASM_draw_target_person)	/* 0x020648 */
 		orb    $0x2,0x26(%eax)
 	jump_207a7:
 		xor    %edx,%edx
-		mov    game_perspective,%dl
+		mov    EXPORT_SYMBOL(game_perspective),%dl
 		cmp    $0x5,%edx
 		je     jump_207c2
 		mov    0x18(%eax),%ebx
@@ -3117,7 +3124,7 @@ GLOBAL_FUNC(ASM_draw_floor_tile1a)	/* 0x022C78 */
 		shl    $0x7,%eax
 		mov    %eax,0x10(%esp)
 		xor    %eax,%eax
-		mov    game_perspective,%al
+		mov    EXPORT_SYMBOL(game_perspective),%al
 		cmp    $0x7,%eax
 		jne    jump_22df6
 		mov    0x10(%esp),%eax
@@ -3141,7 +3148,7 @@ GLOBAL_FUNC(ASM_draw_floor_tile1a)	/* 0x022C78 */
 		mov    %edi,%eax
 		imul   %ebx,%eax
 		xor    %edx,%edx
-		mov    game_perspective,%dl
+		mov    EXPORT_SYMBOL(game_perspective),%dl
 		sub    %esi,%eax
 		cmp    $0x3,%edx
 		je     jump_22e4f
@@ -3197,7 +3204,7 @@ GLOBAL_FUNC(ASM_draw_floor_tile1a)	/* 0x022C78 */
 		sub    (%esp),%edi
 		imul   %edi,%eax
 		xor    %edx,%edx
-		mov    game_perspective,%dl
+		mov    EXPORT_SYMBOL(game_perspective),%dl
 		sub    %ebx,%eax
 		cmp    $0x3,%edx
 		je     jump_22ef8
@@ -3944,7 +3951,7 @@ GLOBAL_FUNC(ASM_draw_floor_tile1b)	/* 0x0236E0 */
 		shl    $0x7,%eax
 		mov    %eax,0x60(%esp)
 		xor    %eax,%eax
-		mov    game_perspective,%al
+		mov    EXPORT_SYMBOL(game_perspective),%al
 		cmp    $0x7,%eax
 		jne    jump_23885
 		mov    0x88(%esp),%eax
@@ -5098,7 +5105,7 @@ GLOBAL_FUNC(ASM_check_mouse_overvehicle)	/* 0x024758 */
 		mov    %ebp,0x14(%esp)
 		mov    %esi,0x18(%esp)
 		mov    %ebp,%edx
-		movzbl game_perspective,%esi
+		movzbl EXPORT_SYMBOL(game_perspective),%esi
 		sar    $0xb,%edx
 		cmp    $0x5,%esi
 		je     jump_24851
@@ -5135,7 +5142,7 @@ GLOBAL_FUNC(ASM_check_mouse_overvehicle)	/* 0x024758 */
 		orb    $0x2,0x26(%eax)
 	jump_248a9:
 		xor    %edx,%edx
-		mov    game_perspective,%dl
+		mov    EXPORT_SYMBOL(game_perspective),%dl
 		cmp    $0x5,%edx
 		je     jump_248c4
 		mov    0x18(%eax),%esi
@@ -7129,7 +7136,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd)	/* 0x027638 */
 		sar    $0x10,%eax
 		add    %eax,%edx
 		xor    %eax,%eax
-		mov    game_perspective,%al
+		mov    EXPORT_SYMBOL(game_perspective),%al
 		mov    %edx,0x4(%esp)
 		cmp    $0x7,%eax
 		jne    jump_278ca
@@ -7273,7 +7280,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd)	/* 0x027638 */
 		mov    %edi,game_quick_lights
 		xor    %eax,%eax
 		inc    %ecx
-		mov    game_perspective,%al
+		mov    EXPORT_SYMBOL(game_perspective),%al
 		mov    %ecx,EXPORT_SYMBOL(dword_176D4C)
 		cmp    $0x3,%eax
 		jne    jump_27af2
@@ -7707,7 +7714,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd)	/* 0x027D78 */
 		sar    $0x10,%eax
 		add    %eax,%edx
 		xor    %eax,%eax
-		mov    game_perspective,%al
+		mov    EXPORT_SYMBOL(game_perspective),%al
 		mov    %edx,0x7c(%esp)
 		cmp    $0x7,%eax
 		jne    jump_28080
@@ -9953,7 +9960,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		mov    EXPORT_SYMBOL(dword_176D4C),%edi
 		xor    %eax,%eax
 		inc    %edi
-		mov    game_perspective,%al
+		mov    EXPORT_SYMBOL(game_perspective),%al
 		mov    %edi,EXPORT_SYMBOL(dword_176D4C)
 		cmp    $0x3,%eax
 		jne    jump_29e18
@@ -10813,7 +10820,7 @@ GLOBAL_FUNC(ASM_transform_point)	/* 0x02B3C0 */
 		imul   %ebx,%esi
 		xor    %ebx,%ebx
 		mov    %edi,0x14(%eax)
-		mov    game_perspective,%bl
+		mov    EXPORT_SYMBOL(game_perspective),%bl
 		mov    %esi,0x18(%eax)
 		cmp    $0x5,%ebx
 		je     jump_2b474
@@ -10854,7 +10861,7 @@ GLOBAL_FUNC(ASM_transform_point)	/* 0x02B3C0 */
 		orb    $0x2,0x26(%eax)
 	jump_2b4d0:
 		xor    %edx,%edx
-		mov    game_perspective,%dl
+		mov    EXPORT_SYMBOL(game_perspective),%dl
 		cmp    $0x5,%edx
 		je     jump_2b4eb
 		mov    0x18(%eax),%ebx
@@ -178186,16 +178193,6 @@ ASM_waft_table:	/* 0x152E9E */
 		.ascii  "\xe4\xff\x01\x00"
 		.short  0x0
 
-GLOBAL (engn_xc)	/* 0x152EE4 */
-		.ascii  "\x80\x32"
-		.short  0x0
-GLOBAL (engn_zc)	/* 0x152EE8 */
-		.ascii  "\x80\x32"
-		.short  0x0
-
-GLOBAL (cam_tilt)	/* 0x152EEC */
-		.ascii  "\x54\xff\xff\xff"
-
 GLOBAL (female_peep)	/* 0x1531A4 */
 		.ascii  "\x28\x20"
 GLOBAL (head_my_path)	/* 0x1531A6 */
@@ -179137,18 +179134,6 @@ GLOBAL (dword_176D00)	/* 0x176D00 */
 GLOBAL (dword_176D04)	/* 0x176D04 */
 		.long	0x0
 
-
-GLOBAL (byte_176D48)	/* 0x176D48 */
-		.byte	0x0
-GLOBAL (byte_176D49)	/* 0x176D49 */
-		.byte	0x0
-GLOBAL (byte_176D4A)	/* 0x176D4A */
-		.byte	0x0
-GLOBAL (byte_176D4B)	/* 0x176D48 */
-		.byte	0x0
-GLOBAL (engn_yc)
-		.long	0x0
-
 data_176d6c:
 		.long	0x0
 
@@ -179263,11 +179248,6 @@ GLOBAL (gamep_unknval_15)
 		.long	0x0
 GLOBAL (gamep_unknval_16)	/* 0x1777B0 */
 		.fill   0x8
-GLOBAL (shield_frm)	/* 0x1777B8 */
-		.short  0x0
-		.short  0x0
-		.short  0x0
-		.short  0x0
 
 GLOBAL (gamep_scene_effect_type)	/* 0x1777C8 */
 		.ascii  "\x00\x00\x00"
@@ -179606,16 +179586,12 @@ GLOBAL (engine_render_lights)	/* 0x19ec6f */
 		.byte	0x0
 data_19ec70:
 		.byte	0x0
-/* 0 - off, 5 - on */
-GLOBAL (game_perspective)	/* 0x19EC71 */
-		.byte	0x0
+
 GLOBAL (unkn_flags_01)	/* 0x19EC72 */
 		.long	0x0
 GLOBAL (display_mode)	/* 0x19EC76 */
 		.long	0x0
-GLOBAL (byte_19EC7A)	/* 0x19EC7A */
-		.byte	0x0
-		.fill   0x3
+
 GLOBAL (things_used)	/* 0x19EC7E */
 		.short  0x0
 GLOBAL (sthings_used)	/* 0x19EC80 */

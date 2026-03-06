@@ -105,8 +105,6 @@ ubyte byte_152EF0[] = {
   10, 10,  5,  7,  5,  7,  7,  0,
 };
 
-ushort overall_scale = 256;
-
 /** Add a new draw item and return linked SortLine instance.
  *
  * @param ditype Draw item type, should be one of SortLine related types.
