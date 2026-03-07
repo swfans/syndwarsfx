@@ -59,17 +59,9 @@
 #include "vehicle.h"
 /******************************************************************************/
 
-extern ushort tnext_screen_point;
-extern ushort tnext_draw_item;
-extern ushort tnext_sort_sprite;
-//extern ushort tnext_sort_line; -- no such var?
-//extern ushort tnext_special_obj_face;
-extern ushort tnext_special_obj_face4;
 
 ushort next_special_obj_face = 1;
 ushort next_special_obj_face4 = 1;
-
-extern long dword_176CC4;
 
 extern ubyte byte_176D49;
 
@@ -126,36 +118,6 @@ void draw_object_face3_textrd_dk(ushort face);
 void draw_object_face3_deep_rdr(ushort face);
 void draw_object_face4_deep_rdr(ushort face4);
 void draw_shrapnel(ushort shrap);
-
-void reset_drawlist(void)
-{
-    tnext_screen_point = next_screen_point;
-    next_screen_point = 0;
-
-    next_sort_line = 0;
-    p_current_sort_line = &game_sort_lines[next_sort_line];
-
-    tnext_draw_item = next_draw_item;
-    next_draw_item = 1;
-    p_current_draw_item = &game_draw_list[next_draw_item];
-
-    tnext_sort_sprite = next_sort_sprite;
-    next_sort_sprite = 0;
-    p_current_sort_sprite = &game_sort_sprites[next_sort_sprite];
-
-    next_special_obj_face = 1;
-
-    tnext_special_obj_face4 = next_special_obj_face4;
-    next_special_obj_face4 = 1;
-
-    ingame.NextRocket = 0;
-
-    tnext_floor_texture = next_floor_texture;
-
-    next_floor_tile = 1;
-
-    dword_176CC4 = 0;
-}
 
 ushort number_player_get_frame(struct Thing *p_person, ubyte n)
 {
@@ -268,170 +230,5 @@ void number_player(struct Thing *p_person, ubyte n)
     unscaled = (lbDisplay.GraphicsScreenHeight < 400);
 
     draw_frame_on_map_coords(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm, unscaled);
-}
-
-// Special non-textured draw; used during nuclear explosions?
-void draw_drawitem_1(ushort dihead)
-{
-    struct DrawItem *itm;
-    ushort iidx;
-
-    for (iidx = dihead; iidx != 0; iidx = itm->Child)
-    {
-      itm = &game_draw_list[iidx];
-      switch (itm->Type)
-      {
-      case DrIT_Unkn1:
-      case DrIT_Unkn10:
-          draw_object_face3_textrd_dk(itm->Offset);
-          break;
-      case DrIT_Unkn2:
-      case DrIT_Unkn8:
-          break;
-      case DrIT_SFrmStatc:
-          draw_sort_sprite1a(itm->Offset);
-          break;
-      case DrIT_Unkn4:
-          draw_floor_tile1a(itm->Offset);
-          break;
-      case DrIT_Unkn5:
-          draw_ex_face(itm->Offset);
-          break;
-      case DrIT_Unkn6:
-          draw_floor_tile1b(itm->Offset);
-          break;
-      case DrIT_Unkn7:
-          draw_object_face3g_textrd(itm->Offset);
-          break;
-      case DrIT_Unkn9:
-          draw_object_face4d_textrd_dk(itm->Offset);
-          break;
-      case DrIT_Unkn11:
-          draw_sort_line1a(itm->Offset);
-          break;
-      case DrIT_SpObFace4:
-          draw_special_object_face4(itm->Offset);
-          break;
-      case DrIT_SFrmPersV:
-          draw_sort_sprite_frame_pers_v(itm->Offset);
-          break;
-      case DrIT_SFrmPersB:
-          draw_sort_sprite_frame_pers_b(itm->Offset);
-          break;
-      case DrIT_SFrmEfctV:
-          draw_sort_sprite_frame_efct_v(itm->Offset);
-          break;
-      case DrIT_Unkn14:
-          draw_object_face4_pole(itm->Offset);
-          break;
-      case DrIT_Unkn15:
-          draw_sort_sprite1c(itm->Offset);
-          break;
-      }
-    }
-}
-
-void draw_drawitem_2(ushort dihead)
-{
-    struct DrawItem *itm;
-    ushort iidx;
-    ushort i;
-
-    assert(screen_position_face_render_cb != NULL);
-    assert(screen_sorted_sprite_statc_render_cb != NULL);
-    assert(screen_sorted_sprite_persn_render_cb != NULL);
-
-    i = 0;
-    for (iidx = dihead; iidx != 0; iidx = itm->Child)
-    {
-      i++;
-      if (i > BUCKET_ITEMS_MAX)
-          break;
-      itm = &game_draw_list[iidx];
-      switch (itm->Type)
-      {
-      case DrIT_Unkn1:
-      case DrIT_Unkn10:
-          draw_object_face3_textrd(itm->Offset);
-          break;
-      case DrIT_SFrmStatc:
-          draw_sort_sprite1a(itm->Offset);
-          break;
-      case DrIT_Unkn4:
-          draw_floor_tile1a(itm->Offset);
-          break;
-      case DrIT_Unkn5:
-          draw_ex_face(itm->Offset);
-          break;
-      case DrIT_Unkn6:
-          draw_floor_tile1b(itm->Offset);
-          break;
-      case DrIT_Unkn7:
-          draw_object_face3g_textrd(itm->Offset);
-          break;
-      case DrIT_Unkn9:
-          draw_object_face4d_textrd(itm->Offset);
-          break;
-      case DrIT_Unkn11:
-          draw_sort_line1a(itm->Offset);
-          break;
-      case DrIT_SpObFace4:
-          draw_special_object_face4(itm->Offset);
-          break;
-      case DrIT_SFrmPersV:
-          draw_sort_sprite_frame_pers_v(itm->Offset);
-          break;
-      case DrIT_SFrmPersB:
-          draw_sort_sprite_frame_pers_b(itm->Offset);
-          break;
-      case DrIT_SFrmEfctV:
-          draw_sort_sprite_frame_efct_v(itm->Offset);
-          break;
-      case DrIT_Unkn14:
-          draw_object_face4_pole(itm->Offset);
-          break;
-      case DrIT_Unkn15:
-          draw_sort_sprite1c(itm->Offset);
-          break;
-      case DrIT_Unkn16:
-          draw_object_face4g_textrd(itm->Offset);
-          break;
-      case DrIT_Unkn17:
-          draw_object_face3_reflect(itm->Offset);
-          break;
-      case DrIT_Unkn18:
-          draw_object_face4_reflect(itm->Offset);
-          break;
-      case DrIT_SPersShdw:
-          draw_sort_sprite_person_shadow(itm->Offset);
-          break;
-      case DrIT_Unkn20:
-          draw_shrapnel(itm->Offset);
-          break;
-      case DrIT_Unkn21:
-          draw_phwoar(itm->Offset);
-          break;
-      case DrIT_LongPropBar:
-          draw_sort_sprite_long_prop_bar(itm->Offset);
-          break;
-      case DrIT_Unkn23:
-          draw_object_face4_deep_rdr(itm->Offset);
-          break;
-      case DrIT_Unkn24:
-          draw_object_face3_deep_rdr(itm->Offset);
-          break;
-      case DrIT_Unkn25:
-          draw_fire_flame(itm->Offset);
-          break;
-      case DrIT_Number:
-          draw_sort_sprite_number(itm->Offset);
-          break;
-      case DrIT_ShortText:
-          draw_sort_sprite_short_text(itm->Offset);
-          break;
-      default:
-          break;
-      }
-    }
 }
 /******************************************************************************/

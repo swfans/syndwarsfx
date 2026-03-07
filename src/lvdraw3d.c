@@ -723,6 +723,7 @@ void func_2e440(void)
     int cor_z_beg, ranges_x_len;
 
     reset_drawlist();
+    ingame.NextRocket = 0;
 
     slt_zmin = lvdraw_fill_bound_points(bound_pts);
 
@@ -857,6 +858,7 @@ void draw_screen(void)
     outp(0x3C9u, 0);
 #endif
     reset_drawlist();
+    ingame.NextRocket = 0;
 }
 
 /******************************************************************************/

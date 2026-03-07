@@ -47,6 +47,7 @@ libswrender_a_SOURCES = \
   src/enginbckt.c \
   src/engincam.c \
   src/engincolour.c \
+  src/engindrwlstx.c \
   src/engindrwlstx_fac.c \
   src/engindrwlstx_spr.c \
   src/enginfexpl.c \

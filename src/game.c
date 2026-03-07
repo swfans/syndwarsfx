@@ -1608,12 +1608,6 @@ int mech_unkn_func_03(struct Thing *p_thing)
     return ret;
 }
 
-void func_13A78(void)
-{
-    asm volatile ("call ASM_func_13A78\n"
-        :  :  : "eax" );
-}
-
 void process_map_craters(void)
 {
     asm volatile ("call ASM_process_map_craters\n"
@@ -1852,6 +1846,7 @@ void process_engine_unk3(void)
     get_engine_inputs();
 
     reset_drawlist();
+    ingame.NextRocket = 0;
     screen_position_face_render_cb = screen_position_face_render_callback;
     screen_sorted_sprite_statc_render_cb = screen_sorted_sprite_statc_render_callback;
     screen_sorted_sprite_persn_render_cb = screen_sorted_sprite_persn_render_callback;
@@ -1864,7 +1859,6 @@ void process_engine_unk3(void)
     mech_unkn_dw_1DC894 = mech_unkn_tile_y3;
 
     process_map_craters();
-    func_13A78();
 
     if (((ingame.Flags & GamF_BillboardBAT) == 0) &&
       ((ingame.Flags & GamF_BillboardMovies) != 0))
@@ -1925,6 +1919,7 @@ void process_engine_unk3(void)
     {
         draw_hud(p_locplayer->DirectControl[0]);
         reset_drawlist();
+        ingame.NextRocket = 0;
     }
 }
 
