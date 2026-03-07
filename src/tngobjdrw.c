@@ -109,7 +109,7 @@ void generate_shadows_for_multicolor_sprites(void)
 
     draw_shadows_for_multicolor_sprites();
 
-    copy_from_screen_ani(vec_tmap[ingame.LastTmap]);
+    copy_from_screen_ani(vec_tmap[shadow_tmap_page]);
 
     generate_shadows_angle_shifts();
 

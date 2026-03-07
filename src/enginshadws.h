@@ -40,6 +40,11 @@ struct ShadowTexture {
 
 #pragma pack()
 /******************************************************************************/
+
+/** Page index of the texture map which contains shadows.
+ */
+extern ushort shadow_tmap_page;
+
 /** Callback for setting height of shadow corners.
  */
 extern s32 (*get_flat_surface_height_below_point_cb)(struct SortMapPoint *p_cor);

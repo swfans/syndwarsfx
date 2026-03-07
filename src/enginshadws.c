@@ -33,7 +33,6 @@
 #include "engintxtrmap.h"
 #include "enginprops.h"
 #include "frame_sprani.h"
-#include "game_options.h"
 #include "matrix.h"
 #include "render_gpoly.h"
 /******************************************************************************/
@@ -89,6 +88,8 @@ extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
 extern sbyte sprshadow_F850[512];
 
+ushort shadow_tmap_page = 0;
+
 s32 (*get_flat_surface_height_below_point_cb)(struct SortMapPoint *p_cor) = NULL;
 
 /******************************************************************************/
@@ -108,8 +109,8 @@ void draw_person_shadow(short scr_x, short scr_y, ushort frm,
     struct EnginePoint ep3;
 
     vec_mode = 10;
-    assert(vec_tmap[ingame.LastTmap] != NULL);
-    vec_map = vec_tmap[ingame.LastTmap];
+    assert(vec_tmap[shadow_tmap_page] != NULL);
+    vec_map = vec_tmap[shadow_tmap_page];
 
     frgrp =  8 * shpak + (((shangl >> 5) - angl + 8) & 7);
     ep3.pp.U = sprshadow_EE90[6 * frgrp + frm] << 16;
@@ -163,12 +164,6 @@ void draw_person_shadow(short scr_x, short scr_y, ushort frm,
 
 void draw_sort_sprite_person_shadow(ushort sspr)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_sort_sprite_person_shadow\n"
-        : : "a" (sspr));
-    return;
-#endif
     struct SortSprite *p_sspr;
     ushort shpak;
     short strng;

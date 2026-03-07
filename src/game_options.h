@@ -180,7 +180,7 @@ struct InGame {
     ubyte fld_unkCAA;
     ubyte PalType;
     short FlameCount;
-    ubyte LastTmap;
+    ubyte LastTmap_UNUSED; // Replaced by shadow_tmap_page - for repurposing
     short SoundThing;
     ubyte fld_unkCB1;
     ubyte fld_unkCB2;

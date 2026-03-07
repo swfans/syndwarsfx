@@ -419,10 +419,6 @@ int reload_texturemaps(void)
 
 void load_texturemaps(void)
 {
-#if 0
-    asm volatile ("call ASM_load_texturemaps\n"
-        :  :  : "eax" );
-#endif
     if (vec_tmap[0] == NULL)
     {
         int tmap_count;
@@ -431,7 +427,7 @@ void load_texturemaps(void)
             exit_game = 1;
             return;
         }
-        ingame.LastTmap = tmap_count - 1;
+        shadow_tmap_page = tmap_count - 1;
     }
     reload_texturemaps();
 }
