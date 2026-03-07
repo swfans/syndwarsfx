@@ -36,12 +36,14 @@
 struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
 u32 next_ex_face = 1;
 
+u32 dont_bother_with_explode_faces = false;
+
 extern ushort word_1AA5CC;
 
-extern s32 dword_1AA5D8;
-extern s32 dword_1AA5DC;
-extern s32 dword_1AA5E0;
-extern s32 dword_1AA5E4;
+s32 dword_1AA5D8 = 0;
+s32 dword_1AA5DC = 0;
+s32 dword_1AA5E0 = 0;
+s32 dword_1AA5E4 = 0;
 
 extern s32 dword_1E08BC;
 

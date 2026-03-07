@@ -70,10 +70,12 @@ struct LightCommand { // sizeof=36
 #pragma pack()
 /******************************************************************************/
 extern struct QuickLight *game_quick_lights;
-extern struct FullLight *game_full_lights;
-extern struct LightCommand *game_light_commands;
 extern ushort next_quick_light;
+
+extern struct FullLight *game_full_lights;
 extern ushort next_full_light;
+
+extern struct LightCommand *game_light_commands;
 extern ushort next_light_command;
 
 uint cummulate_shade_from_quick_lights(ushort light_first);

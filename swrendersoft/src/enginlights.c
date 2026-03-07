@@ -23,8 +23,13 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
+struct QuickLight *game_quick_lights = NULL;
 ushort next_quick_light = 1;
+
+struct FullLight *game_full_lights = NULL;
 ushort next_full_light = 1;
+
+struct LightCommand *game_light_commands = NULL;
 ushort next_light_command = 1;
 
 uint cummulate_shade_from_quick_lights(ushort light_first)

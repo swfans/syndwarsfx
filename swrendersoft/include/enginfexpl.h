@@ -64,7 +64,7 @@ struct ExplodeFace3 { // sizeof=46
 extern struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
 extern u32 next_ex_face;
 
-extern ulong dont_bother_with_explode_faces;
+extern u32 dont_bother_with_explode_faces;
 extern ushort word_1E08B8;
 /******************************************************************************/
 ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z,

@@ -42,6 +42,7 @@
 .global EXPORT_SYMBOL(deep_radar_surface_col);	/* 0x152E5C */
 .global EXPORT_SYMBOL(deep_radar_line_col);	/* 0x152E5D */
 .global EXPORT_SYMBOL(lbSeed);	/* 0x153240 */
+.global EXPORT_SYMBOL(dont_bother_with_explode_faces);	/* 0x154F74 */
 .global EXPORT_SYMBOL(pixmap);	/* 0x162280 */
 
 .global EXPORT_SYMBOL(lbDisplay);
@@ -111,7 +112,10 @@
 .global EXPORT_SYMBOL(textwalk_data);		/* 0x19F73C */
 
 .global EXPORT_SYMBOL(game_floor_tiles);	/* 0x1a09c0 */
+.global EXPORT_SYMBOL(game_light_commands);	/* 0x1a09c4 */
 .global EXPORT_SYMBOL(game_normals);		/* 0x1a09c8 */
+.global EXPORT_SYMBOL(game_quick_lights);	/* 0x1a09cc */
+.global EXPORT_SYMBOL(game_full_lights);	/* 0x1a09d0 */
 .global EXPORT_SYMBOL(game_textures);		/* 0x1a09d4 */
 .global EXPORT_SYMBOL(game_face_textures);	/* 0x1a09d8 */
 .global EXPORT_SYMBOL(game_object_points);	/* 0x1a09e4 */
@@ -130,6 +134,10 @@
 
 .global EXPORT_SYMBOL(unkn_changing_color_counter1);	/* 0x1AA26C */
 .global EXPORT_SYMBOL(colour_lookup_lock);	/* 0x1AA270 */
+.global EXPORT_SYMBOL(dword_1AA5D8);	/* 0x1AA5D8 */
+.global EXPORT_SYMBOL(dword_1AA5DC);	/* 0x1AA5DC */
+.global EXPORT_SYMBOL(dword_1AA5E0);	/* 0x1AA5E0 */
+.global EXPORT_SYMBOL(dword_1AA5E4);	/* 0x1AA5E4 */
 
 .global EXPORT_SYMBOL(NetworkServicePtr);     /* 0x1E2F40 */
 
@@ -6532,8 +6540,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd)	/* 0x027638 */
 		push   %edi
 		push   %ebp
 		sub    $0x84,%esp
-		mov    game_full_lights,%esi
-		mov    game_quick_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
+		mov    EXPORT_SYMBOL(game_quick_lights),%edi
 		mov    %ax,0x80(%esp)
 		xor    %eax,%eax
 		mov    0x80(%esp),%ax
@@ -6846,8 +6854,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd)	/* 0x027638 */
 		mov    %eax,0x60(%esp)
 	jump_27a5e:
 		mov    EXPORT_SYMBOL(dword_176D4C),%ecx
-		mov    %esi,game_full_lights
-		mov    %edi,game_quick_lights
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
+		mov    %edi,EXPORT_SYMBOL(game_quick_lights)
 		xor    %eax,%eax
 		inc    %ecx
 		mov    EXPORT_SYMBOL(game_perspective),%al
@@ -6936,7 +6944,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd)	/* 0x027638 */
 		je     jump_27ba8
 		call   ac_swap_wscreen
 	jump_27ba8:
-		mov    game_full_lights,%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
 		add    $0x84,%esp
 		pop    %ebp
 		pop    %edi
@@ -7088,8 +7096,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd)	/* 0x027D78 */
 		push   %edi
 		push   %ebp
 		sub    $0xb0,%esp
-		mov    game_full_lights,%esi
-		mov    game_quick_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
+		mov    EXPORT_SYMBOL(game_quick_lights),%edi
 		mov    %ax,0xac(%esp)
 		xor    %edx,%edx
 		mov    %ax,%dx
@@ -7490,8 +7498,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd)	/* 0x027D78 */
 		mov    %eax,0x38(%esp)
 	jump_28319:
 		mov    EXPORT_SYMBOL(dword_176D4C),%ebp
-		mov    %esi,game_full_lights
-		mov    %edi,game_quick_lights
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
+		mov    %edi,EXPORT_SYMBOL(game_quick_lights)
 		xor    %eax,%eax
 		inc    %ebp
 		mov    EXPORT_SYMBOL(vec_mode),%al
@@ -7544,9 +7552,9 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd)	/* 0x027D78 */
 		call   ac_check_mouse_over_face
 	jump_283da:
 		mov    0xa8(%esp),%eax
-		mov    game_quick_lights,%edi
+		mov    EXPORT_SYMBOL(game_quick_lights),%edi
 		mov    0x8(%eax),%bx
-		mov    game_full_lights,%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
 		test   %bx,%bx
 		je     jump_28491
 		testb  $0x20,0xa(%eax)
@@ -7597,8 +7605,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd)	/* 0x027D78 */
 		mov    %eax,0xc(%esp)
 	jump_28491:
 		mov    EXPORT_SYMBOL(dword_176D4C),%edx
-		mov    %esi,game_full_lights
-		mov    %edi,game_quick_lights
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
+		mov    %edi,EXPORT_SYMBOL(game_quick_lights)
 		xor    %eax,%eax
 		inc    %edx
 		mov    EXPORT_SYMBOL(vec_mode),%al
@@ -7650,7 +7658,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd)	/* 0x027D78 */
 		sar    $0x10,%ecx
 		call   ac_check_mouse_over_face
 	jump_28552:
-		mov    game_full_lights,%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
 		add    $0xb0,%esp
 		pop    %ebp
 		pop    %edi
@@ -9235,8 +9243,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		push   %edi
 		push   %ebp
 		sub    $0x80,%esp
-		mov    game_full_lights,%ecx
-		mov    game_quick_lights,%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%ecx
+		mov    EXPORT_SYMBOL(game_quick_lights),%esi
 		and    $0xffff,%eax
 		mov    EXPORT_SYMBOL(game_object_faces3),%edx
 		shl    $0x5,%eax
@@ -9345,8 +9353,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		test   %ax,%ax
 		jne    jump_29afd
 	jump_29b3a:
-		mov    %ecx,game_full_lights
-		mov    %esi,game_quick_lights
+		mov    %ecx,EXPORT_SYMBOL(game_full_lights)
+		mov    %esi,EXPORT_SYMBOL(game_quick_lights)
 		cmp    $0x7e00,%ebx
 		jle    jump_29b53
 		mov    $0x7f00,%ebx
@@ -9390,8 +9398,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		test   %eax,%eax
 		je     jump_29c63
 		mov    0x78(%esp),%eax
-		mov    game_quick_lights,%esi
-		mov    game_full_lights,%ecx
+		mov    EXPORT_SYMBOL(game_quick_lights),%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%ecx
 		xor    %ebx,%ebx
 		xor    %edx,%edx
 		mov    0x12(%eax),%bx
@@ -9425,8 +9433,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		mov    $0x7f00,%ebx
 	jump_29c4e:
 		shl    $0x7,%ebx
-		mov    %ecx,game_full_lights
-		mov    %esi,game_quick_lights
+		mov    %ecx,EXPORT_SYMBOL(game_full_lights)
+		mov    %esi,EXPORT_SYMBOL(game_quick_lights)
 		mov    %ebx,0x10(%esp)
 		jmp    jump_29c6b
 	jump_29c63:
@@ -9469,8 +9477,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		test   %eax,%eax
 		je     jump_29d7f
 		mov    0x78(%esp),%eax
-		mov    game_quick_lights,%esi
-		mov    game_full_lights,%ecx
+		mov    EXPORT_SYMBOL(game_quick_lights),%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%ecx
 		xor    %ebx,%ebx
 		xor    %edx,%edx
 		mov    0x10(%eax),%bx
@@ -9506,8 +9514,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		mov    $0x7f00,%ebx
 	jump_29d6a:
 		shl    $0x7,%ebx
-		mov    %ecx,game_full_lights
-		mov    %esi,game_quick_lights
+		mov    %ecx,EXPORT_SYMBOL(game_full_lights)
+		mov    %esi,EXPORT_SYMBOL(game_quick_lights)
 		mov    %ebx,0x60(%esp)
 		jmp    jump_29d87
 	jump_29d7f:
@@ -9525,8 +9533,8 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		mov    %eax,0x10(%esp)
 		mov    %eax,0x60(%esp)
 	jump_29db7:
-		mov    game_quick_lights,%esi
-		mov    game_full_lights,%ecx
+		mov    EXPORT_SYMBOL(game_quick_lights),%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%ecx
 		mov    EXPORT_SYMBOL(dword_176D4C),%edi
 		xor    %eax,%eax
 		inc    %edi
@@ -9578,7 +9586,7 @@ GLOBAL_FUNC(ASM_draw_object_face3_textrd_dk)	/* 0x0299B4 */
 		je     jump_29e7a
 		call   ac_swap_wscreen
 	jump_29e7a:
-		mov    game_full_lights,%ecx
+		mov    EXPORT_SYMBOL(game_full_lights),%ecx
 		add    $0x80,%esp
 		pop    %ebp
 		pop    %edi
@@ -9599,8 +9607,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		push   %edi
 		push   %ebp
 		sub    $0xac,%esp
-		mov    game_quick_lights,%ecx
-		mov    game_full_lights,%esi
+		mov    EXPORT_SYMBOL(game_quick_lights),%ecx
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
 		xor    %edx,%edx
 		mov    %ax,%dx
 		lea    0x0(,%edx,4),%eax
@@ -9718,8 +9726,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		test   %ax,%ax
 		jne    jump_2a011
 	jump_2a054:
-		mov    %ecx,game_quick_lights
-		mov    %esi,game_full_lights
+		mov    %ecx,EXPORT_SYMBOL(game_quick_lights)
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
 		cmp    $0x7e00,%ebx
 		jle    jump_2a06d
 		mov    $0x7f00,%ebx
@@ -9761,8 +9769,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		cmp    $0x2,%eax
 		je     jump_2a182
 		mov    0xa8(%esp),%eax
-		mov    game_full_lights,%esi
-		mov    game_quick_lights,%ecx
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
+		mov    EXPORT_SYMBOL(game_quick_lights),%ecx
 		xor    %ebx,%ebx
 		xor    %edx,%edx
 		mov    0x14(%eax),%bx
@@ -9796,8 +9804,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    $0x7f00,%ebx
 	jump_2a16d:
 		shl    $0x7,%ebx
-		mov    %ecx,game_quick_lights
-		mov    %esi,game_full_lights
+		mov    %ecx,EXPORT_SYMBOL(game_quick_lights)
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
 		mov    %ebx,0x60(%esp)
 		jmp    jump_2a18a
 	jump_2a182:
@@ -9838,8 +9846,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		cmp    $0x2,%eax
 		je     jump_2a29e
 		mov    0xa8(%esp),%eax
-		mov    game_full_lights,%esi
-		mov    game_quick_lights,%ecx
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
+		mov    EXPORT_SYMBOL(game_quick_lights),%ecx
 		xor    %ebx,%ebx
 		xor    %edx,%edx
 		mov    0x12(%eax),%bx
@@ -9873,8 +9881,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    $0x7f00,%ebx
 	jump_2a286:
 		shl    $0x7,%ebx
-		mov    %ecx,game_quick_lights
-		mov    %esi,game_full_lights
+		mov    %ecx,EXPORT_SYMBOL(game_quick_lights)
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
 		mov    %ebx,0x88(%esp)
 		jmp    jump_2a2a9
 	jump_2a29e:
@@ -9917,8 +9925,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		cmp    $0x2,%eax
 		je     jump_2a3bc
 		mov    0xa8(%esp),%eax
-		mov    game_full_lights,%esi
-		mov    game_quick_lights,%ecx
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
+		mov    EXPORT_SYMBOL(game_quick_lights),%ecx
 		xor    %ebx,%ebx
 		xor    %edx,%edx
 		mov    0x16(%eax),%bx
@@ -9952,8 +9960,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    $0x7f00,%ebx
 	jump_2a3a7:
 		shl    $0x7,%ebx
-		mov    %ecx,game_quick_lights
-		mov    %esi,game_full_lights
+		mov    %ecx,EXPORT_SYMBOL(game_quick_lights)
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
 		mov    %ebx,0x10(%esp)
 		jmp    jump_2a3c4
 	jump_2a3bc:
@@ -10001,9 +10009,9 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		call   ac_draw_trigpoly
 	jump_2a45f:
 		mov    0xa8(%esp),%eax
-		mov    game_full_lights,%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
 		mov    0x8(%eax),%bx
-		mov    game_quick_lights,%ecx
+		mov    EXPORT_SYMBOL(game_quick_lights),%ecx
 		test   %bx,%bx
 		je     jump_2a4d0
 		mov    0xa4(%esp),%edx
@@ -10033,8 +10041,8 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    %eax,0x84(%esp)
 	jump_2a4d0:
 		mov    EXPORT_SYMBOL(dword_176D4C),%edx
-		mov    %ecx,game_quick_lights
-		mov    %esi,game_full_lights
+		mov    %ecx,EXPORT_SYMBOL(game_quick_lights)
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
 		xor    %eax,%eax
 		inc    %edx
 		mov    EXPORT_SYMBOL(vec_mode),%al
@@ -10061,7 +10069,7 @@ GLOBAL_FUNC(ASM_draw_object_face4d_textrd_dk)	/* 0x029E90 */
 		mov    %esp,%eax
 		call   ac_draw_trigpoly
 	jump_2a53a:
-		mov    game_quick_lights,%ecx
+		mov    EXPORT_SYMBOL(game_quick_lights),%ecx
 		add    $0xac,%esp
 		pop    %ebp
 		pop    %edi
@@ -11622,7 +11630,7 @@ GLOBAL_FUNC(ASM_unkn_lights_processing)	/* 0x0319E4 */
 		push   %ebp
 		sub    $0x4,%esp
 		mov    EXPORT_SYMBOL(next_light_command),%bx
-		mov    game_full_lights,%ebp
+		mov    EXPORT_SYMBOL(game_full_lights),%ebp
 		mov    EXPORT_SYMBOL(next_full_light),%dx
 		xor    %eax,%eax
 		test   %dx,%dx
@@ -11659,7 +11667,7 @@ GLOBAL_FUNC(ASM_unkn_lights_processing)	/* 0x0319E4 */
 		xor    %edx,%edx
 		mov    (%esp),%dx
 		imul   $0x24,%edx,%eax
-		mov    game_light_commands,%edx
+		mov    EXPORT_SYMBOL(game_light_commands),%edx
 		mov    0x10(%edx,%eax,1),%edi
 		sar    $0x10,%edi
 		test   %edi,%edi
@@ -11700,7 +11708,7 @@ GLOBAL_FUNC(ASM_unkn_lights_processing)	/* 0x0319E4 */
 		lea    0x1(%edi),%esi
 		imul   $0x24,%esi,%esi
 		imul   $0x24,%edi,%edi
-		mov    game_light_commands,%edx
+		mov    EXPORT_SYMBOL(game_light_commands),%edx
 		mov    $0x9,%ecx
 		add    %edx,%esi
 		add    %edx,%edi
@@ -11758,7 +11766,7 @@ GLOBAL_FUNC(ASM_unkn_lights_processing)	/* 0x0319E4 */
 		lea    0x1(%edi),%edx
 		imul   $0x24,%edx,%esi
 		imul   $0x24,%edi,%edi
-		mov    game_light_commands,%edx
+		mov    EXPORT_SYMBOL(game_light_commands),%edx
 		mov    $0x9,%ecx
 		add    %edx,%esi
 		add    %edx,%edi
@@ -11811,7 +11819,7 @@ GLOBAL_FUNC(ASM_unkn_lights_processing)	/* 0x0319E4 */
 		lea    0x1(%edx),%esi
 		imul   $0x24,%esi,%esi
 		imul   $0x24,%edx,%edx
-		mov    game_light_commands,%edi
+		mov    EXPORT_SYMBOL(game_light_commands),%edi
 		mov    $0x9,%ecx
 		add    %edi,%esi
 		add    %edx,%edi
@@ -11826,7 +11834,7 @@ GLOBAL_FUNC(ASM_unkn_lights_processing)	/* 0x0319E4 */
 		mov    %esi,(%esp)
 		jmp    jump_31a45
 	jump_31c20:
-		mov    %ebp,game_full_lights
+		mov    %ebp,EXPORT_SYMBOL(game_full_lights)
 		mov    %bx,EXPORT_SYMBOL(next_light_command)
 		add    $0x4,%esp
 		pop    %ebp
@@ -17872,7 +17880,7 @@ light_cmd_unkn_func_05:	/* 0x043410 */
 		push   %ecx
 		push   %esi
 		push   %edi
-		mov    game_full_lights,%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
 		mov    EXPORT_SYMBOL(next_full_light),%di
 		mov    %edx,%ecx
 		cwtl
@@ -17921,7 +17929,7 @@ light_cmd_unkn_func_05:	/* 0x043410 */
 		mov    %dx,(%eax)
 	jump_4348f:
 		mov    %di,EXPORT_SYMBOL(next_full_light)
-		mov    %esi,game_full_lights
+		mov    %esi,EXPORT_SYMBOL(game_full_lights)
 		pop    %edi
 		pop    %esi
 		pop    %ecx
@@ -18153,14 +18161,14 @@ func_436a5:
 		xor    %eax,%eax
 		mov    %di,%ax
 		imul   $0x24,%eax,%eax
-		mov    game_light_commands,%ebx
+		mov    EXPORT_SYMBOL(game_light_commands),%ebx
 		add    %eax,%ebx
 		mov    0x10(%ebx),%edx
 		sar    $0x10,%edx
 		xor    %eax,%eax
 		test   %edx,%edx
 		jle    jump_4370a
-		mov    game_full_lights,%ecx
+		mov    EXPORT_SYMBOL(game_full_lights),%ecx
 		shl    $0x5,%edx
 		cmp    0x4(%ecx,%edx,1),%di
 		je     jump_4370a
@@ -18264,7 +18272,7 @@ func_43729:
 		jmp    jump_43847
 	jump_43825:
 		mov    %edx,%eax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		add    %edx,%eax
 		mov    0xa(%eax),%edx
@@ -18319,7 +18327,7 @@ func_43729:
 		movw   $0x0,0x30(%edx,%eax,1)
 		jmp    func_436a5
 	jump_438c2:
-		mov    game_full_lights,%eax
+		mov    EXPORT_SYMBOL(game_full_lights),%eax
 		shl    $0x5,%edx
 		movw   $0x0,0x4(%edx,%eax,1)
 		jmp    func_436a5
@@ -18642,7 +18650,7 @@ quick_light_unkn_func_05:	/* 0x043D2C */
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(next_full_light),%ax
 		mov    %eax,%edx
-		mov    game_full_lights,%eax
+		mov    EXPORT_SYMBOL(game_full_lights),%eax
 		shl    $0x5,%edx
 		add    %edx,%eax
 		movw   $0x0,0x10(%eax)
@@ -19067,7 +19075,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %di,%ax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		add    %edx,%eax
 		movswl (%eax),%eax
@@ -19078,7 +19086,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		xor    %eax,%eax
 		mov    %si,%ax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%edx
+		mov    EXPORT_SYMBOL(game_quick_lights),%edx
 		add    %edx,%eax
 		mov    %edx,0x4(%esp)
 		mov    0x14(%ecx),%dx
@@ -19134,7 +19142,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %di,%ax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		add    %edx,%eax
 		movswl (%eax),%eax
@@ -19145,7 +19153,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		xor    %edx,%edx
 		mov    %si,%dx
 		imul   $0x6,%edx,%edx
-		mov    game_quick_lights,%eax
+		mov    EXPORT_SYMBOL(game_quick_lights),%eax
 		add    %eax,%edx
 		mov    %eax,0x4(%esp)
 		mov    0x16(%ecx),%ax
@@ -19201,7 +19209,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %di,%ax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		movswl (%edx,%eax,1),%eax
 		imul   %ebx,%eax
@@ -19211,7 +19219,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		xor    %eax,%eax
 		mov    %si,%ax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%ebp
+		mov    EXPORT_SYMBOL(game_quick_lights),%ebp
 		lea    (%eax,%ebp,1),%edx
 		mov    0x18(%ecx),%ax
 		mov    %ax,0x4(%edx)
@@ -19319,7 +19327,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %di,%ax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		add    %edx,%eax
 		movswl (%eax),%eax
@@ -19330,7 +19338,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		xor    %eax,%eax
 		mov    %si,%ax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%edx
+		mov    EXPORT_SYMBOL(game_quick_lights),%edx
 		mov    %edx,0xc(%esp)
 		add    %eax,%edx
 		mov    0x18(%ecx),%ax
@@ -19386,7 +19394,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %di,%ax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		add    %edx,%eax
 		movswl (%eax),%eax
@@ -19397,7 +19405,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		xor    %eax,%eax
 		mov    %si,%ax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%edx
+		mov    EXPORT_SYMBOL(game_quick_lights),%edx
 		add    %edx,%eax
 		mov    %edx,0xc(%esp)
 		mov    0x1a(%ecx),%dx
@@ -19451,7 +19459,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %di,%ax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		add    %edx,%eax
 		movswl (%eax),%eax
@@ -19462,7 +19470,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		xor    %eax,%eax
 		mov    %si,%ax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%edx
+		mov    EXPORT_SYMBOL(game_quick_lights),%edx
 		mov    %edx,0xc(%esp)
 		add    %eax,%edx
 		mov    0x1c(%ecx),%ax
@@ -19518,7 +19526,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		mov    %eax,%ebx
 		xor    %eax,%eax
 		mov    %di,%ax
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%eax
 		movswl (%edx,%eax,1),%eax
 		imul   %ebx,%eax
@@ -19528,7 +19536,7 @@ quick_light_unkn_func_06:	/* 0x043F88 */
 		xor    %eax,%eax
 		mov    %si,%ax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%ebp
+		mov    EXPORT_SYMBOL(game_quick_lights),%ebp
 		lea    (%eax,%ebp,1),%edx
 		mov    0x1e(%ecx),%ax
 		mov    %ax,0x4(%edx)
@@ -19560,7 +19568,7 @@ quick_light_unkn_func_07:	/* 0x044850 */
 		push   %edi
 		push   %ebp
 		sub    $0x60,%esp
-		mov    game_quick_lights,%ebx
+		mov    EXPORT_SYMBOL(game_quick_lights),%ebx
 		mov    EXPORT_SYMBOL(next_quick_light),%cx
 		mov    %eax,0x48(%esp)
 		movzwl %ax,%ebp
@@ -19976,7 +19984,7 @@ quick_light_unkn_func_07:	/* 0x044850 */
 	jump_44d59:
 		mov    0x44(%esp),%eax
 		mov    %cx,EXPORT_SYMBOL(next_quick_light)
-		mov    %ebx,game_quick_lights
+		mov    %ebx,EXPORT_SYMBOL(game_quick_lights)
 		add    $0x60,%esp
 		pop    %ebp
 		pop    %edi
@@ -20065,7 +20073,7 @@ quick_light_unkn_func_08:	/* 0x044D74 */
 		xor    %edx,%edx
 		mov    0x18(%esp),%dx
 		mov    %edx,%ebx
-		mov    game_full_lights,%edx
+		mov    EXPORT_SYMBOL(game_full_lights),%edx
 		shl    $0x5,%ebx
 		movswl (%edx,%ebx,1),%edx
 		imul   %eax,%edx
@@ -20087,7 +20095,7 @@ quick_light_unkn_func_08:	/* 0x044D74 */
 		add    %ebx,%esi
 		lea    0x0(,%edx,4),%ebx
 		sub    %edx,%ebx
-		mov    game_quick_lights,%ecx
+		mov    EXPORT_SYMBOL(game_quick_lights),%ecx
 		add    %ebx,%ebx
 		lea    (%ecx,%ebx,1),%edx
 		mov    0x2(%esi),%bx
@@ -20126,7 +20134,7 @@ quick_light_unkn_func_09:	/* 0x044F04 */
 		push   %edi
 		push   %ebp
 		sub    $0x4,%esp
-		mov    game_quick_lights,%edi
+		mov    EXPORT_SYMBOL(game_quick_lights),%edi
 		mov    %eax,%ebp
 		mov    %edx,(%esp)
 		mov    0x2(%eax),%dx
@@ -20169,7 +20177,7 @@ quick_light_unkn_func_09:	/* 0x044F04 */
 		test   %dx,%dx
 		jne    jump_44f22
 	jump_44f83:
-		mov    %edi,game_quick_lights
+		mov    %edi,EXPORT_SYMBOL(game_quick_lights)
 		add    $0x4,%esp
 		pop    %ebp
 		pop    %edi
@@ -20194,7 +20202,7 @@ unkn_obj_faces4_lights_func_10:	/* 0x045020 */
 		push   %ebp
 		sub    $0x28,%esp
 		mov    EXPORT_SYMBOL(next_quick_light),%cx
-		mov    game_quick_lights,%esi
+		mov    EXPORT_SYMBOL(game_quick_lights),%esi
 		mov    %ax,0x1c(%esp)
 		mov    %edx,0xc(%esp)
 		mov    %ebx,(%esp)
@@ -20224,7 +20232,7 @@ unkn_obj_faces4_lights_func_10:	/* 0x045020 */
 		test   %eax,%eax
 		jl     jump_45555
 	jump_45091:
-		mov    %esi,game_quick_lights
+		mov    %esi,EXPORT_SYMBOL(game_quick_lights)
 		mov    %cx,EXPORT_SYMBOL(next_quick_light)
 		add    $0x28,%esp
 		pop    %ebp
@@ -20677,7 +20685,7 @@ GLOBAL_FUNC (ASM_map_lights_update)	/* 0x04557C */
 	jump_455c3:
 		and    $0xffff,%eax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%edx
+		mov    EXPORT_SYMBOL(game_quick_lights),%edx
 		add    %edx,%eax
 		xor    %edx,%edx
 		mov    (%eax),%dx
@@ -20788,7 +20796,7 @@ GLOBAL_FUNC (ASM_map_lights_update)	/* 0x04557C */
 		jae    jump_45696
 		and    $0xffff,%eax
 		imul   $0x6,%eax,%edx
-		mov    game_quick_lights,%eax
+		mov    EXPORT_SYMBOL(game_quick_lights),%eax
 		movw   $0x0,(%edx,%eax,1)
 		mov    0x4(%edx,%eax,1),%ax
 		test   %ax,%ax
@@ -20851,7 +20859,7 @@ GLOBAL_FUNC (ASM_map_lights_update)	/* 0x04557C */
 		jae    jump_45735
 		and    $0xffff,%eax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%edx
+		mov    EXPORT_SYMBOL(game_quick_lights),%edx
 		mov    %si,(%edx,%eax,1)
 		mov    0x4(%edx,%eax,1),%ax
 		test   %ax,%ax
@@ -20913,7 +20921,7 @@ GLOBAL_FUNC (ASM_map_lights_update)	/* 0x04557C */
 		jae    jump_457e3
 		and    $0xffff,%eax
 		imul   $0x6,%eax,%eax
-		mov    game_quick_lights,%edx
+		mov    EXPORT_SYMBOL(game_quick_lights),%edx
 		mov    %cx,(%edx,%eax,1)
 		mov    0x4(%edx,%eax,1),%ax
 		test   %ax,%ax
@@ -27676,7 +27684,7 @@ unkn_update_thing_to_light:	/* 0x04A7FC */
 		mov    %edx,%ecx
 		mov    %bl,(%esp)
 		and    $0xffff,%eax
-		mov    game_full_lights,%esi
+		mov    EXPORT_SYMBOL(game_full_lights),%esi
 		shl    $0x5,%eax
 		add    %eax,%esi
 		mov    0x18(%edx),%eax
@@ -27752,7 +27760,7 @@ GLOBAL_FUNC(ASM_process_lighting_unkn1)	/* 0x04A870 */
 		xor    %edx,%edx
 		test   %ax,%ax
 		je     jump_4a930
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 	jump_4a8da:
 		movswl %dx,%ebx
 		cmp    $0x190,%ebx
@@ -27760,7 +27768,7 @@ GLOBAL_FUNC(ASM_process_lighting_unkn1)	/* 0x04A870 */
 		xor    %esi,%esi
 		mov    %ax,%si
 		imul   $0x6,%esi,%esi
-		mov    game_quick_lights,%ebx
+		mov    EXPORT_SYMBOL(game_quick_lights),%ebx
 		add    %esi,%ebx
 		xor    %esi,%esi
 		mov    0x2(%ebx),%si
@@ -27777,7 +27785,7 @@ GLOBAL_FUNC(ASM_process_lighting_unkn1)	/* 0x04A870 */
 	jump_4a919:
 		and    $0xffff,%eax
 		imul   $0x6,%eax,%ebx
-		mov    game_quick_lights,%eax
+		mov    EXPORT_SYMBOL(game_quick_lights),%eax
 		mov    0x4(%ebx,%eax,1),%ax
 		test   %ax,%ax
 		jne    jump_4a8da
@@ -27791,7 +27799,7 @@ GLOBAL_FUNC(ASM_process_lighting_unkn1)	/* 0x04A870 */
 		mov    %al,%cl
 		lea    0x0(,%ebx,4),%eax
 		sub    %ebx,%eax
-		mov    game_quick_lights,%ebx
+		mov    EXPORT_SYMBOL(game_quick_lights),%ebx
 		mov    0x2(%ebx,%eax,2),%ax
 		and    $0xffff,%eax
 		mov    %ecx,%ebx
@@ -65477,7 +65485,7 @@ GLOBAL_FUNC(ASM_set_static_on_fire)	/* 0x067614 */
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		mov    %eax,%esi
 		mov    EXPORT_SYMBOL(sthings),%eax
 		lea    -0x15f90(%eax),%edx
@@ -65515,7 +65523,7 @@ GLOBAL_FUNC(ASM_set_static_on_fire)	/* 0x067614 */
 		mov    %ecx,%edx
 		and    $0xffff,%edx
 		imul   $0x24,%edx,%ecx
-		mov    game_light_commands,%edx
+		mov    EXPORT_SYMBOL(game_light_commands),%edx
 		movb   $0x5,0x1(%ecx,%edx,1)
 	jump_676aa:
 		xor    %edx,%edx
@@ -65534,7 +65542,7 @@ GLOBAL_FUNC(ASM_set_static_on_fire)	/* 0x067614 */
 		cmp    $0x428,%eax
 		jg     jump_676eb
 		movw   $0xd,0xa(%esi)
-		mov    %edi,game_full_lights
+		mov    %edi,EXPORT_SYMBOL(game_full_lights)
 		movw   $0x0,0x28(%esi)
 		jmp    jump_67a84
 	jump_676eb:
@@ -65547,7 +65555,7 @@ GLOBAL_FUNC(ASM_set_static_on_fire)	/* 0x067614 */
 	jump_67707:
 		xor    %eax,%eax
 		mov    0x26(%esi),%ax
-		mov    %edi,game_full_lights
+		mov    %edi,EXPORT_SYMBOL(game_full_lights)
 		cmp    $0x3ec,%eax
 		jle    jump_678e8
 		cmp    $0x3f0,%eax
@@ -65610,7 +65618,7 @@ func_67796:
 		movw   $0x422,0x26(%esi)
 		mov    0x844(%eax),%ax
 		mov    %ax,0x24(%esi)
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65689,7 +65697,7 @@ func_67864:
 		jmp    jump_677d7
 	jump_678bb:
 		mov    0x26(%esi),%ax
-		mov    %edi,game_full_lights
+		mov    %edi,EXPORT_SYMBOL(game_full_lights)
 		sub    $0x401,%eax
 		movw   $0x64,0x28(%esi)
 		cmp    $0x3,%ax
@@ -65763,7 +65771,7 @@ func_67864:
 		sar    $0x8,%eax
 		movw   $0x41c,0x26(%esi)
 		call   ac_do_shockwave
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65814,7 +65822,7 @@ func_67864:
 		mov    %esi,%eax
 		call   ac_delete_snode
 	jump_67a84:
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65835,7 +65843,7 @@ func_67864:
 		mov    0x18(%esi),%eax
 		sar    $0x5,%edx
 		call   ac_FIRE_new
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65850,7 +65858,7 @@ func_67864:
 		sar    $0x5,%edx
 		movw   $0x428,0x26(%esi)
 		call   ac_FIRE_new
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65865,7 +65873,7 @@ func_67864:
 		sar    $0x5,%edx
 		movw   $0x426,0x26(%esi)
 		call   ac_FIRE_new
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65880,7 +65888,7 @@ func_67864:
 		sar    $0x5,%edx
 		movw   $0x429,0x26(%esi)
 		call   ac_FIRE_new
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65901,7 +65909,7 @@ func_67864:
 		mov    0x18(%esi),%eax
 		sar    $0x5,%edx
 		call   ac_FIRE_new
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65910,7 +65918,7 @@ func_67864:
 		ret
 	jump_67b84:
 		movw   $0x28,0x28(%esi)
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		mov    0x26(%esi),%ax
 		movw   $0xc,0xa(%esi)
 		cmp    $0x40b,%ax
@@ -65921,7 +65929,7 @@ func_67864:
 		jbe    jump_67b1e
 		cmp    $0x419,%ax
 		je     jump_67b46
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -65934,7 +65942,7 @@ func_67864:
 		jbe    jump_67a90
 		cmp    $0x40a,%ax
 		je     jump_67ace
-		mov    game_full_lights,%edi
+		mov    EXPORT_SYMBOL(game_full_lights),%edi
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -166054,7 +166062,7 @@ GLOBAL_FUNC(ASM_fill_ail_sample_ids)	/* 0x0D5AD0 */
 		mov    %dx,%bx
 		add    $0x19,%eax
 		inc    %edx
-		mov    %ecx,ail_sample_ids(,%ebx,4)
+		mov    %ecx,EXPORT_SYMBOL(ail_sample_ids)(,%ebx,4)
 		cmp    %esi,%eax
 		jbe    jump_d5af5
 	jump_d5b0b:
@@ -166492,7 +166500,7 @@ GLOBAL_FUNC(ASM_monitor_all_samples)	/* 0x0D5D8C */
 		mov    0x84(%esp),%ax
 		lea    0x0(,%eax,4),%edx
 		mov    (%ecx),%eax
-		cmp    ail_sample_ids(%edx),%eax
+		cmp    EXPORT_SYMBOL(ail_sample_ids)(%edx),%eax
 		jne    jump_d60b0
 		mov    (%ecx),%ebx
 		xor    %edx,%edx
@@ -167097,12 +167105,12 @@ GLOBAL_FUNC (ASM_FIRE_init_or_samples_init)	/* 0x0D6650 */
 		add    $0x14,%edx
 		inc    %ebx
 		inc    %eax
-		mov    %bx,data_1de0b6(%edx)
+		mov    %bx,EXPORT_SYMBOL(FIRE_flame)-2(%edx)
 		cmp    $0x1ff,%eax
 		jl     jump_d666e
 		xor    %ebx,%ebx
 		mov    $0x1,%ecx
-		mov    %bx,data_1de0ca(%edx)
+		mov    %bx,EXPORT_SYMBOL(FIRE_flame)+0x12(%edx)
 		xor    %edx,%edx
 		mov    %cx,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,EXPORT_SYMBOL(dword_1E08BC)
@@ -167209,7 +167217,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -167323,7 +167331,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -167441,7 +167449,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -167554,7 +167562,7 @@ func_d67a1:
 		mov    %eax,%edx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -167666,7 +167674,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -167776,7 +167784,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -167887,7 +167895,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -167999,7 +168007,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -168112,7 +168120,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -168227,7 +168235,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -168344,7 +168352,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -168458,7 +168466,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -168574,7 +168582,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -168689,7 +168697,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -168804,7 +168812,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -168921,7 +168929,7 @@ func_d67a1:
 		mov    %eax,%edx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -169035,7 +169043,7 @@ func_d67a1:
 		mov    %eax,%edx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -169151,7 +169159,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -169270,7 +169278,7 @@ func_d67a1:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -169378,7 +169386,7 @@ func_d67a1:
 		mov    %eax,%edx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%ebx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %ebx
@@ -169496,7 +169504,7 @@ func_d8c79:
 		mov    %eax,%edx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%ebx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %ebx
@@ -169609,7 +169617,7 @@ func_d8e17:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -169722,7 +169730,7 @@ func_d8fe1:
 		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		add    %edx,%eax
 		inc    %ebp
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
@@ -170056,7 +170064,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -170173,7 +170181,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -170291,7 +170299,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -170407,7 +170415,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -170520,7 +170528,7 @@ func_d917f:
 		mov    %eax,%edx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%ebx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %ebx
@@ -170634,7 +170642,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -170750,7 +170758,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -170867,7 +170875,7 @@ func_d917f:
 		mov    %eax,0x1ec(%esp)
 		shl    $0x2,%eax
 		add    0x1ec(%esp),%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -170981,7 +170989,7 @@ func_d917f:
 		mov    %eax,%edx
 		lea    0x0(,%ebx,4),%eax
 		add    %ebx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %edx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -171095,7 +171103,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    EXPORT_SYMBOL(dword_1E08BC),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		inc    %edx
@@ -171209,7 +171217,7 @@ func_d917f:
 		mov    %eax,%ebx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
 		incl   EXPORT_SYMBOL(dword_1E08BC)
@@ -171318,7 +171326,7 @@ func_d917f:
 		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		add    %edx,%eax
 		inc    %ebp
-		mov    data_1de0ca(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(,%eax,4),%ax
 		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    %ebx,%eax
@@ -171719,7 +171727,7 @@ func_dad8c:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dae59:
@@ -171823,7 +171831,7 @@ func_dad8c:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dafed:
@@ -171926,7 +171934,7 @@ func_dad8c:
 		imul   $0x14,%edx,%edx
 		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		inc    %ebp
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 	jump_db17c:
@@ -172056,7 +172064,7 @@ func_db265:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db35a:
@@ -172181,7 +172189,7 @@ func_db444:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db535:
@@ -172304,7 +172312,7 @@ func_db60d:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db6f8:
@@ -172429,7 +172437,7 @@ func_db7e3:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_db8e0:
@@ -172548,7 +172556,7 @@ func_db9b9:
 		imul   $0x14,%edx,%edx
 		mov    EXPORT_SYMBOL(dword_1E08BC),%ebp
 		inc    %ebp
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %ebp,EXPORT_SYMBOL(dword_1E08BC)
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 	jump_dba96:
@@ -172669,7 +172677,7 @@ func_dbb7c:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dbc5a:
@@ -172801,7 +172809,7 @@ func_dbb7c:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dbe5e:
@@ -172861,7 +172869,7 @@ func_dbb7c:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dbf4a:
@@ -173044,7 +173052,7 @@ func_dc131:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dc202:
@@ -173164,7 +173172,7 @@ func_dc2d7:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dc3b2:
@@ -173285,7 +173293,7 @@ func_dc498:
 		xor    %edx,%edx
 		mov    %ax,%dx
 		imul   $0x14,%edx,%edx
-		mov    data_1de0ca(%edx),%dx
+		mov    EXPORT_SYMBOL(FIRE_flame)+0x12(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1E08B8)
 		incl   EXPORT_SYMBOL(dword_1E08BC)
 	jump_dc56c:
@@ -173357,7 +173365,7 @@ func_dc498:
 		jmp    *%cs:vtable_daa58(,%eax,4)
 	jump_dc65e:
 		mov    EXPORT_SYMBOL(word_1E08B8),%bx
-		mov    %bx,data_1de0ca(%edx)
+		mov    %bx,EXPORT_SYMBOL(FIRE_flame)+0x12(%edx)
 		mov    0x18(%esp),%edx
 		mov    %ax,EXPORT_SYMBOL(word_1E08B8)
 		mov    0xa0(%esp),%eax
@@ -177767,8 +177775,7 @@ GLOBAL (word_154F4C)
 		.ascii  "\x21\x00\x00\x00"
 GLOBAL(byte_154F6C)
 		.ascii  "\x00\x00\x01\x00\x01\x00\x00\x00"
-GLOBAL (dont_bother_with_explode_faces)	/* 0x154F74 */
-		.ascii  "\x01\x00\x00\x00"
+
 data_154f78:
 		.ascii  "\x01\x04\x06\x0a\x0f\x14\x14\x16"
 		.ascii  "\x18\x19\x1b\x1d\x1f\x00\x00\x00"
@@ -179047,14 +179054,6 @@ data_19fbb8:
 data_19fbd0:
 		.fill   0xdf0
 
-GLOBAL (game_light_commands)		/* 0x1a09c4 */
-		.long	0x0
-
-GLOBAL (game_quick_lights)			/* 0x1a09cc */
-		.long	0x0
-GLOBAL (game_full_lights)			/* 0x1a09d0 */
-		.long	0x0
-
 /* struct Thing *things;
  */
 GLOBAL (things)	/* 0x1A09DC */
@@ -179370,14 +179369,7 @@ data_1aa5d0:
 		.long	0x0
 data_1aa5d4:
 		.long	0x0
-GLOBAL (dword_1AA5D8)	/* 0x1AA5D8 */
-		.long	0x0
-GLOBAL (dword_1AA5DC)	/* 0x1AA5DC */
-		.long	0x0
-GLOBAL (dword_1AA5E0)	/* 0x1AA5E0 */
-		.long	0x0
-GLOBAL (dword_1AA5E4)	/* 0x1AA5E4 */
-		.long	0x0
+
 GLOBAL (minimum_explode_size)	/* 0x1AA5E8 */
 		.long	0x0
 GLOBAL (minimum_explode_and)	/* 0x1AA5EC */
@@ -180734,14 +180726,12 @@ GLOBAL (sound_heap_memory)	/* 0x1DDED4 */
 		.long	0x0
 data_1dded8:
 		.fill   0x190
-ail_sample_ids:	/* 0x1DE068 */
-		.fill   0x4e
-data_1de0b6:
-		.short  0x0
+GLOBAL (ail_sample_ids)	/* 0x1DE068 */
+		.fill   0x50
+
 GLOBAL (FIRE_flame)	/* 0x1de0b8 */
-		.fill   0x12
-data_1de0ca:
-		.fill   0x27ee
+		.fill   0x2800
+
 GLOBAL (word_1E08B8)	/* 0x1E08B8 */
 		.long	0x0
 GLOBAL (dword_1E08BC)	/* 0x1E08BC */
