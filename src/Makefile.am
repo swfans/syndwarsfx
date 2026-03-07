@@ -59,8 +59,6 @@ syndwarsfx_SOURCES = \
 	engindrwlstm.h \
 	engindrwlstx.c \
 	engindrwlstx_tng.h \
-	enginshadws.c \
-	enginshadws.h \
 	engintext.c \
 	engintext.h \
 	feappbar.c \

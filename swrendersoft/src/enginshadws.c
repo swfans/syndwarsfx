@@ -26,14 +26,12 @@
 #include "enginbckt.h"
 #include "engincam.h"
 #include "engintrns.h"
-#include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "engintxtrmap.h"
 #include "enginprops.h"
 #include "frame_sprani.h"
-#include "matrix.h"
 #include "render_gpoly.h"
 /******************************************************************************/
 //TODO load the shadow data from a config file
@@ -89,8 +87,6 @@ extern ubyte sprshadow_F5F8[600];
 extern sbyte sprshadow_F850[512];
 
 ushort shadow_tmap_page = 0;
-
-s32 (*get_flat_surface_height_below_point_cb)(struct SortMapPoint *p_cor) = NULL;
 
 /******************************************************************************/
 
@@ -255,84 +251,6 @@ ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
     bckt = sort + 1;
     draw_item_add(DrIT_SpObFace4, face, bckt);
     return face;
-}
-
-void get_object_shadow_bound_points_xz(struct SortMapPoint *p_cor1,
-  struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
-  struct SortMapPoint *p_cor4, const struct SortMapPoint *p_tngcor,
-  const struct ShadowTexture *p_shtextr, short matx)
-{
-    struct M31 vec_inp;
-    struct M31 vec_rot;
-    int shd_w, shd_l;
-
-    shd_w = p_shtextr->Width;
-    shd_l = p_shtextr->Length;
-
-    vec_inp.R[0] = -shd_w;
-    vec_inp.R[2] = -shd_l;
-    vec_inp.R[1] = 0;
-    assert(matx < next_local_mat);
-    matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    p_cor1->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
-    p_cor1->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
-
-    vec_inp.R[1] = 0;
-    vec_inp.R[0] = shd_w;
-    vec_inp.R[2] = -shd_l;
-    assert(matx < next_local_mat);
-    matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    p_cor2->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
-    p_cor2->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
-
-    vec_inp.R[0] = p_shtextr->Width;
-    vec_inp.R[1] = 0;
-    vec_inp.R[2] = shd_l;
-    assert(matx < next_local_mat);
-    matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    p_cor3->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
-    p_cor3->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
-
-    vec_inp.R[0] = -p_shtextr->Width;
-    vec_inp.R[1] = 0;
-    vec_inp.R[2] = shd_l;
-    assert(matx < next_local_mat);
-    matrix_transform(&vec_rot, &local_mats[matx], &vec_inp);
-    p_cor4->X = p_tngcor->X - engn_xc + (vec_rot.R[0] >> 15);
-    p_cor4->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
-}
-
-void get_object_shadow_bound_points_y(struct SortMapPoint *p_cor1,
-  struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
-  struct SortMapPoint *p_cor4, struct SortMapPoint *p_tngcor)
-{
-    p_cor1->Y = p_cor2->Y = p_cor3->Y = p_cor4->Y = p_tngcor->Y;
-    if (get_flat_surface_height_below_point_cb == NULL) {
-        return;
-    }
-    p_cor1->Y = get_flat_surface_height_below_point_cb(p_cor1);
-    p_cor2->Y = get_flat_surface_height_below_point_cb(p_cor2);
-    p_cor3->Y = get_flat_surface_height_below_point_cb(p_cor3);
-    p_cor4->Y = get_flat_surface_height_below_point_cb(p_cor4);
-}
-
-void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
-  short matx, ushort sort)
-{
-    struct SortMapPoint cor1, cor2, cor3, cor4;
-    struct ShadowTexture *p_shtextr;
-
-    p_shtextr = &shadowtexture[obmodl];
-    if (p_shtextr->Width == 0)
-        return;
-
-    get_object_shadow_bound_points_xz(&cor1, &cor2, &cor3, &cor4,
-      p_tngcor, p_shtextr, matx);
-
-    get_object_shadow_bound_points_y(&cor1, &cor2, &cor3, &cor4,
-      p_tngcor);
-
-    draw_shadow_at_coords(&cor1, &cor2, &cor3, &cor4, p_shtextr, sort);
 }
 
 void copy_from_screen_ani(ubyte *buf)

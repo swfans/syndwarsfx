@@ -20,6 +20,7 @@ libswrender_a_headers_src = \
   include/enginpriobjs.h \
   include/enginpritxtr.h \
   include/enginprops.h \
+  include/enginshadws.h \
   include/enginshrapn.h \
   include/enginsngobjs.h \
   include/enginsngtxtr.h \
@@ -55,6 +56,7 @@ libswrender_a_SOURCES = \
   src/enginpriobjs.c \
   src/enginpritxtr.c \
   src/enginprops.c \
+  src/enginshadws.c \
   src/enginshrapn.c \
   src/enginsngobjs.c \
   src/enginsngtxtr.c \
