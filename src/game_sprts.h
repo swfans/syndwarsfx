@@ -86,8 +86,10 @@ extern struct TbSprite *fepanel_sprites;
 extern struct TbSprite *fepanel_sprites_end;
 extern ubyte *fepanel_sprites_data;
 
-extern struct TbSprite *m_sprites;
-extern struct TbSprite *m_sprites_end;
+/** Data for in-mission sprites.
+ *
+ * The references to actual sprites are declared within rendering library.
+ */
 extern ubyte *m_sprites_data;
 extern ubyte *m_sprites_data_end;
 

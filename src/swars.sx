@@ -10513,7 +10513,7 @@ GLOBAL_FUNC(ASM_draw_special_object_face4)	/* 0x02A550 */
 		mov    %ax,%dx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
-		mov    game_special_object_faces4,%ecx
+		mov    EXPORT_SYMBOL(game_special_obj_faces4),%ecx
 		shl    $0x3,%eax
 		add    %eax,%ecx
 		mov    0xc(%ecx),%al
@@ -18325,7 +18325,7 @@ is_animating:	/* 0x042D00 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_element_unkn_func_05)	/* 0x042D58 */
+GLOBAL_FUNC(ASM_get_frame_bounds_05)	/* 0x042D58 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -66580,12 +66580,12 @@ GLOBAL_FUNC(ASM_build_polygon_circle_2d)	/* 0x067BF0 */
 	jump_67cd3:
 		mov    0xc(%esp),%eax
 		mov    0x2c(%esp),%edi
-		mov    EXPORT_SYMBOL(next_special_face4),%dx
+		mov    EXPORT_SYMBOL(next_special_obj_face4),%dx
 		mov    %eax,0x1c(%esp)
 		inc    %edx
 		add    %edi,%ecx
 		mov    0x8(%esp),%eax
-		mov    %dx,EXPORT_SYMBOL(next_special_face4)
+		mov    %dx,EXPORT_SYMBOL(next_special_obj_face4)
 		mov    %eax,0x28(%esp)
 	jump_67cf8:
 		movswl %cx,%edx
@@ -66625,14 +66625,14 @@ GLOBAL_FUNC(ASM_build_polygon_circle_2d)	/* 0x067BF0 */
 		add    %eax,%edx
 		mov    EXPORT_SYMBOL(mem_game)+585,%eax
 		mov    %edx,0x8(%esp)
-		mov    EXPORT_SYMBOL(next_special_face),%edx
+		mov    EXPORT_SYMBOL(next_special_obj_face),%edx
 		dec    %eax
 		sar    $0x10,%edx
 		mov    %edi,0xc(%esp)
 		cmp    %eax,%edx
 		jg     jump_67ea9
 		imul   $0x28,%edx,%edi
-		mov    game_special_object_faces4,%edx
+		mov    EXPORT_SYMBOL(game_special_obj_faces4),%edx
 		mov    %esi,%eax
 		add    %edi,%edx
 		add    $0x2,%eax
@@ -66688,7 +66688,7 @@ GLOBAL_FUNC(ASM_build_polygon_circle_2d)	/* 0x067BF0 */
 		cmp    $0xafc7,%edx
 		jge    jump_67cd3
 		mov    EXPORT_SYMBOL(p_current_draw_item),%edx
-		mov    EXPORT_SYMBOL(next_special_face4),%ax
+		mov    EXPORT_SYMBOL(next_special_obj_face4),%ax
 		xor    %edi,%edi
 		movb   $0xc,(%edx)
 		mov    0x58(%esp),%di
@@ -69593,7 +69593,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		inc    %ebx
 		movb   $0x4,0x8(%edx,%eax,2)
 		mov    EXPORT_SYMBOL(mem_game)+585,%edx
-		mov    EXPORT_SYMBOL(next_special_face),%eax
+		mov    EXPORT_SYMBOL(next_special_obj_face),%eax
 		dec    %edx
 		sar    $0x10,%eax
 		mov    %bx,EXPORT_SYMBOL(tnext_floor_texture)
@@ -69610,7 +69610,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		mov    %eax,%edx
 		shl    $0x2,%eax
 		add    %edx,%eax
-		mov    game_special_object_faces4,%edx
+		mov    EXPORT_SYMBOL(game_special_obj_faces4),%edx
 		shl    $0x3,%eax
 		add    %edx,%eax
 		mov    %ebx,%edx
@@ -69635,7 +69635,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		cmp    $0xafc7,%edx
 		jge    jump_6b8a9
 		mov    EXPORT_SYMBOL(p_current_draw_item),%edx
-		mov    EXPORT_SYMBOL(next_special_face4),%bx
+		mov    EXPORT_SYMBOL(next_special_obj_face4),%bx
 		movb   $0xc,(%edx)
 		mov    0x28(%esp),%ecx
 		mov    %bx,0x1(%edx)
@@ -69648,7 +69648,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		mov    %edx,EXPORT_SYMBOL(p_current_draw_item)
 		mov    %bx,EXPORT_SYMBOL(next_draw_item)
 	jump_6b8a9:
-		incw   EXPORT_SYMBOL(next_special_face4)
+		incw   EXPORT_SYMBOL(next_special_obj_face4)
 	jump_6b8b0:
 		mov    %si,EXPORT_SYMBOL(next_screen_point)
 		add    $0x38,%esp
@@ -179127,7 +179127,7 @@ GLOBAL (dword_176CF0)	/* 0x176CF0 */
 		.long	0x0
 GLOBAL (dword_176CF4)
 		.fill   0x8
-GLOBAL (tnext_special_face4)	/* 0x176CFC */
+GLOBAL (tnext_special_obj_face4)	/* 0x176CFC */
 		.long	0x0
 GLOBAL (dword_176D00)	/* 0x176D00 */
 		.long	0x0
@@ -179737,9 +179737,9 @@ GLOBAL (game_object_faces4)			/* 0x1a09ec */
 		.long	0x0
 GLOBAL (game_objects)				/* 0x1a09f0 */
 		.long	0x0
-GLOBAL (game_special_object_faces)	/* 0x1a09f4 */
+GLOBAL (game_special_obj_faces)	/* 0x1a09f4 */
 		.long	0x0
-GLOBAL (game_special_object_faces4)	/* 0x1a09f8 */
+GLOBAL (game_special_obj_faces4)	/* 0x1a09f8 */
 		.long	0x0
 		.align  4
 

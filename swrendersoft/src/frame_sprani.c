@@ -32,6 +32,9 @@ struct Frame *frame_end = NULL;
 struct Element *melement_ani = NULL;
 struct Element *mele_ani_end = NULL;
 
+struct TbSprite *m_sprites = NULL;
+struct TbSprite *m_sprites_end = NULL;
+
 ushort *nstart_ani = NULL;
 ushort *nstart_ani_end = NULL;
 

@@ -63,11 +63,11 @@ extern ushort tnext_screen_point;
 extern ushort tnext_draw_item;
 extern ushort tnext_sort_sprite;
 //extern ushort tnext_sort_line; -- no such var?
-//extern ushort tnext_special_face;
-extern ushort tnext_special_face4;
+//extern ushort tnext_special_obj_face;
+extern ushort tnext_special_obj_face4;
 
-ushort next_special_face = 1;
-ushort next_special_face4 = 1;
+ushort next_special_obj_face = 1;
+ushort next_special_obj_face4 = 1;
 
 extern long dword_176CC4;
 
@@ -143,10 +143,10 @@ void reset_drawlist(void)
     next_sort_sprite = 0;
     p_current_sort_sprite = &game_sort_sprites[next_sort_sprite];
 
-    next_special_face = 1;
+    next_special_obj_face = 1;
 
-    tnext_special_face4 = next_special_face4;
-    next_special_face4 = 1;
+    tnext_special_obj_face4 = next_special_obj_face4;
+    next_special_obj_face4 = 1;
 
     ingame.NextRocket = 0;
 

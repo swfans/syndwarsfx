@@ -48,6 +48,7 @@
 #include "vehicle.h"
 /******************************************************************************/
 extern ubyte byte_1C83E4;
+/******************************************************************************/
 
 void do_car_glare(struct Thing *p_car)
 {
@@ -90,6 +91,26 @@ void process_child_object(struct Thing *p_vehicle)
       gear.R[1] + (vec1.R[1] >> 15),
       gear.R[2] + (vec1.R[2] >> 15) - engn_zc,
       p_sobj, p_mgun);
+}
+
+void draw_vehicle_shadow(ushort veh, ushort sort)
+{
+    struct SortMapPoint tngcor;
+    struct Thing *p_vehicle;
+    short matx;
+    ushort obmodl;
+    ubyte alt_under_real_y;
+
+    p_vehicle = &things[veh];
+
+    matx = p_vehicle->U.UVehicle.MatrixIndex;
+    obmodl = p_vehicle->StartFrame;
+    tngcor.X = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
+    tngcor.Y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
+    tngcor.Z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
+    alt_under_real_y = (p_vehicle->SubType == SubTT_VEH_GROUND);
+
+    draw_object_model_shadow(&tngcor, obmodl, matx, alt_under_real_y, sort);
 }
 
 void build_vehicle(struct Thing *p_thing)

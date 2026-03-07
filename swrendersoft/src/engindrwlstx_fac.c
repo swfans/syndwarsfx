@@ -1336,7 +1336,7 @@ void draw_special_object_face4(ushort face4)
     struct PolyPoint point1;
     struct PolyPoint point3;
 
-    p_face4 = &game_special_object_faces4[face4];
+    p_face4 = &game_special_obj_faces4[face4];
     vec_colour = p_face4->ExCol;
     vec_mode = p_face4->Flags;
 

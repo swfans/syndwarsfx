@@ -735,14 +735,14 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
     if (pt + 4 > screen_points_limit)
         return NULL;
 
-    face = next_special_face4;
-    if (face + 1 > mem_game[25].N)
+    face = next_special_obj_face4;
+    if (face + 1 > game_special_obj_faces4_limit)
         return NULL;
 
     next_screen_point += 4;
-    next_special_face4++;
+    next_special_obj_face4++;
 
-    p_face4 = &game_special_object_faces4[face];
+    p_face4 = &game_special_obj_faces4[face];
     p_face4->PointNo[1] = pt + 1;
     p_face4->PointNo[2] = pt + 2;
     p_face4->PointNo[3] = pt + 3;
@@ -1045,12 +1045,12 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
     p_sftex->TMapY3 = 127;
     p_sftex->Page = 4;
 
-    face = next_special_face4;
-    if (face + 1 > mem_game[25].N)
+    face = next_special_obj_face4;
+    if (face + 1 > game_special_obj_faces4_limit)
         return NULL;
-    next_special_face4++;
+    next_special_obj_face4++;
 
-    p_face4 = &game_special_object_faces4[face];
+    p_face4 = &game_special_obj_faces4[face];
     p_face4->Texture = sftex;
     p_face4->PointNo[0] = pt + 0;
     p_face4->PointNo[1] = pt + 1;
@@ -2063,12 +2063,12 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
         nxt_x = x1 + ((scrad1 * cos_angl) >> 16);
         nxt_y = y1 + ((scrad1 * sin_angl) >> 16);
 
-        face = next_special_face4;
-        if (face + 1 > mem_game[25].N)
+        face = next_special_obj_face4;
+        if (face + 1 > game_special_obj_faces4_limit)
             break;
-        next_special_face4++;
+        next_special_obj_face4++;
 
-        p_face4 = &game_special_object_faces4[face];
+        p_face4 = &game_special_obj_faces4[face];
         p_face4->Flags = 17;
         p_face4->PointNo[0] = pt4 + 2;
         p_face4->PointNo[1] = pt4 + 1;
@@ -2177,12 +2177,12 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         nxt_x = pp_X + ((scrad1 * cos_angl) >> 16);
         nxt_y = pp_Y + ((scrad1 * sin_angl) >> 16);
 
-        face = next_special_face4;
-        if (face + 1 > mem_game[25].N)
+        face = next_special_obj_face4;
+        if (face + 1 > game_special_obj_faces4_limit)
             break;
-        next_special_face4++;
+        next_special_obj_face4++;
 
-        p_face4 = &game_special_object_faces4[face];
+        p_face4 = &game_special_obj_faces4[face];
         p_face4->Flags = 17;
         p_face4->PointNo[0] = pt4 + 2;
         p_face4->PointNo[1] = pt4 + 1;

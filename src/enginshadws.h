@@ -27,11 +27,24 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct SortMapPoint;
+
+struct ShadowTexture {
+    ushort Width;
+    ushort Length;
+    ubyte X1;
+    ubyte Y1;
+    ubyte X2;
+    ubyte Y2;
+};
+
 #pragma pack()
 /******************************************************************************/
 
 void draw_sort_sprite_person_shadow(ushort sspr);
-void draw_vehicle_shadow(ushort veh, ushort sort);
+
+void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
+  short matx, ubyte alt_under_real_y, ushort sort);
 
 void generate_shadows_for_multicolor_sprites(void);
 

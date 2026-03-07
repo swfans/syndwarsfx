@@ -58,9 +58,6 @@ extern short word_1A5836;
 
 extern long sprite_over_16x16;
 
-extern struct TbSprite *m_sprites;
-extern struct TbSprite *m_sprites_end;
-
 ScreenSortSpriteRenderCallback screen_sorted_sprite_statc_render_cb = NULL;
 ScreenSortSpriteRenderCallback screen_sorted_sprite_persn_render_cb = NULL;
 

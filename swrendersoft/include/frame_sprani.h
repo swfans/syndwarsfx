@@ -29,6 +29,8 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+struct TbSprite;
+
 struct Frame {
     /** Index of the first of elements used to draw this frame. */
     ushort FirstElement;
@@ -79,6 +81,11 @@ extern struct Frame *frame_end;
  */
 extern struct Element *melement_ani;
 extern struct Element *mele_ani_end;
+
+/** Array of in-mission sprites, used within elements or drawn independently.
+ */
+extern struct TbSprite *m_sprites;
+extern struct TbSprite *m_sprites_end;
 
 extern ushort shield_frm[4];
 

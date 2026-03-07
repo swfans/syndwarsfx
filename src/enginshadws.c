@@ -35,24 +35,14 @@
 #include "engintxtrmap.h"
 #include "enginprops.h"
 #include "frame_sprani.h"
-#include "game.h"
 #include "game_data.h"
 #include "game_options.h"
-#include "game_sprts.h"
 #include "matrix.h"
 #include "render_gpoly.h"
-#include "thing.h"
-#include "vehicle.h"
 /******************************************************************************/
-struct ShadowTexture {
-    ushort Width;
-    ushort Length;
-    ubyte X1;
-    ubyte Y1;
-    ubyte X2;
-    ubyte Y2;
-};
-
+//TODO load the shadow data from a config file
+/** Per-object-model shadow data.
+ */
 struct ShadowTexture shadowtexture[] = {
   {300, 450,   0, 230,  20, 254},
   {420, 700,  21, 225,  42, 254},
@@ -213,18 +203,18 @@ ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
 
     transform_shpoint(&sp4, p_cor4->X, p_cor4->Y - 8 * engn_yc, p_cor4->Z);
 
-    face = next_special_face4;
-    if (face + 1 > mem_game[25].N)
+    face = next_special_obj_face4;
+    if (face + 1 > game_special_obj_faces4_limit)
         return 0;
 
     pt = next_screen_point;
     if (pt + 4 > screen_points_limit)
         return 0;
 
-    next_special_face4++;
+    next_special_obj_face4++;
     next_screen_point += 4;
 
-    p_face4 = &game_special_object_faces4[face];
+    p_face4 = &game_special_obj_faces4[face];
     p_face4->Flags = 10;
     p_face4->GFlags = 0x01;
     p_face4->ExCol = 16;
@@ -345,31 +335,21 @@ void get_vehicle_shadow_bound_points_y(struct SortMapPoint *p_cor1,
     }
 }
 
-void draw_vehicle_shadow(ushort veh, ushort sort)
+void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
+  short matx, ubyte alt_under_real_y, ushort sort)
 {
-    struct SortMapPoint tngcor;
     struct SortMapPoint cor1, cor2, cor3, cor4;
-    struct Thing *p_vehicle;
     struct ShadowTexture *p_shtextr;
-    short matx;
-    ubyte alt_under_real_y;
 
-    p_vehicle = &things[veh];
-    p_shtextr = &shadowtexture[p_vehicle->StartFrame];
+    p_shtextr = &shadowtexture[obmodl];
     if (p_shtextr->Width == 0)
         return;
 
-    matx = p_vehicle->U.UVehicle.MatrixIndex;
-    tngcor.X = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
-    tngcor.Y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
-    tngcor.Z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
-    alt_under_real_y = (p_vehicle->SubType == SubTT_VEH_GROUND);
-
     get_vehicle_shadow_bound_points_xz(&cor1, &cor2, &cor3, &cor4,
-      &tngcor, p_shtextr, matx);
+      p_tngcor, p_shtextr, matx);
 
     get_vehicle_shadow_bound_points_y(&cor1, &cor2, &cor3, &cor4,
-      &tngcor, alt_under_real_y);
+      p_tngcor, alt_under_real_y);
 
     draw_shadow_at_coords(&cor1, &cor2, &cor3, &cor4, p_shtextr, sort);
 }
@@ -390,15 +370,13 @@ void copy_from_screen_ani(ubyte *buf)
     }
 }
 
-struct Element *element_unkn_func_05(ushort frm, short *x1, short *x2, short *y1, short *y2)
+void get_frame_bounds_05(ushort frm, short *x1, short *x2, short *y1, short *y2)
 {
 #if 0
-    struct Element *ret;
     asm volatile (
-      "push %5\n"
-      "call ASM_element_unkn_func_05\n"
-        : "=r" (ret) : "a" (frm), "d" (x1), "b" (x2), "c" (y1), "g" (y2));
-    return ret;
+      "push %4\n"
+      "call ASM_get_frame_bounds_05\n"
+        : : "a" (frm), "d" (x1), "b" (x2), "c" (y1), "g" (y2));
 #endif
     struct Element *p_el;
     struct Frame *p_frm;
@@ -441,7 +419,6 @@ struct Element *element_unkn_func_05(ushort frm, short *x1, short *x2, short *y1
                 *y1 = scr_beg_y;
         }
     }
-    return p_el;
 }
 
 void draw_shadows_for_multicolor_sprites(void)
@@ -475,7 +452,7 @@ void draw_shadows_for_multicolor_sprites(void)
                 ubyte val3a, val5a, val5b, val6a, val8a;
                 short v21;
 
-                element_unkn_func_05(fr, &a2b, &a3a, &v25b, &a5a);
+                get_frame_bounds_05(fr, &a2b, &a3a, &v25b, &a5a);
                 if (v23hw + a3a - a2b + 1 > 255)
                 {
                     v23hw = 0;

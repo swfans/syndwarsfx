@@ -24,6 +24,8 @@
 #include "bfmemut.h"
 #include "bfsprite.h"
 
+#include "frame_sprani.h"
+
 #include "game_data.h"
 #include "game_options.h"
 #include "game.h"
@@ -84,8 +86,6 @@ struct TbSprite *fepanel_sprites;
 struct TbSprite *fepanel_sprites_end;
 ubyte *fepanel_sprites_data;
 
-struct TbSprite *m_sprites;
-struct TbSprite *m_sprites_end;
 ubyte *m_sprites_data;
 ubyte *m_sprites_data_end;
 /******************************************************************************/

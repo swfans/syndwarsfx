@@ -480,6 +480,9 @@ struct Thing { // sizeof=168
     long Y;
     long Z;
     short Frame;
+    /** For things represented by a sprite, starting frame of animation.
+     * For objects, 3D model selection.
+     */
     ushort StartFrame;
     short Timer1;
     short StartTimer1;
