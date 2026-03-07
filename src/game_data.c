@@ -83,7 +83,7 @@ MemSystem mem_game[] = {
   { "prim4_textures",	(void **)&prim4_textures,		18u, 1200, 0, 0, 0 },
   { "prim_face_textures", (void **)&prim_face_textures,	16u, 500, 0, 0, 0 },
   { "prim_object_points", (void **)&prim_object_points,	10u, 2000, 0, 0, 0 },
-  { "prim_object_faces", (void **)&prim_object_faces,	32u, 800, 0, 0, 0 },
+  { "prim_object_faces3", (void **)&prim_object_faces3,	32u, 800, 0, 0, 0 },
   { "prim_object_faces4", (void **)&prim_object_faces4,	40u, 1300, 0, 0, 0 },
   { "prim_objects",		(void **)&prim_objects,			36u, 60, 0, 0, 0 },
   { "special_obj_faces3", (void **)&game_special_obj_faces3, 32u, 1400, 0, 0, 0 },
@@ -405,7 +405,7 @@ void adjust_memory_use(void)
         mem_game[i].N = 2000;
     total += mem_game[i].ESize * mem_game[i].N;
 
-    assert((i = get_memory_ptr_index((void **)&prim_object_faces)) != -1);
+    assert((i = get_memory_ptr_index((void **)&prim_object_faces3)) != -1);
     if ((ingame.LowerMemoryUse == 1) && (is_single_game || cmdln_param_bcg))
         mem_game[i].N = 2000;
     total += mem_game[i].ESize * mem_game[i].N;
@@ -587,8 +587,8 @@ TbResult propagate_memory_sizes(void)
     game_special_obj_faces4_limit = get_memory_ptr_allocated_count((void **)&game_special_obj_faces4);
     assert(game_special_obj_faces4_limit > 0);
 
-    prim_object_faces_limit = get_memory_ptr_allocated_count((void **)&prim_object_faces);
-    assert(prim_object_faces_limit > 0);
+    prim_object_faces3_limit = get_memory_ptr_allocated_count((void **)&prim_object_faces3);
+    assert(prim_object_faces3_limit > 0);
     prim_object_faces4_limit = get_memory_ptr_allocated_count((void **)&prim_object_faces4);
     assert(prim_object_faces4_limit > 0);
 

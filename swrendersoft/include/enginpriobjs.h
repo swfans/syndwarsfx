@@ -51,13 +51,17 @@ enum PrimitiveElement {
 #pragma pack()
 /******************************************************************************/
 extern struct SinglePoint *prim_object_points;
-extern struct SingleObjectFace3 *prim_object_faces;
+extern ushort next_prim_object_point;
+
+extern struct SingleObjectFace3 *prim_object_faces3;
+extern ushort next_prim_object_face3;
+
 extern struct SingleObjectFace4 *prim_object_faces4;
+extern ushort next_prim_object_face4;
+
 extern struct SingleObject *prim_objects;
-extern ushort prim_object_points_count;
-extern ushort prim_object_faces_count;
-extern ushort prim_object_faces4_count;
-extern ushort prim_objects_count;
+extern ushort next_prim_object;
+
 extern ushort prim_unknprop01;
 
 extern ushort unkn2_pos_x;

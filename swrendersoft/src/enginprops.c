@@ -39,7 +39,7 @@ s32 face_textures_limit = 16;
 s32 game_special_obj_faces3_limit = 16;
 s32 game_special_obj_faces4_limit = 16;
 
-s32 prim_object_faces_limit = 16;
+s32 prim_object_faces3_limit = 16;
 s32 prim_object_faces4_limit = 16;
 
 u32 stat_drawlist_faces = 0;

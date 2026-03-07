@@ -10954,19 +10954,19 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		jmp    jump_303f2
 	jump_302b4:
 		mov    $0x2,%ebx
-		mov    $EXPORT_SYMBOL(prim_object_points_count),%edx
+		mov    $EXPORT_SYMBOL(next_prim_object_point),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $EXPORT_SYMBOL(prim_object_faces_count),%edx
+		mov    $EXPORT_SYMBOL(next_prim_object_face3),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $EXPORT_SYMBOL(prim_object_faces4_count),%edx
+		mov    $EXPORT_SYMBOL(next_prim_object_face4),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
-		mov    $EXPORT_SYMBOL(prim_objects_count),%edx
+		mov    $EXPORT_SYMBOL(next_prim_object),%edx
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		mov    $0x2,%ebx
@@ -10982,7 +10982,7 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		mov    %ecx,%eax
 		call   ac_LbFileRead
 		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(prim_object_points_count),%dx
+		mov    EXPORT_SYMBOL(next_prim_object_point),%dx
 		lea    0x0(,%edx,4),%ebx
 		mov    %ecx,%eax
 		add    %edx,%ebx
@@ -10990,13 +10990,13 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		add    %ebx,%ebx
 		call   ac_LbFileRead
 		xor    %ebx,%ebx
-		mov    prim_object_faces,%edx
-		mov    EXPORT_SYMBOL(prim_object_faces_count),%bx
+		mov    EXPORT_SYMBOL(prim_object_faces3),%edx
+		mov    EXPORT_SYMBOL(next_prim_object_face3),%bx
 		mov    %ecx,%eax
 		shl    $0x5,%ebx
 		call   ac_LbFileRead
 		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(prim_object_faces4_count),%dx
+		mov    EXPORT_SYMBOL(next_prim_object_face4),%dx
 		lea    0x0(,%edx,4),%ebx
 		mov    %ecx,%eax
 		add    %edx,%ebx
@@ -11004,7 +11004,7 @@ GLOBAL_FUNC (ASM_read_primveh_obj)
 		shl    $0x3,%ebx
 		call   ac_LbFileRead
 		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(prim_objects_count),%dx
+		mov    EXPORT_SYMBOL(next_prim_object),%dx
 		lea    0x0(,%edx,8),%ebx
 		mov    %ecx,%eax
 		add    %edx,%ebx
@@ -57572,7 +57572,7 @@ GLOBAL_FUNC(ASM_copy_prim_obj_to_game_object)	/* 0x6031C */
 		mov    (%esp),%dx
 		mov    %cx,%ax
 		add    %edx,%eax
-		mov    prim_object_faces,%ebx
+		mov    EXPORT_SYMBOL(prim_object_faces3),%ebx
 		shl    $0x5,%eax
 		xor    %edx,%edx
 		add    %eax,%ebx
@@ -128918,14 +128918,14 @@ GLOBAL_FUNC (ASM_bang_init)	/* 0xB0E00 */
 		jl     jump_b0e30
 		xor    %ebx,%ebx
 		mov    $0x1,%eax
-		mov    %bx,data_18d162(%edx)
+		mov    %bx,EXPORT_SYMBOL(shrapnel)+0x16(%edx)
 		mov    $0x1c,%edx
 	jump_b0e58:
 		mov    %eax,%ebx
 		add    $0x1c,%edx
 		inc    %ebx
 		inc    %eax
-		mov    %bx,data_190148(%edx)
+		mov    %bx,EXPORT_SYMBOL(phwoar)-4(%edx)
 		cmp    $0x3ff,%eax
 		jl     jump_b0e58
 		mov    $0x1,%esi
@@ -128933,7 +128933,7 @@ GLOBAL_FUNC (ASM_bang_init)	/* 0xB0E00 */
 		xor    %ecx,%ecx
 		mov    %si,shrapnel_free
 		mov    %si,phwoar_free
-		mov    %cx,data_190164(%edx)
+		mov    %cx,EXPORT_SYMBOL(phwoar)+0x18(%edx)
 		xor    %edx,%edx
 		mov    %ebx,data_1dc4e0
 		mov    %edx,phwoar__child
@@ -129086,7 +129086,7 @@ get_some_phwoar:	/* 0x0B1110 */
 		mov    %bx,%dx
 		lea    0x0(,%edx,8),%eax
 		sub    %edx,%eax
-		mov    data_190164(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(phwoar)+0x18(,%eax,4),%ax
 		mov    phwoar__child,%edx
 		mov    %ax,phwoar_free
 		mov    %ebx,%eax
@@ -129112,7 +129112,7 @@ give_some_shrapnel:	/* 0x0B1160 */
 		sub    %ebx,%eax
 		mov    shrapnel_free,%bx
 		mov    %dx,shrapnel_free
-		mov    %bx,data_18d162(,%eax,8)
+		mov    %bx,EXPORT_SYMBOL(shrapnel)+0x16(,%eax,8)
 		pop    %edx
 		pop    %ebx
 		ret
@@ -129131,7 +129131,7 @@ give_some_phwoar:	/* 0x0B118C */
 		lea    0x0(,%eax,4),%ebx
 		mov    phwoar_free,%ax
 		mov    %dx,phwoar_free
-		mov    %ax,data_190164(%ebx)
+		mov    %ax,EXPORT_SYMBOL(phwoar)+0x18(%ebx)
 		mov    phwoar__child,%edx
 		mov    data_1dc4e0,%ebx
 		dec    %edx
@@ -130418,7 +130418,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		xor    %edx,%edx
 		mov    %cx,%dx
 		imul   $0x18,%edx,%edx
-		mov    data_18d162(%edx),%dx
+		mov    EXPORT_SYMBOL(shrapnel)+0x16(%edx),%dx
 		mov    %ecx,%eax
 		mov    %dx,shrapnel_free
 	jump_b23f8:
@@ -130519,7 +130519,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		mov    %eax,%ebx
 		lea    0x0(,%edx,8),%eax
 		sub    %edx,%eax
-		mov    data_190164(,%eax,4),%ax
+		mov    EXPORT_SYMBOL(phwoar)+0x18(,%eax,4),%ax
 		mov    phwoar__child,%edx
 		mov    %ax,phwoar_free
 		mov    %ebx,%eax
@@ -130539,20 +130539,20 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		shl    $0x2,%eax
 		mov    0x9c(%esp),%edx
 		mov    %edx,EXPORT_SYMBOL(phwoar)(%eax)
-		mov    %ebp,data_190154(%eax)
+		mov    %ebp,EXPORT_SYMBOL(phwoar)+8(%eax)
 		mov    0x94(%esp),%edx
-		mov    %edx,data_190150(%eax)
+		mov    %edx,EXPORT_SYMBOL(phwoar)+4(%eax)
 		xor    %dl,%dl
-		mov    %dl,data_190158(%eax)
+		mov    %dl,EXPORT_SYMBOL(phwoar)+0x0C(%eax)
 		xor    %dh,%dh
-		mov    %dl,data_19015a(%eax)
+		mov    %dl,EXPORT_SYMBOL(phwoar)+0x0E(%eax)
 		mov    0xa4(%esp),%dl
-		mov    %dl,data_190159(%eax)
+		mov    %dl,EXPORT_SYMBOL(phwoar)+0x0D(%eax)
 		mov    0xa8(%esp),%dl
-		mov    %dl,data_19015b(%eax)
+		mov    %dl,EXPORT_SYMBOL(phwoar)+0x0F(%eax)
 		xor    %dl,%dl
-		mov    %dx,data_190164(%eax)
-		mov    %dl,data_190166(%eax)
+		mov    %dx,EXPORT_SYMBOL(phwoar)+0x18(%eax)
+		mov    %dl,EXPORT_SYMBOL(phwoar)+0x1A(%eax)
 		add    $EXPORT_SYMBOL(phwoar),%eax
 		call   fillin_phwoar_type_info
 	jump_b261a:
@@ -178763,30 +178763,10 @@ GLOBAL (net_game_play_flags)	/* 0x1811F2 */
 		.fill   0x4b1
 
 GLOBAL (shrapnel)	/* 0x18D14C */
-		.fill   0x16
-data_18d162:
-		.fill   0x2fe6
-data_190148:
-		.long	0x0
+		.fill   0x3000
 
 GLOBAL (phwoar)	/* 0x19014C */
-		.long	0x0
-data_190150:
-		.long	0x0
-data_190154:
-		.long	0x0
-data_190158:
-		.byte	0x0
-data_190159:
-		.byte	0x0
-data_19015a:
-		.byte	0x0
-data_19015b:
-		.fill   0x9
-data_190164:
-		.short  0x0
-data_190166:
-		.fill   0x6fe6
+		.fill   0x7000
 shrapnel_free:	/* 0x19714C */
 		.short  0x0
 phwoar_free:	/* 0x19714E */
@@ -178823,7 +178803,7 @@ GLOBAL (prim_face_textures)	/* 0x19722C */
 		.long	0x0
 GLOBAL (prim_object_points)	/* 0x197230 */
 		.long	0x0
-GLOBAL (prim_object_faces)	/* 0x197234 */
+GLOBAL (prim_object_faces3)	/* 0x197234 */
 		.long	0x0
 GLOBAL (prim_object_faces4)	/* 0x197238 */
 		.long	0x0

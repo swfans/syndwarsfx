@@ -29,10 +29,10 @@
 #include "privrdlog.h"
 /******************************************************************************/
 
-ushort prim_object_points_count = 1;
-ushort prim_object_faces_count = 1;
-ushort prim_object_faces4_count = 1;
-ushort prim_objects_count = 1;
+ushort next_prim_object_point = 1;
+ushort next_prim_object_face3 = 1;
+ushort next_prim_object_face4 = 1;
+ushort next_prim_object = 1;
 
 extern ushort word_19CB58[66];
 
@@ -50,17 +50,17 @@ void read_primveh_obj(const char *fname, int a2)
     LbFileRead(fh, &firstval, sizeof(long));
     if (firstval != 1)
     {
-      LbFileRead(fh, &prim_object_points_count, sizeof(ushort));
-      LbFileRead(fh, &prim_object_faces_count, sizeof(ushort));
-      LbFileRead(fh, &prim_object_faces4_count, sizeof(ushort));
-      LbFileRead(fh, &prim_objects_count, sizeof(ushort));
+      LbFileRead(fh, &next_prim_object_point, sizeof(ushort));
+      LbFileRead(fh, &next_prim_object_face3, sizeof(ushort));
+      LbFileRead(fh, &next_prim_object_face4, sizeof(ushort));
+      LbFileRead(fh, &next_prim_object, sizeof(ushort));
       LbFileRead(fh, &prim4_textures_count, sizeof(ushort));
       LbFileRead(fh, &prim_face_textures_count, sizeof(ushort));
       LbFileRead(fh, &prim_unknprop01, sizeof(ushort));
-      LbFileRead(fh, prim_object_points, sizeof(struct SinglePoint) * prim_object_points_count);
-      LbFileRead(fh, prim_object_faces, sizeof(struct SingleObjectFace3) * prim_object_faces_count);
-      LbFileRead(fh, prim_object_faces4, sizeof(struct SingleObjectFace4) * prim_object_faces4_count);
-      LbFileRead(fh, prim_objects, sizeof(struct SingleObject) * prim_objects_count);
+      LbFileRead(fh, prim_object_points, sizeof(struct SinglePoint) * next_prim_object_point);
+      LbFileRead(fh, prim_object_faces3, sizeof(struct SingleObjectFace3) * next_prim_object_face3);
+      LbFileRead(fh, prim_object_faces4, sizeof(struct SingleObjectFace4) * next_prim_object_face4);
+      LbFileRead(fh, prim_objects, sizeof(struct SingleObject) * next_prim_object);
       LbFileRead(fh, prim4_textures, sizeof(struct SingleFloorTexture) * prim4_textures_count);
       LbFileRead(fh, prim_face_textures, sizeof(struct SingleTexture) * prim_face_textures_count);
     }
@@ -482,7 +482,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
         if (prim_obj_mem_debug != NULL)
             prim_obj_mem_debug(PriEl_PRIM_FACE3, face_beg + face_dt, face_beg + face_dt + 1);
 
-        p_pface = &prim_object_faces[face_beg + face_dt];
+        p_pface = &prim_object_faces3[face_beg + face_dt];
         if (next_object_face3 + 3 > game_object_faces3_limit) {
             p_nsngobj->NumbFaces = face_dt;
             return new_obj;
