@@ -158,7 +158,7 @@ void check_mouse_over_face(struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
     {
     case 1:
         players[local_player_no].Target = face;
-        p_face3 = &game_object_faces[face];
+        p_face3 = &game_object_faces3[face];
         p_sobj = &game_objects[p_face3->Object];
         p_point3 = &game_object_points[p_face3->PointNo[0]];
         p_point1 = &game_object_points[p_face3->PointNo[2]];

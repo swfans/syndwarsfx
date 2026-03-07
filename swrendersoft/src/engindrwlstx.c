@@ -27,12 +27,14 @@
 #include "enginsngtxtr.h"
 /******************************************************************************/
 
-extern ushort tnext_screen_point;
-extern ushort tnext_draw_item;
-extern ushort tnext_sort_sprite;
+ushort tnext_draw_item = 0;
+
+ushort tnext_sort_sprite = 0;
 //extern ushort tnext_sort_line; -- no such var?
 //extern ushort tnext_special_obj_face;
-extern ushort tnext_special_obj_face4;
+ushort tnext_special_obj_face4 = 1;
+
+ushort tnext_screen_point = 0;
 
 /******************************************************************************/
 // from engindrwlstx_spr

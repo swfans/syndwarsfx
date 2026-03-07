@@ -1394,7 +1394,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         if (next_screen_point + 4 > screen_points_limit)
             break;
 
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         p_face->GFlags &= ~0x1C;
         p_face->GFlags |= faceGF;
         p_face->WalkHeader = faceWH;
@@ -1554,7 +1554,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         struct SingleObjectFace3 *p_face;
         struct SinglePoint *p_snpoint;
 
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
 
         p_snpoint = &game_object_points[p_face->PointNo[0]];
         p_snpoint->Flags = 0;
@@ -1574,7 +1574,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         if (next_screen_point + 4 > screen_points_limit)
             break;
 
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
 
         transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
           p_thing->U.UObject.MatrixIndex, p_face->PointNo[0]);
@@ -1903,7 +1903,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
             struct SinglePoint *p_snpoint3;
             struct SpecialPoint *p_specpt3;
 
-            p_face = &game_object_faces[face];
+            p_face = &game_object_faces3[face];
             {
                 int depth_max, bckt;
                 ushort flags_all, flags_any;

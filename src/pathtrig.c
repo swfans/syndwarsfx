@@ -457,7 +457,7 @@ static ubyte face_is_blocking(ushort obj, short face, ushort colt)
     else if (face > 0)
     {
         struct SingleObjectFace3 *p_face;
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         if ((p_face->GFlags & FGFlg_Unkn10) != 0)
             return THIN_PASS;
         return THIN_BLOCK;
@@ -476,7 +476,7 @@ void thin_wall_around_face3(short obj_x, short obj_y, short obj_z, short face, u
     int z_cor[4];
     short cor;
 
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
 
     for (cor = 0; cor < 3; cor++) {
         struct SinglePoint *p_pt;
@@ -1033,7 +1033,7 @@ TbBool face_has_walk_item(short face, short walk_face)
     else if (face > 0)
     {
         struct SingleObjectFace3 *p_face;
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         wh = p_face->WalkHeader;
     } else
     {
@@ -1073,7 +1073,7 @@ void add_face_walk_item(short face, short walk_face)
     else if (face > 0)
     {
         struct SingleObjectFace3 *p_face;
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         wh = p_face->WalkHeader;
     } else
     {
@@ -1109,7 +1109,7 @@ int face_to_object_position(short face, short *x, short *y, short *z)
         struct SingleObjectFace3 *p_face;
         struct SingleObject *p_obj;
 
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         p_obj = &game_objects[p_face->Object];
         *x = p_obj->MapX;
         *y = p_obj->OffsetY;
@@ -1163,7 +1163,7 @@ int add_walk_items_for_face_object(short face, short obj)
             struct SingleObjectFace3 *p_face;
             struct SinglePoint *p_pt;
 
-            p_face = &game_object_faces[face];
+            p_face = &game_object_faces3[face];
             p_pt = &game_object_points[p_face->PointNo[cor]];
             fcpt_x = fcobj_x + p_pt->X;
             fcpt_y = fcobj_y + p_pt->Y;
@@ -1174,7 +1174,7 @@ int add_walk_items_for_face_object(short face, short obj)
         {
             struct SingleObjectFace3 *p_face;
             short ccor;
-            p_face = &game_object_faces[cface];
+            p_face = &game_object_faces3[cface];
             if ((p_face->GFlags & FGFlg_Unkn04) == 0) {
                 continue;
             }
@@ -1307,7 +1307,7 @@ TbBool prepare_face_for_having_walk_items(short face, ushort walk_item)
 
         new_wh = next_walk_header;
         next_walk_header++;
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         p_face->WalkHeader = new_wh;
     }
     else if (face < 0)
@@ -1343,9 +1343,9 @@ void generate_walk_items(void)
 
     next_walk_header = 1;
     next_walk_item = 1;
-    for (face = 1; face < next_object_face; face++)
+    for (face = 1; face < next_object_face3; face++)
     {
-        if ((game_object_faces[face].GFlags & FGFlg_Unkn04) != 0)
+        if ((game_object_faces3[face].GFlags & FGFlg_Unkn04) != 0)
             add_walk_items_for_face(face);
     }
     for (face = 1; face < next_object_face4; face++)
@@ -1483,7 +1483,7 @@ void update_mapel_collision_columns_around_face(short face, ushort flags)
         {
             struct SingleObjectFace3 *p_face;
 
-            p_face = &game_object_faces[face];
+            p_face = &game_object_faces3[face];
             p_pt0 = &game_object_points[p_face->PointNo[0]];
             p_pt1 = &game_object_points[p_face->PointNo[1]];
             p_pt2 = &game_object_points[p_face->PointNo[2]];
@@ -1694,7 +1694,7 @@ void add_object_face3_to_col_vect(short obj_x, short obj_y, short obj_z, ThingId
     int cor;
 
     // Fill arrays with face coordinates
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
     for (cor = 0; cor < 3; cor++) {
         struct SinglePoint *p_pt;
         p_pt = &game_object_points[p_face->PointNo[cor]];
@@ -1988,7 +1988,7 @@ void generate_thin_paths(void)
     // Array for mapping each SingleObjectFace4 into two TrTriangles
     TrTriangId *faces4_added;
 
-    faces3_added = LbMemoryAlloc(next_object_face * sizeof(TrTriangId));
+    faces3_added = LbMemoryAlloc(next_object_face3 * sizeof(TrTriangId));
     faces4_added = LbMemoryAlloc(next_object_face4 * sizeof(TrTriangId) * 2);
 
     // Add faces which directly touch the ground

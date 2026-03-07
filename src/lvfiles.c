@@ -75,7 +75,7 @@ struct BillboardNBreakout {
 TbBool level_deep_fix = false;
 
 ulong stored_g3d_next_object;
-ulong stored_g3d_next_object_face;
+ulong stored_g3d_next_object_face3;
 ulong stored_g3d_next_object_face4;
 ulong stored_g3d_next_object_point;
 ulong stored_g3d_next_normal;
@@ -91,7 +91,7 @@ struct QuickLoad quick_load_pc[] = {
   {&next_floor_texture,	(void **)&game_textures,		18, 800},
   {&next_face_texture,	(void **)&game_face_textures,	16, 800},
   {&next_object_point,	(void **)&game_object_points,	10, 2000},
-  {&next_object_face,	(void **)&game_object_faces,	32, 2000},
+  {&next_object_face3,	(void **)&game_object_faces3,	32, 2000},
   {&next_object,		(void **)&game_objects,		36, 120},
   {&next_quick_light,	(void **)&game_quick_lights,	 6, 4000},
   {&next_full_light,	(void **)&game_full_lights,	32, 10},
@@ -140,7 +140,7 @@ void global_3d_store(int action)
         if (stored_global3d_inuse)
         {
             next_object = stored_g3d_next_object;
-            next_object_face = stored_g3d_next_object_face;
+            next_object_face3 = stored_g3d_next_object_face3;
             next_object_face4 = stored_g3d_next_object_face4;
             next_object_point = stored_g3d_next_object_point;
             next_normal = stored_g3d_next_normal;
@@ -154,7 +154,7 @@ void global_3d_store(int action)
         if (!stored_global3d_inuse)
         {
             stored_g3d_next_object = next_object;
-            stored_g3d_next_object_face = next_object_face;
+            stored_g3d_next_object_face3 = next_object_face3;
             stored_g3d_next_object_face4 = next_object_face4;
             stored_g3d_next_object_point = next_object_point;
             stored_g3d_next_normal = next_normal;
@@ -1144,11 +1144,11 @@ void fix_map_outranged_properties(void)
             }
         }
     }
-    for (i = 0; i < next_object_face; i++) {
+    for (i = 0; i < next_object_face3; i++) {
         struct SingleObjectFace3 *p_face;
         ushort texture;
 
-        p_face = &game_object_faces[i];
+        p_face = &game_object_faces3[i];
         texture = p_face->Texture & 0x3FFF;
         if (texture >= next_face_texture) {
             LOGERR("Outranged texture %d used in face3 %d", (int)texture, (int)i);
@@ -1248,18 +1248,18 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     }
     if (fmtver >= 19)
     {
-        LbFileRead(fh, &next_object_face, sizeof(next_object_face));
+        LbFileRead(fh, &next_object_face3, sizeof(next_object_face3));
         assert(sizeof(struct SingleObjectFace3) == 32);
-        LbFileRead(fh, game_object_faces, sizeof(struct SingleObjectFace3) * next_object_face);
+        LbFileRead(fh, game_object_faces3, sizeof(struct SingleObjectFace3) * next_object_face3);
     }
     else
     {
         struct SingleObjectFace3OldV7 old_object_face;
-        LbFileRead(fh, &next_object_face, sizeof(next_object_face));
+        LbFileRead(fh, &next_object_face3, sizeof(next_object_face3));
         assert(sizeof(old_object_face) == 48);
-        for (i = 0; i < next_object_face; i++) {
+        for (i = 0; i < next_object_face3; i++) {
             LbFileRead(fh, &old_object_face, sizeof(old_object_face));
-            refresh_old_object_face_format(&game_object_faces[i], &old_object_face, fmtver);
+            refresh_old_object_face_format(&game_object_faces3[i], &old_object_face, fmtver);
         }
     }
     {
@@ -1310,8 +1310,8 @@ void load_map_dat_pc_handle(TbFileHandle fh)
     {
         next_object_face4 = 1;
     }
-    LOGSYNC("stats: object_faces=%hu objects=%hu quick_lights=%hu full_lights=%hu normals=%hu object_faces4=%hu",
-      next_object_face, next_object, next_quick_light, next_full_light, next_normal, next_object_face4);
+    LOGSYNC("stats: object_faces3=%hu objects=%hu quick_lights=%hu full_lights=%hu normals=%hu object_faces4=%hu",
+      next_object_face3, next_object, next_quick_light, next_full_light, next_normal, next_object_face4);
 
     clear_mapwho_on_whole_map();
 

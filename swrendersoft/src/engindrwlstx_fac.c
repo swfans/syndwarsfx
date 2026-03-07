@@ -47,18 +47,24 @@ const sbyte byte_153014[] = {
   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
 
-extern long dword_176D00;
-extern long dword_176D04;
+extern s32 dword_176D00;
+extern s32 dword_176D04;
 
-extern s32 engn_nuclear_shade_timer;
-extern s32 engn_nuclear_shade_x;
-extern s32 engn_nuclear_shade_y;
-extern s32 engn_nuclear_shade_z;
+s32 engn_nuclear_shade_timer = 0;
+s32 engn_nuclear_shade_x = 0;
+s32 engn_nuclear_shade_y = 0;
+s32 engn_nuclear_shade_z = 0;
 
 ScreenTriangleRenderCallback screen_position_face_render_cb = NULL;
 
 struct SpecialPoint *game_screen_point_pool = NULL;
 ushort next_screen_point;
+
+struct SingleObjectFace3 *game_special_obj_faces = NULL;
+ushort next_special_obj_face = 1;
+
+struct SingleObjectFace4 *game_special_obj_faces4 = NULL;
+ushort next_special_obj_face4 = 1;
 /******************************************************************************/
 
 void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
@@ -337,7 +343,7 @@ void set_floor_texture_uv_shade3(ushort face, struct PolyPoint *p_pt1,
 {
     struct SingleObjectFace3 *p_face;
 
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
     assert(vec_tmap[4] != NULL);
     vec_map = vec_tmap[4];
     {
@@ -617,7 +623,7 @@ void draw_object_face3_reflect(ushort face3)
     struct PolyPoint point1;
     struct PolyPoint point2;
 
-    p_face = &game_object_faces[face3];
+    p_face = &game_object_faces3[face3];
     vec_colour = p_face->ExCol;
     vec_mode = 27;
     set_floor_texture_uv_shade3(face3, &point1, &point3, &point2);
@@ -865,7 +871,7 @@ void draw_object_face3g_textrd(ushort face)
     struct PolyPoint point3;
     struct PolyPoint point2;
 
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
     vec_colour = p_face->ExCol;
     vec_mode = p_face->Flags;
 
@@ -1501,7 +1507,7 @@ void draw_object_face3_textrd(ushort face)
     struct PolyPoint point3;
     struct SingleObjectFace3 *p_face;
 
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
     vec_colour = p_face->ExCol;
     vec_mode = p_face->Flags;
 
@@ -1877,7 +1883,7 @@ void draw_object_face3_textrd_dk(ushort face)
     struct PolyPoint point3;
     struct SingleObjectFace3 *p_face;
 
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
     vec_colour = 0x40;
     vec_mode = 4;
 
@@ -2007,7 +2013,7 @@ void draw_object_face3_deep_rdr(ushort face)
     struct PolyPoint point1;
     struct PolyPoint point3;
 
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
 
     {
         struct SinglePoint *p_point;

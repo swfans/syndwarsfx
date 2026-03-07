@@ -174,8 +174,8 @@ struct SingleObject { // sizeof=36
 
 #pragma pack()
 /******************************************************************************/
-extern struct SingleObjectFace3 *game_object_faces;
-extern ushort next_object_face;
+extern struct SingleObjectFace3 *game_object_faces3;
+extern ushort next_object_face3;
 
 extern struct SingleObjectFace4 *game_object_faces4;
 extern ushort next_object_face4;

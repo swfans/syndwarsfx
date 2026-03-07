@@ -66,7 +66,7 @@ MemSystem mem_game[] = {
   { "textures",			(void **)&game_textures,		18u, 4512, 0, 0, 0 },
   { "face_textures",	(void **)&game_face_textures,	16u, 4000, 0, 0, 0 },
   { "object_points",	(void **)&game_object_points,	10u, 20000, 0, 0, 0 },
-  { "object_faces",		(void **)&game_object_faces,	32u, 15000, 0, 0, 0 },
+  { "object_faces3",	(void **)&game_object_faces3,	32u, 15000, 0, 0, 0 },
   { "objects",			(void **)&game_objects,			36u, 2000, 0, 0, 0 },
   { "quick_lights",		(void **)&game_quick_lights,	6u, 64000, 0, 0, 0 },
   { "full_lights",		(void **)&game_full_lights,		32u, 4000, 0, 0, 0 },
@@ -415,7 +415,7 @@ void adjust_memory_use(void)
         mem_game[i].N = 2000;
     total += mem_game[i].ESize * mem_game[i].N;
 
-    assert((i = get_memory_ptr_index((void **)&game_object_faces)) != -1);
+    assert((i = get_memory_ptr_index((void **)&game_object_faces3)) != -1);
     if (ingame.LowerMemoryUse == 1)
         mem_game[i].N = 11000;
     total += mem_game[i].ESize * mem_game[i].N;
@@ -573,8 +573,8 @@ TbResult propagate_memory_sizes(void)
 
     game_object_points_limit = get_memory_ptr_allocated_count((void **)&game_object_points);
     assert(game_object_points_limit > 0);
-    game_object_faces_limit = get_memory_ptr_allocated_count((void **)&game_object_faces);
-    assert(game_object_faces_limit > 0);
+    game_object_faces3_limit = get_memory_ptr_allocated_count((void **)&game_object_faces3);
+    assert(game_object_faces3_limit > 0);
     game_object_faces4_limit = get_memory_ptr_allocated_count((void **)&game_object_faces4);
     assert(game_object_faces4_limit > 0);
     game_normals_limit = get_memory_ptr_allocated_count((void **)&game_normals);

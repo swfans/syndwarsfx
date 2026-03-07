@@ -36,7 +36,7 @@ ushort prim_objects_count = 1;
 
 extern ushort word_19CB58[66];
 
-ushort old_next_object, old_next_object_face, old_next_object_point,
+ushort old_next_object, old_next_object_face3, old_next_object_point,
   old_next_normal, old_next_face_texture;
 
 void read_primveh_obj(const char *fname, int a2)
@@ -174,7 +174,7 @@ void calc_normal(short face, struct Normal *p_normal)
     int dirvec_x, dirvec_y, dirvec_z, dirvec_len;
     int nx, ny, nz;
 
-    p_face = &game_object_faces[face];
+    p_face = &game_object_faces3[face];
     p_objpt1 = &game_object_points[p_face->PointNo[0]];
     p_objpt2 = &game_object_points[p_face->PointNo[1]];
     p_objpt3 = &game_object_points[p_face->PointNo[2]];
@@ -421,7 +421,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
 #pragma GCC diagnostic pop
 
     old_next_object = next_object;
-    old_next_object_face = next_object_face;
+    old_next_object_face3 = next_object_face3;
     old_next_object_point = next_object_point;
     old_next_normal = next_normal;
     old_next_face_texture = next_face_texture;
@@ -470,7 +470,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             prim_obj_mem_debug(PriEl_PRIM_POINT, pt, pt+1);
     }
 
-    p_nsngobj->StartFace = next_object_face;
+    p_nsngobj->StartFace = next_object_face3;
     p_nsngobj->NumbFaces = face_num;
 
     for (face_dt = 0; face_dt < face_num; face_dt++)
@@ -483,12 +483,12 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
             prim_obj_mem_debug(PriEl_PRIM_FACE3, face_beg + face_dt, face_beg + face_dt + 1);
 
         p_pface = &prim_object_faces[face_beg + face_dt];
-        if (next_object_face + 3 > game_object_faces_limit) {
+        if (next_object_face3 + 3 > game_object_faces3_limit) {
             p_nsngobj->NumbFaces = face_dt;
             return new_obj;
         }
-        new_face = next_object_face++;
-        p_nface = &game_object_faces[new_face];
+        new_face = next_object_face3++;
+        p_nface = &game_object_faces3[new_face];
         if (p_pface->Texture != 0)
         {
             struct SingleTexture *p_nstxtr;

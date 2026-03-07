@@ -66,7 +66,7 @@ extern long dword_176CC0;
 
 extern short word_19CC64;
 extern short word_19CC66;
-extern long nuclear_overexposure;
+TbBool nuclear_overexposure = false;
 
 
 int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z, int mag)

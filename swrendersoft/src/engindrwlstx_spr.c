@@ -44,19 +44,31 @@
     (varr)[3] = (((ushort)vpck) >> 9) & 0x07; \
     (varr)[4] = (((ushort)vpck) >> 12) & 0x07
 
-extern long dword_176CE0;
-extern long dword_176CE4;
-extern long dword_176CE8;
-extern long dword_176CEC;
-extern long dword_176CF0;
-extern long dword_176CF4;
-extern long dword_176D00;
-extern long dword_176D04;
+s32 dword_176CE0;
+s32 dword_176CE4;
+s32 dword_176CE8;
+s32 dword_176CEC;
+s32 dword_176CF0;
+s32 dword_176CF4;
+s32 dword_176D00;
+s32 dword_176D04;
 
 extern short word_1A5834;
 extern short word_1A5836;
 
 extern long sprite_over_16x16;
+
+struct SortLine *game_sort_lines = NULL;
+struct SortLine *p_current_sort_line = NULL;
+ushort next_sort_line = 0;
+
+struct DrawItem *game_draw_list = NULL;
+struct DrawItem *p_current_draw_item = NULL;
+ushort next_draw_item = 0;
+
+struct SortSprite *game_sort_sprites = NULL;
+struct SortSprite *p_current_sort_sprite = NULL;
+ushort next_sort_sprite = 0;
 
 ScreenSortSpriteRenderCallback screen_sorted_sprite_statc_render_cb = NULL;
 ScreenSortSpriteRenderCallback screen_sorted_sprite_persn_render_cb = NULL;

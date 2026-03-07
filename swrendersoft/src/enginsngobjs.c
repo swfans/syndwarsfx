@@ -26,16 +26,21 @@
 #include "enginprops.h"
 #include "privrdlog.h"
 /******************************************************************************/
-
-ushort next_normal = 1;
-
+struct SinglePoint *game_object_points = NULL;
 ushort next_object_point = 1;
 
-ushort next_object_face = 1;
+struct SingleObjectFace3 *game_object_faces3 = NULL;
+ushort next_object_face3 = 1;
 
+struct SingleObjectFace4 *game_object_faces4 = NULL;
 ushort next_object_face4 = 1;
 
+struct Normal *game_normals = NULL;
+ushort next_normal = 1;
+
+struct SingleObject *game_objects = NULL;
 ushort next_object = 1;
+/******************************************************************************/
 
 void refresh_old_object_face_format(struct SingleObjectFace3 *p_objface,
   struct SingleObjectFace3OldV7 *p_oldobjface, u32 fmtver)
@@ -148,7 +153,7 @@ int alt_change_at_face(short face, int *change_xz)
         struct SingleObjectFace3 *p_face;
         short cor1, cor2;
 
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
 
         for (cor1 = 0; cor1 < 3; cor1++)
         {
@@ -202,7 +207,7 @@ int get_height_on_face(int x, int z, ushort face)
     int dt_a, dt_b;
     int len_a, len_b;
 
-    p_oface = &game_object_faces[face];
+    p_oface = &game_object_faces3[face];
     {
         struct SingleObject *p_sobj;
         struct SinglePoint *p_opt0;
@@ -293,11 +298,11 @@ void update_object_faces_flags(void)
 {
     short face;
 
-    for (face = 1; face < next_object_face; face++)
+    for (face = 1; face < next_object_face3; face++)
     {
         struct SingleObjectFace3 *p_face;
 
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         p_face->GFlags |= FGFlg_Unkn04;
         if (compute_face_is_blocking_walk(face))
             p_face->GFlags &= ~FGFlg_Unkn04;
@@ -324,7 +329,7 @@ TbBool face_is_blocking_walk(short face)
     else if (face > 0)
     {
         struct SingleObjectFace3 *p_face;
-        p_face = &game_object_faces[face];
+        p_face = &game_object_faces3[face];
         return ((p_face->GFlags & FGFlg_Unkn04) == 0);
     }
 

@@ -209,7 +209,7 @@ ushort word_1531E0 = 1;
 ushort next_mission = 1;
 
 ulong stored_l3d_next_object;
-ulong stored_l3d_next_object_face;
+ulong stored_l3d_next_object_face3;
 ulong stored_l3d_next_object_face4;
 ulong stored_l3d_next_object_point;
 ulong stored_l3d_next_normal;
@@ -2780,7 +2780,7 @@ void init_level_3d(ubyte flag)
     if (flag)
     {
         next_object = stored_l3d_next_object;
-        next_object_face = stored_l3d_next_object_face;
+        next_object_face3 = stored_l3d_next_object_face3;
         next_object_face4 = stored_l3d_next_object_face4;
         next_object_point = stored_l3d_next_object_point;
         next_normal = stored_l3d_next_normal;
@@ -2792,7 +2792,7 @@ void init_level_3d(ubyte flag)
     else
     {
         stored_l3d_next_object = next_object;
-        stored_l3d_next_object_face = next_object_face;
+        stored_l3d_next_object_face3 = next_object_face3;
         stored_l3d_next_object_face4 = next_object_face4;
         stored_l3d_next_object_point = next_object_point;
         stored_l3d_next_normal = next_normal;

@@ -59,26 +59,10 @@
 #include "vehicle.h"
 /******************************************************************************/
 
-
-ushort next_special_obj_face = 1;
-ushort next_special_obj_face4 = 1;
-
 extern ubyte byte_176D49;
 
 extern short word_1A5834;
 extern short word_1A5836;
-
-struct DrawItem *game_draw_list;
-struct DrawItem *p_current_draw_item;
-ushort next_draw_item;
-
-struct SortSprite *game_sort_sprites;
-struct SortSprite *p_current_sort_sprite;
-ushort next_sort_sprite;
-
-struct SortLine *game_sort_lines;
-struct SortLine *p_current_sort_line;
-ushort next_sort_line;
 
 TbPixel deep_radar_surface_col = 0xd8;
 TbPixel deep_radar_line_col = 0x64;
