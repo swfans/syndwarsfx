@@ -74,7 +74,10 @@ struct ShadowTexture shadowtexture[] = {
   {  0,   0,   0,   0,   0,   0},
 };
 
-extern const ushort word_154F4C[14];
+extern const ushort word_154F4C[] = {
+  1, 33, 113, 241, 273, 161, 193, 721, 753, 321, 401, 433, 33,
+};
+
 
 ubyte sprshadow_EE90[24];
 ubyte sprshadow_EEA8[600];
@@ -332,7 +335,7 @@ void draw_shadows_for_multicolor_sprites(void)
     v23hw = 0;
     v25a = 0;
     v23mw = 0;
-    for (shpak = 12; shpak > -1; shpak--)
+    for (shpak = 12; shpak >= 0; shpak--)
     {
         int base_idx;
         ushort spr;

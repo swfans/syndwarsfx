@@ -38,14 +38,15 @@ u32 next_ex_face = 1;
 
 u32 dont_bother_with_explode_faces = false;
 
-extern ushort word_1AA5CC;
+ushort word_1AA5CC = 1;
 
 s32 dword_1AA5D8 = 0;
 s32 dword_1AA5DC = 0;
 s32 dword_1AA5E0 = 0;
 s32 dword_1AA5E4 = 0;
 
-extern s32 dword_1E08BC;
+ushort word_1E08B8 = 0;
+s32 dword_1E08BC = 0;
 
 /******************************************************************************/
 
@@ -204,7 +205,7 @@ void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];
@@ -229,7 +230,7 @@ void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];
@@ -254,7 +255,7 @@ void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];
@@ -279,7 +280,7 @@ void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];
@@ -331,7 +332,7 @@ void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];
@@ -359,7 +360,7 @@ void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];
@@ -387,9 +388,7 @@ void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-    {
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
-    }
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];
@@ -417,9 +416,7 @@ void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
 
     eface = word_1AA5CC;
     if (eface != 0)
-    {
-        word_1AA5CC = ex_faces[word_1AA5CC].Flags;
-    }
+        word_1AA5CC = ex_faces[eface].Flags;
     if (eface != 0)
     {
         p_neface = &ex_faces[eface];

@@ -44,6 +44,7 @@ const short waft_table[] = {
 
 ushort gamep_scene_effect_intensity = 1000;
 short gamep_scene_effect_change = -1;
+ushort gamep_scene_effect_type = ScEff_NONE;
 
 ushort word_1A7314;
 ushort word_1A7330[1000];

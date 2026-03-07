@@ -84,6 +84,7 @@
 .global EXPORT_SYMBOL(byte_176D49);			/* 0x176D49 */
 .global EXPORT_SYMBOL(engn_yc);
 .global EXPORT_SYMBOL(shield_frm);			/* 0x1777B8 */
+.global EXPORT_SYMBOL(gamep_scene_effect_type);	/* 0x1777C8 */
 .global EXPORT_SYMBOL(tmaps_extra_buf);		/* 0x1810D1 */
 .global EXPORT_SYMBOL(tmaps_extra_len);		/* 0x1810D5 */
 .global EXPORT_SYMBOL(colour_mix_lookup);	/* 0x181136 */
@@ -134,6 +135,7 @@
 
 .global EXPORT_SYMBOL(unkn_changing_color_counter1);	/* 0x1AA26C */
 .global EXPORT_SYMBOL(colour_lookup_lock);	/* 0x1AA270 */
+.global EXPORT_SYMBOL(word_1AA5CC);			/* 0x1AA5CC */
 .global EXPORT_SYMBOL(dword_1AA5D8);	/* 0x1AA5D8 */
 .global EXPORT_SYMBOL(dword_1AA5DC);	/* 0x1AA5DC */
 .global EXPORT_SYMBOL(dword_1AA5E0);	/* 0x1AA5E0 */
@@ -177768,7 +177770,7 @@ GLOBAL (byte_154F2C)	/* 0x154F2C */
 		.ascii  "\x09\x0a\x0b\x05\x06\x00\x00\x00"
 		.ascii  "\x01\x05\x06\x00\x01\x07\x08\x02"
 		.ascii  "\x02\x0a\x0b\x05\x06\x0a\x0b"
-GLOBAL (word_154F4C)
+GLOBAL (ASM_word_154F4C)
 		.ascii  "\x01\x00\x21\x00\x71\x00\xf1\x00"
 		.ascii  "\x11\x01\xa1\x00\xc1\x00\xd1\x02"
 		.ascii  "\xf1\x02\x41\x01\x91\x01\xb1\x01"
@@ -178673,9 +178675,6 @@ GLOBAL (gamep_unknval_15)
 GLOBAL (gamep_unknval_16)	/* 0x1777B0 */
 		.fill   0x8
 
-GLOBAL (gamep_scene_effect_type)	/* 0x1777C8 */
-		.ascii  "\x00\x00\x00"
-		.byte	0x0
 GLOBAL (my_paths)	/* 0x1777CC */
 		.byte	0x0
 data_1777cd:
@@ -179358,8 +179357,7 @@ GLOBAL (dword_1AA5C4)	/* 0x1AA5C4 */
 		.long	0x0
 GLOBAL (dword_1AA5C8)	/* 0x1AA5C8 */
 		.long	0x0
-GLOBAL (word_1AA5CC)	/* 0x1AA5CC */
-		.long	0x0
+
 data_1aa5d0:
 		.long	0x0
 data_1aa5d4:
@@ -180723,12 +180721,6 @@ data_1dded8:
 		.fill   0x190
 GLOBAL (ail_sample_ids)	/* 0x1DE068 */
 		.fill   0x50
-
-GLOBAL (word_1E08B8)	/* 0x1E08B8 */
-		.long	0x0
-GLOBAL (dword_1E08BC)	/* 0x1E08BC */
-		.long	0x0
-
 
 GLOBAL (hmhead)	/* 0x1E2E44 */
 		.long	0x0
