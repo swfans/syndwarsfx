@@ -21,5 +21,8 @@
 #include "bfmemut.h"
 #include "privrdlog.h"
 /******************************************************************************/
+struct Shrapnel shrapnel[512];
+struct Phwoar phwoar[1024];
+struct FireFlame FIRE_flame[512];
 
 /******************************************************************************/

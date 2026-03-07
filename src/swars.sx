@@ -128907,7 +128907,7 @@ GLOBAL_FUNC (ASM_bang_init)	/* 0xB0E00 */
 		push   %edx
 		push   %esi
 		mov    $0x3000,%ebx
-		mov    $shrapnel,%eax
+		mov    $EXPORT_SYMBOL(shrapnel),%eax
 		xor    %edx,%edx
 		call   ac_memset
 		mov    $0x7000,%ebx
@@ -130435,7 +130435,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		je     jump_b253a
 		and    $0xffff,%eax
 		imul   $0x18,%eax,%eax
-		mov    $shrapnel,%edx
+		mov    $EXPORT_SYMBOL(shrapnel),%edx
 		mov    0x98(%esp),%ecx
 		add    %eax,%edx
 		cmp    %ecx,%ebx
@@ -157413,7 +157413,7 @@ func_ca88e:
 		cmp    $0x200,%eax
 		jge    jump_cae6c
 		imul   $0x18,%eax,%eax
-		mov    $shrapnel,%esi
+		mov    $EXPORT_SYMBOL(shrapnel),%esi
 		add    %eax,%esi
 		mov    0x16(%esi),%ax
 		mov    %eax,0x50(%esp)
@@ -178769,11 +178769,6 @@ GLOBAL (net_game_play_flags)	/* 0x1811F2 */
 		.byte	0x0
 		.fill   0x4b1
 
-GLOBAL (shrapnel)	/* 0x18D14C */
-		.fill   0x3000
-
-GLOBAL (phwoar)	/* 0x19014C */
-		.fill   0x7000
 shrapnel_free:	/* 0x19714C */
 		.short  0x0
 phwoar_free:	/* 0x19714E */
@@ -180728,9 +180723,6 @@ data_1dded8:
 		.fill   0x190
 GLOBAL (ail_sample_ids)	/* 0x1DE068 */
 		.fill   0x50
-
-GLOBAL (FIRE_flame)	/* 0x1de0b8 */
-		.fill   0x2800
 
 GLOBAL (word_1E08B8)	/* 0x1E08B8 */
 		.long	0x0
