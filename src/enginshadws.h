@@ -40,13 +40,19 @@ struct ShadowTexture {
 
 #pragma pack()
 /******************************************************************************/
+/** Callback for setting height of shadow corners.
+ */
+extern s32 (*get_flat_surface_height_below_point_cb)(struct SortMapPoint *p_cor);
+/******************************************************************************/
+
+void draw_shadows_for_multicolor_sprites(void);
+void generate_shadows_angle_shifts(void);
+void copy_from_screen_ani(ubyte *buf);
 
 void draw_sort_sprite_person_shadow(ushort sspr);
 
 void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
-  short matx, ubyte alt_under_real_y, ushort sort);
-
-void generate_shadows_for_multicolor_sprites(void);
+  short matx, ushort sort);
 
 /******************************************************************************/
 #ifdef __cplusplus

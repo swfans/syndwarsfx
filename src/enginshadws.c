@@ -23,8 +23,6 @@
 #include "bfmath.h"
 #include "bfsprite.h"
 
-#include "bigmap.h"
-#include "display.h"
 #include "enginbckt.h"
 #include "engincam.h"
 #include "engintrns.h"
@@ -35,7 +33,6 @@
 #include "engintxtrmap.h"
 #include "enginprops.h"
 #include "frame_sprani.h"
-#include "game_data.h"
 #include "game_options.h"
 #include "matrix.h"
 #include "render_gpoly.h"
@@ -91,6 +88,10 @@ extern ubyte sprshadow_F388[600];
 extern ubyte sprshadow_F5E0[24];
 extern ubyte sprshadow_F5F8[600];
 extern sbyte sprshadow_F850[512];
+
+s32 (*get_flat_surface_height_below_point_cb)(struct SortMapPoint *p_cor) = NULL;
+
+/******************************************************************************/
 
 void draw_person_shadow(short scr_x, short scr_y, ushort frm,
   ushort shpak, ubyte shangl, ubyte angl, short strng)
@@ -261,7 +262,7 @@ ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
     return face;
 }
 
-void get_vehicle_shadow_bound_points_xz(struct SortMapPoint *p_cor1,
+void get_object_shadow_bound_points_xz(struct SortMapPoint *p_cor1,
   struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
   struct SortMapPoint *p_cor4, const struct SortMapPoint *p_tngcor,
   const struct ShadowTexture *p_shtextr, short matx)
@@ -306,37 +307,22 @@ void get_vehicle_shadow_bound_points_xz(struct SortMapPoint *p_cor1,
     p_cor4->Z = p_tngcor->Z - engn_zc + (vec_rot.R[2] >> 15);
 }
 
-void get_vehicle_shadow_bound_points_y(struct SortMapPoint *p_cor1,
+void get_object_shadow_bound_points_y(struct SortMapPoint *p_cor1,
   struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
-  struct SortMapPoint *p_cor4, struct SortMapPoint *p_tngcor, ubyte alt_under_real_y)
+  struct SortMapPoint *p_cor4, struct SortMapPoint *p_tngcor)
 {
-    if (alt_under_real_y) {
-        p_cor1->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
-          engn_xc + p_cor1->X, engn_zc + p_cor1->Z,
-          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
-        p_cor2->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
-          engn_xc + p_cor2->X, engn_zc + p_cor2->Z,
-          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
-        p_cor3->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
-          engn_xc + p_cor3->X, engn_zc + p_cor3->Z,
-          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
-        p_cor4->Y = PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
-          engn_xc + p_cor4->X, engn_zc + p_cor4->Z,
-          MAPCOORD_TO_PRCCOORD(p_tngcor->Y,0)));
-    } else {
-        p_cor1->Y = PRCCOORD_TO_YCOORD(alt_at_point(
-          engn_xc + p_cor1->X, engn_zc + p_cor1->Z));
-        p_cor2->Y = PRCCOORD_TO_YCOORD(alt_at_point(
-          engn_xc + p_cor2->X, engn_zc + p_cor2->Z));
-        p_cor3->Y = PRCCOORD_TO_YCOORD(alt_at_point(
-          engn_xc + p_cor3->X, engn_zc + p_cor3->Z));
-        p_cor4->Y = PRCCOORD_TO_YCOORD(alt_at_point(
-          engn_xc + p_cor4->X, engn_zc + p_cor4->Z));
+    p_cor1->Y = p_cor2->Y = p_cor3->Y = p_cor4->Y = p_tngcor->Y;
+    if (get_flat_surface_height_below_point_cb == NULL) {
+        return;
     }
+    p_cor1->Y = get_flat_surface_height_below_point_cb(p_cor1);
+    p_cor2->Y = get_flat_surface_height_below_point_cb(p_cor2);
+    p_cor3->Y = get_flat_surface_height_below_point_cb(p_cor3);
+    p_cor4->Y = get_flat_surface_height_below_point_cb(p_cor4);
 }
 
 void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
-  short matx, ubyte alt_under_real_y, ushort sort)
+  short matx, ushort sort)
 {
     struct SortMapPoint cor1, cor2, cor3, cor4;
     struct ShadowTexture *p_shtextr;
@@ -345,11 +331,11 @@ void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
     if (p_shtextr->Width == 0)
         return;
 
-    get_vehicle_shadow_bound_points_xz(&cor1, &cor2, &cor3, &cor4,
+    get_object_shadow_bound_points_xz(&cor1, &cor2, &cor3, &cor4,
       p_tngcor, p_shtextr, matx);
 
-    get_vehicle_shadow_bound_points_y(&cor1, &cor2, &cor3, &cor4,
-      p_tngcor, alt_under_real_y);
+    get_object_shadow_bound_points_y(&cor1, &cor2, &cor3, &cor4,
+      p_tngcor);
 
     draw_shadow_at_coords(&cor1, &cor2, &cor3, &cor4, p_shtextr, sort);
 }
@@ -534,27 +520,6 @@ void generate_shadows_angle_shifts(void)
         sprshadow_F850[2 * i + 0] = x;
         sprshadow_F850[2 * i + 1] = y;
     }
-}
-
-/** Prepare buffer with sprite shadows.
- * Clear the wscreen buffer before this call. Also make sure m_sprites are loaded.
- */
-void generate_shadows_for_multicolor_sprites(void)
-{
-    struct ScreenBufBkp bkp;
-
-    // TODO would be better to use some back buffer instead of normal screen buf
-    screen_switch_to_custom_buffer(&bkp, lbDisplay.WScreen,
-      lbDisplay.GraphicsScreenWidth, 256);
-    LbScreenClear(0);
-
-    draw_shadows_for_multicolor_sprites();
-
-    copy_from_screen_ani(vec_tmap[ingame.LastTmap]);
-
-    generate_shadows_angle_shifts();
-
-    screen_load_backup_buffer(&bkp);
 }
 
 /******************************************************************************/

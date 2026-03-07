@@ -32,6 +32,8 @@ struct Thing;
 #pragma pack()
 /******************************************************************************/
 
+void generate_shadows_for_multicolor_sprites(void);
+
 short draw_thing_object(struct Thing *p_thing);
 
 #define draw_sthing_object(p_sthing) draw_thing_object((struct Thing *)p_sthing)

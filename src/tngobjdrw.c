@@ -30,10 +30,12 @@
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
 #include "engintrns.h"
+#include "engintxtrmap.h"
 #include "enginzoom.h"
 
 #include "bigmap.h"
 #include "building.h"
+#include "display.h"
 #include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "frame_sprani.h"
@@ -93,13 +95,47 @@ void process_child_object(struct Thing *p_vehicle)
       p_sobj, p_mgun);
 }
 
+/** Prepare buffer with sprite shadows.
+ * Clear the wscreen buffer before this call. Also make sure m_sprites are loaded.
+ */
+void generate_shadows_for_multicolor_sprites(void)
+{
+    struct ScreenBufBkp bkp;
+
+    // TODO would be better to use some back buffer instead of normal screen buf
+    screen_switch_to_custom_buffer(&bkp, lbDisplay.WScreen,
+      lbDisplay.GraphicsScreenWidth, 256);
+    LbScreenClear(0);
+
+    draw_shadows_for_multicolor_sprites();
+
+    copy_from_screen_ani(vec_tmap[ingame.LastTmap]);
+
+    generate_shadows_angle_shifts();
+
+    screen_load_backup_buffer(&bkp);
+}
+
+s32 get_flat_surface_height_at_ground_callback(struct SortMapPoint *p_cor)
+{
+    return PRCCOORD_TO_YCOORD(alt_at_point(
+      engn_xc + p_cor->X, engn_zc + p_cor->Z));
+}
+
+s32 get_flat_surface_height_below_real_pos_callback(struct SortMapPoint *p_cor)
+{
+    return PRCCOORD_TO_MAPCOORD(alt_at_point_under_height(
+      engn_xc + p_cor->X, engn_zc + p_cor->Z,
+      MAPCOORD_TO_PRCCOORD(p_cor->Y,0)));
+}
+
+
 void draw_vehicle_shadow(ushort veh, ushort sort)
 {
     struct SortMapPoint tngcor;
     struct Thing *p_vehicle;
     short matx;
     ushort obmodl;
-    ubyte alt_under_real_y;
 
     p_vehicle = &things[veh];
 
@@ -108,9 +144,12 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     tngcor.X = PRCCOORD_TO_MAPCOORD(p_vehicle->X);
     tngcor.Y = PRCCOORD_TO_MAPCOORD(p_vehicle->Y);
     tngcor.Z = PRCCOORD_TO_MAPCOORD(p_vehicle->Z);
-    alt_under_real_y = (p_vehicle->SubType == SubTT_VEH_GROUND);
+    if (p_vehicle->SubType == SubTT_VEH_GROUND)
+        get_flat_surface_height_below_point_cb = get_flat_surface_height_below_real_pos_callback;
+    else
+        get_flat_surface_height_below_point_cb = get_flat_surface_height_at_ground_callback;
 
-    draw_object_model_shadow(&tngcor, obmodl, matx, alt_under_real_y, sort);
+    draw_object_model_shadow(&tngcor, obmodl, matx, sort);
 }
 
 void build_vehicle(struct Thing *p_thing)
