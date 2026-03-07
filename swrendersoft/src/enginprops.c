@@ -36,7 +36,7 @@ s32 game_normals_limit = 16;
 s32 game_objects_limit = 8;
 s32 face_textures_limit = 16;
 
-s32 game_special_obj_faces_limit = 16;
+s32 game_special_obj_faces3_limit = 16;
 s32 game_special_obj_faces4_limit = 16;
 
 s32 prim_object_faces_limit = 16;

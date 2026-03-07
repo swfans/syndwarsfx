@@ -91,8 +91,8 @@ extern ushort next_draw_item;
 
 /** Array of triangular faces valid only as part of drawlist for a single frame.
  */
-extern struct SingleObjectFace3 *game_special_obj_faces;
-extern ushort next_special_obj_face;
+extern struct SingleObjectFace3 *game_special_obj_faces3;
+extern ushort next_special_obj_face3;
 
 /** Array of rectangular faces valid only as part of drawlist for a single frame.
  */

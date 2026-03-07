@@ -115,8 +115,8 @@
 .global EXPORT_SYMBOL(game_object_faces3);	/* 0x1a09e8 */
 .global EXPORT_SYMBOL(game_object_faces4);	/* 0x1a09ec */
 .global EXPORT_SYMBOL(game_objects);		/* 0x1a09f0 */
-.global EXPORT_SYMBOL(game_special_obj_faces);	/* 0x1a09f4 */
-.global EXPORT_SYMBOL(game_special_obj_faces4;)	/* 0x1a09f8 */
+.global EXPORT_SYMBOL(game_special_obj_faces3);	/* 0x1a09f4 */
+.global EXPORT_SYMBOL(game_special_obj_faces4);	/* 0x1a09f8 */
 
 .global EXPORT_SYMBOL(pointer_sprites);		/* 0x1A5840 */
 .global EXPORT_SYMBOL(small_font);			/* 0x1A5848 */
@@ -66076,7 +66076,7 @@ GLOBAL_FUNC(ASM_build_polygon_circle_2d)	/* 0x067BF0 */
 		add    %eax,%edx
 		mov    EXPORT_SYMBOL(mem_game)+585,%eax
 		mov    %edx,0x8(%esp)
-		mov    EXPORT_SYMBOL(next_special_obj_face),%edx
+		mov    EXPORT_SYMBOL(next_special_obj_face3),%edx
 		dec    %eax
 		sar    $0x10,%edx
 		mov    %edi,0xc(%esp)
@@ -69044,7 +69044,7 @@ GLOBAL_FUNC(ASM_build_glare)	/* 0x06B634 */
 		inc    %ebx
 		movb   $0x4,0x8(%edx,%eax,2)
 		mov    EXPORT_SYMBOL(mem_game)+585,%edx
-		mov    EXPORT_SYMBOL(next_special_obj_face),%eax
+		mov    EXPORT_SYMBOL(next_special_obj_face3),%eax
 		dec    %edx
 		sar    $0x10,%eax
 		mov    %bx,EXPORT_SYMBOL(tnext_floor_texture)

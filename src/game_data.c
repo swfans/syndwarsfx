@@ -86,8 +86,8 @@ MemSystem mem_game[] = {
   { "prim_object_faces", (void **)&prim_object_faces,	32u, 800, 0, 0, 0 },
   { "prim_object_faces4", (void **)&prim_object_faces4,	40u, 1300, 0, 0, 0 },
   { "prim_objects",		(void **)&prim_objects,			36u, 60, 0, 0, 0 },
-  { "special_obj_faces", (void **)&game_special_obj_faces, 32u, 1400, 0, 0, 0 },
-  { "special_obj_faces4",(void **)&game_special_obj_faces4, 40u, 1400, 0, 0, 0 },
+  { "special_obj_faces3", (void **)&game_special_obj_faces3, 32u, 1400, 0, 0, 0 },
+  { "special_obj_faces4", (void **)&game_special_obj_faces4, 40u, 1400, 0, 0, 0 },
   { "floor_tiles",		(void **)&game_floor_tiles,		39u, 18000, 0, 0, 0 },
   { "used_objectives",	(void **)&game_used_objectives,	32u, 1200, 0, 0, 0 },
   { "objectives",		(void **)&game_objectives,		32u, 1200, 0, 0, 0 },
@@ -582,8 +582,8 @@ TbResult propagate_memory_sizes(void)
     game_objects_limit = get_memory_ptr_allocated_count((void **)&game_objects);
     assert(game_objects_limit > 0);
 
-    game_special_obj_faces_limit = get_memory_ptr_allocated_count((void **)&game_special_obj_faces);
-    assert(game_special_obj_faces_limit > 0);
+    game_special_obj_faces3_limit = get_memory_ptr_allocated_count((void **)&game_special_obj_faces3);
+    assert(game_special_obj_faces3_limit > 0);
     game_special_obj_faces4_limit = get_memory_ptr_allocated_count((void **)&game_special_obj_faces4);
     assert(game_special_obj_faces4_limit > 0);
 

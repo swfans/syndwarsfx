@@ -60,8 +60,8 @@ ScreenTriangleRenderCallback screen_position_face_render_cb = NULL;
 struct SpecialPoint *game_screen_point_pool = NULL;
 ushort next_screen_point;
 
-struct SingleObjectFace3 *game_special_obj_faces = NULL;
-ushort next_special_obj_face = 1;
+struct SingleObjectFace3 *game_special_obj_faces3 = NULL;
+ushort next_special_obj_face3 = 1;
 
 struct SingleObjectFace4 *game_special_obj_faces4 = NULL;
 ushort next_special_obj_face4 = 1;

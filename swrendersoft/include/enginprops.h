@@ -148,7 +148,7 @@ extern s32 game_objects_limit;
  * This variable is used while creating 3D primitives of special objects.
  * It needs to be set by the app based on memory allocation.
  */
-extern s32 game_special_obj_faces_limit;
+extern s32 game_special_obj_faces3_limit;
 
 /** Amount of available quadrangular faces for game special objects.
  *
