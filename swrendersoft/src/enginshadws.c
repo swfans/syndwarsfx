@@ -76,15 +76,15 @@ struct ShadowTexture shadowtexture[] = {
 
 extern const ushort word_154F4C[14];
 
-extern ubyte sprshadow_EE90[24];
-extern ubyte sprshadow_EEA8[600];
-extern ubyte sprshadow_F100[24];
-extern ubyte sprshadow_F118[600];
-extern ubyte sprshadow_F370[24];
-extern ubyte sprshadow_F388[600];
-extern ubyte sprshadow_F5E0[24];
-extern ubyte sprshadow_F5F8[600];
-extern sbyte sprshadow_F850[512];
+ubyte sprshadow_EE90[24];
+ubyte sprshadow_EEA8[600];
+ubyte sprshadow_F100[24];
+ubyte sprshadow_F118[600];
+ubyte sprshadow_F370[24];
+ubyte sprshadow_F388[600];
+ubyte sprshadow_F5E0[24];
+ubyte sprshadow_F5F8[600];
+sbyte sprshadow_F850[512];
 
 ushort shadow_tmap_page = 0;
 

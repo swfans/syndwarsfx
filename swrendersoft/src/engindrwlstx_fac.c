@@ -65,6 +65,9 @@ ushort next_special_obj_face3 = 1;
 
 struct SingleObjectFace4 *game_special_obj_faces4 = NULL;
 ushort next_special_obj_face4 = 1;
+
+ubyte engine_render_lights = 0;
+
 /******************************************************************************/
 
 void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,

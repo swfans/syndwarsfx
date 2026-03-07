@@ -117,10 +117,12 @@ extern TbPixel deep_radar_line_col;
 
 extern ubyte engine_render_lights;
 
+extern short word_1A5834;
+extern short word_1A5836;
+
 extern ScreenTriangleRenderCallback screen_position_face_render_cb;
 extern ScreenSortSpriteRenderCallback screen_sorted_sprite_statc_render_cb;
 extern ScreenSortSpriteRenderCallback screen_sorted_sprite_persn_render_cb;
-
 /******************************************************************************/
 
 void draw_frame_scaled_alpha(int scr_x, int scr_y, ushort frm,

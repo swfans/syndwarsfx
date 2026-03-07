@@ -33,6 +33,7 @@
 #include "frame_sprani.h"
 #include "privrdlog.h"
 /******************************************************************************/
+struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
 u32 next_ex_face = 1;
 
 extern ushort word_1AA5CC;

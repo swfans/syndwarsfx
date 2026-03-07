@@ -91,12 +91,14 @@
 .global EXPORT_SYMBOL(colour_sel_blue);		/* 0x18114a */
 .global EXPORT_SYMBOL(colour_sel_red);		/* 0x18114e */
 .global EXPORT_SYMBOL(colour_sel_purple);	/* 0x181152 */
+.global EXPORT_SYMBOL(ex_faces);			/* 0x18194C */
 
 .global EXPORT_SYMBOL(scratch_buf1)			/* 0x19CB54 */
 .global EXPORT_SYMBOL(colour_grey1);		/* 0x19CC5C */
 .global EXPORT_SYMBOL(colour_grey2);		/* 0x19CC5D */
 .global EXPORT_SYMBOL(colour_brown2);		/* 0x19CC5E */
 .global EXPORT_SYMBOL(pop1_sprites);		/* 0x19CBDC */
+.global EXPORT_SYMBOL(engine_render_lights);/* 0x19ec6f */
 .global EXPORT_SYMBOL(game_perspective);	/* 0x19EC71 */
 .global EXPORT_SYMBOL(nuclear_overexposure);	/* 0x19F4F8 */
 .global EXPORT_SYMBOL(engn_nuclear_shade_timer);	/* 0x19F4FC */
@@ -108,6 +110,7 @@
 .global EXPORT_SYMBOL(next_col_column);		/* 0x19f73a */
 .global EXPORT_SYMBOL(textwalk_data);		/* 0x19F73C */
 
+.global EXPORT_SYMBOL(game_floor_tiles);	/* 0x1a09c0 */
 .global EXPORT_SYMBOL(game_normals);		/* 0x1a09c8 */
 .global EXPORT_SYMBOL(game_textures);		/* 0x1a09d4 */
 .global EXPORT_SYMBOL(game_face_textures);	/* 0x1a09d8 */
@@ -118,6 +121,8 @@
 .global EXPORT_SYMBOL(game_special_obj_faces3);	/* 0x1a09f4 */
 .global EXPORT_SYMBOL(game_special_obj_faces4);	/* 0x1a09f8 */
 
+.global EXPORT_SYMBOL(word_1A5834);			/* 0x1A5834 */
+.global EXPORT_SYMBOL(word_1A5836);			/* 0x1A5836 */
 .global EXPORT_SYMBOL(pointer_sprites);		/* 0x1A5840 */
 .global EXPORT_SYMBOL(small_font);			/* 0x1A5848 */
 .global EXPORT_SYMBOL(display_palette);		/* 0x1A5878 */
@@ -2864,7 +2869,7 @@ GLOBAL_FUNC(ASM_draw_floor_tile1a)	/* 0x022C78 */
 		add    %ecx,%eax
 		shl    $0x3,%eax
 		sub    %ecx,%eax
-		mov    game_floor_tiles,%ecx
+		mov    EXPORT_SYMBOL(game_floor_tiles),%ecx
 		add    %eax,%ecx
 		mov    0x20(%ecx),%al
 		mov    %al,EXPORT_SYMBOL(vec_colour)
@@ -3681,7 +3686,7 @@ GLOBAL_FUNC(ASM_draw_floor_tile1b)	/* 0x0236E0 */
 		add    %ecx,%eax
 		shl    $0x3,%eax
 		sub    %ecx,%eax
-		mov    game_floor_tiles,%ecx
+		mov    EXPORT_SYMBOL(game_floor_tiles),%ecx
 		add    %eax,%ecx
 		mov    0x20(%ecx),%al
 		mov    %al,EXPORT_SYMBOL(vec_colour)
@@ -15696,26 +15701,6 @@ GLOBAL_FUNC (ASM_input)	/* 0x3DE08 */
 	jump_3de5d:
 		mov    %dl,EXPORT_SYMBOL(lbShift)
 		pop    %edx
-		ret
-
-
-/*----------------------------------------------------------------*/
-ASM_debug_check_unkn_sprite_size:	/* 0x03DF58 */
-/*----------------------------------------------------------------*/
-		mov    EXPORT_SYMBOL(sprite_over_16x16),%edx
-		test   %edx,%edx
-		jne    jump_3df8c
-		mov    EXPORT_SYMBOL(m_sprites),%eax
-		mov    0x1b28(%eax),%dl
-		cmp    $0x10,%edx
-		jg     jump_3df82
-		mov    0x1b29(%eax),%al
-		and    $0xff,%eax
-		cmp    $0x10,%eax
-		jle    jump_3df8c
-	jump_3df82:
-		movl   $0x1,EXPORT_SYMBOL(sprite_over_16x16)
-	jump_3df8c:
 		ret
 
 
@@ -58783,7 +58768,7 @@ GLOBAL_FUNC (ASM_init_free_explode_faces)
 		mov    $0x1,%edx
 	jump_6206e:
 		xor    %ebx,%ebx
-		mov    %bx,data_18196c(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		mov    %edx,%ebx
 		add    $0x2e,%eax
 		inc    %ebx
@@ -58793,9 +58778,9 @@ GLOBAL_FUNC (ASM_init_free_explode_faces)
 		jl     jump_6206e
 		xor    %ecx,%ecx
 		mov    $0x1,%edx
-		mov    %cx,data_18196c(%eax)
+		mov    %cx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		mov    %edx,EXPORT_SYMBOL(dont_bother_with_explode_faces)
-		mov    %cx,data_18194e(%eax)
+		mov    %cx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		pop    %edx
 		pop    %ecx
 		pop    %ebx
@@ -58955,7 +58940,7 @@ unkn1_explode_faces:	/* 0x62114 */
 		test   %eax,%eax
 		je     jump_622f6
 		imul   $0x2e,%eax,%edx
-		mov    data_18194e(%edx),%dx
+		mov    EXPORT_SYMBOL(ex_faces)+2(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1AA5CC)
 	jump_622f6:
 		test   %eax,%eax
@@ -59197,7 +59182,7 @@ unkn1_explode_faces:	/* 0x62114 */
 		test   %eax,%eax
 		je     jump_625fa
 		imul   $0x2e,%eax,%edx
-		mov    data_18194e(%edx),%dx
+		mov    EXPORT_SYMBOL(ex_faces)+2(%edx),%dx
 		mov    %dx,EXPORT_SYMBOL(word_1AA5CC)
 	jump_625fa:
 		test   %eax,%eax
@@ -59428,7 +59413,7 @@ func_6276c:
 		sub    %ebp,%edx
 		shl    $0x3,%edx
 		sub    %ebp,%edx
-		mov    data_18194e(,%edx,2),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(,%edx,2),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 	jump_628e3:
 		test   %ebp,%ebp
@@ -60801,7 +60786,7 @@ explode_thing_object:	/* 0x063484 */
 		test   %edx,%edx
 		je     jump_63802
 		imul   $0x2e,%edx,%ebx
-		mov    data_18194e(%ebx),%bx
+		mov    EXPORT_SYMBOL(ex_faces)+2(%ebx),%bx
 		mov    %bx,EXPORT_SYMBOL(word_1AA5CC)
 	jump_63802:
 		mov    %edx,%ebx
@@ -61159,7 +61144,7 @@ explode_thing_object:	/* 0x063484 */
 		test   %edx,%edx
 		je     jump_63c6f
 		imul   $0x2e,%edx,%ebx
-		mov    data_18194e(%ebx),%bx
+		mov    EXPORT_SYMBOL(ex_faces)+2(%ebx),%bx
 		mov    %bx,EXPORT_SYMBOL(word_1AA5CC)
 	jump_63c6f:
 		mov    %edx,%ebx
@@ -61588,7 +61573,7 @@ GLOBAL_FUNC(ASM_explode_thing_building)	/* 0x063F34 */
 		je     jump_641c6
 		mov    %eax,%edx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %edx,%eax
 	jump_641c6:
@@ -61769,7 +61754,7 @@ GLOBAL_FUNC(ASM_explode_thing_building)	/* 0x063F34 */
 		je     jump_64427
 		mov    %eax,%edx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %edx,%eax
 	jump_64427:
@@ -63174,10 +63159,10 @@ func_6554a:
 		mov    %di,%ax
 		imul   $0x2e,%eax,%edx
 		mov    EXPORT_SYMBOL(word_1AA5CC),%bx
-		mov    %bx,data_18194e(%edx)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+2(%edx)
 		imul   $0x2e,%eax,%edx
 		xor    %ebx,%ebx
-		mov    %bx,data_18196c(%edx)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+0x20(%edx)
 		mov    $0x23,%ecx
 		mov    0x24(%esi),%ebx
 		mov    0x22(%esi),%edx
@@ -63216,9 +63201,9 @@ func_6554a:
 		mov    %di,%ax
 		imul   $0x2e,%eax,%eax
 		mov    EXPORT_SYMBOL(word_1AA5CC),%bx
-		mov    %bx,data_18194e(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		xor    %ebx,%ebx
-		mov    %bx,data_18196c(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		mov    $0x23,%ecx
 		mov    0x24(%esi),%ebx
 		mov    0x22(%esi),%edx
@@ -63247,9 +63232,9 @@ func_6554a:
 		mov    EXPORT_SYMBOL(word_1AA5CC),%bx
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
 		xor    %esi,%esi
-		mov    %bx,data_18194e(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %si,data_18196c(%eax)
+		mov    %si,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_656de:
 		mov    0x26(%esi),%eax
@@ -63471,10 +63456,10 @@ func_65933:
 		mov    %di,%ax
 		imul   $0x2e,%eax,%edx
 		mov    EXPORT_SYMBOL(word_1AA5CC),%bx
-		mov    %bx,data_18194e(%edx)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+2(%edx)
 		imul   $0x2e,%eax,%edx
 		xor    %ebx,%ebx
-		mov    %bx,data_18196c(%edx)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+0x20(%edx)
 		mov    $0x23,%ecx
 		mov    0x24(%esi),%ebx
 		mov    0x22(%esi),%edx
@@ -63515,10 +63500,10 @@ func_65933:
 		mov    EXPORT_SYMBOL(word_1AA5CC),%dx
 		movw   $0x0,0x20(%esi)
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		xor    %edx,%edx
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %dx,data_18196c(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_65a6b:
 		mov    0x22(%esi),%eax
@@ -63537,9 +63522,9 @@ func_65933:
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
 		movw   $0x0,0x20(%esi)
 		xor    %esi,%esi
-		mov    %bx,data_18194e(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %si,data_18196c(%eax)
+		mov    %si,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_65ab9:
 		mov    0x26(%esi),%eax
@@ -63871,10 +63856,10 @@ func_65db6:
 		imul   $0x2e,%eax,%eax
 		mov    EXPORT_SYMBOL(word_1AA5CC),%dx
 		movw   $0x0,0x20(%esi)
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		xor    %edx,%edx
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %dx,data_18196c(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		call   ac_LbRandomAnyShort
 		xor    %ah,%ah
 		and    $0x3f,%al
@@ -63964,7 +63949,7 @@ func_65db6:
 		je     jump_6600d
 		mov    %eax,%ecx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %ecx,%eax
 	jump_6600d:
@@ -64009,7 +63994,7 @@ func_65db6:
 		je     jump_660b3
 		mov    %eax,%ecx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %ecx,%eax
 	jump_660b3:
@@ -64055,7 +64040,7 @@ func_65db6:
 		je     jump_6615a
 		mov    %eax,%ecx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %ecx,%eax
 	jump_6615a:
@@ -64101,7 +64086,7 @@ func_65db6:
 		je     jump_66201
 		mov    %eax,%ecx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %ecx,%eax
 	jump_66201:
@@ -64147,9 +64132,9 @@ func_65db6:
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
 		movw   $0x0,0x20(%esi)
 		xor    %ecx,%ecx
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %cx,data_18196c(%eax)
+		mov    %cx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_662be:
 		call   ac_LbRandomAnyShort
@@ -64335,10 +64320,10 @@ func_663c6:
 		mov    EXPORT_SYMBOL(word_1AA5CC),%bx
 		movw   $0x0,0x20(%esi)
 		xor    %edx,%edx
-		mov    %bx,data_18194e(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		xor    %ebx,%ebx
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %bx,data_18196c(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		call   ac_LbRandomAnyShort
 		and    $0x1,%ah
 		mov    %ax,%dx
@@ -64521,7 +64506,7 @@ func_663c6:
 		je     jump_667a4
 		mov    %eax,%ecx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %ecx,%eax
 	jump_667a4:
@@ -64572,7 +64557,7 @@ func_663c6:
 		je     jump_6686b
 		mov    %eax,%ecx
 		imul   $0x2e,%eax,%eax
-		mov    data_18194e(%eax),%ax
+		mov    EXPORT_SYMBOL(ex_faces)+2(%eax),%ax
 		mov    %ax,EXPORT_SYMBOL(word_1AA5CC)
 		mov    %ecx,%eax
 	jump_6686b:
@@ -64623,7 +64608,7 @@ func_663c6:
 		test   %eax,%eax
 		je     jump_66930
 		imul   $0x2e,%eax,%ebx
-		mov    data_18194e(%ebx),%bx
+		mov    EXPORT_SYMBOL(ex_faces)+2(%ebx),%bx
 		mov    %bx,EXPORT_SYMBOL(word_1AA5CC)
 	jump_66930:
 		test   %eax,%eax
@@ -64674,7 +64659,7 @@ func_663c6:
 		test   %eax,%eax
 		je     jump_669f6
 		imul   $0x2e,%eax,%ebx
-		mov    data_18194e(%ebx),%bx
+		mov    EXPORT_SYMBOL(ex_faces)+2(%ebx),%bx
 		mov    %bx,EXPORT_SYMBOL(word_1AA5CC)
 	jump_669f6:
 		test   %eax,%eax
@@ -64726,9 +64711,9 @@ func_663c6:
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
 		movw   $0x0,0x20(%esi)
 		xor    %ecx,%ecx
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %cx,data_18196c(%eax)
+		mov    %cx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_66ad5:
 		call   ac_LbRandomAnyShort
@@ -64892,9 +64877,9 @@ func_66c2c:
 		mov    0x98(%esp),%ebx
 		mov    EXPORT_SYMBOL(word_1AA5CC),%ax
 		xor    %ecx,%ecx
-		mov    %ax,data_18194e(%ebx)
+		mov    %ax,EXPORT_SYMBOL(ex_faces)+2(%ebx)
 		mov    %dx,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %cx,data_18196c(%ebx)
+		mov    %cx,EXPORT_SYMBOL(ex_faces)+0x20(%ebx)
 		jmp    jump_67486
 	jump_66cfd:
 		mov    0x28(%esi),%eax
@@ -64939,10 +64924,10 @@ func_66c2c:
 		mov    EXPORT_SYMBOL(word_1AA5CC),%dx
 		movw   $0x0,0x20(%esi)
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		xor    %edx,%edx
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %dx,data_18196c(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_66dc2:
 		mov    0x22(%esi),%eax
@@ -64959,9 +64944,9 @@ func_66c2c:
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
 		movw   $0x0,0x20(%esi)
 		xor    %esi,%esi
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %si,data_18196c(%eax)
+		mov    %si,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_66e0a:
 		mov    0x25(%esi),%eax
@@ -65159,11 +65144,11 @@ func_6700f:
 		mov    EXPORT_SYMBOL(word_1AA5CC),%ax
 		movw   $0x0,0x20(%esi)
 		mov    0x80(%esp),%edx
-		mov    %ax,data_18194e(%ebx)
+		mov    %ax,EXPORT_SYMBOL(ex_faces)+2(%ebx)
 		mov    %ebx,%eax
 		xor    %ebx,%ebx
 		mov    $0x23,%ecx
-		mov    %bx,data_18196c(%eax)
+		mov    %bx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		mov    %dx,EXPORT_SYMBOL(word_1AA5CC)
 		mov    0x24(%esi),%ebx
 		mov    0x22(%esi),%edx
@@ -65220,10 +65205,10 @@ func_6700f:
 		mov    EXPORT_SYMBOL(word_1AA5CC),%dx
 		movw   $0x0,0x20(%esi)
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		xor    %edx,%edx
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %dx,data_18196c(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_671ac:
 		mov    0x22(%esi),%eax
@@ -65240,9 +65225,9 @@ func_6700f:
 		mov    %ebp,EXPORT_SYMBOL(dword_1AA5E4)
 		movw   $0x0,0x20(%esi)
 		xor    %esi,%esi
-		mov    %dx,data_18194e(%eax)
+		mov    %dx,EXPORT_SYMBOL(ex_faces)+2(%eax)
 		mov    %di,EXPORT_SYMBOL(word_1AA5CC)
-		mov    %si,data_18196c(%eax)
+		mov    %si,EXPORT_SYMBOL(ex_faces)+0x20(%eax)
 		jmp    jump_67486
 	jump_671f4:
 		mov    0x25(%esi),%eax
@@ -128928,7 +128913,7 @@ GLOBAL_FUNC (ASM_bang_init)	/* 0xB0E00 */
 		add    $0x18,%edx
 		inc    %ebx
 		inc    %eax
-		mov    %bx,data_18d14a(%edx)
+		mov    %bx,EXPORT_SYMBOL(shrapnel)-2(%edx)
 		cmp    $0x1ff,%eax
 		jl     jump_b0e30
 		xor    %ebx,%ebx
@@ -178698,42 +178683,6 @@ data_17ee8a:
 		.short  0x0
 GLOBAL (path_count)	/* 0x17EE8C */
 		.long	0x0
-GLOBAL (sprshadow_EE90)	/* 0x17EE90 */
-		.byte	0x0
-data_17ee91:
-		.fill   0x17
-GLOBAL (sprshadow_EEA8)	/* 0x17EEA8 */
-		.byte	0x0
-data_17eea9:
-		.fill   0x257
-GLOBAL (sprshadow_F100) /* 0x17F100 */
-		.byte	0x0
-data_17f101:
-		.fill   0x17
-GLOBAL (sprshadow_F118) /* 0x17F118 */
-		.byte	0x0
-data_17f119:
-		.fill   0x257
-GLOBAL (sprshadow_F370) /* 0x17F370 */
-		.byte	0x0
-data_17f371:
-		.fill   0x17
-GLOBAL (sprshadow_F388)	/* 0x17F388 */
-		.byte	0x0
-data_17f389:
-		.fill   0x257
-GLOBAL (sprshadow_F5E0)	/* 0x17F5E0 */
-		.byte	0x0
-data_17f5e1:
-		.fill   0x17
-GLOBAL (sprshadow_F5F8)	/* 0x17F5F8 */
-		.byte	0x0
-data_17f5f9:
-		.fill   0x257
-GLOBAL (sprshadow_F850)	/* 0x17F850 */
-		.byte	0x0
-data_17f851:
-		.fill   0x1ff
 
 GLOBAL (input_char)	/* 0x17FA50 */
 		.short  0x0
@@ -178812,17 +178761,6 @@ GLOBAL (byte_1811E2)	/* 0x1811E2 */
 GLOBAL (net_game_play_flags)	/* 0x1811F2 */
 		.byte	0x0
 		.fill   0x4b1
-
-GLOBAL (ex_faces)	/* 0x18194C */
-		.short  0x0
-data_18194e:
-		.fill   0x1e
-data_18196c:
-		.fill   0xe
-data_18197a:
-		.fill   0xb7d0
-data_18d14a:
-		.short  0x0
 
 GLOBAL (shrapnel)	/* 0x18D14C */
 		.fill   0x16
@@ -179008,8 +178946,7 @@ GLOBAL (super_quick_light)	/* 0x19CC68 */
 
 GLOBAL (keyboard_mode_direct)	/* 0x19EC6E */
 		.byte	0x0
-GLOBAL (engine_render_lights)	/* 0x19ec6f */
-		.byte	0x0
+
 data_19ec70:
 		.byte	0x0
 
@@ -179129,8 +179066,7 @@ data_19fbb8:
 		.fill   0x18
 data_19fbd0:
 		.fill   0xdf0
-GLOBAL (game_floor_tiles)			/* 0x1a09c0 */
-		.long	0x0
+
 GLOBAL (game_light_commands)		/* 0x1a09c4 */
 		.long	0x0
 
@@ -179146,11 +179082,6 @@ GLOBAL (things)	/* 0x1A09DC */
 GLOBAL (sthings)	/* 0x1A09E0 */
 		.long	0x0
 		.align  4
-
-GLOBAL (word_1A5834)
-		.short  0x0
-GLOBAL (word_1A5836)
-		.short  0x0
 
 GLOBAL (gui_strings)	/* 0x1A5888 */
 		.fill   8000
@@ -179390,8 +179321,7 @@ GLOBAL (curr_tick_time)	/* 0x1A7320 */
 		.long	0x0
 GLOBAL (active_flags_general_unkn01)	/* 0x1A7324 */
 		.long	0x0
-GLOBAL (sprite_over_16x16)	/* 0x1A7328 */
-		.long	0x0
+
 GLOBAL (navi2_unkn_counter_max)	/* 0x1A732C */
 		.long	0x0
 

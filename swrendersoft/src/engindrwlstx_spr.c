@@ -53,10 +53,10 @@ s32 dword_176CF4;
 s32 dword_176D00;
 s32 dword_176D04;
 
-extern short word_1A5834;
-extern short word_1A5836;
+short word_1A5834 = 0;
+short word_1A5836 = 0;
 
-extern long sprite_over_16x16;
+TbBool sprite_over_16x16 = false;
 
 struct SortLine *game_sort_lines = NULL;
 struct SortLine *p_current_sort_line = NULL;
