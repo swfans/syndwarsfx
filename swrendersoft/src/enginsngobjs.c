@@ -200,8 +200,8 @@ TbBool get_mapcoord_on_face_points(int *cor_x, int *cor_z,
     int scr_distc0_x, scr_distc0_y;
     int map_dist02_x, map_dist02_z;
     int map_dist12_x, map_dist12_z;
+    int factorA, factorB, factorLen;
     int m1, m2, m3, m4;
-    int factorA, factorB;
 
     scr_dist10_x = (p_scrpt1->X - p_scrpt0->X) << 16;
     scr_dist10_y = (p_scrpt1->Y - p_scrpt0->Y) << 16;
@@ -220,14 +220,17 @@ TbBool get_mapcoord_on_face_points(int *cor_x, int *cor_z,
 
     m3 = mul_shift16_sign_pad_lo(scr_dist10_x, scr_dist20_y);
     m4 = mul_shift16_sign_pad_lo(scr_dist10_y, scr_dist20_x);
+    factorLen = m3 - m4;
+    if (factorLen == 0)
+      factorLen = 1;
 
     m1 = mul_shift16_sign_pad_lo(scr_dist20_y, scr_distc0_x);
     m2 = mul_shift16_sign_pad_lo(scr_dist20_x, scr_distc0_y);
-    factorA = ((m1 - (s64)m2) << 16) / (m3 - m4);
+    factorA = ((m1 - (s64)m2) << 16) / factorLen;
 
     m1 = mul_shift16_sign_pad_lo(scr_dist10_x, scr_distc0_y);
     m2 = mul_shift16_sign_pad_lo(scr_dist10_y, scr_distc0_x);
-    factorB = ((m1 - (s64)m2) << 16) / (m3 - m4);
+    factorB = ((m1 - (s64)m2) << 16) / factorLen;
 
     if ((factorA <= 0 || factorA > 0x10000)) {
         return false;
@@ -247,6 +250,61 @@ TbBool get_mapcoord_on_face_points(int *cor_x, int *cor_z,
     *cor_z += p_mappt2->Z;
     *cor_z += mul_shift16_sign_pad_lo(map_dist02_z, factorA) >> 16;
     *cor_z += mul_shift16_sign_pad_lo(map_dist12_z, factorB) >> 16;
+
+    return true;
+}
+
+/** Alter given precise map height to represent position on face defined by given points.
+ *
+ * @param prc_y Output map coordinate; expected to be initialized with parent position for the face.
+ * @param p_mappt0 Target face coordinates on which we're looking for position.
+ * @param prc_x Specific map position on the face.
+ */
+TbBool get_prccoord_height_on_face_points(int *prc_y,
+  struct SinglePoint *p_mappt0, struct SinglePoint *p_mappt1, struct SinglePoint *p_mappt2,
+  int prc_x, int prc_z)
+{
+    int prc_dist10_x, prc_dist10_y, prc_dist10_z;
+    int prc_dist20_x, prc_dist20_y, prc_dist20_z;
+    int prc_distc0_x, prc_distc0_z;
+    int factorA, factorB, factorLen;
+    int m1, m2, m3, m4;
+
+    prc_dist10_x = (p_mappt1->X - p_mappt0->X) << 8;
+    prc_dist10_y = (p_mappt1->Y - p_mappt0->Y) << 8;
+    prc_dist10_z = (p_mappt1->Z - p_mappt0->Z) << 8;
+
+    prc_dist20_y = (p_mappt2->Y - p_mappt0->Y) << 8;
+    prc_dist20_z = (p_mappt2->Z - p_mappt0->Z) << 8;
+    prc_dist20_x = (p_mappt2->X - p_mappt0->X) << 8;
+
+    prc_distc0_x = prc_x - (p_mappt0->X << 8);
+    prc_distc0_z = prc_z - (p_mappt0->Z << 8);
+
+    m3 = mul_shift16_sign_pad_lo(prc_dist10_x, prc_dist20_z);
+    m4 = mul_shift16_sign_pad_lo(prc_dist10_z, prc_dist20_x);
+    factorLen = m3 - m4;
+    if (factorLen == 0)
+      factorLen = 1;
+
+    m1 = mul_shift16_sign_pad_lo(prc_dist20_z, prc_distc0_x);
+    m2 = mul_shift16_sign_pad_lo(prc_dist20_x, prc_distc0_z);
+    factorA = ((m1 - (s64)m2) << 16) / factorLen;
+
+    m1 = mul_shift16_sign_pad_lo(prc_dist10_x, prc_distc0_z);
+    m2 = mul_shift16_sign_pad_lo(prc_dist10_z, prc_distc0_x);
+    factorB = ((m1 - (s64)m2) << 16) / factorLen;
+
+    if ((factorA <= 0 || factorA > 0x10000)) {
+        return false;
+    }
+    if ((factorB <= 0 || factorB > 0x10000)) {
+        return false;
+    }
+
+    *prc_y += (p_mappt0->Y << 8);
+    *prc_y += mul_shift16_sign_pad_lo(prc_dist10_y, factorA);
+    *prc_y += mul_shift16_sign_pad_lo(prc_dist20_y, factorB);
 
     return true;
 }
@@ -339,9 +397,7 @@ int get_height_on_face_quad(int x, int z, ushort face)
     struct SinglePoint *p_pt0;
     struct SinglePoint *p_pt1;
     struct SinglePoint *p_pt2;
-    int prc_dist10_x, prc_dist10_y, prc_dist10_z;
-    int prc_dist20_x, prc_dist20_y, prc_dist20_z;
-    int prc_distc0_x, prc_distc0_z;
+    int prc_x, prc_y, prc_z;
 
     p_face = &game_object_faces4[face];
     p_sobj = &game_objects[p_face->Object];
@@ -349,45 +405,15 @@ int get_height_on_face_quad(int x, int z, ushort face)
     p_pt1 = &game_object_points[p_face->PointNo[1]];
     p_pt2 = &game_object_points[p_face->PointNo[2]];
 
-    prc_dist10_x = (p_pt1->X - p_pt0->X) << 8;
-    prc_dist10_y = (p_pt1->Y - p_pt0->Y) << 8;
-    prc_dist10_z = (p_pt1->Z - p_pt0->Z) << 8;
-    prc_dist20_y = (p_pt2->Y - p_pt0->Y) << 8;
-    prc_dist20_z = (p_pt2->Z - p_pt0->Z) << 8;
-    prc_dist20_x = (p_pt2->X - p_pt0->X) << 8;
-    prc_distc0_x = x - ((p_sobj->MapX + p_pt0->X) << 8);
-    prc_distc0_z = z - ((p_sobj->MapZ + p_pt0->Z) << 8);
+    prc_x = x - (p_sobj->MapX << 8);
+    prc_z = z - (p_sobj->MapZ << 8);
+    prc_y = (p_sobj->OffsetY << 8);
 
-    int factorA, factorB, factorLen;
-    int m1, m2, m3, m4;
-    int height;
-
-    m3 = mul_shift16_sign_pad_lo(prc_dist10_x, prc_dist20_z);
-    m4 = mul_shift16_sign_pad_lo(prc_dist10_z, prc_dist20_x);
-    factorLen = m3 - m4;
-    if (factorLen == 0)
-      factorLen = 1;
-
-    m1 = mul_shift16_sign_pad_lo(prc_dist20_z, prc_distc0_x);
-    m2 = mul_shift16_sign_pad_lo(prc_dist20_x, prc_distc0_z);
-    factorA = ((m1 - (s64)m2) << 16) / factorLen;
-
-    m1 = mul_shift16_sign_pad_lo(prc_dist10_x, prc_distc0_z);
-    m2 = mul_shift16_sign_pad_lo(prc_dist10_z, prc_distc0_x);
-    factorB = ((m1 - (s64)m2) << 16) / factorLen;
-
-    if ((factorA <= 0 || factorA > 0x10000)) {
+    if (!get_prccoord_height_on_face_points(&prc_y,
+      p_pt0, p_pt1, p_pt2, prc_x, prc_z)) {
         return 0;
     }
-    if ((factorB <= 0 || factorB > 0x10000)) {
-        return 0;
-    }
-
-    height = ((p_pt0->Y + p_sobj->OffsetY) << 8);
-    height += mul_shift16_sign_pad_lo(prc_dist10_y, factorA);
-    height += mul_shift16_sign_pad_lo(prc_dist20_y, factorB);
-
-    return height >> 3;
+    return prc_y >> 3;
 }
 
 /** Checks if a face should not be allowed to walk on due to sharp slope.
