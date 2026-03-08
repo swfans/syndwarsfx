@@ -38,6 +38,8 @@ enum FaceGFlags {
     FGFlg_Unkn80     = 0x80,
 };
 
+struct PolyPoint;
+
 struct SingleObjectFace3 { // sizeof=32
     short PointNo[3];
     ushort Texture;
@@ -207,6 +209,18 @@ TbBool face_is_blocking_walk(short face);
 
 void unkn_object_shift_03(ushort objectno);
 void unkn_object_shift_02(int norm1, int norm2, ushort objectno);
+
+/** Alter given map coordinates to represent position on face defined by given points.
+ *
+ * @param cor_x Output map coordinate; expected to be initialized with parent position for the face.
+ * @param p_scrpt0 Screen coordinates transformed base points.
+ * @param p_mappt0 Target face coordinates on which we're looking for position.
+ * @param scr_x Specific screen position to be mapped onto the face.
+ */
+TbBool get_mapcoord_on_face_points(int *cor_x, int *cor_z,
+  struct PolyPoint *p_scrpt0, struct PolyPoint *p_scrpt1, struct PolyPoint *p_scrpt2,
+  struct SinglePoint *p_mappt0, struct SinglePoint *p_mappt1, struct SinglePoint *p_mappt2,
+  int scr_x, int scr_y);
 
 int get_height_on_face(int x, int z, ushort face);
 int get_height_on_face_quad(int x, int z, ushort face);

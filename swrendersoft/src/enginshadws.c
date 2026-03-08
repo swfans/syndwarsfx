@@ -74,7 +74,7 @@ struct ShadowTexture shadowtexture[] = {
   {  0,   0,   0,   0,   0,   0},
 };
 
-extern const ushort word_154F4C[] = {
+const ushort word_154F4C[] = {
   1, 33, 113, 241, 273, 161, 193, 721, 753, 321, 401, 433, 33,
 };
 

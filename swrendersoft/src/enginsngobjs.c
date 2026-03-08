@@ -23,6 +23,7 @@
 #include <limits.h>
 #include <stdlib.h>
 
+#include "engintrns.h"
 #include "enginprops.h"
 #include "privrdlog.h"
 /******************************************************************************/
@@ -187,6 +188,67 @@ int alt_change_at_face(short face, int *change_xz)
     if (change_xz != NULL)
         *change_xz = best_dxz;
     return best_dy;
+}
+
+TbBool get_mapcoord_on_face_points(int *cor_x, int *cor_z,
+  struct PolyPoint *p_scrpt0, struct PolyPoint *p_scrpt1, struct PolyPoint *p_scrpt2,
+  struct SinglePoint *p_mappt0, struct SinglePoint *p_mappt1, struct SinglePoint *p_mappt2,
+  int scr_x, int scr_y)
+{
+    int scr_dist10_x, scr_dist10_y;
+    int scr_dist20_x, scr_dist20_y;
+    int scr_distc0_x, scr_distc0_y;
+    int map_dist02_x, map_dist02_z;
+    int map_dist12_x, map_dist12_z;
+    int m1, m2, m3, m4;
+    int factorA, factorB;
+
+    scr_dist10_x = (p_scrpt1->X - p_scrpt0->X) << 16;
+    scr_dist10_y = (p_scrpt1->Y - p_scrpt0->Y) << 16;
+
+    scr_dist20_x = (p_scrpt2->X - p_scrpt0->X) << 16;
+    scr_dist20_y = (p_scrpt2->Y - p_scrpt0->Y) << 16;
+
+    scr_distc0_x = (scr_x - p_scrpt0->X) << 16;
+    scr_distc0_y = (scr_y - p_scrpt0->Y) << 16;
+
+    map_dist02_x = (p_mappt0->X - p_mappt2->X) << 16;
+    map_dist02_z = (p_mappt0->Z - p_mappt2->Z) << 16;
+
+    map_dist12_x = (p_mappt1->X - p_mappt2->X) << 16;
+    map_dist12_z = (p_mappt1->Z - p_mappt2->Z) << 16;
+
+    m3 = mul_shift16_sign_pad_lo(scr_dist10_x, scr_dist20_y);
+    m4 = mul_shift16_sign_pad_lo(scr_dist10_y, scr_dist20_x);
+
+    m1 = mul_shift16_sign_pad_lo(scr_dist20_y, scr_distc0_x);
+    m2 = mul_shift16_sign_pad_lo(scr_dist20_x, scr_distc0_y);
+    factorA = ((m1 - (s64)m2) << 16) / (m3 - m4);
+
+    m1 = mul_shift16_sign_pad_lo(scr_dist10_x, scr_distc0_y);
+    m2 = mul_shift16_sign_pad_lo(scr_dist10_y, scr_distc0_x);
+    factorB = ((m1 - (s64)m2) << 16) / (m3 - m4);
+
+    if ((factorA <= 0 || factorA > 0x10000)) {
+        return false;
+    }
+    if ((factorB <= 0 || factorB > 0x10000)) {
+        return false;
+    }
+
+    if ((factorA + factorB) > 0x20000) {
+        return false;
+    }
+
+    *cor_x += p_mappt2->X;
+    *cor_x += mul_shift16_sign_pad_lo(map_dist02_x, factorA) >> 16;
+    *cor_x += mul_shift16_sign_pad_lo(map_dist12_x, factorB) >> 16;
+
+    *cor_z += p_mappt2->Z;
+    *cor_z += mul_shift16_sign_pad_lo(map_dist02_z, factorA) >> 16;
+    *cor_z += mul_shift16_sign_pad_lo(map_dist12_z, factorB) >> 16;
+
+    return true;
 }
 
 int get_height_on_face(int x, int z, ushort face)

@@ -34,8 +34,6 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-s32 mul_shift16_sign_pad_lo(s32 ar1, s32 ar2);
-
 ushort set_thing_height_on_face_tri(struct Thing *p_thing, int x, int z, short face);
 ushort set_thing_height_on_face_quad(struct Thing *p_thing, int x, int z, short face);
 ushort set_thing_height_on_face(struct Thing *p_thing, int x, int z, short face);

@@ -75,6 +75,8 @@ extern s32 dword_176D4C;
 extern s32 cam_rotation_velocity;
 
 /******************************************************************************/
+s32 mul_shift16_sign_pad_lo(s32 ar1, s32 ar2);
+
 short angle_between_points(int x1, int z1, int x2, int z2);
 
 void local_to_worldr(int *dx, int *dy, int *dz);

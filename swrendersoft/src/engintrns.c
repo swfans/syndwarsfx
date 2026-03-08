@@ -38,6 +38,34 @@ s32 dword_176D4C;
 s32 cam_rotation_velocity = 0;
 /******************************************************************************/
 
+/**
+ * Multiplication with shift and special quirks.
+ *
+ * Fills lower bits with sign, but that's not all - results are quite unique.
+ * Decompiler generates the following pseudo-C for it:
+ *    HIWORD(tmp) = (ar1 * ar2) >> 16;
+ *    LOWORD(tmp) = (ar1 * ar2) >> 32;
+ *    ret = bw_rotl32(tmp, 16);
+ * Needs testing whether something similar can really represent this ic C.
+ */
+s32 mul_shift16_sign_pad_lo(s32 ar1, s32 ar2)
+{
+#if 0
+    s32 tmp;
+    tmp = (ar1 * ar2) & 0xFFFF0000;
+    tmp |= ((ar1 * (s64)ar2) >> 32) & 0xFFFF;
+    return bw_rotl32(tmp, 16);
+#else
+    s32 ret;
+    asm volatile (
+      "imul   %%edx\n"
+      "mov    %%dx,%%ax\n"
+      "rol    $0x10,%%eax\n"
+        : "=r" (ret) : "a" (ar1), "d" (ar2));
+    return ret;
+#endif
+}
+
 short angle_between_points(int x1, int z1, int x2, int z2)
 {
   return LbArcTanAngle(x2 - x1, z1 - z2);
