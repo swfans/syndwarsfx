@@ -57,15 +57,12 @@ struct BulStart {
     sbyte OffsetY;
 };
 
-struct unkn_mech_struc3
-{
-    short mech3_unkn_thing;
-    short mech3_unkn_fld_2;
-    ubyte mech3_unkn_fld_4[8];
-    int mech3_unkn_fld_C[5];
-    ubyte mech3_unkn_fld_20[3];
-    short mech3_unkn_fld_23;
-    int mech3_unkn_vec_25[9];
+struct unkn_mech_struc3 { // sizeof=0x76
+    struct unkn_mech_struc4 *mech3_arr4_ptr;
+    int mech3_unkn_arr4_idx;
+    int mech3_unkn_fld_8;
+    struct M33 mech3_unkn_mat_C;
+    ubyte mech3_unkn_fld_30[25];
     int mech3_unkn_fld_49;
     ubyte mech3_unkn_fld_4D[7];
     int mech3_unkn_fld_54[3];
@@ -1979,23 +1976,22 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
     return bckt_max;
 }
 
-int mech_unkn_func_11(struct unkn_mech_struc3 *p_itm3, struct M31 *p_bodypos, int *a3)
+int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4, struct M31 *p_bodypos, struct M33 *p_mat)
 {
     int ret;
     asm volatile ("call ASM_mech_unkn_func_11\n"
-        : "=r" (ret) : "a" (p_itm3),  "d" (p_bodypos),  "b" (a3));
+        : "=r" (ret) : "a" (p_itm4),  "d" (p_bodypos),  "b" (p_mat));
     return ret;
 }
 
 int mech_unkn_func_03(struct Thing *p_thing)
 {
-#if 1
+#if 0
     int ret;
     asm volatile ("call ASM_mech_unkn_func_03\n"
         : "=r" (ret) : "a" (p_thing));
     return ret;
 #endif
-  //TODO fix - this is not correct
   struct M31 bodypos;
   int mechno;
 
@@ -2003,8 +1999,8 @@ int mech_unkn_func_03(struct Thing *p_thing)
   bodypos.R[0] = PRCCOORD_TO_MAPCOORD(p_thing->X);
   bodypos.R[2] = PRCCOORD_TO_MAPCOORD(p_thing->Z);
   bodypos.R[1] = PRCCOORD_TO_YCOORD(p_thing->Y) + 600;
-  return mech_unkn_func_11(&unkn_mech_arr3[mechno],
-    &bodypos, unkn_mech_arr3[mechno].mech3_unkn_fld_C);
+  return mech_unkn_func_11(unkn_mech_arr3[mechno].mech3_arr4_ptr,
+    &bodypos, &unkn_mech_arr3[mechno].mech3_unkn_mat_C);
 }
 
 void draw_vehicle_health(struct Thing *p_thing, int bckt)

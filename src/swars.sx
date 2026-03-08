@@ -138245,7 +138245,7 @@ GLOBAL_FUNC(ASM_process_mech_unknown1)	/* 0x0BBEA4 */
 		add    %edx,%eax
 		add    $0xc,%eax
 		mov    %ecx,%edx
-		call   mech_unkn_func_07
+		call   matrix_transpose_cp
 		xor    %eax,%eax
 		mov    0x3c(%ebx),%ax
 		call   mech_unkn_func_08
@@ -141521,7 +141521,7 @@ mech_unkn_func_18:	/* 0x0BE620 */
 
 
 /*----------------------------------------------------------------*/
-mech_unkn_func_07:	/* 0x0BE6EC */
+matrix_transpose_cp:	/* 0x0BE6EC */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    (%edx),%ebx
