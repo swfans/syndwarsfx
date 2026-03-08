@@ -208,7 +208,7 @@ void update_object_faces_flags(void);
 TbBool face_is_blocking_walk(short face);
 
 void unkn_object_shift_03(ushort objectno);
-void unkn_object_shift_02(int norm1, int norm2, ushort objectno);
+void unkn_object_shift_02(ushort norm1, ushort norm2, ushort objectno);
 
 /** Alter given map coordinates to represent position on face defined by given points.
  *

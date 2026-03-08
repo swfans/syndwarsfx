@@ -610,10 +610,57 @@ void unkn_object_shift_03(ushort objectno)
     next_normal = nrml;
 }
 
-void unkn_object_shift_02(int norm1, int norm2, ushort objectno)
+void unkn_object_shift_02(ushort norm1, ushort norm2, ushort objectno)
 {
+#if 0
     asm volatile ("call ASM_unkn_object_shift_02\n"
         : : "a" (norm1), "d" (norm2), "b" (objectno));
+#endif
+    struct SingleObject *p_psngobj;
+    int n_remove;
+    int i;
+    ushort nrml;
+
+    p_psngobj = &game_objects[objectno];
+    n_remove = norm2 - norm1;
+    if (p_psngobj->StartFace != 0)
+    {
+        for (i = 0; i < p_psngobj->NumbFaces; i++)
+        {
+            struct SingleObjectFace3 *p_frame;
+            p_frame = &game_object_faces3[p_psngobj->StartFace + i];
+            p_frame->Shade0 -= n_remove;
+            p_frame->Shade1 -= n_remove;
+            p_frame->Shade2 -= n_remove;
+        }
+    }
+    if (p_psngobj->StartFace4 != 0)
+    {
+        for (i = 0; i < p_psngobj->NumbFaces4; i++)
+        {
+            struct SingleObjectFace4 *p_frame;
+            p_frame = &game_object_faces4[p_psngobj->StartFace4 + i];
+            p_frame->Shade0 -= n_remove;
+            p_frame->Shade1 -= n_remove;
+            p_frame->Shade2 -= n_remove;
+            p_frame->Shade3 -= n_remove;
+        }
+    }
+    for (nrml = norm2; nrml < next_normal; nrml++)
+    {
+        struct Normal *p_nrml1;
+        struct Normal *p_nrml2;
+        p_nrml1 = &game_normals[nrml];
+        p_nrml2 = &game_normals[nrml - n_remove];
+
+        p_nrml2->NX = p_nrml1->NX;
+        p_nrml2->NY = p_nrml1->NY;
+        p_nrml2->NZ = p_nrml1->NZ;
+        p_nrml2->LightRatio = p_nrml1->LightRatio;
+    }
+    p_psngobj->OffsetX -= n_remove;
+    p_psngobj->OffsetY -= n_remove;
+    next_normal -= n_remove;
 }
 
 /******************************************************************************/
