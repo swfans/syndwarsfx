@@ -327,12 +327,67 @@ int get_height_on_face(int x, int z, ushort face)
 
 int get_height_on_face_quad(int x, int z, ushort face)
 {
-    // TODO when rewriting, use mul_shift16_sign_pad_lo()
+#if 0
     int ret;
     asm volatile (
       "call ASM_get_height_on_face_quad\n"
         : "=r" (ret) : "a" (x), "d" (z), "b" (face));
     return ret;
+#endif
+    struct SingleObjectFace4 *p_face;
+    struct SingleObject *p_sobj;
+    struct SinglePoint *p_pt0;
+    struct SinglePoint *p_pt1;
+    struct SinglePoint *p_pt2;
+    int prc_dist10_x, prc_dist10_y, prc_dist10_z;
+    int prc_dist20_x, prc_dist20_y, prc_dist20_z;
+    int prc_distc0_x, prc_distc0_z;
+
+    p_face = &game_object_faces4[face];
+    p_sobj = &game_objects[p_face->Object];
+    p_pt0 = &game_object_points[p_face->PointNo[0]];
+    p_pt1 = &game_object_points[p_face->PointNo[1]];
+    p_pt2 = &game_object_points[p_face->PointNo[2]];
+
+    prc_dist10_x = (p_pt1->X - p_pt0->X) << 8;
+    prc_dist10_y = (p_pt1->Y - p_pt0->Y) << 8;
+    prc_dist10_z = (p_pt1->Z - p_pt0->Z) << 8;
+    prc_dist20_y = (p_pt2->Y - p_pt0->Y) << 8;
+    prc_dist20_z = (p_pt2->Z - p_pt0->Z) << 8;
+    prc_dist20_x = (p_pt2->X - p_pt0->X) << 8;
+    prc_distc0_x = x - ((p_sobj->MapX + p_pt0->X) << 8);
+    prc_distc0_z = z - ((p_sobj->MapZ + p_pt0->Z) << 8);
+
+    int factorA, factorB, factorLen;
+    int m1, m2, m3, m4;
+    int height;
+
+    m3 = mul_shift16_sign_pad_lo(prc_dist10_x, prc_dist20_z);
+    m4 = mul_shift16_sign_pad_lo(prc_dist10_z, prc_dist20_x);
+    factorLen = m3 - m4;
+    if (factorLen == 0)
+      factorLen = 1;
+
+    m1 = mul_shift16_sign_pad_lo(prc_dist20_z, prc_distc0_x);
+    m2 = mul_shift16_sign_pad_lo(prc_dist20_x, prc_distc0_z);
+    factorA = ((m1 - (s64)m2) << 16) / factorLen;
+
+    m1 = mul_shift16_sign_pad_lo(prc_dist10_x, prc_distc0_z);
+    m2 = mul_shift16_sign_pad_lo(prc_dist10_z, prc_distc0_x);
+    factorB = ((m1 - (s64)m2) << 16) / factorLen;
+
+    if ((factorA <= 0 || factorA > 0x10000)) {
+        return 0;
+    }
+    if ((factorB <= 0 || factorB > 0x10000)) {
+        return 0;
+    }
+
+    height = ((p_pt0->Y + p_sobj->OffsetY) << 8);
+    height += mul_shift16_sign_pad_lo(prc_dist10_y, factorA);
+    height += mul_shift16_sign_pad_lo(prc_dist20_y, factorB);
+
+    return height >> 3;
 }
 
 /** Checks if a face should not be allowed to walk on due to sharp slope.
