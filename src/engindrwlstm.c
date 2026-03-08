@@ -57,6 +57,30 @@ struct BulStart {
     sbyte OffsetY;
 };
 
+struct unkn_mech_struc4 { // sizeof=0x7A
+    short thing;
+    ubyte field_2[33];
+    short field_23;
+    int field_25;
+    int field_29;
+    int field_2D;
+    int field_31;
+    int field_35;
+    int field_39;
+    int field_3D;
+    int field_41;
+    int field_45;
+    int angle_49;
+    int angle_4D;
+    int angle_51;
+    int field_55;
+    int field_59;
+    ubyte field_5D[4];
+    struct M31 field_61;
+    struct M31 field_6D;
+    ubyte field_79;
+};
+
 struct unkn_mech_struc3 { // sizeof=0x76
     struct unkn_mech_struc4 *mech3_arr4_ptr;
     int mech3_unkn_arr4_idx;
