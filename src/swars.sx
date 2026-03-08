@@ -138026,7 +138026,7 @@ GLOBAL_FUNC(ASM_init_mech)	/* 0x0BBC80 */
 		xor    %edx,%edx
 		mov    %esi,%eax
 		sub    %esi,%ebx
-		mov    %esi,unkn_mech_arr3
+		mov    %esi,EXPORT_SYMBOL(unkn_mech_arr3)
 		call   ac_memset
 		mov    $aDataMech_dat,%eax
 		mov    %ecx,unkn_mech_var8
@@ -138043,7 +138043,7 @@ GLOBAL_FUNC(ASM_init_mech)	/* 0x0BBC80 */
 		mov    $aDataMech_txt,%edx
 		mov    %ecx,unkn_mech_var18
 		call   load_mech_dat
-		mov    unkn_mech_arr3,%edi
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%edi
 		xor    %ebp,%ebp
 		mov    %edi,%edx
 		jmp    jump_bbd43
@@ -138078,7 +138078,7 @@ GLOBAL_FUNC(ASM_init_mech)	/* 0x0BBC80 */
 		mov    unkn_mech_arr1,%eax
 		mov    0x9(%ebx,%eax,1),%eax
 		mov    %eax,0x5c(%edx)
-		mov    %edi,unkn_mech_arr3
+		mov    %edi,EXPORT_SYMBOL(unkn_mech_arr3)
 		pop    %ebp
 		pop    %edi
 		pop    %esi
@@ -138095,7 +138095,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_02)	/* 0x0BBD98 */
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    unkn_mech_arr3,%esi
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%esi
 		xor    %edx,%edx
 		xor    %edi,%edi
 		mov    %edx,unkn_mech_var10
@@ -138116,7 +138116,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_02)	/* 0x0BBD98 */
 		jge    jump_bbdb4
 		jmp    jump_bbdc6
 	jump_bbdd3:
-		mov    %esi,unkn_mech_arr3
+		mov    %esi,EXPORT_SYMBOL(unkn_mech_arr3)
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -138147,14 +138147,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_03)	/* 0x0BBDE0 */
 		sub    %edx,%eax
 		lea    (%eax,%eax,1),%edx
 		add    $0x258,%ebx
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		mov    %ecx,0x8(%esp)
 		add    %edx,%eax
 		mov    %ebx,0x4(%esp)
 		lea    0xc(%eax),%ebx
 		mov    %esp,%edx
 		mov    (%eax),%eax
-		call   mech_unkn_func_11
+		call   ac_mech_unkn_func_11
 		add    $0xc,%esp
 		pop    %edx
 		pop    %ecx
@@ -138184,7 +138184,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_05)	/* 0x0BBE3C */
 		sub    %edx,%eax
 		shl    $0x2,%eax
 		sub    %edx,%eax
-		mov    unkn_mech_arr3,%edi
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%edi
 		add    %eax,%eax
 		add    %eax,%edi
 		mov    %ebx,%eax
@@ -138240,7 +138240,7 @@ GLOBAL_FUNC(ASM_process_mech_unknown1)	/* 0x0BBEA4 */
 		sub    %edx,%eax
 		shl    $0x2,%eax
 		sub    %edx,%eax
-		mov    unkn_mech_arr3,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%edx
 		add    %eax,%eax
 		add    %edx,%eax
 		add    $0xc,%eax
@@ -138500,7 +138500,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		sub    %edx,%eax
 		shl    $0x2,%eax
 		sub    %edx,%eax
-		mov    unkn_mech_arr3,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%edx
 		add    %eax,%eax
 		add    %edx,%eax
 		mov    $unkn_mech_var8,%esi
@@ -139115,7 +139115,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		mov    %ecx,unkn_mech_var10
 		lea    (%eax,%eax,1),%edx
 		inc    %ebp
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		sub    %esi,%ebp
 		mov    %edi,unkn_mech_var11
 		mov    %ebp,0x8(%edx,%eax,1)
@@ -139166,7 +139166,7 @@ mech_unkn_func_08:	/* 0x0BCAA0 */
 		jl     jump_bcba9
 	jump_bcaf8:
 		mov    0x10(%esp),%ecx
-		mov    unkn_mech_arr3,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%edx
 		add    %ecx,%edx
 		cmpb   $0x0,0x74(%edx,%esi,1)
 		je     jump_bcaec
@@ -139194,7 +139194,7 @@ mech_unkn_func_08:	/* 0x0BCAA0 */
 		test   %eax,%eax
 		jne    jump_bcb1c
 		mov    0x10(%esp),%ecx
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		add    %ecx,%eax
 		lea    (%eax,%edi,1),%ecx
 		imul   $0x89,0x6c(%ecx),%ebp
@@ -139209,7 +139209,7 @@ mech_unkn_func_08:	/* 0x0BCAA0 */
 		je     jump_bcad9
 	jump_bcb71:
 		mov    0x10(%esp),%ebp
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		add    %ebp,%eax
 		mov    0xc(%esp),%edx
 		mov    %edx,0x64(%edi,%eax,1)
@@ -139240,7 +139240,7 @@ mech_unkn_func_08:	/* 0x0BCAA0 */
 
 
 /*----------------------------------------------------------------*/
-mech_unkn_func_11:	/* 0x0BCC08 */
+GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -139525,7 +139525,7 @@ mech_unkn_func_11:	/* 0x0BCC08 */
 		lea    0x30(%esp),%edx
 		mov    %edi,%ebx
 		mov    0x3(%esi),%eax
-		call   mech_unkn_func_11
+		call   ac_mech_unkn_func_11
 		add    $0x4,%esi
 		inc    %ecx
 	jump_bcf70:
@@ -141703,7 +141703,7 @@ mech_unkn_func_19:	/* 0x0BE884 */
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
 	jump_be8ce:
-		mov    unkn_mech_arr3,%ebx
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%ebx
 		add    %ebp,%ebx
 		cmp    0x8(%ebx),%eax
 		jb     jump_be8b2
@@ -141729,7 +141729,7 @@ mech_unkn_func_19:	/* 0x0BE884 */
 		xor    %ecx,%ecx
 	jump_be921:
 		mov    0xf8(%esp),%edi
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		add    %edi,%eax
 		mov    0x4(%eax),%edx
 		add    %ebp,%edx
@@ -141753,7 +141753,7 @@ mech_unkn_func_19:	/* 0x0BE884 */
 		call   mech_unkn_func_20
 		mov    0xf4(%esp),%edi
 		mov    0xf8(%esp),%edx
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		lea    0xd8(%esp),%esi
 		add    %edx,%eax
 		lea    (%esp,%edi,1),%edi
@@ -141823,7 +141823,7 @@ mech_unkn_func_19:	/* 0x0BE884 */
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		add    0xf8(%esp),%eax
 		mov    0xfc(%esp),%edi
 		mov    0x4(%eax),%eax
@@ -141844,7 +141844,7 @@ mech_unkn_func_19:	/* 0x0BE884 */
 		mov    %eax,0xfc(%esp)
 	jump_bead2:
 		mov    0xf8(%esp),%ebp
-		mov    unkn_mech_arr3,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		add    %ebp,%eax
 		mov    0xfc(%esp),%edx
 		cmp    0x8(%eax),%edx
@@ -141872,7 +141872,7 @@ mech_unkn_func_19:	/* 0x0BE884 */
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
 	jump_beb27:
-		mov    unkn_mech_arr3,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_arr3),%edx
 		add    %ebp,%edx
 		cmp    0x8(%edx),%ecx
 		jb     jump_beb0b
@@ -180550,7 +180550,7 @@ unkn_mech_var15:	/* 0x1DC848 */
 		.long	0x0
 unkn_mech_var18:	/* 0x1DC84C */
 		.long	0x0
-unkn_mech_arr3:	/* 0x1DC850 */
+GLOBAL (unkn_mech_arr3)	/* 0x1DC850 */
 		.long	0x0
 unkn_mech_arr4:	/* 0x1DC854 */
 		.long	0x0

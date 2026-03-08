@@ -57,7 +57,7 @@ void draw_sort_sprite_person_shadow(ushort sspr);
 ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
   struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
   struct SortMapPoint *p_cor4, struct ShadowTexture *p_shtextr,
-  ushort sort);
+  int bckt);
 
 /******************************************************************************/
 #ifdef __cplusplus

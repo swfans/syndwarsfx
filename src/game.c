@@ -1600,14 +1600,6 @@ void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign)
     }
 }
 
-int mech_unkn_func_03(struct Thing *p_thing)
-{
-    int ret;
-    asm volatile ("call ASM_mech_unkn_func_03\n"
-        : "=r" (ret) : "a" (p_thing));
-    return ret;
-}
-
 void process_map_craters(void)
 {
     asm volatile ("call ASM_process_map_craters\n"

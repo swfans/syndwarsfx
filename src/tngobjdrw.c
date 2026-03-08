@@ -181,7 +181,7 @@ void get_object_shadow_bound_points_y(struct SortMapPoint *p_cor1,
 }
 
 void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
-  short matx, ushort sort)
+  short matx, int bckt)
 {
     struct SortMapPoint cor1, cor2, cor3, cor4;
     struct ShadowTexture *p_shtextr;
@@ -196,7 +196,7 @@ void draw_object_model_shadow(struct SortMapPoint *p_tngcor, ushort obmodl,
     get_object_shadow_bound_points_y(&cor1, &cor2, &cor3, &cor4,
       p_tngcor);
 
-    draw_shadow_at_coords(&cor1, &cor2, &cor3, &cor4, p_shtextr, sort);
+    draw_shadow_at_coords(&cor1, &cor2, &cor3, &cor4, p_shtextr, bckt);
 }
 
 s32 get_flat_surface_height_at_ground_callback(struct SortMapPoint *p_cor)
@@ -213,7 +213,7 @@ s32 get_flat_surface_height_below_real_pos_callback(struct SortMapPoint *p_cor)
 }
 
 
-void draw_vehicle_shadow(ushort veh, ushort sort)
+void draw_vehicle_shadow(ushort veh, int bckt)
 {
     struct SortMapPoint tngcor;
     struct Thing *p_vehicle;
@@ -232,13 +232,13 @@ void draw_vehicle_shadow(ushort veh, ushort sort)
     else
         get_flat_surface_height_below_point_cb = get_flat_surface_height_at_ground_callback;
 
-    draw_object_model_shadow(&tngcor, obmodl, matx, sort);
+    draw_object_model_shadow(&tngcor, obmodl, matx, bckt);
 }
 
 void build_vehicle(struct Thing *p_thing)
 {
     PlayerInfo *p_locplayer;
-    int i;
+    int bckt;
 
     if (((p_thing->Flag2 & TgF2_ExistsOffMap) != 0) && (byte_1C83E4 & 0x01) != 0)
         return;
@@ -251,26 +251,27 @@ void build_vehicle(struct Thing *p_thing)
         check_mouse_overvehicle(p_thing, TrgTp_Unkn4);
     if (p_thing->SubType == SubTT_VEH_MECH)
     {
-        if ((p_thing->Flag & TngF_Destroyed) == 0)
+        if ((p_thing->Flag & TngF_Destroyed) == 0) {
             mech_unkn_func_03(p_thing);
-        i = 0;
+        }
+        bckt = 10; //TODO get proper bucket from object draw calls
     }
     else
     {
         struct SingleObject *p_sobj;
 
         p_sobj = &game_objects[p_thing->U.UVehicle.Object];
-        i = draw_rot_object(
+        bckt = draw_rot_object(
              PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
              PRCCOORD_TO_YCOORD(p_thing->Y),
              PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
              p_sobj, p_thing);
     }
     if (p_thing->SubType != SubTT_VEH_TRAIN)
-        draw_vehicle_shadow(p_thing->ThingOffset, i);
+        draw_vehicle_shadow(p_thing->ThingOffset, bckt);
 
     if (p_thing->Health < p_thing->U.UVehicle.MaxHealth)
-        draw_vehicle_health(p_thing);
+        draw_vehicle_health(p_thing, bckt);
 
     if ((p_thing->U.UVehicle.SubThing != 0) && (p_thing->SubType == SubTT_VEH_TANK))
         process_child_object(p_thing);
@@ -450,15 +451,16 @@ void build_building(struct Thing *p_thing)
     {
         PlayerInfo *p_locplayer;
         short tng_x, tng_y, tng_z;
+        int bckt;
 
         p_locplayer = &players[local_player_no];
         if (p_locplayer->TargetType < TrgTp_Unkn2)
             check_mouse_overvehicle(p_thing, TrgTp_Unkn2);
         p_sobj = &game_objects[p_thing->U.UObject.Object];
         get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
-        draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
+        bckt = draw_rot_object2(tng_x - engn_xc, tng_y, tng_z - engn_zc, p_sobj, p_thing);
         if (p_thing->Health < p_thing->U.UMGun.MaxHealth)
-            draw_vehicle_health(p_thing);
+            draw_vehicle_health(p_thing, bckt);
     }
     else
     {

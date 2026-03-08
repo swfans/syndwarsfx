@@ -57,6 +57,28 @@ struct BulStart {
     sbyte OffsetY;
 };
 
+struct unkn_mech_struc3
+{
+    short mech3_unkn_thing;
+    short mech3_unkn_fld_2;
+    ubyte mech3_unkn_fld_4[8];
+    int mech3_unkn_fld_C[5];
+    ubyte mech3_unkn_fld_20[3];
+    short mech3_unkn_fld_23;
+    int mech3_unkn_vec_25[9];
+    int mech3_unkn_fld_49;
+    ubyte mech3_unkn_fld_4D[7];
+    int mech3_unkn_fld_54[3];
+    ubyte field_60;
+    int field_61;
+    int field_65;
+    int field_69;
+    ubyte field_6D[3];
+    int field_70;
+    ubyte field_74;
+    ubyte field_75;
+};
+
 #pragma pack()
 /******************************************************************************/
 extern short word_1552F8;
@@ -70,6 +92,8 @@ extern long dword_152E4C;
 extern const ubyte byte_154F2C[32];
 
 extern struct BulStart bul_starts[4000];
+
+extern struct unkn_mech_struc3 *unkn_mech_arr3;
 
 extern short word_1AA5F4;
 extern short word_1AA5F6;
@@ -1955,12 +1979,39 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
     return bckt_max;
 }
 
-void draw_vehicle_health(struct Thing *p_thing)
+int mech_unkn_func_11(struct unkn_mech_struc3 *p_itm3, struct M31 *p_bodypos, int *a3)
+{
+    int ret;
+    asm volatile ("call ASM_mech_unkn_func_11\n"
+        : "=r" (ret) : "a" (p_itm3),  "d" (p_bodypos),  "b" (a3));
+    return ret;
+}
+
+int mech_unkn_func_03(struct Thing *p_thing)
+{
+#if 1
+    int ret;
+    asm volatile ("call ASM_mech_unkn_func_03\n"
+        : "=r" (ret) : "a" (p_thing));
+    return ret;
+#endif
+  //TODO fix - this is not correct
+  struct M31 bodypos;
+  int mechno;
+
+  mechno = p_thing->Owner;
+  bodypos.R[0] = PRCCOORD_TO_MAPCOORD(p_thing->X);
+  bodypos.R[2] = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+  bodypos.R[1] = PRCCOORD_TO_YCOORD(p_thing->Y) + 600;
+  return mech_unkn_func_11(&unkn_mech_arr3[mechno],
+    &bodypos, unkn_mech_arr3[mechno].mech3_unkn_fld_C);
+}
+
+void draw_vehicle_health(struct Thing *p_thing, int bckt)
 {
     struct ShEnginePoint sp;
     int x, y, z;
     struct SortSprite *p_sspr;
-    int bckt;
     int scr_depth;
     TbPixel lvl_col, bar_col;
 
@@ -1970,7 +2021,8 @@ void draw_vehicle_health(struct Thing *p_thing)
     transform_shpoint(&sp, x, y - 8 * engn_yc, z);
 
     scr_depth = sp.Depth - 2 * p_thing->Radius;
-    bckt = BUCKET_MID + scr_depth;
+    if (bckt > BUCKET_MID + scr_depth)
+        bckt = BUCKET_MID + scr_depth;
     p_sspr = draw_item_add_sprite(DrIT_LongPropBar, bckt);
     if (p_sspr == NULL) {
         return;

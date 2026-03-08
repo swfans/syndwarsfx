@@ -180,13 +180,12 @@ void draw_sort_sprite_person_shadow(ushort sspr)
 ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
   struct SortMapPoint *p_cor2, struct SortMapPoint *p_cor3,
   struct SortMapPoint *p_cor4, struct ShadowTexture *p_shtextr,
-  ushort sort)
+  int bckt)
 {
     struct ShEnginePoint sp1, sp2, sp3, sp4;
     struct SingleObjectFace4 *p_face4;
     struct SingleFloorTexture *p_sftex;
     struct SpecialPoint *p_specpt;
-    int bckt;
     ushort face, pt;
     short sftex;
 
@@ -251,7 +250,7 @@ ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
     p_specpt->X = sp4.X;
     p_specpt->Y = sp4.Y;
 
-    bckt = sort + 1;
+    bckt++;
     draw_item_add(DrIT_SpObFace4, face, bckt);
     return face;
 }

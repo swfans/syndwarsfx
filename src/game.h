@@ -360,7 +360,6 @@ void process_sound_heap(void);
 void update_danger_music(ubyte a1);
 
 void check_mouse_overvehicle(struct Thing *p_thing, ubyte target_assign);
-int mech_unkn_func_03(struct Thing *p_thing);
 
 void draw_new_panel(void);
 
