@@ -160,8 +160,8 @@ struct SingleObject { // sizeof=36
   ushort StartFace4;
   ushort NumbFaces4;
   short ThingNo;
-  short OffsetX;
-  short OffsetY;
+  short OffsetX; // likely StartNormal
+  short OffsetY; // likely EndNormal
   short OffsetZ;
   short ObjectNo;
   short MapX;

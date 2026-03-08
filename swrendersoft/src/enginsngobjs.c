@@ -481,8 +481,133 @@ TbBool face_is_blocking_walk(short face)
 
 void unkn_object_shift_03(ushort objectno)
 {
+#if 0
     asm volatile ("call ASM_unkn_object_shift_03\n"
         : : "a" (objectno));
+#endif
+    struct SingleObject *p_psngobj;
+    int sum_nx, sum_ny, sum_nz;
+    int n;
+    ushort n_sum;
+    ushort pointno;
+
+    ushort nrml_beg, nrml;
+    nrml_beg = next_normal;
+    nrml = nrml_beg;
+    p_psngobj = &game_objects[objectno];
+
+    for (pointno = p_psngobj->StartPoint; pointno < p_psngobj->EndPoint; pointno++)
+    {
+        sum_nz = 0;
+        sum_ny = 0;
+        n_sum = 0;
+        sum_nx = 0;
+        {
+            for (n = 0; n < p_psngobj->NumbFaces; n++)
+            {
+                struct SingleObjectFace3 *p_face;
+                int i;
+                p_face = &game_object_faces3[p_psngobj->StartFace + n];
+                for (i = 0; i < 3; i++)
+                {
+                    struct Normal *p_nrml;
+                    if (pointno != p_face->PointNo[i])
+                        continue;
+                    p_nrml = &game_normals[p_face->FaceNormal];
+                    sum_nx += p_nrml->NX;
+                    sum_ny += p_nrml->NY;
+                    sum_nz += p_nrml->NZ;
+                    n_sum++;
+                }
+            }
+        }
+
+        {
+            for (n = 0; n < p_psngobj->NumbFaces4;  n++)
+            {
+                struct SingleObjectFace4 *p_face;
+                int i;
+                p_face = &game_object_faces4[p_psngobj->StartFace4 + n];
+                for (i = 0; i < 4; i++)
+                {
+                    struct Normal *p_nrml;
+                    if (pointno != p_face->PointNo[i])
+                        continue;
+                    p_nrml = &game_normals[p_face->FaceNormal];
+                    sum_nx += p_nrml->NX;
+                    sum_ny += p_nrml->NY;
+                    sum_nz += p_nrml->NZ;
+                    n_sum++;
+                }
+            }
+        }
+        if (n_sum > 0)
+        {
+            struct Normal *p_nrml;
+            p_nrml = &game_normals[nrml];
+            p_nrml->NX = sum_nx / n_sum;
+            p_nrml->NY = sum_ny / n_sum;
+            p_nrml->NZ = sum_nz / n_sum;
+
+            for (n = 0; n < p_psngobj->NumbFaces; n++)
+            {
+                struct SingleObjectFace3 *p_face;
+                int i;
+                p_face = &game_object_faces3[p_psngobj->StartFace + n];
+                for (i = 0; i < 3; i++)
+                {
+                    if (pointno != p_face->PointNo[i])
+                        continue;
+                    switch (i)
+                    {
+                    case 0:
+                        p_face->Shade0 = nrml;
+                        break;
+                    case 1:
+                        p_face->Shade1 = nrml;
+                        break;
+                    case 2:
+                        p_face->Shade2 = nrml;
+                        break;
+                      default:
+                        break;
+                    }
+                }
+            }
+            for (n = 0; n < p_psngobj->NumbFaces4; n++)
+            {
+                struct SingleObjectFace4 *p_face;
+                int i;
+                p_face = &game_object_faces4[p_psngobj->StartFace4 + n];
+                for (i = 0; i < 4; i++)
+                {
+                    if (pointno != p_face->PointNo[i])
+                        continue;
+                    switch (i)
+                    {
+                    case 0:
+                        p_face->Shade0 = nrml;
+                        break;
+                    case 1:
+                        p_face->Shade1 = nrml;
+                        break;
+                    case 2:
+                        p_face->Shade2 = nrml;
+                        break;
+                    case 3:
+                        p_face->Shade3 = nrml;
+                        break;
+                      default:
+                        break;
+                    }
+                }
+            }
+            nrml++;
+        }
+    }
+    p_psngobj->OffsetX = nrml_beg;
+    p_psngobj->OffsetY = nrml;
+    next_normal = nrml;
 }
 
 void unkn_object_shift_02(int norm1, int norm2, ushort objectno)
