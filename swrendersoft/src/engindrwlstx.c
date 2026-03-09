@@ -68,8 +68,8 @@ void draw_object_face4_pole(ushort face4);
 void draw_object_face4d_textrd(ushort face4);
 void draw_object_face3_textrd(ushort face);
 void draw_object_face3_textrd_dk(ushort face);
-void draw_object_face3_deep_rdr(ushort face);
-void draw_object_face4_deep_rdr(ushort face4);
+void draw_object_face3_tran_tint(ushort face);
+void draw_object_face4_tran_tint(ushort face4);
 void draw_shrapnel(ushort shrap);
 
 void reset_drawlist(void)
@@ -109,7 +109,7 @@ void draw_drawitem_1(ushort dihead)
       itm = &game_draw_list[iidx];
       switch (itm->Type)
       {
-      case DrIT_Unkn1:
+      case DrIT_ObFace3Txtr:
       case DrIT_Unkn10:
           draw_object_face3_textrd_dk(itm->Offset);
           break;
@@ -131,7 +131,7 @@ void draw_drawitem_1(ushort dihead)
       case DrIT_Unkn7:
           draw_object_face3g_textrd(itm->Offset);
           break;
-      case DrIT_Unkn9:
+      case DrIT_ObFace4Txtr:
           draw_object_face4d_textrd_dk(itm->Offset);
           break;
       case DrIT_Unkn11:
@@ -178,7 +178,7 @@ void draw_drawitem_2(ushort dihead)
       itm = &game_draw_list[iidx];
       switch (itm->Type)
       {
-      case DrIT_Unkn1:
+      case DrIT_ObFace3Txtr:
       case DrIT_Unkn10:
           draw_object_face3_textrd(itm->Offset);
           break;
@@ -197,7 +197,7 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn7:
           draw_object_face3g_textrd(itm->Offset);
           break;
-      case DrIT_Unkn9:
+      case DrIT_ObFace4Txtr:
           draw_object_face4d_textrd(itm->Offset);
           break;
       case DrIT_Unkn11:
@@ -224,31 +224,31 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn16:
           draw_object_face4g_textrd(itm->Offset);
           break;
-      case DrIT_Unkn17:
+      case DrIT_ObFace3Refl:
           draw_object_face3_reflect(itm->Offset);
           break;
-      case DrIT_Unkn18:
+      case DrIT_ObFace4Refl:
           draw_object_face4_reflect(itm->Offset);
           break;
       case DrIT_SPersShdw:
           draw_sort_sprite_person_shadow(itm->Offset);
           break;
-      case DrIT_Unkn20:
+      case DrIT_SharpnlPoly:
           draw_shrapnel(itm->Offset);
           break;
-      case DrIT_Unkn21:
+      case DrIT_SFrmPhwoar:
           draw_phwoar(itm->Offset);
           break;
       case DrIT_LongPropBar:
           draw_sort_sprite_long_prop_bar(itm->Offset);
           break;
-      case DrIT_Unkn23:
-          draw_object_face4_deep_rdr(itm->Offset);
+      case DrIT_ObFace4Tran:
+          draw_object_face4_tran_tint(itm->Offset);
           break;
-      case DrIT_Unkn24:
-          draw_object_face3_deep_rdr(itm->Offset);
+      case DrIT_ObFace3Tran:
+          draw_object_face3_tran_tint(itm->Offset);
           break;
-      case DrIT_Unkn25:
+      case DrIT_SFireFlame:
           draw_fire_flame(itm->Offset);
           break;
       case DrIT_Number:

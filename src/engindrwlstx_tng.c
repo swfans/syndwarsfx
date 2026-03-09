@@ -95,13 +95,6 @@ void draw_object_face3g_textrd(ushort face);
 void draw_object_face4d_textrd_dk(ushort face4);
 void draw_ex_face(ushort exface);
 void draw_special_object_face4(ushort face4);
-void draw_object_face4_pole(ushort face4);
-void draw_object_face4d_textrd(ushort face4);
-void draw_object_face3_textrd(ushort face);
-void draw_object_face3_textrd_dk(ushort face);
-void draw_object_face3_deep_rdr(ushort face);
-void draw_object_face4_deep_rdr(ushort face4);
-void draw_shrapnel(ushort shrap);
 
 ushort number_player_get_frame(struct Thing *p_person, ubyte n)
 {

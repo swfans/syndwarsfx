@@ -435,7 +435,7 @@ void set_floor_texture_uv_shade4(ushort face4, struct PolyPoint *p_pt1,
  * Draw rectangular face with textured surface, version G.
  * TODO: figure out how this version is unique.
  *
- * @param face4 Index of SingleObjectFace4 instance.
+ * @param face4 Index in `game_object_faces4` array.
  */
 void draw_object_face4g_textrd(ushort face4)
 {
@@ -611,7 +611,7 @@ void draw_object_face4g_textrd(ushort face4)
 /**
  * Draw triangular face with reflective (mirror) surface.
  *
- * @param face Index of SingleObjectFace3 instance.
+ * @param face3 Index in `game_object_faces3` array.
  */
 void draw_object_face3_reflect(ushort face3)
 {
@@ -677,7 +677,7 @@ void draw_object_face3_reflect(ushort face3)
 /**
  * Draw rectangular face with reflective (mirror) surface.
  *
- * @param face4 Index of SingleObjectFace4 instance.
+ * @param face4 Index in `game_object_faces4` array.
  */
 void draw_object_face4_reflect(ushort face4)
 {
@@ -859,14 +859,14 @@ void draw_ex_face(ushort exface)
  * Draw triangular face with textured surface, version G.
  * TODO: figure out how this version is unique.
  *
- * @param face Index of SingleObjectFace3 instance.
+ * @param face3 Index in `game_object_faces3` array.
  */
-void draw_object_face3g_textrd(ushort face)
+void draw_object_face3g_textrd(ushort face3)
 {
 #if 0
     asm volatile (
       "call ASM_draw_object_face3g_textrd\n"
-        : : "a" (face));
+        : : "a" (face3));
     return;
 #endif
     struct SingleObjectFace3 *p_face;
@@ -874,7 +874,7 @@ void draw_object_face3g_textrd(ushort face)
     struct PolyPoint point3;
     struct PolyPoint point2;
 
-    p_face = &game_object_faces3[face];
+    p_face = &game_object_faces3[face3];
     vec_colour = p_face->ExCol;
     vec_mode = p_face->Flags;
 
@@ -1328,7 +1328,7 @@ void draw_floor_tile1b(ushort tl)
  * What is special about these is that each SingleObjectFace4 instance stores
  * SpecialPoint indexes rather than SinglePoint indexes.
  *
- * @param face4 Index of SingleObjectFace4 instance.
+ * @param face4 Index in `game_object_faces4` array.
  */
 void draw_special_object_face4(ushort face4)
 {
@@ -1416,7 +1416,7 @@ void draw_special_object_face4(ushort face4)
 /**
  * Draw a textured pole between two points, using remaining two point indexes as diameters at each end.
  *
- * @param face4 Index of SingleObjectFace4 instance.
+ * @param face4 Index in `game_object_faces4` array.
  */
 void draw_object_face4_pole(ushort face4)
 {
@@ -1495,14 +1495,14 @@ void draw_object_face4_pole(ushort face4)
 /**
  * Draw triangular face with textured surface.
  *
- * @param face Index of SingleObjectFace3 instance.
+ * @param face3 Index in `game_object_faces3` array.
  */
-void draw_object_face3_textrd(ushort face)
+void draw_object_face3_textrd(ushort face3)
 {
 #if 0
     asm volatile (
       "call ASM_draw_object_face3_textrd\n"
-        : : "a" (face));
+        : : "a" (face3));
     return;
 #endif
     struct PolyPoint point1;
@@ -1510,7 +1510,7 @@ void draw_object_face3_textrd(ushort face)
     struct PolyPoint point3;
     struct SingleObjectFace3 *p_face;
 
-    p_face = &game_object_faces3[face];
+    p_face = &game_object_faces3[face3];
     vec_colour = p_face->ExCol;
     vec_mode = p_face->Flags;
 
@@ -1652,7 +1652,7 @@ void draw_object_face3_textrd(ushort face)
 
     if ((p_face->GFlags & FGFlg_Unkn04) != 0)
     {
-        screen_position_face_render_cb(&point1, &point2, &point3, face, 1);
+        screen_position_face_render_cb(&point1, &point2, &point3, face3, 1);
     }
 }
 
@@ -1660,7 +1660,7 @@ void draw_object_face3_textrd(ushort face)
  * Draw rectangular face with textured surface, version D.
  * TODO: figure out how this version is unique.
  *
- * @param face4 Index of SingleObjectFace4 instance.
+ * @param face4 Index in `game_object_faces4` array.
  */
 void draw_object_face4d_textrd(ushort face4)
 {
@@ -1871,14 +1871,14 @@ void draw_object_face4d_textrd(ushort face4)
  *
  * The dark view is used to contrast with extremely intense light, like nuclear explosions.
  *
- * @param face Index of SingleObjectFace3 instance.
+ * @param face3 Index in `game_object_faces3` array.
  */
-void draw_object_face3_textrd_dk(ushort face)
+void draw_object_face3_textrd_dk(ushort face3)
 {
 #if 0
     asm volatile (
       "call ASM_draw_object_face3_textrd_dk\n"
-        : : "a" (face));
+        : : "a" (face3));
     return;
 #endif
     struct PolyPoint point1;
@@ -1886,7 +1886,7 @@ void draw_object_face3_textrd_dk(ushort face)
     struct PolyPoint point3;
     struct SingleObjectFace3 *p_face;
 
-    p_face = &game_object_faces3[face];
+    p_face = &game_object_faces3[face3];
     vec_colour = 0x40;
     vec_mode = 4;
 
@@ -2003,11 +2003,11 @@ void draw_object_face3_textrd_dk(ushort face)
     }
 }
 
-void draw_object_face3_deep_rdr(ushort face)
+void draw_object_face3_tran_tint(ushort face)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face3_deep_rdr\n"
+      "call ASM_draw_object_face3_tran_tint\n"
         : : "a" (face));
     return;
 #endif
@@ -2061,11 +2061,11 @@ void draw_object_face3_deep_rdr(ushort face)
     }
 }
 
-void draw_object_face4_deep_rdr(ushort face4)
+void draw_object_face4_tran_tint(ushort face4)
 {
 #if 0
     asm volatile (
-      "call ASM_draw_object_face4_deep_rdr\n"
+      "call ASM_draw_object_face4_tran_tint\n"
         : : "a" (face4));
     return;
 #endif
@@ -2150,7 +2150,7 @@ void draw_object_face4_deep_rdr(ushort face4)
 /**
  * Draw shrapnel polygon.
  *
- * @param shrap Index of Shrapnel instance.
+ * @param shrap Index in `shrapnel` array.
  */
 void draw_shrapnel(ushort shrap)
 {
@@ -2183,6 +2183,7 @@ void draw_shrapnel(ushort shrap)
         point3.Y = p_scrpoint->Y + dword_176D04;
     }
 
+    // Draw in both directions, so that rotating face would not disappear
     vec_mode = 0;
     vec_colour = colour_lookup[8];
     {

@@ -639,7 +639,7 @@ void draw_sort_sprite_frame_efct_v(int sspr)
 /**
  * Draw smoke cloud sprite.
  *
- * @param ph Index of Phwoar instance.
+ * @param ph Index in `phwoar` array.
  */
 void draw_phwoar(ushort ph)
 {
@@ -658,6 +658,11 @@ void draw_phwoar(ushort ph)
     draw_frame_on_screen(scr_x, scr_y, p_phwoar->f);
 }
 
+/**
+ * Draw flame sprite.
+ *
+ * @param flm Index in `FIRE_flame` array.
+ */
 void draw_fire_flame(ushort flm)
 {
     struct FireFlame *p_flame;

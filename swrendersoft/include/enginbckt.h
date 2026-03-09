@@ -43,7 +43,7 @@ extern "C" {
 
 enum DrawItemType {
     DrIT_NONE = 0x0,
-    DrIT_Unkn1 = 0x1,
+    DrIT_ObFace3Txtr = 0x1,
     DrIT_Unkn2 = 0x2,
     /** Frame of sprite elements, representing a static thing. */
     DrIT_SFrmStatc = 0x3,
@@ -52,7 +52,7 @@ enum DrawItemType {
     DrIT_Unkn6 = 0x6,
     DrIT_Unkn7 = 0x7,
     DrIT_Unkn8 = 0x8,
-    DrIT_Unkn9 = 0x9,
+    DrIT_ObFace4Txtr = 0x9,
     DrIT_Unkn10 = 0xA,
     DrIT_Unkn11 = 0xB,
     DrIT_SpObFace4 = 0xC,
@@ -61,15 +61,23 @@ enum DrawItemType {
     DrIT_Unkn14 = 0xE,
     DrIT_Unkn15 = 0xF,
     DrIT_Unkn16 = 0x10,
-    DrIT_Unkn17 = 0x11,
-    DrIT_Unkn18 = 0x12,
-    DrIT_SPersShdw = 0x13,
-    DrIT_Unkn20 = 0x14,
-    DrIT_Unkn21 = 0x15,
+    /** Reflective triangular face, from the object faces array. */
+    DrIT_ObFace3Refl,
+    /** Reflective quadrangular face, from the object faces array. */
+    DrIT_ObFace4Refl,
+    /** Sprite-based shadow of a person. */
+    DrIT_SPersShdw,
+    /** Triangular face from dedicated shrapnel array. */
+    DrIT_SharpnlPoly,
+    /** Frame of sprite elements from dedicated phwoar array. */
+    DrIT_SFrmPhwoar,
     DrIT_LongPropBar,
-    DrIT_Unkn23 = 0x17,
-    DrIT_Unkn24 = 0x18,
-    DrIT_Unkn25 = 0x19,
+    /** Semi-transparent quadrangular face, tinted with predefined colour. Used for deep radar. */
+    DrIT_ObFace4Tran,
+    /** Semi-transparent triangular face, tinted with predefined colour. Used for deep radar. */
+    DrIT_ObFace3Tran,
+    /** Flame sprite from dedicated fire array. */
+    DrIT_SFireFlame,
     /** Numeric value written is simple (non-sprite) font. */
     DrIT_Number,
     /** Short text message (without extra buffer) written is simple (non-sprite) font. */
