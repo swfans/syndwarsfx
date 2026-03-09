@@ -112,8 +112,8 @@ extern struct SortLine *game_sort_lines;
 extern struct SortLine *p_current_sort_line;
 extern ushort next_sort_line;
 
-extern TbPixel deep_radar_surface_col;
-extern TbPixel deep_radar_line_col;
+extern TbPixel face_transp_tinted_surface_col;
+extern TbPixel face_transp_tinted_line_col;
 
 extern ubyte engine_render_lights;
 

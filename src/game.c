@@ -1896,6 +1896,9 @@ void process_engine_unk3(void)
     process_explode();
     assert(vec_tmap[1] != NULL);
     vec_map = vec_tmap[1];
+    face_transp_tinted_surface_col = deep_radar_surface_col;
+    face_transp_tinted_line_col = deep_radar_line_col;
+
     p_locplayer = &players[local_player_no];
     if ((ingame.Flags & GamF_RenderScene) != 0)
     {

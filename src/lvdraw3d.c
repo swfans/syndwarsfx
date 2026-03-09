@@ -755,6 +755,8 @@ void func_2e440(void)
 
     assert(vec_tmap[1] != NULL);
     vec_map = vec_tmap[1];
+    face_transp_tinted_surface_col = deep_radar_surface_col;
+    face_transp_tinted_line_col = deep_radar_line_col;
 
     draw_screen();
 }

@@ -39,8 +39,6 @@
 
 .global EXPORT_SYMBOL(lbFontPtr);
 
-.global EXPORT_SYMBOL(deep_radar_surface_col);	/* 0x152E5C */
-.global EXPORT_SYMBOL(deep_radar_line_col);	/* 0x152E5D */
 .global EXPORT_SYMBOL(lbSeed);	/* 0x153240 */
 .global EXPORT_SYMBOL(dont_bother_with_explode_faces);	/* 0x154F74 */
 .global EXPORT_SYMBOL(pixmap);	/* 0x162280 */

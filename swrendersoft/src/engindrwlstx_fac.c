@@ -68,6 +68,9 @@ ushort next_special_obj_face4 = 1;
 
 ubyte engine_render_lights = 0;
 
+TbPixel face_transp_tinted_surface_col = 0;
+TbPixel face_transp_tinted_line_col = 0;
+
 /******************************************************************************/
 
 void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
@@ -2046,12 +2049,12 @@ void draw_object_face3_tran_tint(ushort face)
         point3.Y = p_scrpoint->Y + dword_176D04;
     }
 
-    vec_colour = deep_radar_line_col;
+    vec_colour = face_transp_tinted_line_col;
     poly_line(&point1, &point3);
     poly_line(&point2, &point3);
     poly_line(&point1, &point2);
 
-    vec_colour = deep_radar_surface_col;
+    vec_colour = face_transp_tinted_surface_col;
     vec_mode = 15;
     draw_trigpoly(&point1, &point2, &point3);
 
@@ -2076,7 +2079,7 @@ void draw_object_face4_tran_tint(ushort face4)
     struct PolyPoint point3;
 
     p_face4 = &game_object_faces4[face4];
-    vec_colour = deep_radar_surface_col;
+    vec_colour = face_transp_tinted_surface_col;
     vec_mode = 15;
 
     {
@@ -2128,7 +2131,7 @@ void draw_object_face4_tran_tint(ushort face4)
         draw_trigpoly(&point4, &point3, &point2);
     }
 
-    vec_colour = deep_radar_line_col;
+    vec_colour = face_transp_tinted_line_col;
 
     poly_line(&point1, &point2);
     poly_line(&point3, &point1);

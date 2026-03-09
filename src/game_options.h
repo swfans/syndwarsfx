@@ -203,6 +203,8 @@ extern ubyte net_game_play_flags;
 /** User set in-game brightess. */
 extern short user_sel_brightness;
 
+extern TbPixel deep_radar_surface_col;
+extern TbPixel deep_radar_line_col;
 /******************************************************************************/
 
 /** Gives national text with description of the action.

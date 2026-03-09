@@ -64,9 +64,6 @@ extern ubyte byte_176D49;
 extern short word_1A5834;
 extern short word_1A5836;
 
-TbPixel deep_radar_surface_col = 0xd8;
-TbPixel deep_radar_line_col = 0x64;
-
 /******************************************************************************/
 // from engindrwlstx_spr
 void draw_sort_line1a(ushort sln);
