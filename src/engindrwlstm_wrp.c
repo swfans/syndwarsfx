@@ -654,7 +654,6 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
     int scal_dx1, scal_dy1;
     int scal_dx2, scal_dy2;
     int length;
-    ushort face;
     ushort pt;
     TbBool neg_x, neg_y;
 
@@ -693,22 +692,11 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
         scal_dx2 = -scal_dx2;
     }
 
-    pt = next_screen_point;
-    if (pt + 4 > screen_points_limit)
+    p_face4 = draw_item_add_special_obj_face4(DrIT_SpObFace4, sort_key);
+    if (p_face4 == NULL) {
         return NULL;
+    }
 
-    face = next_special_obj_face4;
-    if (face + 1 > game_special_obj_faces4_limit)
-        return NULL;
-
-    next_screen_point += 4;
-    next_special_obj_face4++;
-
-    p_face4 = &game_special_obj_faces4[face];
-    p_face4->PointNo[1] = pt + 1;
-    p_face4->PointNo[2] = pt + 2;
-    p_face4->PointNo[3] = pt + 3;
-    p_face4->PointNo[0] = pt + 0;
     p_face4->ExCol = col;
     p_face4->Flags = 15;
 
@@ -720,19 +708,23 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
         word_1AA5FA = y1 - scal_dx1;
     }
 
-    p_specpt = &game_screen_point_pool[pt + 0];
+    pt = p_face4->PointNo[0];
+    p_specpt = &game_screen_point_pool[pt];
     p_specpt->X = word_1AA5F4;
     p_specpt->Y = word_1AA5F6;
 
-    p_specpt = &game_screen_point_pool[pt + 1];
+    pt = p_face4->PointNo[1];
+    p_specpt = &game_screen_point_pool[pt];
     p_specpt->X = word_1AA5F8;
     p_specpt->Y = word_1AA5FA;
 
-    p_specpt = &game_screen_point_pool[pt + 2];
+    pt = p_face4->PointNo[2];
+    p_specpt = &game_screen_point_pool[pt];
     p_specpt->X = x2 + scal_dy2;
     p_specpt->Y = y2 + scal_dx2;
 
-    p_specpt = &game_screen_point_pool[pt + 3];
+    pt = p_face4->PointNo[3];
+    p_specpt = &game_screen_point_pool[pt];
     p_specpt->X = x2 - scal_dy2;
     p_specpt->Y = y2 - scal_dx2;
 
@@ -741,7 +733,6 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, shor
     word_1AA5FA = y2 - scal_dx2;
     word_1AA5F4 = x2 + scal_dy2;
 
-    draw_item_add(DrIT_SpObFace4, face, sort_key);
     return p_face4;
 }
 
@@ -954,7 +945,6 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
     int scaled_r;
     int bckt;
     uint sftex;
-    ushort face;
     ushort pt;
 
     ep.X3d = x1 - engn_xc;
@@ -977,25 +967,33 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
     if ((ep.pp.Y + scaled_r < 0) || (ep.pp.Y - scaled_r > vec_window_height))
         return NULL;
 
-    pt = next_screen_point;
-    if (pt + 4 > screen_points_limit)
+    p_face4 = draw_item_add_special_obj_face4(DrIT_SpObFace4, bckt);
+    if (p_face4 == NULL) {
         return NULL;
-    next_screen_point += 4;
+    }
 
-    p_scrpoint = &game_screen_point_pool[pt + 0];
+    pt = p_face4->PointNo[0];
+    p_scrpoint = &game_screen_point_pool[pt];
     p_scrpoint->X = pp_X - scaled_r;
     p_scrpoint->Y = pp_Y - scaled_r;
-    p_scrpoint = &game_screen_point_pool[pt + 1];
+
+    pt = p_face4->PointNo[1];
+    p_scrpoint = &game_screen_point_pool[pt];
     p_scrpoint->X = pp_X + scaled_r;
     p_scrpoint->Y = pp_Y - scaled_r;
-    p_scrpoint = &game_screen_point_pool[pt + 2];
+
+    pt = p_face4->PointNo[3];
+    p_scrpoint = &game_screen_point_pool[pt];
     p_scrpoint->X = pp_X + scaled_r;
     p_scrpoint->Y = pp_Y + scaled_r;
-    p_scrpoint = &game_screen_point_pool[pt + 3];
+
+    pt = p_face4->PointNo[2];
+    p_scrpoint = &game_screen_point_pool[pt];
     p_scrpoint->X = pp_X - scaled_r;
     p_scrpoint->Y = pp_Y + scaled_r;
 
     sftex = tnext_floor_texture;
+    //TODO add floor texture limit check
     tnext_floor_texture += 1;
     p_sftex = &game_textures[sftex];
     p_sftex->TMapX1 = 96;
@@ -1008,21 +1006,9 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
     p_sftex->TMapY3 = 127;
     p_sftex->Page = 4;
 
-    face = next_special_obj_face4;
-    if (face + 1 > game_special_obj_faces4_limit)
-        return NULL;
-    next_special_obj_face4++;
-
-    p_face4 = &game_special_obj_faces4[face];
     p_face4->Texture = sftex;
-    p_face4->PointNo[0] = pt + 0;
-    p_face4->PointNo[1] = pt + 1;
-    p_face4->PointNo[3] = pt + 2;
-    p_face4->PointNo[2] = pt + 3;
     p_face4->Flags = 0x08 | 0x01;
     p_face4->GFlags = 1;
-
-    draw_item_add(DrIT_SpObFace4, face, bckt);
 
     return p_face4;
 }
