@@ -30,7 +30,7 @@
 #include "engintrns.h"
 
 #include "bigmap.h"
-#include "engindrwlstm.h"
+#include "engindrwlstm_wrp.h"
 #include "engindrwlstx.h"
 #include "frame_sprani.h"
 #include "game_sprts.h"

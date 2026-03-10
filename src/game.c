@@ -75,7 +75,7 @@
 #include "dos.h"
 #include "drawtext.h"
 #include "enginbckt.h"
-#include "engindrwlstm.h"
+#include "engindrwlstm_wrp.h"
 #include "engindrwlstx.h"
 #include "engindrwlstx_tng.h"
 #include "enginfexpl.h"

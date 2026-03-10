@@ -38,7 +38,7 @@
 #include "enginbckt.h"
 #include "engincam.h"
 #include "engincolour.h"
-#include "engindrwlstm.h"
+#include "engindrwlstm_wrp.h"
 #include "enginlights.h"
 #include "enginsngobjs.h"
 #include "enginsngtxtr.h"
@@ -66,32 +66,8 @@ extern short word_1A5836;
 
 /******************************************************************************/
 // from engindrwlstx_spr
-void draw_sort_line1a(ushort sln);
-void draw_sort_sprite1c(ushort sspr);
 void draw_hud_frame_on_screen_unscaled_but_scale_pos(short scr_x, short scr_y, ushort frm, int sscale);
 void draw_hud_frame_on_screen(short scr_x, short scr_y, ushort frm, int sscale);
-void draw_sort_sprite_frame_pers_v(int sspr);
-void draw_sort_sprite_frame_pers_b(int sspr);
-void draw_sort_sprite_frame_efct_v(int sspr);
-void draw_phwoar(ushort ph);
-void draw_sort_sprite_long_prop_bar(short sspr);
-void draw_sort_sprite_number(ushort sspr);
-void draw_sort_sprite_short_text(ushort sspr);
-void draw_fire_flame(ushort flm);
-// from engindrwlstx_fac
-void set_face_texture_uv(ushort stex, struct PolyPoint *p_pt1,
-  struct PolyPoint *p_pt2, struct PolyPoint *p_pt3, ubyte gflags);
-void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
-  struct PolyPoint *p_pt3, struct PolyPoint *p_pt4, ubyte gflags);
-void set_floor_texture_uv_damaged_ground(struct PolyPoint *p_pt1,
-  struct PolyPoint *p_pt2, struct PolyPoint *p_pt3, struct PolyPoint *p_pt4, ubyte neighbrs);
-void draw_object_face4g_textrd(ushort face4);
-void draw_object_face3_reflect(ushort face3);
-void draw_object_face4_reflect(ushort face4);
-void draw_object_face3g_textrd(ushort face);
-void draw_object_face4d_textrd_dk(ushort face4);
-void draw_ex_face(ushort exface);
-void draw_special_object_face4(ushort face4);
 
 ushort number_player_get_frame(struct Thing *p_person, ubyte n)
 {

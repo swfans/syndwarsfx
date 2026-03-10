@@ -27,6 +27,10 @@ u32 render_faces_flags = 0;
 
 s32 screen_points_limit = 16;
 s32 draw_items_limit = 16;
+s32 sort_lines_limit = 16;
+s32 sort_sprites_limit = 16;
+s32 floor_tiles_limit = 16;
+
 s32 game_textures_limit = 16;
 s32 game_anim_tmaps_limit = 16;
 s32 game_object_points_limit = 16;

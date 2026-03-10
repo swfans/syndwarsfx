@@ -12,6 +12,7 @@ libswrender_a_headers_src = \
   include/enginbckt.h \
   include/engincam.h \
   include/engincolour.h \
+  include/engindrwlstm.h \
   include/engindrwlstx.h \
   include/enginfexpl.h \
   include/enginfloor.h \
@@ -47,6 +48,7 @@ libswrender_a_SOURCES = \
   src/enginbckt.c \
   src/engincam.c \
   src/engincolour.c \
+  src/engindrwlstm.c \
   src/engindrwlstx.c \
   src/engindrwlstx_fac.c \
   src/engindrwlstx_spr.c \

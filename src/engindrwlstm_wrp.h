@@ -1,8 +1,8 @@
 /******************************************************************************/
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
-/** @file engindrwlstm.h
- *     Header file for engindrwlstm.c.
+/** @file engindrwlstm_wrp.h
+ *     Header file for engindrwlstm_wrp.c.
  * @par Purpose:
  *     Making drawlists for the 3D engine.
  * @par Comment:
@@ -16,8 +16,8 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef ENGINDRWLSTM_H
-#define ENGINDRWLSTM_H
+#ifndef ENGINDRWLSTM_WRP_H
+#define ENGINDRWLSTM_WRP_H
 
 #include "bftypes.h"
 

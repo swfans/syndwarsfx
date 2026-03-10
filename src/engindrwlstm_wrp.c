@@ -1,7 +1,7 @@
 /******************************************************************************/
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
-/** @file engindrwlstm.c
+/** @file engindrwlstm_wrp.c
  *     Making drawlists for the 3D engine.
  * @par Purpose:
  *     Implements functions for filling drawlists.
@@ -16,7 +16,7 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#include "engindrwlstm.h"
+#include "engindrwlstm_wrp.h"
 
 #include "bfendian.h"
 #include "bfmath.h"
@@ -24,11 +24,12 @@
 #include "bfutility.h"
 #include <assert.h>
 #include <limits.h>
+#include <string.h>
 
-#include "bigmap.h"
 #include "enginbckt.h"
 #include "engincam.h"
 #include "engincolour.h"
+#include "engindrwlstm.h"
 #include "engindrwlstx.h"
 #include "enginfloor.h"
 #include "enginpeff.h"
@@ -38,11 +39,14 @@
 #include "enginprops.h"
 #include "engintrns.h"
 #include "frame_sprani.h"
+
+#include "bigmap.h"
 #include "game.h"
 #include "game_data.h"
 #include "game_options.h"
 #include "game_speed.h"
 #include "matrix.h"
+#include "people.h"
 #include "swlog.h"
 #include "thing.h"
 #include "vehicle.h"
@@ -150,97 +154,6 @@ ubyte byte_152EF0[] = {
   10, 10,  5,  7,  5,  7,  7,  0,
 };
 
-/** Add a new draw item and return linked SortLine instance.
- *
- * @param ditype Draw item type, should be one of SortLine related types.
- * @param bckt Destination bucket for this draw item.
- * @return SortLine instance to fill, or NULL if arrays exceeded.
- */
-struct SortLine *draw_item_add_line(ubyte ditype, int bckt)
-{
-    struct SortLine *p_sline;
-
-    if (next_sort_line + 1 > mem_game[33].N)
-        return NULL;
-
-    p_sline = p_current_sort_line;
-    if (!draw_item_add(ditype, next_sort_line, bckt))
-        return NULL;
-
-    p_current_sort_line++;
-    next_sort_line++;
-
-    return p_sline;
-}
-
-/** Add a new draw item and return linked SortSprite instance.
- *
- * @param ditype Draw item type, should be one of SortSprite related types.
- * @param bckt Destination bucket for this draw item.
- * @return SortSprite instance to fill, or NULL if arrays exceeded.
- */
-struct SortSprite *draw_item_add_sprite(ubyte ditype, int bckt)
-{
-    struct SortSprite *p_sspr;
-
-    if (next_sort_sprite + 1 > mem_game[32].N)
-        return NULL;
-
-    p_sspr = p_current_sort_sprite;
-    if (!draw_item_add(ditype, next_sort_sprite, bckt))
-        return NULL;
-
-    p_current_sort_sprite++;
-    next_sort_sprite++;
-
-    return p_sspr;
-}
-
-/** Add a new draw item and return first of linked SpecialPoint instances.
- *
- * @param ditype Draw item type, should be one of SpecialPoint related types.
- * @param bckt Destination bucket for this draw item.
- * @param npoints Amount of consecutive points to reserve.
- * @return SpecialPoint instance to fill, or NULL if arrays exceeded.
- */
-struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset, int bckt, ushort npoints)
-{
-    struct SpecialPoint *p_scrpoint;
-
-    if (next_screen_point + npoints > screen_points_limit)
-        return NULL;
-
-    p_scrpoint = &game_screen_point_pool[next_screen_point];
-    if (!draw_item_add(ditype, offset, bckt))
-        return NULL;
-
-    next_screen_point += npoints;
-
-    return p_scrpoint;
-}
-
-/** Add a new draw item and return linked FloorTile instance.
- *
- * @param ditype Draw item type, should be one of FloorTile related types.
- * @param bckt Destination bucket for this draw item.
- * @return FloorTile instance to fill, or NULL if arrays exceeded.
- */
-struct FloorTile *draw_item_add_floor_tile(ubyte ditype, int bckt)
-{
-    struct FloorTile *p_floortl;
-
-    if (next_floor_tile + 1 > mem_game[26].N)
-        return NULL;
-
-    p_floortl = &game_floor_tiles[next_floor_tile];
-    if (!draw_item_add(ditype, next_floor_tile, bckt))
-        return NULL;
-
-    next_floor_tile++;
-
-    return p_floortl;
-}
-
 ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
 {
     struct ShEnginePoint sp1, sp2;
@@ -274,7 +187,8 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
     return sline;
 }
 
-ushort draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col)
+ushort draw_mapwho_vect_len(int x1, int y1, int z1,
+  int x2, int y2, int z2, int len, int col)
 {
     int dt_x, dt_y, dt_z;
     int dist;
@@ -2296,6 +2210,6 @@ void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
         cur_y = nxt_y;
         angle += dt_angle;
     }
-  next_screen_point = pt4;
+    next_screen_point = pt4;
 }
 /******************************************************************************/

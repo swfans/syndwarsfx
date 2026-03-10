@@ -35,7 +35,7 @@
 #include "enginzoom.h"
 
 #include "bigmap.h"
-#include "engindrwlstm.h"
+#include "engindrwlstm_wrp.h"
 #include "engindrwlstx.h"
 #include "enginsngtxtr.h"
 #include "game.h"

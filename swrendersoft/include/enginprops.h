@@ -87,6 +87,27 @@ extern s32 screen_points_limit;
  */
 extern s32 draw_items_limit;
 
+/** Amount of available sort lines, cached in render module to optimize speed.
+ *
+ * This variable is used many times while creating drawlist. It needs to be set
+ * by the app based on memory allocation.
+ */
+extern s32 sort_lines_limit;
+
+/** Amount of available sort sprites, cached in render module to optimize speed.
+ *
+ * This variable is used many times while creating drawlist. It needs to be set
+ * by the app based on memory allocation.
+ */
+extern s32 sort_sprites_limit;
+
+/** Amount of available floor tiles, cached in render module to optimize speed.
+ *
+ * This variable is used many times while creating drawlist. It needs to be set
+ * by the app based on memory allocation.
+ */
+extern s32 floor_tiles_limit;
+
 /** Amount of available quadrangular game textures, cached in render module to optimize speed.
  *
  * This variable is used many times while creating drawlist. It needs to be set
