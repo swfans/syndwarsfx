@@ -504,8 +504,8 @@ void build_grenade(struct Thing *p_thing)
     p_mapel = &game_my_big_map[128 * (p_thing->Z >> 16) + (p_thing->X >> 16)];
     get_thing_position_mapcoords(&tng_x, &tng_y, &tng_z, p_thing->ThingOffset);
 
-    draw_e_graphic(tng_x - engn_xc, tng_y >> 3, tng_z - engn_zc,
-      frame, p_thing->Radius, p_mapel->ShadeR, p_thing);
+    draw_thing_e_graphic(p_thing, tng_x - engn_xc, tng_y >> 3, tng_z - engn_zc,
+      frame, p_thing->Radius, p_mapel->ShadeR);
 }
 
 void build_static(struct SimpleThing *p_sthing)
@@ -518,11 +518,11 @@ void build_static(struct SimpleThing *p_sthing)
         return;
     p_mapel = &game_my_big_map[128 * (p_sthing->Z >> 16) + (p_sthing->X >> 16)];
 
-    draw_e_graphic(
+    draw_thing_e_graphic((struct Thing *)p_sthing,
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
       PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
-      frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
+      frame, p_sthing->Radius, p_mapel->ShadeR);
 }
 
 void build_laser_guided_piece(struct Thing *p_laser)
@@ -539,11 +539,11 @@ void build_dropped_item(struct SimpleThing *p_sthing)
     frame = p_sthing->Frame;
     p_mapel = &game_my_big_map[128 * (p_sthing->Z >> 16) + (p_sthing->X >> 16)];
 
-    draw_e_graphic(
+    draw_thing_e_graphic((struct Thing *)p_sthing,
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
       PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
-      frame, p_sthing->Radius, p_mapel->ShadeR, (struct Thing *)p_sthing);
+      frame, p_sthing->Radius, p_mapel->ShadeR);
 }
 
 void build_spark(struct SimpleThing *p_sthing)
@@ -560,11 +560,11 @@ void build_spark(struct SimpleThing *p_sthing)
 
 void build_unkn18(struct Thing *p_thing)
 {
-    draw_e_graphic(
+    draw_thing_e_graphic(p_thing,
       PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc,
       PRCCOORD_TO_YCOORD(p_thing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc,
-      nstart_ani[900], p_thing->Radius, 63, p_thing);
+      nstart_ani[900], p_thing->Radius, 63);
 }
 
 void build_electricity(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)

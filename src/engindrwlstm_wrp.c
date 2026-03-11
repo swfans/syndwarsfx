@@ -208,7 +208,8 @@ ushort draw_mapwho_vect_len(int x1, int y1, int z1,
     return draw_mapwho_vect(x1, y1, z1, x3, y3, z3, col);
 }
 
-void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing)
+void draw_e_graphic(int x, int y, int z, ushort frame,
+  int radius, int intensity, int depth_shift, intptr_t p_sitm)
 {
     struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
@@ -219,9 +220,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
-    scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
-        scr_depth += BUCKETS_COUNT;
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8) + depth_shift;
 
     p_sspr = draw_item_add_sprite(DrIT_SFrmStatc, BUCKET_MID + scr_depth);
     if (p_sspr == NULL) {
@@ -234,10 +233,11 @@ void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity
     p_sspr->Frame = frame;
     p_sspr->Brightness = intensity;
     p_sspr->Scale = 256;
-    p_sspr->SrcItem = (intptr_t)p_thing;
+    p_sspr->SrcItem = p_sitm;
 }
 
-void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int intensity, int scale)
+void draw_e_graphic_scale(int x, int y, int z, ushort frame,
+  int radius, int intensity, int scale)
 {
     struct ShEnginePoint sp;
     struct SortSprite *p_sspr;
@@ -264,9 +264,63 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int int
     p_sspr->SrcItem = (intptr_t)NULL;
 }
 
-void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth)
+void draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
+  ubyte angl, ubyte shangl, ushort shpak, short strng, intptr_t p_sitm)
 {
     struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_SPersShdw, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = shpak;
+    p_sspr->Frame = frm;
+    p_sspr->Brightness = shangl;
+    p_sspr->Angle = angl;
+    p_sspr->Scale = strng;
+    p_sspr->SrcItem = p_sitm;
+}
+
+void draw_pb_frame_basic(int scr_x, int scr_y, int scr_depth, int frame,
+  ubyte angl, short bright, intptr_t p_sitm)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmPersB, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->Frame = frame;
+    p_sspr->Brightness = bright;
+    p_sspr->Angle = angl;
+    p_sspr->Scale = 256;
+    p_sspr->SrcItem = p_sitm;
+}
+
+
+void draw_thing_e_graphic(struct Thing *p_thing, int x, int y, int z, ushort frame,
+  int radius, int intensity)
+{
+    int depth_shift;
+
+    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
+        depth_shift = BUCKETS_COUNT;
+    else
+        depth_shift = 0;
+
+    draw_e_graphic(x, y, z, frame, radius,
+      intensity, depth_shift, (intptr_t)p_thing);
+}
+
+void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth)
+{
     ushort frm, anmode;
     ushort shpak;
     short strng;
@@ -290,38 +344,17 @@ void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth
     shangl = p_thing->U.UPerson.Shadows[0];
     strng = p_thing->U.UPerson.Shadows[1];
 
-    p_sspr = draw_item_add_sprite(DrIT_SPersShdw, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL) {
-        return;
-    }
-
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
-    p_sspr->Z = shpak;
-    p_sspr->Frame = frm;
-    p_sspr->SrcItem = (intptr_t)p_thing;
-    p_sspr->Brightness = shangl;
-    p_sspr->Angle = angl;
-    p_sspr->Scale = strng;
+    draw_tall_spr_shadow(scr_x, scr_y, scr_depth, frm,
+      angl, shangl, shpak, strng, (intptr_t)p_thing);
 }
 
 void draw_pers_frame_basic(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
 {
-    struct SortSprite *p_sspr;
+    ubyte angl;
 
-    p_sspr = draw_item_add_sprite(DrIT_SFrmPersB, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL) {
-        return;
-    }
-
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
-    p_sspr->Z = 0;
-    p_sspr->Frame = frame;
-    p_sspr->SrcItem = (intptr_t)p_thing;
-    p_sspr->Brightness = bright;
-    p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
-    p_sspr->Scale = 256;
+    angl = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
+    draw_pb_frame_basic(scr_x, scr_y, scr_depth, frame,
+      angl, bright, (intptr_t)p_thing);
 }
 
 void draw_pers_frame_versioned(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
@@ -344,10 +377,10 @@ void draw_pers_frame_versioned(struct Thing *p_thing, int scr_x, int scr_y, int 
     p_sspr->Y = scr_y;
     p_sspr->Z = 0;
     p_sspr->Frame = frame;
-    p_sspr->SrcItem = (intptr_t)p_thing;
     p_sspr->Brightness = bright;
     p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
     p_sspr->Scale = SPR_FRAME_VERSIONS_PACK(frv[0], frv[1], frv[2], frv[3], frv[4]);
+    p_sspr->SrcItem = (intptr_t)p_thing;
 }
 
 void draw_pers_shield(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, short bright)

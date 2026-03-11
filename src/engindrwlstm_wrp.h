@@ -36,8 +36,10 @@ struct SingleFloorTexture;
 #pragma pack()
 /******************************************************************************/
 ushort draw_mapwho_vect_len(int x1, int y1, int z1, int x2, int y2, int z2, int len, int col);
-void draw_e_graphic(int x, int y, int z, ushort frame, int radius, int intensity, struct Thing *p_thing);
-void draw_e_graphic_scale(int x, int y, int z, ushort frame, int radius, int intensity, int scale);
+void draw_e_graphic_scale(int x, int y, int z, ushort frame,
+  int radius, int intensity, int scale);
+void draw_thing_e_graphic(struct Thing *p_thing, int x, int y, int z, ushort frame,
+  int radius, int intensity);
 void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity);
 void FIRE_draw_fire(struct SimpleThing *p_sthing);
 void draw_bang(struct SimpleThing *p_pow);
