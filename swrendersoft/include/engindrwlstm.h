@@ -87,9 +87,26 @@ struct SingleObjectFace4 *draw_item_add_special_obj_face4_no_pts(ubyte ditype, i
  */
 struct SingleObjectFace4 *draw_item_add_special_obj_face4(ubyte ditype, int bckt);
 
-ushort draw_mapwho_vect_len(int x1, int y1, int z1,
+void draw_mapwho_vect_len(int x1, int y1, int z1,
   int x2, int y2, int z2, int len, int col);
 
+void draw_e_graphic(int x, int y, int z, ushort frame,
+  int radius, int intensity, int depth_shift, intptr_t p_sitm);
+
+void draw_e_graphic_scale(int x, int y, int z, ushort frame,
+  int radius, int intensity, int scale, intptr_t p_sitm);
+
+void draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
+  ubyte angl, ubyte shangl, ushort shpak, short strng, intptr_t p_sitm);
+
+void draw_pb_frame_basic(int scr_x, int scr_y, int scr_depth, int frame,
+  ubyte angl, short bright, intptr_t p_sitm);
+
+void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy,
+  int num, int radius, TbPixel colour);
+
+void draw_e_text(int x, int y, int z, short scr_dx, short scr_dy,
+  const char *text, int radius, TbPixel colour);
 /******************************************************************************/
 #ifdef __cplusplus
 }

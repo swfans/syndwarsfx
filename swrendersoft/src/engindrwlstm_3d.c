@@ -19,10 +19,15 @@
 #include "engindrwlstm.h"
 
 #include "bfmath.h"
+#include "bfmemut.h"
+#include "bfutility.h"
+#include <string.h>
 
 #include "enginbckt.h"
 #include "engincam.h"
 #include "engindrwlstx.h"
+#include "enginpeff.h"
+#include "enginprops.h"
 #include "engintrns.h"
 
 /******************************************************************************/
@@ -64,7 +69,7 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
     return sline;
 }
 
-ushort draw_mapwho_vect_len(int x1, int y1, int z1,
+void draw_mapwho_vect_len(int x1, int y1, int z1,
   int x2, int y2, int z2, int len, int col)
 {
     int dt_x, dt_y, dt_z;
@@ -82,8 +87,157 @@ ushort draw_mapwho_vect_len(int x1, int y1, int z1,
     z3 = z1 + dt_z * len / dist;
     x3 = x1 + dt_x * len / dist;
 
-    return draw_mapwho_vect(x1, y1, z1, x3, y3, z3, col);
+    draw_mapwho_vect(x1, y1, z1, x3, y3, z3, col);
 }
 
+void draw_e_graphic(int x, int y, int z, ushort frame,
+  int radius, int intensity, int depth_shift, intptr_t p_sitm)
+{
+    struct ShEnginePoint sp;
+    struct SortSprite *p_sspr;
+    int scr_depth;
+
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+        y += waft_table[render_anim_turn & 0x1F] >> 3;
+
+    transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
+
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8) + depth_shift;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmStatc, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = sp.X;
+    p_sspr->Y = sp.Y;
+    p_sspr->Z = scr_depth;
+    p_sspr->Frame = frame;
+    p_sspr->Brightness = intensity;
+    p_sspr->Scale = 256;
+    p_sspr->SrcItem = p_sitm;
+}
+
+void draw_e_graphic_scale(int x, int y, int z, ushort frame,
+  int radius, int intensity, int scale, intptr_t p_sitm)
+{
+    struct ShEnginePoint sp;
+    struct SortSprite *p_sspr;
+    int scr_depth;
+
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+        y += waft_table[render_anim_turn & 0x1F] >> 3;
+
+    transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
+
+    scr_depth = sp.Depth - (((radius - 100) * overall_scale) >> 8);
+
+    p_sspr = draw_item_add_sprite(DrIT_Unkn15, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = sp.X;
+    p_sspr->Y = sp.Y;
+    p_sspr->Z = scr_depth;
+    p_sspr->Frame = frame;
+    p_sspr->Brightness = intensity;
+    p_sspr->Scale = scale;
+    p_sspr->SrcItem = p_sitm;
+}
+
+void draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
+  ubyte angl, ubyte shangl, ushort shpak, short strng, intptr_t p_sitm)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_SPersShdw, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = shpak;
+    p_sspr->Frame = frm;
+    p_sspr->Brightness = shangl;
+    p_sspr->Angle = angl;
+    p_sspr->Scale = strng;
+    p_sspr->SrcItem = p_sitm;
+}
+
+void draw_pb_frame_basic(int scr_x, int scr_y, int scr_depth, int frame,
+  ubyte angl, short bright, intptr_t p_sitm)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmPersB, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->Frame = frame;
+    p_sspr->Brightness = bright;
+    p_sspr->Angle = angl;
+    p_sspr->Scale = 256;
+    p_sspr->SrcItem = p_sitm;
+}
+
+void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy,
+  int num, int radius, TbPixel colour)
+{
+    struct ShEnginePoint sp;
+    struct SortSprite *p_sspr;
+    int scr_depth;
+
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+        y += waft_table[render_anim_turn & 0x1F] >> 3;
+
+    transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
+
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
+
+    p_sspr = draw_item_add_sprite(DrIT_Number, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = sp.X + scr_dx;
+    p_sspr->Y = sp.Y + scr_dy;
+    p_sspr->Z = scr_depth;
+    p_sspr->Frame = colour;
+    p_sspr->Brightness = 0;
+    p_sspr->Scale = 256;
+    p_sspr->SrcItem = (intptr_t)num;
+}
+
+void draw_e_text(int x, int y, int z, short scr_dx, short scr_dy,
+  const char *text, int radius, TbPixel colour)
+{
+    struct ShEnginePoint sp;
+    struct SortSprite *p_sspr;
+    int scr_depth;
+
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+        y += waft_table[render_anim_turn & 0x1F] >> 3;
+
+    transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
+
+    scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
+
+    p_sspr = draw_item_add_sprite(DrIT_ShortText, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = sp.X + scr_dx;
+    p_sspr->Y = sp.Y + scr_dy;
+    p_sspr->Z = scr_depth;
+    p_sspr->Frame = colour;
+    LbMemoryCopy(&p_sspr->SrcItem, text, min(strlen(text)+1, 8));
+}
 
 /******************************************************************************/

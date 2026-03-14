@@ -616,7 +616,8 @@ void build_scale_effect(struct SimpleThing *p_sthing)
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
       PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
-      frame, p_sthing->Radius, 32, p_sthing->Object);
+      frame, p_sthing->Radius, 32, p_sthing->Object,
+      (intptr_t)p_sthing);
 }
 
 void build_nuclear_bomb(struct SimpleThing *p_sthing)
