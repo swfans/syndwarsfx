@@ -1041,7 +1041,7 @@ struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
 
     p_face4->Texture = sftex;
     p_face4->Flags = 0x08 | 0x01;
-    p_face4->GFlags = 1;
+    p_face4->GFlags = FGFlg_Unkn01;
 
     return p_face4;
 }
@@ -1281,6 +1281,8 @@ TbBool triangle_not_visible(struct SpecialPoint *p_specpt1,
             (p_specpt2->Y - p_specpt1->Y) * (p_specpt3->X - p_specpt2->X) <= 0);
 }
 
+#define VisMDF_SkipFlg20 0x0100
+
 int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4, ushort gflags)
 {
     struct SinglePoint *p_snpoint1;
@@ -1328,10 +1330,13 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
     if (p_snpoint4 != NULL)
         flags_any |= p_snpoint4->Flags;
 
-    if ((flags_any & 0x20) != 0 || (flags_all & 0xF) != 0)
+    if (((gflags & VisMDF_SkipFlg20) == 0) && ((flags_any & 0x20) != 0))
         return SHRT_MIN - 1;
 
-    if ((gflags & 0x01) == 0) {
+    if ((flags_all & 0xF) != 0)
+        return SHRT_MIN - 1;
+
+    if ((gflags & FGFlg_Unkn01) == 0) {
         if (triangle_not_visible(p_specpt1, p_specpt2, p_specpt3))
             return SHRT_MIN - 1;
     }
@@ -1438,7 +1443,6 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         struct ShEnginePoint sp1, sp2, sp3;
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
-        ushort flags_all;
 
         // each transform_rot_object_shpoint() call could reserve a point
         if (next_screen_point + 4 > screen_points_limit) {
@@ -1446,7 +1450,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         }
 
         p_face = &game_object_faces3[face];
-        p_face->GFlags &= ~0x1C;
+        p_face->GFlags &= ~(FGFlg_Unkn10|FGFlg_Unkn08|FGFlg_Unkn04);
         p_face->GFlags |= faceGF;
         p_face->WalkHeader = faceWH;
 
@@ -1459,27 +1463,14 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[1]);
 
-        depth_max = SHRT_MIN;
-        if (depth_max < sp1.Depth)
-            depth_max = sp1.Depth;
-        if (depth_max < sp2.Depth)
-            depth_max = sp2.Depth;
-        if (depth_max < sp3.Depth)
-            depth_max = sp3.Depth;
-
-        flags_all = sp1.Flags & sp2.Flags & sp3.Flags;
-
-        if ((flags_all & 0xF) != 0)
+        depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
+          p_face->PointNo[2], p_face->PointNo[1], -1,
+          p_face->GFlags | VisMDF_SkipFlg20);
+        if (depth_max < SHRT_MIN)
             continue;
 
-        if ((p_face->GFlags & 0x01) == 0) {
-            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
-              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
-                continue;
-        }
-
         ubyte ditype;
-        if ((p_face->GFlags & 0x80) == 0)
+        if ((p_face->GFlags & FGFlg_Unkn80) == 0)
             ditype = DrIT_Unkn7;
         else
             ditype = DrIT_ObFace3Refl;
@@ -1501,14 +1492,13 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         struct ShEnginePoint sp1, sp2, sp3, sp4;
         struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
-        ushort flags_all;
 
         if (next_screen_point + 5 > screen_points_limit) {
             break;
         }
 
         p_face4 = &game_object_faces4[face];
-        p_face4->GFlags &= ~0x1C;
+        p_face4->GFlags &= ~(FGFlg_Unkn10|FGFlg_Unkn08|FGFlg_Unkn04);
         p_face4->GFlags |= faceGF;
         p_face4->WalkHeader = faceWH;
 
@@ -1524,29 +1514,14 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         transform_rot_object_shpoint(&sp4, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[3]);
 
-        depth_max = SHRT_MIN;
-        if (depth_max < sp1.Depth)
-            depth_max = sp1.Depth;
-        if (depth_max < sp2.Depth)
-            depth_max = sp2.Depth;
-        if (depth_max < sp3.Depth)
-            depth_max = sp3.Depth;
-        if (depth_max < sp4.Depth)
-            depth_max = sp4.Depth;
-
-        flags_all = sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags;
-
-        if ((flags_all & 0xF) != 0)
+        depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
+          p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
+          p_face4->GFlags | VisMDF_SkipFlg20);
+        if (depth_max < SHRT_MIN)
             continue;
 
-        if ((p_face4->GFlags & 0x01) == 0) {
-            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
-              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
-                continue;
-        }
-
         ubyte ditype;
-        if ((p_face4->GFlags & 0x80) == 0)
+        if ((p_face4->GFlags & FGFlg_Unkn80) == 0)
             ditype = DrIT_Unkn16;
         else
             ditype = DrIT_ObFace4Refl;
@@ -1660,7 +1635,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         if ((flags_all & 0xF) != 0)
             continue;
 
-        if ((p_face->GFlags & 0x01) == 0) {
+        if ((p_face->GFlags & FGFlg_Unkn01) == 0) {
             if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
               (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
                 continue;
@@ -1740,7 +1715,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         if ((flags_all & 0xF) != 0)
             continue;
 
-        if ((p_face->GFlags & 0x01) == 0) {
+        if ((p_face->GFlags & FGFlg_Unkn01) == 0) {
             if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
               (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
                 continue;
@@ -1841,7 +1816,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
             struct SpecialPoint *p_specpt2;
 
             p_face4 = &game_object_faces4[face];
-            if ((p_face4->GFlags & 0x08) != 0)
+            if ((p_face4->GFlags & FGFlg_Unkn08) != 0)
             {
                 int specpt;
                 int depth_max, bckt;
