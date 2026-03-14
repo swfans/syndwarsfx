@@ -1302,8 +1302,13 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
     p_snpoint2 = &game_object_points[pt2];
     p_specpt2 = &game_screen_point_pool[p_snpoint2->PointOffset];
 
-    p_snpoint3 = &game_object_points[pt3];
-    p_specpt3 = &game_screen_point_pool[p_snpoint3->PointOffset];
+    if (pt3 >= 0) {
+        p_snpoint3 = &game_object_points[pt3];
+        p_specpt3 = &game_screen_point_pool[p_snpoint3->PointOffset];
+    } else {
+        p_snpoint3 = NULL;
+        p_specpt3 = NULL;
+    }
 
     if (pt4 >= 0) {
         p_snpoint4 = &game_object_points[pt4];
@@ -1318,15 +1323,19 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
         depth_max = p_specpt1->Z;
     if (depth_max < p_specpt2->Z)
         depth_max = p_specpt2->Z;
-    if (depth_max < p_specpt3->Z)
+    if ((p_specpt3 != NULL) && (depth_max < p_specpt3->Z))
         depth_max = p_specpt3->Z;
     if ((p_specpt4 != NULL) && (depth_max < p_specpt4->Z))
         depth_max = p_specpt4->Z;
 
-    flags_all = p_snpoint3->Flags & p_snpoint2->Flags & p_snpoint1->Flags;
+    flags_all = p_snpoint2->Flags & p_snpoint1->Flags;
+    if (p_snpoint3 != NULL)
+        flags_all &= p_snpoint3->Flags;
     if (p_snpoint4 != NULL)
         flags_all &= p_snpoint4->Flags;
-    flags_any = p_snpoint3->Flags | p_snpoint2->Flags | p_snpoint1->Flags;
+    flags_any = p_snpoint2->Flags | p_snpoint1->Flags;
+    if (p_snpoint3 != NULL)
+        flags_any |= p_snpoint3->Flags;
     if (p_snpoint4 != NULL)
         flags_any |= p_snpoint4->Flags;
 
@@ -1336,7 +1345,7 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
     if ((flags_all & 0xF) != 0)
         return SHRT_MIN - 1;
 
-    if ((gflags & FGFlg_Unkn01) == 0) {
+    if (((gflags & FGFlg_Unkn01) == 0) && (p_specpt3 != NULL)) {
         if (triangle_not_visible(p_specpt1, p_specpt2, p_specpt3))
             return SHRT_MIN - 1;
     }
@@ -1440,7 +1449,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp1, sp2, sp3;
+        struct ShEnginePoint sp;
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
 
@@ -1454,13 +1463,13 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         p_face->GFlags |= faceGF;
         p_face->WalkHeader = faceWH;
 
-        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[0]);
 
-        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[2]);
 
-        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[1]);
 
         depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
@@ -1489,7 +1498,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp1, sp2, sp3, sp4;
+        struct ShEnginePoint sp;
         struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
 
@@ -1502,16 +1511,16 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         p_face4->GFlags |= faceGF;
         p_face4->WalkHeader = faceWH;
 
-        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[0]);
 
-        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[2]);
 
-        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[1]);
 
-        transform_rot_object_shpoint(&sp4, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[3]);
 
         depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
@@ -1602,10 +1611,9 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp1, sp2, sp3;
+        struct ShEnginePoint sp;
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
-        ushort flags_all;
 
         if (next_screen_point + 4 > screen_points_limit) {
             break;
@@ -1613,33 +1621,20 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
 
         p_face = &game_object_faces3[face];
 
-        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UObject.MatrixIndex, p_face->PointNo[0]);
 
-        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UObject.MatrixIndex, p_face->PointNo[2]);
 
-        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
           p_thing->U.UObject.MatrixIndex, p_face->PointNo[1]);
 
-        depth_max = SHRT_MIN;
-        if (depth_max < sp1.Depth)
-            depth_max = sp1.Depth;
-        if (depth_max < sp2.Depth)
-            depth_max = sp2.Depth;
-        if (depth_max < sp3.Depth)
-            depth_max = sp3.Depth;
-
-        flags_all = sp1.Flags & sp2.Flags & sp3.Flags;
-
-        if ((flags_all & 0xF) != 0)
+        depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
+          p_face->PointNo[2], p_face->PointNo[1], -1,
+          p_face->GFlags | VisMDF_SkipFlg20);
+        if (depth_max < SHRT_MIN)
             continue;
-
-        if ((p_face->GFlags & FGFlg_Unkn01) == 0) {
-            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
-              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
-                continue;
-        }
 
         ubyte ditype;
         ditype = DrIT_ObFace3Txtr;
@@ -1677,49 +1672,33 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp1, sp2, sp3, sp4;
-        struct SingleObjectFace4 *p_face;
+        struct ShEnginePoint sp;
+        struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
-        ushort flags_all;
 
         if (next_screen_point + 5 > screen_points_limit) {
             break;
         }
 
-        p_face = &game_object_faces4[face];
+        p_face4 = &game_object_faces4[face];
 
-        transform_rot_object_shpoint(&sp1, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face->PointNo[0]);
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[0]);
 
-        transform_rot_object_shpoint(&sp2, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face->PointNo[2]);
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[2]);
 
-        transform_rot_object_shpoint(&sp3, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face->PointNo[1]);
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[1]);
 
-        transform_rot_object_shpoint(&sp4, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face->PointNo[3]);
+        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
+          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[3]);
 
-        depth_max = SHRT_MIN;
-        if (depth_max < sp1.Depth)
-            depth_max = sp1.Depth;
-        if (depth_max < sp2.Depth)
-            depth_max = sp2.Depth;
-        if (depth_max < sp3.Depth)
-            depth_max = sp3.Depth;
-        if (depth_max < sp4.Depth)
-            depth_max = sp4.Depth;
-
-        flags_all = sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags;
-
-        if ((flags_all & 0xF) != 0)
+        depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
+          p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
+          p_face4->GFlags | VisMDF_SkipFlg20);
+        if (depth_max < SHRT_MIN)
             continue;
-
-        if ((p_face->GFlags & FGFlg_Unkn01) == 0) {
-            if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
-              (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
-                continue;
-        }
 
         ubyte ditype;
         ditype = DrIT_ObFace4Txtr;
@@ -1821,7 +1800,6 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 int specpt;
                 int depth_max, bckt;
                 int dxc, dyc, dzc;
-                ushort flags_all, flags_any;
 
                 specpt = next_screen_point;
                 next_screen_point += 2;
@@ -1854,16 +1832,10 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 p_specpt2->Y = sp3.Y;
                 p_specpt2->Z = sp3.Depth;
 
-                depth_max = SHRT_MIN;
-                if (depth_max < p_specpt1->Z)
-                    depth_max = p_specpt1->Z;
-                if (depth_max < p_specpt2->Z)
-                    depth_max = p_specpt2->Z;
-
-                flags_any = p_snpoint2->Flags | p_snpoint1->Flags;
-                flags_all = p_snpoint2->Flags & p_snpoint1->Flags;
-
-                if ((flags_any & 0x20) != 0 || (flags_all & 0xF) != 0)
+                depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
+                  p_face4->PointNo[1], -1, -1,
+                  p_face4->GFlags);
+                if (depth_max < SHRT_MIN)
                     continue;
 
                 ubyte ditype;
