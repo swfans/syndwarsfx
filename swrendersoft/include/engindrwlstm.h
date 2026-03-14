@@ -113,11 +113,23 @@ void enlist_draw_frame_pers_rot_versioned(int scr_x, int scr_y, int scr_depth,
 void enlist_draw_frame_effect_versioned(int scr_x, int scr_y, int scr_depth,
   int frame, ubyte *frv, ubyte angl, short bright, intptr_t p_sitm);
 
-/** Enlist drawing flame sprites in a list.
+/** Enlist drawing flame sprites from a list.
  *
  * @param flame_beg Index in `FIRE_flame` array of a first item in linked list.
  */
 void enlist_draw_fire_flames(ushort flame_beg);
+
+/** Enlist drawing phwoar sprites from a list.
+ *
+ * @param phwoar_beg Index in `phwoar` array of a first item in linked list.
+ */
+void enlist_draw_bang_phwoars(ushort phwoar_beg);
+
+/** Enlist drawing shrapnel sprites from a list.
+ *
+ * @param shrapnel_beg Index in `shrapnel` array of a first item in linked list.
+ */
+void enlist_draw_bang_shrapnels(ushort shrapnel_beg);
 
 /** Enlist drawing a number at given map coordinates.
  *

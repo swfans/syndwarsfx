@@ -117,10 +117,10 @@ extern struct BulStart bul_starts[4000];
 
 extern struct unkn_mech_struc3 *unkn_mech_arr3;
 
-extern short word_1AA5F4;
-extern short word_1AA5F6;
-extern short word_1AA5F8;
-extern short word_1AA5FA;
+short word_1AA5F4 = 0;
+short word_1AA5F6 = 0;
+short word_1AA5F8 = 0;
+short word_1AA5FA = 0;
 
 extern ushort zig_zag[55];
 
@@ -291,129 +291,12 @@ void FIRE_draw_fire(struct SimpleThing *p_sthing)
 
 void draw_bang_phwoar(struct SimpleThing *p_pow)
 {
-    struct Phwoar *p_phwoar;
-    ushort phw;
-
-    for (phw = p_pow->U.UBang.phwoar; phw != 0; phw = p_phwoar->child)
-    {
-        struct ShEnginePoint sp;
-        struct SpecialPoint *p_scrpoint;
-        int x, y, z;
-
-        p_phwoar = &phwoar[phw];
-        x = (p_phwoar->x >> 8) - engn_xc;
-        z = (p_phwoar->z >> 8) - engn_zc;
-        y = PRCCOORD_TO_YCOORD(p_phwoar->y) - engn_yc;
-
-        transform_shpoint(&sp, x, y - 8 * engn_yc, z);
-
-        p_phwoar->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_SFrmPhwoar, phw, BUCKET_MID + sp.Depth - 100, 1);
-        if (p_scrpoint == NULL) {
-            break;
-        }
-
-        p_scrpoint->X = sp.X;
-        p_scrpoint->Y = sp.Y;
-        p_scrpoint->Z = sp.Depth;
-    }
+    enlist_draw_bang_phwoars(p_pow->U.UBang.phwoar);
 }
 
 void draw_bang_shrapnel(struct SimpleThing *p_pow)
 {
-    struct Shrapnel *p_shrapnel;
-    ushort shrap;
-
-    for (shrap = p_pow->U.UBang.shrapnel; shrap != 0; shrap = p_shrapnel->child)
-    {
-        struct ShEnginePoint sp1, sp2, sp3;
-        struct SpecialPoint *p_scrpoint;
-        int x, y, z;
-        int x_pcc, x_pcs, y_msc, y_mss, x_mmc, y_pps;
-        int z_ps, z_ms;
-        int scr_depth;
-
-        p_shrapnel = &shrapnel[shrap];
-        if ((p_shrapnel->type < 1) || (p_shrapnel->type > 3))
-            continue;
-
-        {
-            int cos_yaw, cos_pitch, sin_yaw, sin_pitch, tmp;
-            int sh_cc, sh_cs, sh_sc, sh_ss, sh_z;
-            short shrap_yaw, shrap_pitch;
-
-            shrap_yaw = 8 * p_shrapnel->yaw;
-            shrap_pitch = 8 * p_shrapnel->pitch;
-            cos_yaw = lbSinTable[shrap_yaw + LbFPMath_PI/2];
-            cos_pitch = lbSinTable[shrap_pitch + LbFPMath_PI/2];
-            sin_pitch = lbSinTable[shrap_pitch];
-            sin_yaw = lbSinTable[shrap_yaw];
-
-            tmp = (cos_pitch * cos_yaw) & 0xFFFF0000;
-            tmp |= ((u64)(cos_pitch * (s64)cos_yaw) >> 32) & 0xFFFF;
-            sh_cc = (int)bw_rotl32(tmp, 16) >> 10;
-
-            tmp = (cos_pitch * sin_yaw) & 0xFFFF0000;
-            tmp |= ((u64)(cos_pitch * (s64)sin_yaw) >> 32) & 0xFFFF;
-            sh_cs = (int)bw_rotl32(tmp, 16) >> 10;
-
-            tmp = (sin_pitch * cos_yaw) & 0xFFFF0000;
-            tmp |= ((u64)(sin_pitch * (s64)cos_yaw) >> 32) & 0xFFFF;
-            sh_sc = (int)bw_rotl32(tmp, 16) >> 10;
-
-            tmp = (sin_pitch * sin_yaw) & 0xFFFF0000;
-            tmp |= ((u64)(sin_pitch * (s64)sin_yaw) >> 32) & 0xFFFF;
-            sh_ss = (int)bw_rotl32(tmp, 16) >> 10;
-
-            sh_z = sin_yaw >> 10;
-
-            x = (p_shrapnel->x >> 8) - engn_xc;
-            y = PRCCOORD_TO_YCOORD(p_shrapnel->y) - engn_yc;
-            z = (p_shrapnel->z >> 8) - engn_zc;
-
-            x_pcc = x + sh_cc;
-            y_msc = y - sh_sc;
-            x_pcs = x + sh_cs;
-            y_mss = y - sh_ss;
-            y_pps = y + sh_sc + sh_ss;
-            x_mmc = x - sh_cc - sh_cs;
-            z_ps = z + sh_z;
-            z_ms = z - sh_z;
-        }
-
-        transform_shpoint(&sp1, x_pcc, y_msc - 8 * engn_yc, z_ms);
-        transform_shpoint(&sp2, x_pcs, y_mss - 8 * engn_yc, z);
-        transform_shpoint(&sp3, x_mmc, y_pps - 8 * engn_yc, z_ps);
-
-        if (((sp2.Flags & sp1.Flags & sp3.Flags) & 0xF) != 0)
-            continue;
-
-        scr_depth = sp2.Depth;
-        if (scr_depth >= sp3.Depth)
-            scr_depth = sp3.Depth;
-        if (scr_depth > sp1.Depth)
-            scr_depth = sp1.Depth;
-
-        p_shrapnel->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_SharpnlPoly, shrap, BUCKET_MID + scr_depth, 3);
-        if (p_scrpoint == NULL) {
-            break;
-        }
-
-        p_scrpoint->X = sp1.X;
-        p_scrpoint->Y = sp1.Y;
-        p_scrpoint->Z = sp1.Depth;
-        p_scrpoint++;
-
-        p_scrpoint->X = sp2.X;
-        p_scrpoint->Y = sp2.Y;
-        p_scrpoint->Z = sp2.Depth;
-        p_scrpoint++;
-
-        p_scrpoint->X = sp3.X;
-        p_scrpoint->Y = sp3.Y;
-        p_scrpoint->Z = sp3.Depth;
-    }
+    enlist_draw_bang_shrapnels(p_pow->U.UBang.shrapnel);
 }
 
 struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, short y2,

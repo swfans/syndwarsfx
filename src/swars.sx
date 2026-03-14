@@ -179044,16 +179044,7 @@ GLOBAL (minimum_explode_and)	/* 0x1AA5EC */
 		.long	0x0
 GLOBAL (minimum_explode_depth)	/* 0x1AA5F0 */
 		.long	0x0
-GLOBAL (word_1AA5F4)	/* 0x1AA5F4 */
-		.short  0x0
-GLOBAL (word_1AA5F6)	/* 0x1AA5F6 */
-		.short  0x0
-GLOBAL (word_1AA5F8)	/* 0x1AA5F8 */
-		.short  0x0
-GLOBAL (word_1AA5FA)	/* 0x1AA5FA */
-		.short  0x0
-data_1aa5fc:
-		.fill   0x64
+
 data_1aa660:
 		.short  0x0
 data_1aa662:

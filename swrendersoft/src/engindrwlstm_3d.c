@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "engindrwlstm.h"
 
+#include "bfendian.h"
 #include "bfmath.h"
 #include "bfmemut.h"
 #include "bfutility.h"
@@ -259,6 +260,133 @@ void enlist_draw_fire_flames(ushort flame_beg)
         p_scrpoint->X = sp.X;
         p_scrpoint->Y = sp.Y;
         p_scrpoint->Z = sp.Depth;
+    }
+}
+
+void enlist_draw_bang_phwoars(ushort phwoar_beg)
+{
+    struct Phwoar *p_phwoar;
+    ushort phw;
+
+    for (phw = phwoar_beg; phw != 0; phw = p_phwoar->child)
+    {
+        struct ShEnginePoint sp;
+        struct SpecialPoint *p_scrpoint;
+        int cor_dx, cor_dy, cor_dz;
+
+        p_phwoar = &phwoar[phw];
+        cor_dx = (p_phwoar->x >> 8) - engn_xc;
+        cor_dz = (p_phwoar->z >> 8) - engn_zc;
+        cor_dy = (p_phwoar->y >> 5) - engn_yc;
+
+        transform_shpoint(&sp, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
+
+        p_phwoar->PointOffset = next_screen_point;
+        p_scrpoint = draw_item_add_points(DrIT_SFrmPhwoar, phw, BUCKET_MID + sp.Depth - 100, 1);
+        if (p_scrpoint == NULL) {
+            break;
+        }
+
+        p_scrpoint->X = sp.X;
+        p_scrpoint->Y = sp.Y;
+        p_scrpoint->Z = sp.Depth;
+    }
+}
+
+void enlist_draw_bang_shrapnels(ushort shrapnel_beg)
+{
+    struct Shrapnel *p_shrapnel;
+    ushort shrap;
+
+    for (shrap = shrapnel_beg; shrap != 0; shrap = p_shrapnel->child)
+    {
+        struct ShEnginePoint sp1, sp2, sp3;
+        struct SpecialPoint *p_scrpoint;
+        int x, y, z;
+        int x_pcc, x_pcs, y_msc, y_mss, x_mmc, y_pps;
+        int z_ps, z_ms;
+        int scr_depth;
+
+        p_shrapnel = &shrapnel[shrap];
+        if ((p_shrapnel->type < 1) || (p_shrapnel->type > 3))
+            continue;
+
+        {
+            int cos_yaw, cos_pitch, sin_yaw, sin_pitch, tmp;
+            int sh_cc, sh_cs, sh_sc, sh_ss, sh_z;
+            short shrap_yaw, shrap_pitch;
+
+            shrap_yaw = 8 * p_shrapnel->yaw;
+            shrap_pitch = 8 * p_shrapnel->pitch;
+            cos_yaw = lbSinTable[shrap_yaw + LbFPMath_PI/2];
+            cos_pitch = lbSinTable[shrap_pitch + LbFPMath_PI/2];
+            sin_pitch = lbSinTable[shrap_pitch];
+            sin_yaw = lbSinTable[shrap_yaw];
+
+            tmp = (cos_pitch * cos_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(cos_pitch * (s64)cos_yaw) >> 32) & 0xFFFF;
+            sh_cc = (int)bw_rotl32(tmp, 16) >> 10;
+
+            tmp = (cos_pitch * sin_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(cos_pitch * (s64)sin_yaw) >> 32) & 0xFFFF;
+            sh_cs = (int)bw_rotl32(tmp, 16) >> 10;
+
+            tmp = (sin_pitch * cos_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(sin_pitch * (s64)cos_yaw) >> 32) & 0xFFFF;
+            sh_sc = (int)bw_rotl32(tmp, 16) >> 10;
+
+            tmp = (sin_pitch * sin_yaw) & 0xFFFF0000;
+            tmp |= ((u64)(sin_pitch * (s64)sin_yaw) >> 32) & 0xFFFF;
+            sh_ss = (int)bw_rotl32(tmp, 16) >> 10;
+
+            sh_z = sin_yaw >> 10;
+
+            x = (p_shrapnel->x >> 8) - engn_xc;
+            y = (p_shrapnel->y >> 5) - engn_yc;
+            z = (p_shrapnel->z >> 8) - engn_zc;
+
+            x_pcc = x + sh_cc;
+            y_msc = y - sh_sc;
+            x_pcs = x + sh_cs;
+            y_mss = y - sh_ss;
+            y_pps = y + sh_sc + sh_ss;
+            x_mmc = x - sh_cc - sh_cs;
+            z_ps = z + sh_z;
+            z_ms = z - sh_z;
+        }
+
+        transform_shpoint(&sp1, x_pcc, y_msc - 8 * engn_yc, z_ms);
+        transform_shpoint(&sp2, x_pcs, y_mss - 8 * engn_yc, z);
+        transform_shpoint(&sp3, x_mmc, y_pps - 8 * engn_yc, z_ps);
+
+        if (((sp2.Flags & sp1.Flags & sp3.Flags) & 0xF) != 0)
+            continue;
+
+        scr_depth = sp2.Depth;
+        if (scr_depth >= sp3.Depth)
+            scr_depth = sp3.Depth;
+        if (scr_depth > sp1.Depth)
+            scr_depth = sp1.Depth;
+
+        p_shrapnel->PointOffset = next_screen_point;
+        p_scrpoint = draw_item_add_points(DrIT_SharpnlPoly, shrap, BUCKET_MID + scr_depth, 3);
+        if (p_scrpoint == NULL) {
+            break;
+        }
+
+        p_scrpoint->X = sp1.X;
+        p_scrpoint->Y = sp1.Y;
+        p_scrpoint->Z = sp1.Depth;
+        p_scrpoint++;
+
+        p_scrpoint->X = sp2.X;
+        p_scrpoint->Y = sp2.Y;
+        p_scrpoint->Z = sp2.Depth;
+        p_scrpoint++;
+
+        p_scrpoint->X = sp3.X;
+        p_scrpoint->Y = sp3.Y;
+        p_scrpoint->Z = sp3.Depth;
     }
 }
 
