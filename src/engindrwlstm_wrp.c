@@ -1278,6 +1278,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
 {
     int i, bckt_max;
     int face_beg, face;
+    short depth_shift;
     short faces_num;
     ushort faceWH, faceGF;
 
@@ -1334,6 +1335,8 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         p_snpoint->Flags = 0;
     }
 
+    depth_shift = -250;
+
     // This function can be called for objects, vehicles, mguns and rockets
     assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UVehicle.MatrixIndex));
     assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UMGun.MatrixIndex));
@@ -1371,6 +1374,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         struct ShEnginePoint sp1, sp2, sp3;
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
+        ushort flags_all;
 
         // each transform_rot_object_shpoint() call could reserve a point
         if (next_screen_point + 4 > screen_points_limit) {
@@ -1399,8 +1403,11 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         if (depth_max < sp3.Depth)
             depth_max = sp3.Depth;
 
-        if ((sp1.Flags & sp2.Flags & sp3.Flags & 0xF) != 0)
+        flags_all = sp1.Flags & sp2.Flags & sp3.Flags;
+
+        if ((flags_all & 0xF) != 0)
             continue;
+
         if ((p_face->GFlags & 0x01) == 0) {
             if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
               (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
@@ -1412,7 +1419,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
             ditype = DrIT_Unkn7;
         else
             ditype = DrIT_ObFace3Refl;
-        bckt = BUCKET_MID + depth_max - 250;
+        bckt = BUCKET_MID + depth_shift + depth_max;
         if (bckt_max < bckt)
             bckt_max = bckt;
         stat_drawlist_faces++;
@@ -1430,6 +1437,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         struct ShEnginePoint sp1, sp2, sp3, sp4;
         struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
+        ushort flags_all;
 
         if (next_screen_point + 5 > screen_points_limit) {
             break;
@@ -1462,7 +1470,9 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         if (depth_max < sp4.Depth)
             depth_max = sp4.Depth;
 
-        if ((sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags & 0xF) != 0)
+        flags_all = sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags;
+
+        if ((flags_all & 0xF) != 0)
             continue;
 
         if ((p_face4->GFlags & 0x01) == 0) {
@@ -1476,7 +1486,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
             ditype = DrIT_Unkn16;
         else
             ditype = DrIT_ObFace4Refl;
-        bckt = BUCKET_MID + depth_max - 250;
+        bckt = BUCKET_MID + depth_shift + depth_max;
         if (bckt_max < bckt)
             bckt_max = bckt;
         stat_drawlist_faces++;
@@ -1554,6 +1564,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         struct ShEnginePoint sp1, sp2, sp3;
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
+        ushort flags_all;
 
         if (next_screen_point + 4 > screen_points_limit) {
             break;
@@ -1578,8 +1589,11 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         if (depth_max < sp3.Depth)
             depth_max = sp3.Depth;
 
-        if ((sp1.Flags & sp2.Flags & sp3.Flags & 0xF) != 0)
+        flags_all = sp1.Flags & sp2.Flags & sp3.Flags;
+
+        if ((flags_all & 0xF) != 0)
             continue;
+
         if ((p_face->GFlags & 0x01) == 0) {
             if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
               (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
@@ -1624,6 +1638,7 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         struct ShEnginePoint sp1, sp2, sp3, sp4;
         struct SingleObjectFace4 *p_face;
         int depth_max, bckt;
+        ushort flags_all;
 
         if (next_screen_point + 5 > screen_points_limit) {
             break;
@@ -1653,8 +1668,11 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         if (depth_max < sp4.Depth)
             depth_max = sp4.Depth;
 
-        if ((sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags & 0xF) != 0)
+        flags_all = sp1.Flags & sp2.Flags & sp3.Flags & sp4.Flags;
+
+        if ((flags_all & 0xF) != 0)
             continue;
+
         if ((p_face->GFlags & 0x01) == 0) {
             if  ((sp2.X - sp1.X) * (sp3.Y - sp2.Y) -
               (sp3.X - sp2.X) * (sp2.Y - sp1.Y) <= 0)
@@ -1765,6 +1783,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 int specpt;
                 int depth_max, bckt;
                 int dxc, dyc, dzc;
+                ushort flags_all, flags_any;
 
                 p_snpoint1 = &game_object_points[p_face4->PointNo[0]];
                 dxc = p_snpoint1->X + obj_x;
@@ -1805,9 +1824,10 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 if (depth_max < sp3.Depth)
                     depth_max = sp3.Depth;
 
-                if ((sp3.Flags & 0x20) != 0 || (sp2.Flags & 0x20) != 0)
-                    continue;
-                if ((sp3.Flags & sp2.Flags & 0xF) != 0)
+                flags_any = sp3.Flags | sp2.Flags;
+                flags_all = sp3.Flags & sp2.Flags;
+
+                if ((flags_any & 0x20) != 0 || (flags_all & 0xF) != 0)
                     continue;
 
                 ubyte ditype;
@@ -1855,7 +1875,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
 
                 if ((p_face4->GFlags & 0x01) == 0) {
                     if ((p_specpt2->X - p_specpt1->X) * (p_specpt3->Y - p_specpt2->Y) -
-                      (p_specpt3->X - p_specpt2->X) * (p_specpt2->Y - p_specpt1->Y) <= 0)
+                      (p_specpt2->Y - p_specpt1->Y) * (p_specpt3->X - p_specpt2->X) <= 0)
                         continue;
                 }
 
@@ -1917,8 +1937,8 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                     continue;
 
                 if ((p_face->GFlags & 0x01) == 0) {
-                    if (((p_specpt3->X - p_specpt1->X) * (p_specpt2->Y - p_specpt3->Y) -
-                      (p_specpt2->X - p_specpt3->X) * (p_specpt3->Y - p_specpt1->Y) <= 0))
+                    if ((p_specpt3->X - p_specpt1->X) * (p_specpt2->Y - p_specpt3->Y) -
+                      (p_specpt3->Y - p_specpt1->Y) * (p_specpt2->X - p_specpt3->X) <= 0)
                         continue;
                 }
 
@@ -1956,15 +1976,15 @@ int mech_unkn_func_03(struct Thing *p_thing)
         : "=r" (ret) : "a" (p_thing));
     return ret;
 #endif
-  struct M31 bodypos;
-  int mechno;
+    struct M31 bodypos;
+    int mechno;
 
-  mechno = p_thing->Owner;
-  bodypos.R[0] = PRCCOORD_TO_MAPCOORD(p_thing->X);
-  bodypos.R[2] = PRCCOORD_TO_MAPCOORD(p_thing->Z);
-  bodypos.R[1] = PRCCOORD_TO_YCOORD(p_thing->Y) + 600;
-  return mech_unkn_func_11(unkn_mech_arr3[mechno].mech3_arr4_ptr,
-    &bodypos, &unkn_mech_arr3[mechno].mech3_unkn_mat_C);
+    mechno = p_thing->Owner;
+    bodypos.R[0] = PRCCOORD_TO_MAPCOORD(p_thing->X);
+    bodypos.R[2] = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    bodypos.R[1] = PRCCOORD_TO_YCOORD(p_thing->Y) + 600;
+    return mech_unkn_func_11(unkn_mech_arr3[mechno].mech3_arr4_ptr,
+      &bodypos, &unkn_mech_arr3[mechno].mech3_unkn_mat_C);
 }
 
 void draw_vehicle_health(struct Thing *p_thing, int bckt)
