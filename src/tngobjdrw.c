@@ -342,7 +342,7 @@ void build_person(struct Thing *p_thing)
       frame, p_thing->Radius, bri);
 
     if (debug_hud_collision) {
-        draw_e_number(cor_x, cor_y, cor_z,
+        enlist_draw_number(cor_x, cor_y, cor_z,
           0, 37, p_thing->U.UPerson.RecoilTimer,
           p_thing->Radius - 1, colour_lookup[ColLU_RED]);
     }
@@ -356,7 +356,7 @@ void build_person(struct Thing *p_thing)
         strcat(locstr, "B");
     }
     if (locstr[0] != '\0') {
-        draw_e_text(cor_x, cor_y, cor_z, -8, 37, locstr,
+        enlist_draw_text(cor_x, cor_y, cor_z, -8, 37, locstr,
           p_thing->Radius - 1, colour_lookup[ColLU_RED]);
     }
 }
@@ -549,7 +549,7 @@ void build_dropped_item(struct SimpleThing *p_sthing)
 
 void build_spark(struct SimpleThing *p_sthing)
 {
-    draw_mapwho_vect_len(
+    enlist_draw_mapwho_vect_len(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
       PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,
@@ -612,7 +612,7 @@ void build_scale_effect(struct SimpleThing *p_sthing)
     ushort frame;
 
     frame = p_sthing->Frame;
-    draw_e_graphic_scale(
+    enlist_draw_frame_graphic_scale(
       PRCCOORD_TO_MAPCOORD(p_sthing->X) - engn_xc,
       PRCCOORD_TO_YCOORD(p_sthing->Y) >> 3,
       PRCCOORD_TO_MAPCOORD(p_sthing->Z) - engn_zc,

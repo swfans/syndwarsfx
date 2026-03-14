@@ -65954,7 +65954,7 @@ GLOBAL_FUNC(ASM_build_stasis_pod)	/* 0x068240 */
 		push   %ebp
 		add    %edx,%eax
 		mov    %ebp,%edx
-		call   ac_draw_mapwho_vect
+		call   ac_enlist_draw_mapwho_vect
 		test   %ax,%ax
 		je     jump_68374
 		and    $0xffff,%eax
@@ -66962,7 +66962,7 @@ do_beam_electric:	/* 0x0697B0 */
 		push   %eax
 		sar    $0x8,%ecx
 		mov    0x30(%esp),%eax
-		call   ac_draw_mapwho_vect
+		call   ac_enlist_draw_mapwho_vect
 		jmp    jump_69903
 	jump_69a29:
 		add    $0x34,%esp

@@ -28,15 +28,18 @@
 #include "engindrwlstx.h"
 #include "enginpeff.h"
 #include "enginprops.h"
+#include "enginshrapn.h"
 #include "engintrns.h"
 
 /******************************************************************************/
 #pragma pack(1)
 
+/** Packs sprite frame versions into one, 16-bit field */
+#define SPR_FRAME_VERSIONS_PACK(v0, v1, v2, v3, v4) ((v0 << 0) + (v1 << 3) + (v2 << 6) + (v3 << 9) + (v4 << 12))
 
 #pragma pack()
 /******************************************************************************/
-ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
+ushort enlist_draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
 {
     struct ShEnginePoint sp1, sp2;
     struct SortLine *p_sline;
@@ -69,7 +72,7 @@ ushort draw_mapwho_vect(int x1, int y1, int z1, int x2, int y2, int z2, int col)
     return sline;
 }
 
-void draw_mapwho_vect_len(int x1, int y1, int z1,
+void enlist_draw_mapwho_vect_len(int x1, int y1, int z1,
   int x2, int y2, int z2, int len, int col)
 {
     int dt_x, dt_y, dt_z;
@@ -87,10 +90,10 @@ void draw_mapwho_vect_len(int x1, int y1, int z1,
     z3 = z1 + dt_z * len / dist;
     x3 = x1 + dt_x * len / dist;
 
-    draw_mapwho_vect(x1, y1, z1, x3, y3, z3, col);
+    enlist_draw_mapwho_vect(x1, y1, z1, x3, y3, z3, col);
 }
 
-void draw_e_graphic(int x, int y, int z, ushort frame,
+void enlist_draw_frame_graphic(int x, int y, int z, ushort frame,
   int radius, int intensity, int depth_shift, intptr_t p_sitm)
 {
     struct ShEnginePoint sp;
@@ -118,7 +121,7 @@ void draw_e_graphic(int x, int y, int z, ushort frame,
     p_sspr->SrcItem = p_sitm;
 }
 
-void draw_e_graphic_scale(int x, int y, int z, ushort frame,
+void enlist_draw_frame_graphic_scale(int x, int y, int z, ushort frame,
   int radius, int intensity, int scale, intptr_t p_sitm)
 {
     struct ShEnginePoint sp;
@@ -146,7 +149,7 @@ void draw_e_graphic_scale(int x, int y, int z, ushort frame,
     p_sspr->SrcItem = p_sitm;
 }
 
-void draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
+void enlist_draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
   ubyte angl, ubyte shangl, ushort shpak, short strng, intptr_t p_sitm)
 {
     struct SortSprite *p_sspr;
@@ -166,7 +169,7 @@ void draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
     p_sspr->SrcItem = p_sitm;
 }
 
-void draw_pb_frame_basic(int scr_x, int scr_y, int scr_depth, int frame,
+void enlist_draw_frame_pers_basic(int scr_x, int scr_y, int scr_depth, int frame,
   ubyte angl, short bright, intptr_t p_sitm)
 {
     struct SortSprite *p_sspr;
@@ -186,7 +189,80 @@ void draw_pb_frame_basic(int scr_x, int scr_y, int scr_depth, int frame,
     p_sspr->SrcItem = p_sitm;
 }
 
-void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy,
+void enlist_draw_frame_pers_rot_versioned(int scr_x, int scr_y, int scr_depth,
+  int frame, ubyte *frv, ubyte angl, short bright, intptr_t p_sitm)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmPersV, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->Frame = frame;
+    p_sspr->Brightness = bright;
+    p_sspr->Angle = angl;
+    p_sspr->Scale = SPR_FRAME_VERSIONS_PACK(frv[0], frv[1], frv[2], frv[3], frv[4]);
+    p_sspr->SrcItem = p_sitm;
+}
+
+void enlist_draw_frame_effect_versioned(int scr_x, int scr_y, int scr_depth,
+  int frame, ubyte *frv, ubyte angl, short bright, intptr_t p_sitm)
+{
+    struct SortSprite *p_sspr;
+
+    p_sspr = draw_item_add_sprite(DrIT_SFrmEfctV, BUCKET_MID + scr_depth);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = 0;
+    p_sspr->Frame = frame;
+    p_sspr->Brightness = bright;
+    p_sspr->Angle = angl;
+    p_sspr->Scale = SPR_FRAME_VERSIONS_PACK(frv[0], frv[1], frv[2], frv[3], frv[4]);
+    p_sspr->SrcItem = p_sitm;
+}
+
+void enlist_draw_fire_flames(ushort flame_beg)
+{
+    struct FireFlame *p_flame;
+    ushort flm;
+
+    for (flm = flame_beg; flm != 0; flm = p_flame->next)
+    {
+        struct ShEnginePoint sp;
+        struct SpecialPoint *p_scrpoint;
+        int cor_dx, cor_dy, cor_dz;
+
+        p_flame = &FIRE_flame[flm];
+        cor_dx = p_flame->x - engn_xc;
+        cor_dy = p_flame->y - engn_yc;
+        cor_dz = p_flame->z - engn_zc;
+
+        if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+            cor_dy += waft_table[render_anim_turn & 0x1F];
+
+        transform_shpoint(&sp, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
+
+        p_flame->PointOffset = next_screen_point;
+        p_scrpoint = draw_item_add_points(DrIT_SFireFlame, flm, BUCKET_MID + sp.Depth - 50, 1);
+        if (p_scrpoint == NULL) {
+            break;
+        }
+
+        p_scrpoint->X = sp.X;
+        p_scrpoint->Y = sp.Y;
+        p_scrpoint->Z = sp.Depth;
+    }
+}
+
+void enlist_draw_number(int x, int y, int z, short scr_dx, short scr_dy,
   int num, int radius, TbPixel colour)
 {
     struct ShEnginePoint sp;
@@ -214,7 +290,7 @@ void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy,
     p_sspr->SrcItem = (intptr_t)num;
 }
 
-void draw_e_text(int x, int y, int z, short scr_dx, short scr_dy,
+void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
   const char *text, int radius, TbPixel colour)
 {
     struct ShEnginePoint sp;

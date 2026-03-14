@@ -53,9 +53,6 @@
 /******************************************************************************/
 #pragma pack(1)
 
-/** Packs sprite frame versions into one, 16-bit field */
-#define SPR_FRAME_VERSIONS_PACK(v0, v1, v2, v3, v4) ((v0 << 0) + (v1 << 3) + (v2 << 6) + (v3 << 9) + (v4 << 12))
-
 struct BulStart {
     sbyte OffsetX;
     sbyte OffsetY;
@@ -127,26 +124,15 @@ extern short word_1AA5FA;
 
 extern ushort zig_zag[55];
 
-ubyte pers_shield_spr_vers[] = {
-  0, 1, 2, 0, 0,
-  0, 2, 1, 0, 0,
-  0, 1, 1, 0, 0,
-  1, 2, 0, 0, 0,
-  1, 1, 0, 0, 0,
-  2, 0, 1, 0, 0,
-  2, 0, 2, 0, 0,
-  2, 0, 2, 0, 0,
-};
-
-ushort pers_shield_spr_vers_packed[] = {
-  SPR_FRAME_VERSIONS_PACK(0, 1, 2, 0, 0),
-  SPR_FRAME_VERSIONS_PACK(0, 2, 1, 0, 0),
-  SPR_FRAME_VERSIONS_PACK(0, 1, 1, 0, 0),
-  SPR_FRAME_VERSIONS_PACK(1, 2, 0, 0, 0),
-  SPR_FRAME_VERSIONS_PACK(1, 1, 0, 0, 0),
-  SPR_FRAME_VERSIONS_PACK(2, 0, 1, 0, 0),
-  SPR_FRAME_VERSIONS_PACK(2, 0, 2, 0, 0),
-  SPR_FRAME_VERSIONS_PACK(2, 0, 2, 0, 0),
+ubyte pers_shield_spr_vers[][5] = {
+  {0, 1, 2, 0, 0,},
+  {0, 2, 1, 0, 0,},
+  {0, 1, 1, 0, 0,},
+  {1, 2, 0, 0, 0,},
+  {1, 1, 0, 0, 0,},
+  {2, 0, 1, 0, 0,},
+  {2, 0, 2, 0, 0,},
+  {2, 0, 2, 0, 0,},
 };
 
 ubyte byte_152EF0[] = {
@@ -165,11 +151,11 @@ void draw_thing_e_graphic(struct Thing *p_thing, int x, int y, int z, ushort fra
     else
         depth_shift = 0;
 
-    draw_e_graphic(x, y, z, frame, radius,
+    enlist_draw_frame_graphic(x, y, z, frame, radius,
       intensity, depth_shift, (intptr_t)p_thing);
 }
 
-void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth)
+static void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth)
 {
     ushort frm, anmode;
     ushort shpak;
@@ -194,66 +180,51 @@ void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth
     shangl = p_thing->U.UPerson.Shadows[0];
     strng = p_thing->U.UPerson.Shadows[1];
 
-    draw_tall_spr_shadow(scr_x, scr_y, scr_depth, frm,
+    enlist_draw_tall_spr_shadow(scr_x, scr_y, scr_depth, frm,
       angl, shangl, shpak, strng, (intptr_t)p_thing);
 }
 
-void draw_pers_frame_basic(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
+static void draw_pers_frame_basic(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
 {
     ubyte angl;
 
     angl = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
-    draw_pb_frame_basic(scr_x, scr_y, scr_depth, frame,
+
+    enlist_draw_frame_pers_basic(scr_x, scr_y, scr_depth, frame,
       angl, bright, (intptr_t)p_thing);
 }
 
-void draw_pers_frame_versioned(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
+static void draw_pers_frame_versioned(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
 {
-    struct SortSprite *p_sspr;
     ubyte *frv;
+    ubyte angl;
 
-    if ((p_thing->U.UPerson.AnimMode == ANIM_PERS_Unkn12) || ((ingame.Flags & GamF_ThermalView) != 0))
+    if ((p_thing->U.UPerson.AnimMode == ANIM_PERS_Unkn12) ||
+      ((ingame.Flags & GamF_ThermalView) != 0))
         bright = 32;
-    if (((p_thing->Flag2 & TgF2_Unkn00080000) != 0) && (p_thing->SubType == SubTT_PERS_ZEALOT))
+    if (((p_thing->Flag2 & TgF2_Unkn00080000) != 0) &&
+      (p_thing->SubType == SubTT_PERS_ZEALOT))
         bright = 32;
     frv = p_thing->U.UPerson.FrameId.Version;
+    angl = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
 
-    p_sspr = draw_item_add_sprite(DrIT_SFrmPersV, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL) {
-        return;
-    }
-
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
-    p_sspr->Z = 0;
-    p_sspr->Frame = frame;
-    p_sspr->Brightness = bright;
-    p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
-    p_sspr->Scale = SPR_FRAME_VERSIONS_PACK(frv[0], frv[1], frv[2], frv[3], frv[4]);
-    p_sspr->SrcItem = (intptr_t)p_thing;
+    enlist_draw_frame_pers_rot_versioned(scr_x, scr_y, scr_depth,
+      frame, frv, angl, bright, (intptr_t)p_thing);
 }
 
-void draw_pers_shield(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, short bright)
+static void draw_pers_shield(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, short bright)
 {
-    struct SortSprite *p_sspr;
+    ubyte *frv;
     ushort frame, k;
+    ubyte angl;
 
     frame = shield_frm[p_thing->ThingOffset & 3];
     k = ((gameturn + 16 * p_thing->ThingOffset) >> 2) & 7;
+    angl = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
+    frv = pers_shield_spr_vers[k];
 
-    p_sspr = draw_item_add_sprite(DrIT_SFrmEfctV, BUCKET_MID + scr_depth);
-    if (p_sspr == NULL) {
-        return;
-    }
-
-    p_sspr->X = scr_x;
-    p_sspr->Y = scr_y;
-    p_sspr->Z = 0;
-    p_sspr->Frame = frame;
-    p_sspr->SrcItem = (intptr_t)p_thing;
-    p_sspr->Brightness = bright;
-    p_sspr->Angle = (p_thing->U.UObject.Angle + 8 - byte_176D49) & 7;
-    p_sspr->Scale = pers_shield_spr_vers_packed[k]; // The shield has versioned sprites
+    enlist_draw_frame_effect_versioned(scr_x, scr_y, scr_depth,
+      frame, frv, angl, bright, (intptr_t)p_thing);
 }
 
 void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity)
@@ -315,35 +286,7 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 
 void FIRE_draw_fire(struct SimpleThing *p_sthing)
 {
-    struct FireFlame *p_flame;
-    ushort flm;
-
-    for (flm = p_sthing->U.UFire.flame; flm; flm = p_flame->next)
-    {
-        struct ShEnginePoint sp;
-        struct SpecialPoint *p_scrpoint;
-        int x, y, z;
-
-        p_flame = &FIRE_flame[flm];
-        x = p_flame->x - engn_xc;
-        y = p_flame->y - engn_yc;
-        z = p_flame->z - engn_zc;
-
-        if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-            y += waft_table[gameturn & 0x1F];
-
-        transform_shpoint(&sp, x, y - 8 * engn_yc, z);
-
-        p_flame->PointOffset = next_screen_point;
-        p_scrpoint = draw_item_add_points(DrIT_SFireFlame, flm, BUCKET_MID + sp.Depth - 50, 1);
-        if (p_scrpoint == NULL) {
-            break;
-        }
-
-        p_scrpoint->X = sp.X;
-        p_scrpoint->Y = sp.Y;
-        p_scrpoint->Z = sp.Depth;
-    }
+    enlist_draw_fire_flames(p_sthing->U.UFire.flame);
 }
 
 void draw_bang_phwoar(struct SimpleThing *p_pow)

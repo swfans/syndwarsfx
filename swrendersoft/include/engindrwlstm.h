@@ -87,25 +87,60 @@ struct SingleObjectFace4 *draw_item_add_special_obj_face4_no_pts(ubyte ditype, i
  */
 struct SingleObjectFace4 *draw_item_add_special_obj_face4(ubyte ditype, int bckt);
 
-void draw_mapwho_vect_len(int x1, int y1, int z1,
+void enlist_draw_mapwho_vect_len(int x1, int y1, int z1,
   int x2, int y2, int z2, int len, int col);
 
-void draw_e_graphic(int x, int y, int z, ushort frame,
+void enlist_draw_frame_graphic(int x, int y, int z, ushort frame,
   int radius, int intensity, int depth_shift, intptr_t p_sitm);
 
-void draw_e_graphic_scale(int x, int y, int z, ushort frame,
+void enlist_draw_frame_graphic_scale(int x, int y, int z, ushort frame,
   int radius, int intensity, int scale, intptr_t p_sitm);
 
-void draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
+void enlist_draw_tall_spr_shadow(int scr_x, int scr_y, int scr_depth, ushort frm,
   ubyte angl, ubyte shangl, ushort shpak, short strng, intptr_t p_sitm);
 
-void draw_pb_frame_basic(int scr_x, int scr_y, int scr_depth, int frame,
+void enlist_draw_frame_pers_basic(int scr_x, int scr_y, int scr_depth, int frame,
   ubyte angl, short bright, intptr_t p_sitm);
 
-void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy,
+void enlist_draw_frame_pers_rot_versioned(int scr_x, int scr_y, int scr_depth,
+  int frame, ubyte *frv, ubyte angl, short bright, intptr_t p_sitm);
+
+/** Enlist drawing a frame containing versioned effect.
+ *
+ * @param scr_x Screen coordinate.
+ * @param scr_y Screen coordinate.
+ */
+void enlist_draw_frame_effect_versioned(int scr_x, int scr_y, int scr_depth,
+  int frame, ubyte *frv, ubyte angl, short bright, intptr_t p_sitm);
+
+/** Enlist drawing flame sprites in a list.
+ *
+ * @param flame_beg Index in `FIRE_flame` array of a first item in linked list.
+ */
+void enlist_draw_fire_flames(ushort flame_beg);
+
+/** Enlist drawing a number at given map coordinates.
+ *
+ * @param x Map coodrinate.
+ * @param y Map coodrinate.
+ * @param z Map coodrinate.
+ * @param num The number to draw.
+ * @param radius Value which alters depth (distance from camera).
+ * @param colour The text colour.
+ */
+void enlist_draw_number(int x, int y, int z, short scr_dx, short scr_dy,
   int num, int radius, TbPixel colour);
 
-void draw_e_text(int x, int y, int z, short scr_dx, short scr_dy,
+/** Enlist drawing a text at given map coordinates.
+ *
+ * @param x Map coodrinate.
+ * @param y Map coodrinate.
+ * @param z Map coodrinate.
+ * @param text The text to draw.
+ * @param radius Value which alters depth (distance from camera).
+ * @param colour The text colour.
+ */
+void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
   const char *text, int radius, TbPixel colour);
 /******************************************************************************/
 #ifdef __cplusplus

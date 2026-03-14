@@ -41,18 +41,6 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
 void FIRE_draw_fire(struct SimpleThing *p_sthing);
 void draw_bang(struct SimpleThing *p_pow);
 
-/** Draw a number at given map coordinates.
- *
- * @param x Map coodrinate.
- * @param y Map coodrinate.
- * @param z Map coodrinate.
- * @param num The number to draw.
- * @param radius Value which alters depth (distance from camera).
- * @param colour The text colour.
- */
-void draw_e_number(int x, int y, int z, short scr_dx, short scr_dy, int num, int radius, TbPixel colour);
-void draw_e_text(int x, int y, int z, short scr_dx, short scr_dy, const char *text, int radius, TbPixel colour);
-
 /** Adds primitives for a rotated 3D object to drawlist.
  *
  * @return Gives max depth value shifted to bucket index.
