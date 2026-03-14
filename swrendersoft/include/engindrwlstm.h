@@ -87,6 +87,9 @@ struct SingleObjectFace4 *draw_item_add_special_obj_face4_no_pts(ubyte ditype, i
  */
 struct SingleObjectFace4 *draw_item_add_special_obj_face4(ubyte ditype, int bckt);
 
+ushort draw_mapwho_vect_len(int x1, int y1, int z1,
+  int x2, int y2, int z2, int len, int col);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

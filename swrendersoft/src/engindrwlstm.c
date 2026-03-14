@@ -2,7 +2,7 @@
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
 /** @file engindrwlstm.c
- *     Making drawlists for the 3D engine.
+ *     Making drawlists for the 3D engine, low level 2D functions.
  * @par Purpose:
  *     Implements functions for filling drawlists.
  * @par Comment:
