@@ -2061,13 +2061,10 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
     while (angle <= 2048)
     {
         struct SingleObjectFace4 *p_face4;
-        struct SpecialPoint *p_specpt1;
-        struct SpecialPoint *p_specpt2;
-        struct SpecialPoint *p_specpt4;
+        struct SpecialPoint *p_specpt;
         int nxt_x, nxt_y;
         int sin_angl, half_angl, cos_angl;
         int hlf_y, hlf_x;
-        ushort face;
 
         half_angl = angle - angle_detail;
         cos_angl = lbSinTable[(half_angl & LbFPMath_AngleMask) + LbFPMath_PI/2];
@@ -2080,13 +2077,16 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
         nxt_x = x1 + ((scrad1 * cos_angl) >> 16);
         nxt_y = y1 + ((scrad1 * sin_angl) >> 16);
 
-        face = next_special_obj_face4;
-        if (face + 1 > game_special_obj_faces4_limit) {
+        if (pt4 + 3 > screen_points_limit) {
             break;
         }
-        next_special_obj_face4++;
 
-        p_face4 = &game_special_obj_faces4[face];
+        p_face4 = draw_item_add_special_obj_face4_no_pts(DrIT_SpObFace4, sort_key);
+
+        if (p_face4 == NULL) {
+            break;
+        }
+
         p_face4->Flags = 17;
         p_face4->PointNo[0] = pt4 + 2;
         p_face4->PointNo[1] = pt4 + 1;
@@ -2099,22 +2099,19 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
         p_face4->GFlags = 0;
         p_face4->ExCol = col;
 
-        p_specpt1 = &game_screen_point_pool[pt4 + 2];
-        p_specpt2 = &game_screen_point_pool[pt4 + 1];
-        p_specpt4 = &game_screen_point_pool[pt4 + 0];
+        p_specpt = &game_screen_point_pool[pt4 + 0];
+        p_specpt->X = cur_x;
+        p_specpt->Y = cur_y;
+
+        p_specpt = &game_screen_point_pool[pt4 + 1];
+        p_specpt->X = hlf_x;
+        p_specpt->Y = hlf_y;
+
+        p_specpt = &game_screen_point_pool[pt4 + 2];
+        p_specpt->X = nxt_x;
+        p_specpt->Y = nxt_y;
+
         pt4 += 3;
-
-        p_specpt4->X = cur_x;
-        p_specpt4->Y = cur_y;
-        p_specpt2->X = hlf_x;
-        p_specpt2->Y = hlf_y;
-        p_specpt1->X = nxt_x;
-        p_specpt1->Y = nxt_y;
-
-        if (!draw_item_add(DrIT_SpObFace4, face, sort_key)) {
-            break;
-        }
-
         cur_x = nxt_x;
         cur_y = nxt_y;
         angle += dt_angle;

@@ -69,6 +69,15 @@ struct SpecialPoint *draw_item_add_points(ubyte ditype, ushort offset,
  */
 struct FloorTile *draw_item_add_floor_tile(ubyte ditype, int bckt);
 
+/** Add a new draw item and return linked special quad face instance, but no points.
+ * Reserves the face, but leaves points for the caller to set.
+ *
+ * @param ditype Draw item type, should be one of SingleObjectFace4 related types.
+ * @param bckt Destination bucket for this draw item.
+ * @return SingleObjectFace4 instance to fill, or NULL if arrays exceeded.
+ */
+struct SingleObjectFace4 *draw_item_add_special_obj_face4_no_pts(ubyte ditype, int bckt);
+
 /** Add a new draw item and return linked special quad face instance.
  * Reserves and sets 4 SpecialPoint instances for the face.
  *

@@ -106,31 +106,45 @@ struct FloorTile *draw_item_add_floor_tile(ubyte ditype, int bckt)
     return p_floortl;
 }
 
-struct SingleObjectFace4 *draw_item_add_special_obj_face4(ubyte ditype, int bckt)
+struct SingleObjectFace4 *draw_item_add_special_obj_face4_no_pts(ubyte ditype, int bckt)
 {
     struct SingleObjectFace4 *p_face4;
     ushort face;
-    ushort pt;
-
-    pt = next_screen_point;
-    if (pt + 4 > screen_points_limit)
-        return NULL;
 
     face = next_special_obj_face4;
     if (face + 1 > game_special_obj_faces4_limit)
         return NULL;
 
     p_face4 = &game_special_obj_faces4[face];
-    p_face4->PointNo[1] = pt + 1;
-    p_face4->PointNo[2] = pt + 2;
-    p_face4->PointNo[3] = pt + 3;
-    p_face4->PointNo[0] = pt + 0;
 
     if (!draw_item_add(ditype, face, bckt))
         return NULL;
 
-    next_screen_point += 4;
     next_special_obj_face4++;
+
+    return p_face4;
+}
+
+struct SingleObjectFace4 *draw_item_add_special_obj_face4(ubyte ditype, int bckt)
+{
+    struct SingleObjectFace4 *p_face4;
+    ushort pt;
+
+    pt = next_screen_point;
+    if (pt + 4 > screen_points_limit)
+        return NULL;
+
+    p_face4 = draw_item_add_special_obj_face4_no_pts(ditype, bckt);
+
+    if (p_face4 == NULL)
+        return NULL;
+
+    next_screen_point += 4;
+
+    p_face4->PointNo[0] = pt + 0;
+    p_face4->PointNo[1] = pt + 1;
+    p_face4->PointNo[2] = pt + 2;
+    p_face4->PointNo[3] = pt + 3;
 
     return p_face4;
 }
