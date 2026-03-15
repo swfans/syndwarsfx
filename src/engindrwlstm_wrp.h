@@ -55,7 +55,6 @@ int mech_unkn_func_03(struct Thing *p_thing);
 void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
   struct SingleFloorTexture *p_tex, int col, int bright1, int bright2);
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour);
-struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1);
 
 // Lowest level functions, to be used only if previous ones really do not match
 

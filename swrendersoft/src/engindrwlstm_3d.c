@@ -32,6 +32,7 @@
 #include "enginprops.h"
 #include "enginshrapn.h"
 #include "enginsngobjs.h"
+#include "enginsngtxtr.h"
 #include "engintrns.h"
 
 /******************************************************************************/
@@ -551,6 +552,84 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
     prevpt1_y = y2 + scal_dx2;
     prevpt2_x = x2 - scal_dy2;
     prevpt2_y = y2 - scal_dx2;
+
+    return p_face4;
+}
+
+struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
+{
+    struct EnginePoint ep;
+    struct SpecialPoint *p_scrpoint;
+    struct SingleObjectFace4 *p_face4;
+    struct SingleFloorTexture *p_sftex;
+    int pp_X, pp_Y, pp_Z;
+    int scaled_r;
+    int bckt;
+    uint sftex;
+    ushort pt;
+
+    ep.X3d = x1 - engn_xc;
+    ep.Z3d = z1 - engn_zc;
+    ep.Y3d = y1 - (engn_yc >> 3);
+    ep.Flags = 0;
+    transform_point(&ep);
+
+    pp_X = ep.pp.X;
+    pp_Z = ep.Z3d - 16 * r1;
+    pp_Y = ep.pp.Y;
+
+    bckt = BUCKET_MID + pp_Z;
+
+    scaled_r = (r1 * overall_scale) >> 8;
+
+    if ((ep.pp.X + scaled_r < 0) || (ep.pp.X - scaled_r > vec_window_width))
+        return NULL;
+
+    if ((ep.pp.Y + scaled_r < 0) || (ep.pp.Y - scaled_r > vec_window_height))
+        return NULL;
+
+    p_face4 = draw_item_add_special_obj_face4(DrIT_SpObFace4, bckt);
+    if (p_face4 == NULL) {
+        return NULL;
+    }
+
+    pt = p_face4->PointNo[0];
+    p_scrpoint = &game_screen_point_pool[pt];
+    p_scrpoint->X = pp_X - scaled_r;
+    p_scrpoint->Y = pp_Y - scaled_r;
+
+    pt = p_face4->PointNo[1];
+    p_scrpoint = &game_screen_point_pool[pt];
+    p_scrpoint->X = pp_X + scaled_r;
+    p_scrpoint->Y = pp_Y - scaled_r;
+
+    pt = p_face4->PointNo[3];
+    p_scrpoint = &game_screen_point_pool[pt];
+    p_scrpoint->X = pp_X + scaled_r;
+    p_scrpoint->Y = pp_Y + scaled_r;
+
+    pt = p_face4->PointNo[2];
+    p_scrpoint = &game_screen_point_pool[pt];
+    p_scrpoint->X = pp_X - scaled_r;
+    p_scrpoint->Y = pp_Y + scaled_r;
+
+    sftex = tnext_floor_texture;
+    //TODO add floor texture limit check
+    tnext_floor_texture += 1;
+    p_sftex = &game_textures[sftex];
+    p_sftex->TMapX1 = 96;
+    p_sftex->TMapY1 = 96;
+    p_sftex->TMapX2 = 127;
+    p_sftex->TMapY2 = 96;
+    p_sftex->TMapX4 = 127;
+    p_sftex->TMapY4 = 127;
+    p_sftex->TMapX3 = 96;
+    p_sftex->TMapY3 = 127;
+    p_sftex->Page = 4;
+
+    p_face4->Texture = sftex;
+    p_face4->Flags = 0x08 | 0x01;
+    p_face4->GFlags = FGFlg_Unkn01;
 
     return p_face4;
 }
