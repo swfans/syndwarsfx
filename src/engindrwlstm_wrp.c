@@ -324,14 +324,14 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
     enlist_draw_bang_wobble_line(p_pow->U.UBang.shrapnel);
 }
 
-void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour)
+void build_laser(int x1, int y1, int z1, int x2, int y2, int z2,
+  int itime, struct Thing *p_owner, int colour)
 {
-    struct EnginePoint ep1, ep2;
-    ubyte flg;
-    int scr_x, scr_y, scr_depth;
-    int scr_dx, scr_dy, scr_ddepth;
-    int thick_x, thick_y;
-    int i, iter_count;
+    int depth_shift;
+    short ofs_x, ofs_y;
+
+    ofs_x = 0;
+    ofs_y = 0;
 
     if ((p_owner != NULL) && (p_owner->Type == TT_BUILDING))
     {
@@ -346,130 +346,21 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
         y1 = p_owner->Y >> 8;
         z1 = (p_owner->Z - 3 * lbSinTable[angle + LbFPMath_PI/2] / 2) >> 8;
     }
-    ep1.Flags = 0;
-    ep1.X3d = x1 - engn_xc;
-    ep1.Z3d = z1 - engn_zc;
-    ep1.Y3d = 8 * y1 - (engn_yc >> 3);
-    transform_point(&ep1);
-
-    scr_x = ep1.pp.X << 8;
-    scr_y = ep1.pp.Y << 8;
-    scr_depth = ep1.Z3d << 8;
-
     if ((p_owner != NULL) && (p_owner->Type != TT_BUILDING))
     {
-        short ofs_x, ofs_y;
         ushort mangle, frame;
         mangle = (p_owner->U.UPerson.Angle + 8 - byte_176D49) & 7;
         frame = p_owner->StartFrame + 1 + mangle;
         ofs_x = bul_starts[frame].OffsetX;
         ofs_y = bul_starts[frame].OffsetY;
-        scr_x += (overall_scale * ofs_x) >> 1;
-        scr_y += (overall_scale * ofs_y) >> 1;
-    }
-    ep2.Flags = 0;
-    ep2.X3d = x2 - engn_xc;
-    ep2.Z3d = z2 - engn_zc;
-    ep2.Y3d = 8 * y2 - (engn_yc >> 3);
-    transform_point(&ep2);
-
-    if ((ep2.Flags & ep1.Flags & 0xF) != 0)
-        return;
-
-    scr_dy = (ep2.pp.Y << 8) - scr_y;
-    scr_dx = (ep2.pp.X << 8) - scr_x;
-    scr_ddepth = (ep2.Z3d << 8) - scr_depth;
-
-    {
-        int length, divdr;
-
-        length = LbSqrL(scr_dy * scr_dy + scr_dx * scr_dx);
-        if (length == 0)
-            return;
-        divdr = (length / 30) >> 8;
-        if (divdr < 1)
-            divdr = 1;
-        scr_dx /= divdr;
-        scr_dy /= divdr;
-        scr_ddepth /= divdr;
-        iter_count = divdr + 1;
     }
 
-    switch (itime)
-    {
-    case 0:
-        thick_x = (7 * scr_dx) >> 4;
-        thick_y = (7 * scr_dy) >> 4;
-        break;
-    case 1:
-        thick_x = (5 * scr_dx) >> 4;
-        thick_y = (5 * scr_dy) >> 4;
-        break;
-    case 2:
-        thick_x = (3 * scr_dx) >> 4;
-        thick_y = (3 * scr_dy) >> 4;
-        break;
-    case 3:
-        thick_x = (2 * scr_dx) >> 4;
-        thick_y = (2 * scr_dy) >> 4;
-        break;
-    default:
-        thick_x = 0;
-        thick_y = 0;
-        break;
-    }
+    depth_shift = -641;
+    if ((itime < 0) || (colour == colour_lookup[ColLU_GREEN]))
+        depth_shift -= 400;
 
-    flg = 0;
-    for (i = 1; i < iter_count; i++)
-    {
-        if ((scr_x > 0) && (scr_x >> 8 < lbDisplay.GraphicsScreenWidth)
-          && (scr_y > 0) && (scr_y >> 8 < lbDisplay.GraphicsScreenHeight))
-        {
-          struct SortLine *p_sline;
-          int cor_x2, cor_y2;
-          int cor_x1, cor_y1;
-          int bckt;
-
-          bckt = BUCKET_MID + (scr_depth >> 8) - 641;
-          if ((itime < 0) || (colour == colour_lookup[ColLU_GREEN]))
-              bckt -= 400;
-
-          cor_x1 = (scr_x + thick_x) >> 8;
-          cor_y1 = (scr_y + thick_y) >> 8;
-          cor_x2 = (scr_x + scr_dx - thick_x) >> 8;
-          cor_y2 = (scr_y + scr_dy - thick_y) >> 8;
-
-          p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
-          if (p_sline != NULL)
-          {
-              p_sline->X1 = cor_x1;
-              p_sline->Y1 = cor_y1;
-              p_sline->X2 = cor_x2;
-              p_sline->Y2 = cor_y2;
-              p_sline->Shade = 32;
-              p_sline->Flags = 0;
-              p_sline->Col = colour;
-          }
-
-          if (itime > 10) {
-              build_polygon_slice(cor_x1, cor_y1, cor_x2, cor_y2,
-                i * 6, (i + 1) * 6, colour, bckt, flg);
-          } else if (itime > 4) {
-              build_polygon_slice(cor_x1, cor_y1, cor_x2, cor_y2,
-                i * (itime - 4), (i + 1) * (itime - 4), colour, bckt, flg);
-          } else if (itime >= 0) {
-              build_polygon_slice(cor_x1, cor_y1, cor_x2, cor_y2,
-                2, 2, colour, bckt, flg);
-          } else {
-              build_polygon_slice(cor_x1, cor_y1, cor_x2, cor_y2,
-                -itime, -itime, colour, bckt, flg);
-          }
-        }
-        scr_x += scr_dx;
-        scr_y += scr_dy;
-        flg = 1;
-        scr_depth += scr_ddepth;
-    }
+    enlist_draw_laser(x1, y1, z1, x2, y2, z2,
+      depth_shift, itime, ofs_x, ofs_y, colour);
 }
 
 void draw_bang(struct SimpleThing *p_pow)

@@ -165,6 +165,9 @@ void enlist_draw_wobble_line(int x1, int y1, int z1,
  int x2, int y2, int z2, int itime, ubyte slflags, TbBool is_player);
 
 void enlist_draw_bang_wobble_line(ushort shrapnel_beg);
+
+void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
+  int depth_shift, int itime, short ofs_x, short ofs_y, TbPixel colour);
 /******************************************************************************/
 #ifdef __cplusplus
 }
