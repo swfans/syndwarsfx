@@ -30,6 +30,7 @@
 #include "enginpeff.h"
 #include "enginprops.h"
 #include "enginshrapn.h"
+#include "enginsngobjs.h"
 #include "engintrns.h"
 
 /******************************************************************************/
@@ -442,6 +443,105 @@ void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
     p_sspr->Z = scr_depth;
     p_sspr->Frame = colour;
     LbMemoryCopy(&p_sspr->SrcItem, text, min(strlen(text)+1, 8));
+}
+
+struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
+  short x2, short y2, int w1, int w2, int col, int sort_key, ushort flag)
+{
+    struct SingleObjectFace4 *p_face4;
+    struct SpecialPoint *p_specpt;
+    int dx, dy;
+    int norm_dx, norm_dy;
+    int prop_dx1, prop_dy1;
+    int prop_dx2, prop_dy2;
+    int scal_dx1, scal_dy1;
+    int scal_dx2, scal_dy2;
+    int length;
+    ushort pt;
+    TbBool neg_x, neg_y;
+
+    static short prevpt1_x = 0;
+    static short prevpt1_y = 0;
+    static short prevpt2_x = 0;
+    static short prevpt2_y = 0;
+
+    neg_y = 0;
+    neg_x = 0;
+    dx = x1 - x2;
+    dy = y2 - y1;
+    length = LbSqrL(16 * (dx * dx + dy * dy));
+    if (length == 0)
+        return NULL;
+    norm_dy = (dy << 10) / length;
+    norm_dx = (dx << 10) / length;
+    if (norm_dy < 0) {
+        norm_dy = -norm_dy;
+        neg_y = 1;
+    }
+    if (norm_dx < 0) {
+        norm_dx = -norm_dx;
+        neg_x = 1;
+    }
+
+    prop_dy1 = (norm_dy * w1 + 128) >> 8;
+    prop_dx1 = (norm_dx * w1 + 128) >> 8;
+    prop_dy2 = (norm_dy * w2 + 128) >> 8;
+    prop_dx2 = (norm_dx * w2 + 128) >> 8;
+    scal_dy1 = (overall_scale * prop_dy1 + 128) >> 8;
+    scal_dx1 = (overall_scale * prop_dx1 + 128) >> 8;
+    scal_dy2 = (overall_scale * prop_dy2 + 128) >> 8;
+    scal_dx2 = (overall_scale * prop_dx2 + 128) >> 8;
+    if (neg_y) {
+        scal_dy1 = -scal_dy1;
+        scal_dy2 = -scal_dy2;
+    }
+    if (neg_x) {
+        scal_dx1 = -scal_dx1;
+        scal_dx2 = -scal_dx2;
+    }
+
+    p_face4 = draw_item_add_special_obj_face4(DrIT_SpObFace4, sort_key);
+    if (p_face4 == NULL) {
+        return NULL;
+    }
+
+    p_face4->ExCol = col;
+    p_face4->Flags = 15;
+
+    if (flag == 0) // First slice
+    {
+        prevpt1_x = x1 + scal_dy1;
+        prevpt1_y = y1 + scal_dx1;
+        prevpt2_x = x1 - scal_dy1;
+        prevpt2_y = y1 - scal_dx1;
+    }
+
+    pt = p_face4->PointNo[0];
+    p_specpt = &game_screen_point_pool[pt];
+    p_specpt->X = prevpt1_x;
+    p_specpt->Y = prevpt1_y;
+
+    pt = p_face4->PointNo[1];
+    p_specpt = &game_screen_point_pool[pt];
+    p_specpt->X = prevpt2_x;
+    p_specpt->Y = prevpt2_y;
+
+    pt = p_face4->PointNo[2];
+    p_specpt = &game_screen_point_pool[pt];
+    p_specpt->X = x2 + scal_dy2;
+    p_specpt->Y = y2 + scal_dx2;
+
+    pt = p_face4->PointNo[3];
+    p_specpt = &game_screen_point_pool[pt];
+    p_specpt->X = x2 - scal_dy2;
+    p_specpt->Y = y2 - scal_dx2;
+
+    prevpt1_x = x2 + scal_dy2;
+    prevpt1_y = y2 + scal_dx2;
+    prevpt2_x = x2 - scal_dy2;
+    prevpt2_y = y2 - scal_dx2;
+
+    return p_face4;
 }
 
 /******************************************************************************/

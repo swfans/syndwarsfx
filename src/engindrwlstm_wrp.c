@@ -117,11 +117,6 @@ extern struct BulStart bul_starts[4000];
 
 extern struct unkn_mech_struc3 *unkn_mech_arr3;
 
-short word_1AA5F4 = 0;
-short word_1AA5F6 = 0;
-short word_1AA5F8 = 0;
-short word_1AA5FA = 0;
-
 extern ushort zig_zag[55];
 
 ubyte pers_shield_spr_vers[][5] = {
@@ -299,100 +294,6 @@ void draw_bang_shrapnel(struct SimpleThing *p_pow)
     enlist_draw_bang_shrapnels(p_pow->U.UBang.shrapnel);
 }
 
-struct SingleObjectFace4 *build_polygon_slice(short x1, short y1, short x2, short y2,
-  int w1, int w2, int col, int sort_key, ushort flag)
-{
-    struct SingleObjectFace4 *p_face4;
-    struct SpecialPoint *p_specpt;
-    int dx, dy;
-    int norm_dx, norm_dy;
-    int prop_dx1, prop_dy1;
-    int prop_dx2, prop_dy2;
-    int scal_dx1, scal_dy1;
-    int scal_dx2, scal_dy2;
-    int length;
-    ushort pt;
-    TbBool neg_x, neg_y;
-
-    neg_y = 0;
-    neg_x = 0;
-    dx = x1 - x2;
-    dy = y2 - y1;
-    length = LbSqrL(16 * (dx * dx + dy * dy));
-    if (length == 0)
-        return NULL;
-    norm_dy = (dy << 10) / length;
-    norm_dx = (dx << 10) / length;
-    if (norm_dy < 0) {
-        norm_dy = -norm_dy;
-        neg_y = 1;
-    }
-    if (norm_dx < 0) {
-        norm_dx = -norm_dx;
-        neg_x = 1;
-    }
-
-    prop_dy1 = (norm_dy * w1 + 128) >> 8;
-    prop_dx1 = (norm_dx * w1 + 128) >> 8;
-    prop_dy2 = (norm_dy * w2 + 128) >> 8;
-    prop_dx2 = (norm_dx * w2 + 128) >> 8;
-    scal_dy1 = (overall_scale * prop_dy1 + 128) >> 8;
-    scal_dx1 = (overall_scale * prop_dx1 + 128) >> 8;
-    scal_dy2 = (overall_scale * prop_dy2 + 128) >> 8;
-    scal_dx2 = (overall_scale * prop_dx2 + 128) >> 8;
-    if (neg_y) {
-        scal_dy1 = -scal_dy1;
-        scal_dy2 = -scal_dy2;
-    }
-    if (neg_x) {
-        scal_dx1 = -scal_dx1;
-        scal_dx2 = -scal_dx2;
-    }
-
-    p_face4 = draw_item_add_special_obj_face4(DrIT_SpObFace4, sort_key);
-    if (p_face4 == NULL) {
-        return NULL;
-    }
-
-    p_face4->ExCol = col;
-    p_face4->Flags = 15;
-
-    if (flag == 0)
-    {
-        word_1AA5F4 = x1 + scal_dy1;
-        word_1AA5F6 = y1 + scal_dx1;
-        word_1AA5F8 = x1 - scal_dy1;
-        word_1AA5FA = y1 - scal_dx1;
-    }
-
-    pt = p_face4->PointNo[0];
-    p_specpt = &game_screen_point_pool[pt];
-    p_specpt->X = word_1AA5F4;
-    p_specpt->Y = word_1AA5F6;
-
-    pt = p_face4->PointNo[1];
-    p_specpt = &game_screen_point_pool[pt];
-    p_specpt->X = word_1AA5F8;
-    p_specpt->Y = word_1AA5FA;
-
-    pt = p_face4->PointNo[2];
-    p_specpt = &game_screen_point_pool[pt];
-    p_specpt->X = x2 + scal_dy2;
-    p_specpt->Y = y2 + scal_dx2;
-
-    pt = p_face4->PointNo[3];
-    p_specpt = &game_screen_point_pool[pt];
-    p_specpt->X = x2 - scal_dy2;
-    p_specpt->Y = y2 - scal_dx2;
-
-    word_1AA5F6 = y2 + scal_dx2;
-    word_1AA5F8 = x2 - scal_dy2;
-    word_1AA5FA = y2 - scal_dx2;
-    word_1AA5F4 = x2 + scal_dy2;
-
-    return p_face4;
-}
-
 void build_wobble_line(int x1, int y1, int z1,
  int x2, int y2, int z2, struct SimpleThing *p_sthing, int itime)
 {
@@ -502,24 +403,24 @@ void build_wobble_line(int x1, int y1, int z1,
 
         if ((itime & 0xFF) < 100)
         {
-            p_sline->Col = colour_lookup[4];
+            p_sline->Col = colour_lookup[ColLU_BLUE];
             p_sline->Shade = 32 + ((prc_cur_x1 + itime + step) & 0x1F);
         }
         else if ((itime & 0xFF) < 110)
         {
-            p_sline->Col = colour_lookup[1];
+            p_sline->Col = colour_lookup[ColLU_WHITE];
             p_sline->Shade = 32;
             p_sline->Flags = 0;
         }
         else if ((itime & 0xFF) < 142)
         {
-            p_sline->Col = colour_lookup[4];
+            p_sline->Col = colour_lookup[ColLU_BLUE];
             p_sline->Shade = 32 + (31 - (itime - 110));
             p_sline->Flags = 0;
         }
         else
         {
-            p_sline->Col = colour_lookup[4];
+            p_sline->Col = colour_lookup[ColLU_BLUE];
             p_sline->Shade = 32 + ((prc_cur_x1 + itime + step) & 0x1F);
             p_sline->Flags = 0;
         }
@@ -679,7 +580,6 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
     int thick_x, thick_y;
     int i, iter_count;
 
-    flg = 0;
     if ((p_owner != NULL) && (p_owner->Type == TT_BUILDING))
     {
         short angle;
@@ -766,6 +666,7 @@ void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, stru
         break;
     }
 
+    flg = 0;
     for (i = 1; i < iter_count; i++)
     {
         if ((scr_x > 0) && (scr_x >> 8 < lbDisplay.GraphicsScreenWidth)

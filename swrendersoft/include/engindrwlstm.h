@@ -31,6 +31,7 @@ struct SortLine;
 struct SortSprite;
 struct SpecialPoint;
 struct FloorTile;
+struct SingleObjectFace4;
 
 #pragma pack()
 /******************************************************************************/
@@ -154,6 +155,9 @@ void enlist_draw_number(int x, int y, int z, short scr_dx, short scr_dy,
  */
 void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
   const char *text, int radius, TbPixel colour);
+
+struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
+  short x2, short y2, int w1, int w2, int col, int sort_key, ushort flag);
 /******************************************************************************/
 #ifdef __cplusplus
 }
