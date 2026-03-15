@@ -26,6 +26,7 @@
 
 #include "enginbckt.h"
 #include "engincam.h"
+#include "engincolour.h"
 #include "engindrwlstx.h"
 #include "enginpeff.h"
 #include "enginprops.h"
@@ -38,6 +39,16 @@
 
 /** Packs sprite frame versions into one, 16-bit field */
 #define SPR_FRAME_VERSIONS_PACK(v0, v1, v2, v3, v4) ((v0 << 0) + (v1 << 3) + (v2 << 6) + (v3 << 9) + (v4 << 12))
+
+ushort zig_zag[] = {
+  256, 240, 360, 265, 256, 270, 240, 256,
+  253, 272, 250, 246, 240, 260, 265, 256,
+  270, 240, 156, 203, 272, 250, 266, 240,
+  260, 295, 216, 270, 240, 256, 253, 292,
+  220, 246, 255, 260, 265, 156, 270, 240,
+  256, 203, 272, 210, 266, 245, 260, 265,
+  356, 270, 240, 256, 293, 272, 250,
+};
 
 #pragma pack()
 /******************************************************************************/
@@ -542,6 +553,180 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
     prevpt2_y = y2 - scal_dx2;
 
     return p_face4;
+}
+
+void enlist_draw_wobble_line(int x1, int y1, int z1,
+ int x2, int y2, int z2, int itime, ubyte slflags, TbBool is_player)
+{
+    int prc_x1, prc_y1, prc_z1;
+    int prc_x2, prc_y2, prc_z2;
+    int dt_x, dt_y, dt_z;
+    int tot_dist;
+    int num_steps, step;
+    int prc_cur_x2, prc_cur_y2;
+
+    prc_x1 = x1 << 7;
+    prc_y1 = y1 << 7;
+    prc_z1 = z1 << 7;
+    prc_x2 = x2 << 7;
+    prc_y2 = y2 << 7;
+    prc_z2 = z2 << 7;
+
+    tot_dist = LbSqrL((prc_y2 - prc_y1) * (prc_y2 - prc_y1)
+      + (prc_x2 - prc_x1) * (prc_x2 - prc_x1));
+    if (tot_dist <= 0) {
+        return;
+    }
+
+    num_steps = (tot_dist / 10) >> 7;
+    if (is_player)
+        num_steps *= 2;
+    if (num_steps < 1)
+        num_steps = 1;
+
+    dt_x = (prc_x2 - prc_x1) / num_steps;
+    dt_y = (prc_y2 - prc_y1) / num_steps;
+    dt_z = (prc_z2 - prc_z1) / num_steps;
+
+    prc_cur_x2 = prc_x1;
+    prc_cur_y2 = prc_y1;
+    for (step = 1; step < num_steps + 1; step++)
+    {
+        struct SortLine *p_sline;
+        int prc_cur_x1, prc_cur_y1;
+        int shift;
+        int bckt;
+
+        prc_cur_x1 = prc_cur_x2;
+        prc_cur_y1 = prc_cur_y2;
+        prc_y1 += dt_y;
+        prc_x1 += dt_x;
+        prc_z1 += dt_z;
+
+        if (!is_player)
+        {
+            shift = ((LbRandomPosShort() % 16) << 7) - 1024;
+            prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
+            shift = ((LbRandomPosShort() % 16) << 7) - 1024;
+            prc_cur_y2 = prc_y1 + ((shift * overall_scale) >> 8);
+        }
+        else if (step == 1)
+        {
+            shift = ((zig_zag[(render_anim_turn + x1) & 0x1F] & 7) << 7) - 512;
+            prc_cur_x1 = prc_cur_x2 + ((overall_scale * shift) >> 8);
+            shift = ((zig_zag[(render_anim_turn + y1) & 0x1F] & 7) << 7) - 512;
+            prc_cur_y1 = prc_cur_y2 + ((shift * overall_scale) >> 8);
+            shift = ((LbRandomPosShort() & 7) << 7) - 512;
+            prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
+            shift = ((LbRandomPosShort() & 7) << 7) - 512;
+            prc_cur_y2 = prc_y1 + ((shift * overall_scale) >> 8);
+        }
+        else if (step == num_steps)
+        {
+            shift = ((zig_zag[(render_anim_turn + x2) & 0x1F] & 7) << 7) - 512;
+            prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
+            shift = ((zig_zag[(y2 + render_anim_turn) & 0x1F] & 7) << 7) - 512;
+            prc_cur_y2 = prc_y1 + ((shift * overall_scale) >> 8);
+        }
+
+        if ((prc_x1 < 0) || (prc_x1 >> 7 >= lbDisplay.GraphicsScreenWidth)
+          || (prc_y1 < 0) || (prc_y1 >> 7 >= lbDisplay.GraphicsScreenHeight))
+            continue;
+
+        bckt = BUCKET_MID + (prc_z1 >> 7);
+
+        p_sline = draw_item_add_line(DrIT_Unkn11, bckt);
+        if (p_sline == NULL) {
+            break;
+        }
+
+        p_sline->X1 = prc_cur_x1 >> 7;
+        p_sline->Y1 = prc_cur_y1 >> 7;
+        p_sline->X2 = prc_cur_x2 >> 7;
+        p_sline->Y2 = prc_cur_y2 >> 7;
+        p_sline->Flags = slflags;
+
+        if ((itime & 0xFF) < 100)
+        {
+            p_sline->Col = colour_lookup[ColLU_BLUE];
+            p_sline->Shade = 32 + ((prc_cur_x1 + itime + step) & 0x1F);
+        }
+        else if ((itime & 0xFF) < 110)
+        {
+            p_sline->Col = colour_lookup[ColLU_WHITE];
+            p_sline->Shade = 32;
+            p_sline->Flags = 0;
+        }
+        else if ((itime & 0xFF) < 142)
+        {
+            p_sline->Col = colour_lookup[ColLU_BLUE];
+            p_sline->Shade = 32 + (31 - (itime - 110));
+            p_sline->Flags = 0;
+        }
+        else
+        {
+            p_sline->Col = colour_lookup[ColLU_BLUE];
+            p_sline->Shade = 32 + ((prc_cur_x1 + itime + step) & 0x1F);
+            p_sline->Flags = 0;
+        }
+    }
+}
+
+ushort shrapnel_get_child_type_not_3(struct Shrapnel *p_shraparnt)
+{
+    struct Shrapnel *p_shrapnel;
+    ushort shrap;
+
+    for (shrap = p_shraparnt->child; shrap != 0; shrap = p_shrapnel->child)
+    {
+        p_shrapnel = &shrapnel[shrap];
+
+        if (p_shrapnel->type != 3)
+            return shrap;
+    }
+    return 0;
+}
+
+void enlist_draw_bang_wobble_line(ushort shrapnel_beg)
+{
+    struct Shrapnel *p_shrapnel1;
+    struct Shrapnel *p_shrapnel2;
+    ushort shrap1, shrap2;
+    ubyte slflags;
+    TbBool is_player;
+
+    is_player = 0;
+    slflags = 0x01;
+
+    shrap1 = shrapnel_beg;
+    if (shrap1 == 0)
+        return;
+    p_shrapnel1 = &shrapnel[shrap1];
+
+    shrap2 = shrapnel_get_child_type_not_3(p_shrapnel1);
+    if (shrap2 == 0)
+        return;
+    p_shrapnel2 = &shrapnel[shrap2];
+
+    {
+        struct ShEnginePoint sp1, sp2;
+        int x, y, z;
+
+        x = (p_shrapnel1->x >> 8) - engn_xc;
+        z = (p_shrapnel1->z >> 8) - engn_zc;
+        y = (p_shrapnel1->y >> 5) - engn_yc;
+
+        transform_shpoint(&sp1, x, y - 8 * engn_yc, z);
+
+        x = (p_shrapnel2->x >> 8) - engn_xc;
+        z = (p_shrapnel2->z >> 8) - engn_zc;
+        y = (p_shrapnel2->y >> 5) - engn_yc;
+
+        transform_shpoint(&sp2, x, y - 8 * engn_yc, z);
+
+        enlist_draw_wobble_line(sp1.X, sp1.Y, sp1.Depth,
+          sp2.X, sp2.Y, sp2.Depth, 10, slflags, is_player);
+    }
 }
 
 /******************************************************************************/

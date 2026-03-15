@@ -158,6 +158,11 @@ void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
 
 struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
   short x2, short y2, int w1, int w2, int col, int sort_key, ushort flag);
+
+void enlist_draw_wobble_line(int x1, int y1, int z1,
+ int x2, int y2, int z2, int itime, ubyte slflags, TbBool is_player);
+
+void enlist_draw_bang_wobble_line(ushort shrapnel_beg);
 /******************************************************************************/
 #ifdef __cplusplus
 }
