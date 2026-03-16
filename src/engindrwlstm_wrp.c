@@ -443,6 +443,36 @@ static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp,
     }
 }
 
+void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object)
+{
+    int points_num, rnd_range;
+    int i;
+    ubyte slflags;
+    TbBool is_player;
+
+    is_player = 0;
+    slflags = 0x01;
+
+    points_num = point_object->EndPoint - point_object->StartPoint;
+    rnd_range = points_num - 4;
+    assert(rnd_range < next_screen_point);
+
+    for (i = 0; i < 10; i++)
+    {
+        struct SpecialPoint *p_specpt2;
+        struct SpecialPoint *p_specpt1;
+        int pt1, pt2;
+
+        pt1 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
+        pt2 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
+        p_specpt2 = &game_screen_point_pool[pt2];
+        p_specpt1 = &game_screen_point_pool[pt1];
+
+        enlist_draw_wobble_line(p_specpt1->X, p_specpt1->Y, p_specpt1->Z - 1024,
+          p_specpt2->X, p_specpt2->Y, p_specpt2->Z - 1024, 10, slflags, is_player);
+    }
+}
+
 int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
 {
     int i, bckt_max;
@@ -641,29 +671,10 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         if ((LbRandomPosShort() & 0xFF) > 0xE0)
             dword_176CB0 = (LbRandomPosShort() & 0xFF) - 0xD0;
 
-        if (dword_176CB0 && (LbRandomPosShort() & 0xFF) > 0x90)
+        if ((dword_176CB0 != 0) && (LbRandomPosShort() & 0xFF) > 0x90)
         {
-            int points_num, rnd_range;
-
-            points_num = point_object->EndPoint - point_object->StartPoint;
             dword_176CB0--;
-            rnd_range = points_num - 4;
-            assert(rnd_range < next_screen_point);
-
-            for (i = 0; i < 10; i++)
-            {
-              struct SpecialPoint *p_specpt2;
-              struct SpecialPoint *p_specpt1;
-              int pt1, pt2;
-
-              pt1 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
-              pt2 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
-              p_specpt2 = &game_screen_point_pool[pt2];
-              p_specpt1 = &game_screen_point_pool[pt1];
-
-              build_wobble_line(p_specpt1->X, p_specpt1->Y, p_specpt1->Z - 1024,
-                p_specpt2->X, p_specpt2->Y, p_specpt2->Z - 1024, 0, 10);
-            }
+            enlist_draw_plasma_sparks_on_object(point_object);
         }
     }
     return bckt_max;
