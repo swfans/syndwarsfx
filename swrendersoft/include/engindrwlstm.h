@@ -34,6 +34,7 @@ struct SortLine;
 struct SortSprite;
 struct SpecialPoint;
 struct FloorTile;
+struct SingleObject;
 struct SingleObjectFace4;
 
 #pragma pack()
@@ -174,6 +175,8 @@ void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
 
 int object_face_get_visible_max_depth(short pt1, short pt2,
   short pt3, short pt4, ushort gflags);
+
+void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object);
 
 /******************************************************************************/
 #ifdef __cplusplus

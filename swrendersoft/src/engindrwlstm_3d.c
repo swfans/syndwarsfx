@@ -22,6 +22,7 @@
 #include "bfmath.h"
 #include "bfmemut.h"
 #include "bfutility.h"
+#include <assert.h>
 #include <limits.h>
 #include <string.h>
 
@@ -1009,6 +1010,36 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
             return SHRT_MIN - 1;
     }
     return depth_max;
+}
+
+void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object)
+{
+    int points_num, rnd_range;
+    int i;
+    ubyte slflags;
+    TbBool is_player;
+
+    is_player = 0;
+    slflags = 0x01;
+
+    points_num = point_object->EndPoint - point_object->StartPoint;
+    rnd_range = points_num - 4;
+    assert(rnd_range < next_screen_point);
+
+    for (i = 0; i < 10; i++)
+    {
+        struct SpecialPoint *p_specpt2;
+        struct SpecialPoint *p_specpt1;
+        int pt1, pt2;
+
+        pt1 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
+        pt2 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
+        p_specpt2 = &game_screen_point_pool[pt2];
+        p_specpt1 = &game_screen_point_pool[pt1];
+
+        enlist_draw_wobble_line(p_specpt1->X, p_specpt1->Y, p_specpt1->Z - 1024,
+          p_specpt2->X, p_specpt2->Y, p_specpt2->Z - 1024, 10, slflags, is_player);
+    }
 }
 
 /******************************************************************************/

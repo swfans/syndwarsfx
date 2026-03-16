@@ -443,107 +443,11 @@ static void transform_rot_object_shpoint(struct ShEnginePoint *p_sp,
     }
 }
 
-void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object)
+void compute_normals_light_ratio(ushort nrml_beg, ushort nrml_end, ushort matx)
 {
-    int points_num, rnd_range;
-    int i;
-    ubyte slflags;
-    TbBool is_player;
+    ushort i;
 
-    is_player = 0;
-    slflags = 0x01;
-
-    points_num = point_object->EndPoint - point_object->StartPoint;
-    rnd_range = points_num - 4;
-    assert(rnd_range < next_screen_point);
-
-    for (i = 0; i < 10; i++)
-    {
-        struct SpecialPoint *p_specpt2;
-        struct SpecialPoint *p_specpt1;
-        int pt1, pt2;
-
-        pt1 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
-        pt2 = next_screen_point - (((ushort)LbRandomPosShort() % rnd_range) + 1);
-        p_specpt2 = &game_screen_point_pool[pt2];
-        p_specpt1 = &game_screen_point_pool[pt1];
-
-        enlist_draw_wobble_line(p_specpt1->X, p_specpt1->Y, p_specpt1->Z - 1024,
-          p_specpt2->X, p_specpt2->Y, p_specpt2->Z - 1024, 10, slflags, is_player);
-    }
-}
-
-int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
-{
-    int i, bckt_max;
-    int face_beg, face;
-    short depth_shift;
-    short faces_num;
-    ushort faceWH, faceGF;
-
-    bckt_max = 0;
-
-    faceGF = 0;
-    if ((p_thing->Type != TT_UNKN35) && (p_thing->SubType != SubTT_VEH_TRAIN))
-    {
-        short pos_x, pos_z;
-        ushort darken;
-
-        // Cannot get absolute map position from p_thing as it might be relative; so get it from the offset
-        pos_x = engn_xc + offset_x;
-        pos_z = engn_zc + offset_z;
-
-        darken = 9;
-        if (pos_x < TILE_TO_MAPCOORD(8, 0))
-            darken = min(darken, pos_x >> 7);
-        else if (pos_x > TILE_TO_MAPCOORD(MAP_TILE_WIDTH - 8, 0))
-            darken = min(darken, (MAP_COORD_WIDTH - pos_x) >> 7);
-        else if (pos_z < TILE_TO_MAPCOORD(8, 0))
-            darken = min(darken, pos_z >> 7);
-        else if (pos_z > TILE_TO_MAPCOORD(MAP_TILE_HEIGHT - 8, 0))
-            darken = min(darken, (MAP_COORD_HEIGHT - pos_z) >> 7);
-
-        if (darken < 9)
-        {
-            if (darken > 7)
-                darken = 7;
-            if (darken <= 0)
-                darken = 1;
-            faceGF |= (darken << 2);
-        }
-    }
-
-    if ((p_thing->Flag & TngF_Unkn01000000) != 0)
-    {
-        p_thing->Flag &= ~TngF_Unkn01000000;
-        faceWH = 11 - (gameturn & 3);
-    }
-    else
-    {
-      faceWH = 0;
-    }
-
-    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        offset_y += waft_table[gameturn & 0x1F];
-
-    for (i = point_object->StartPoint; i < point_object->EndPoint; i++)
-    {
-        struct SinglePoint *p_snpoint;
-
-        p_snpoint = &game_object_points[i];
-        p_snpoint->Flags = 0;
-    }
-
-    depth_shift = -250;
-
-    // This function can be called for objects, vehicles, mguns and rockets
-    assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UVehicle.MatrixIndex));
-    assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UMGun.MatrixIndex));
-    assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UEffect.MatrixIndex));
-    // Matrix for anything other than rocket shall respect the allocated entries counter
-    assert((p_thing->U.UObject.MatrixIndex < next_local_mat) || (p_thing->Type == TT_ROCKET));
-
-    for (i = point_object->OffsetX; i < point_object->OffsetY; i++)
+    for (i = nrml_beg; i < nrml_end; i++)
     {
         struct M31 vec_nx, vec_rot;
         struct Normal *p_nrml;
@@ -551,7 +455,7 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
 
         p_nrml = &game_normals[i];
         vec_nx = *(struct M31 *)&p_nrml->NX;
-        matrix_transform(&vec_rot, &local_mats[p_thing->U.UObject.MatrixIndex], &vec_nx);
+        matrix_transform(&vec_rot, &local_mats[matx], &vec_nx);
 
         fctr_o = dword_176D14 * (vec_rot.R[0] >> 14) - dword_176D10 * (vec_rot.R[2] >> 14);
         fctr_p = (dword_176D14 * (vec_rot.R[2] >> 14) + dword_176D10 * (vec_rot.R[0] >> 14)) >> 16;
@@ -563,6 +467,77 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         p_nrml->LightRatio |= (((fctr_r >> 19) & 0xFF) << 8);
         p_nrml->LightRatio |= ((fctr_s & 0xFFFF) << 16);
     }
+}
+
+void object_points_clear_flags(struct SingleObject *point_object)
+{
+    int i;
+
+    for (i = point_object->StartPoint; i < point_object->EndPoint; i++)
+    {
+        struct SinglePoint *p_snpoint;
+
+        p_snpoint = &game_object_points[i];
+        p_snpoint->Flags = 0;
+    }
+}
+
+void object_points_in_faces_clear_flags(struct SingleObject *point_object)
+{
+    short i;
+    int face_beg, face;
+    short faces_num;
+
+    faces_num = point_object->NumbFaces;
+    face_beg = point_object->StartFace;
+
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct SingleObjectFace3 *p_face;
+        struct SinglePoint *p_snpoint;
+
+        p_face = &game_object_faces3[face];
+
+        p_snpoint = &game_object_points[p_face->PointNo[0]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face->PointNo[1]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face->PointNo[2]];
+        p_snpoint->Flags = 0;
+    }
+
+    faces_num = point_object->NumbFaces4;
+    face_beg = point_object->StartFace4;
+
+    face = face_beg;
+    for (i = 0; i < faces_num; i++, face++)
+    {
+        struct SingleObjectFace4 *p_face4;
+        struct SinglePoint *p_snpoint;
+
+        p_face4 = &game_object_faces4[face];
+
+        p_snpoint = &game_object_points[p_face4->PointNo[0]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face4->PointNo[1]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face4->PointNo[2]];
+        p_snpoint->Flags = 0;
+        p_snpoint = &game_object_points[p_face4->PointNo[3]];
+        p_snpoint->Flags = 0;
+    }
+}
+
+int draw_rot_object_faces(int offset_x, int offset_y, int offset_z,
+  struct SingleObject *point_object, short depth_shift,
+  ushort matx, ushort faceWH, ushort faceGF)
+{
+    int i, bckt_max;
+    int face_beg, face;
+    short faces_num;
+
+    bckt_max = 0;
 
     faces_num = point_object->NumbFaces;
     face_beg = point_object->StartFace;
@@ -585,13 +560,13 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         p_face->WalkHeader = faceWH;
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[0]);
+          matx, p_face->PointNo[0]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[2]);
+          matx, p_face->PointNo[2]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face->PointNo[1]);
+          matx, p_face->PointNo[1]);
 
         depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
           p_face->PointNo[2], p_face->PointNo[1], -1,
@@ -633,16 +608,16 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         p_face4->WalkHeader = faceWH;
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[0]);
+          matx, p_face4->PointNo[0]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[2]);
+          matx, p_face4->PointNo[2]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[1]);
+          matx, p_face4->PointNo[1]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UVehicle.MatrixIndex, p_face4->PointNo[3]);
+          matx, p_face4->PointNo[3]);
 
         depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
           p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
@@ -664,24 +639,12 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
         }
     }
 
-    // Plasma jumps when a vehicle got influenced by explosion or is crashing
-    if ((p_thing->Type == TT_VEHICLE) && (p_thing->State == VehSt_UNKN_45 ||
-      (p_thing->U.UVehicle.WorkPlace & VWPFlg_Unkn0080) != 0))
-    {
-        if ((LbRandomPosShort() & 0xFF) > 0xE0)
-            dword_176CB0 = (LbRandomPosShort() & 0xFF) - 0xD0;
-
-        if ((dword_176CB0 != 0) && (LbRandomPosShort() & 0xFF) > 0x90)
-        {
-            dword_176CB0--;
-            enlist_draw_plasma_sparks_on_object(point_object);
-        }
-    }
     return bckt_max;
 }
 
-short draw_rot_object2(int offset_x, int offset_y, int offset_z,
-  struct SingleObject *point_object, struct Thing *p_thing)
+int draw_rot_object2_faces(int offset_x, int offset_y, int offset_z,
+  struct SingleObject *point_object,
+  ushort matx)
 {
     int i, bckt_max;
     int face_beg, face;
@@ -697,22 +660,6 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct SingleObjectFace3 *p_face;
-        struct SinglePoint *p_snpoint;
-
-        p_face = &game_object_faces3[face];
-
-        p_snpoint = &game_object_points[p_face->PointNo[0]];
-        p_snpoint->Flags = 0;
-        p_snpoint = &game_object_points[p_face->PointNo[1]];
-        p_snpoint->Flags = 0;
-        p_snpoint = &game_object_points[p_face->PointNo[2]];
-        p_snpoint->Flags = 0;
-    }
-
-    face = face_beg;
-    for (i = 0; i < faces_num; i++, face++)
-    {
         struct ShEnginePoint sp;
         struct SingleObjectFace3 *p_face;
         int depth_max, bckt;
@@ -724,13 +671,13 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         p_face = &game_object_faces3[face];
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face->PointNo[0]);
+          matx, p_face->PointNo[0]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face->PointNo[2]);
+          matx, p_face->PointNo[2]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face->PointNo[1]);
+          matx, p_face->PointNo[1]);
 
         depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
           p_face->PointNo[2], p_face->PointNo[1], -1,
@@ -756,24 +703,6 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct SingleObjectFace4 *p_face4;
-        struct SinglePoint *p_snpoint;
-
-        p_face4 = &game_object_faces4[face];
-
-        p_snpoint = &game_object_points[p_face4->PointNo[0]];
-        p_snpoint->Flags = 0;
-        p_snpoint = &game_object_points[p_face4->PointNo[1]];
-        p_snpoint->Flags = 0;
-        p_snpoint = &game_object_points[p_face4->PointNo[2]];
-        p_snpoint->Flags = 0;
-        p_snpoint = &game_object_points[p_face4->PointNo[3]];
-        p_snpoint->Flags = 0;
-    }
-
-    face = face_beg;
-    for (i = 0; i < faces_num; i++, face++)
-    {
         struct ShEnginePoint sp;
         struct SingleObjectFace4 *p_face4;
         int depth_max, bckt;
@@ -785,16 +714,16 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
         p_face4 = &game_object_faces4[face];
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[0]);
+          matx, p_face4->PointNo[0]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[2]);
+          matx, p_face4->PointNo[2]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[1]);
+          matx, p_face4->PointNo[1]);
 
         transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          p_thing->U.UObject.MatrixIndex, p_face4->PointNo[3]);
+          matx, p_face4->PointNo[3]);
 
         depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
           p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
@@ -812,6 +741,103 @@ short draw_rot_object2(int offset_x, int offset_y, int offset_z,
             break;
         }
     }
+
+    return bckt_max;
+}
+
+int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
+{
+    int bckt_max;
+    short depth_shift;
+    ushort faceWH, faceGF;
+
+    bckt_max = 0;
+    depth_shift = -250;
+
+    faceGF = 0;
+    if ((p_thing->Type != TT_UNKN35) && (p_thing->SubType != SubTT_VEH_TRAIN))
+    {
+        short pos_x, pos_z;
+        ushort darken;
+
+        // Cannot get absolute map position from p_thing as it might be relative; so get it from the offset
+        pos_x = engn_xc + offset_x;
+        pos_z = engn_zc + offset_z;
+
+        darken = 9;
+        if (pos_x < TILE_TO_MAPCOORD(8, 0))
+            darken = min(darken, pos_x >> 7);
+        else if (pos_x > TILE_TO_MAPCOORD(MAP_TILE_WIDTH - 8, 0))
+            darken = min(darken, (MAP_COORD_WIDTH - pos_x) >> 7);
+        else if (pos_z < TILE_TO_MAPCOORD(8, 0))
+            darken = min(darken, pos_z >> 7);
+        else if (pos_z > TILE_TO_MAPCOORD(MAP_TILE_HEIGHT - 8, 0))
+            darken = min(darken, (MAP_COORD_HEIGHT - pos_z) >> 7);
+
+        if (darken < 9)
+        {
+            if (darken > 7)
+                darken = 7;
+            if (darken <= 0)
+                darken = 1;
+            faceGF |= (darken << 2);
+        }
+    }
+
+    if ((p_thing->Flag & TngF_Unkn01000000) != 0)
+    {
+        p_thing->Flag &= ~TngF_Unkn01000000;
+        faceWH = 11 - (gameturn & 3);
+    }
+    else
+    {
+        faceWH = 0;
+    }
+
+    // This function can be called for objects, vehicles, mguns and rockets
+    assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UVehicle.MatrixIndex));
+    assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UMGun.MatrixIndex));
+    assert(offsetof(struct Thing, U.UObject.MatrixIndex) == offsetof(struct Thing, U.UEffect.MatrixIndex));
+    // Matrix for anything other than rocket shall respect the allocated entries counter
+    assert((p_thing->U.UObject.MatrixIndex < next_local_mat) || (p_thing->Type == TT_ROCKET));
+
+    if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
+        offset_y += waft_table[gameturn & 0x1F];
+
+    object_points_clear_flags(point_object);
+
+    compute_normals_light_ratio(point_object->OffsetX, point_object->OffsetY,
+      p_thing->U.UObject.MatrixIndex);
+
+    bckt_max = draw_rot_object_faces(offset_x, offset_y, offset_z,
+      point_object, depth_shift, p_thing->U.UObject.MatrixIndex,
+      faceWH, faceGF);
+
+    // Plasma jumps when a vehicle got influenced by explosion or is crashing
+    if ((p_thing->Type == TT_VEHICLE) && (p_thing->State == VehSt_UNKN_45 ||
+      (p_thing->U.UVehicle.WorkPlace & VWPFlg_Unkn0080) != 0))
+    {
+        if ((LbRandomPosShort() & 0xFF) > 0xE0)
+            dword_176CB0 = (LbRandomPosShort() & 0xFF) - 0xD0;
+
+        if ((dword_176CB0 != 0) && (LbRandomPosShort() & 0xFF) > 0x90)
+        {
+            dword_176CB0--;
+            enlist_draw_plasma_sparks_on_object(point_object);
+        }
+    }
+    return bckt_max;
+}
+
+short draw_rot_object2(int offset_x, int offset_y, int offset_z,
+  struct SingleObject *point_object, struct Thing *p_thing)
+{
+    int bckt_max;
+
+    object_points_in_faces_clear_flags(point_object);
+
+    bckt_max = draw_rot_object2_faces(offset_x, offset_y, offset_z, point_object,
+      p_thing->U.UObject.MatrixIndex);
 
     return bckt_max;
 }
