@@ -558,6 +558,131 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
     return p_face4;
 }
 
+void build_polygon_circle_2d(int x1, int y1, int r1, int r2,
+  int flag, struct SingleFloorTexture *p_tex, ushort col,
+  short bright1, short bright2, int depth_shift)
+{
+    int pt3, pt4;
+    int scrad1;
+    int cur_x, cur_y;
+    short angle, dt_angle, angle_detail;
+
+    scrad1 = (overall_scale * r1) >> 8;
+
+    if ((x1 + scrad1 < 0) || (x1 - scrad1 > vec_window_width))
+        return;
+    if ((y1 + scrad1 < 0) || (y1 - scrad1 > vec_window_height))
+        return;
+
+    if (scrad1 > 150)
+        angle_detail = 16;
+    else if (scrad1 > 50)
+        angle_detail = 32;
+    else if (scrad1 > 10)
+        angle_detail = 64;
+    else if (scrad1 > 5)
+        angle_detail = 128;
+    else
+        angle_detail = 256;
+
+    cur_x = x1 + scrad1;
+    cur_y = y1;
+
+    pt3 = next_screen_point;
+    pt4 = pt3 + 1;
+    {
+        struct SpecialPoint *p_specpt3;
+        p_specpt3 = &game_screen_point_pool[pt3];
+        p_specpt3->X = x1;
+        p_specpt3->Y = y1;
+    }
+
+    dt_angle = 2 * angle_detail;
+    angle = dt_angle;
+    while (angle <= 2048)
+    {
+        struct SingleObjectFace4 *p_face4;
+        struct SpecialPoint *p_specpt;
+        int nxt_x, nxt_y;
+        int sin_angl, half_angl, cos_angl;
+        int hlf_y, hlf_x;
+
+        half_angl = angle - angle_detail;
+        cos_angl = lbSinTable[(half_angl & LbFPMath_AngleMask) + LbFPMath_PI/2];
+        sin_angl = lbSinTable[(half_angl & LbFPMath_AngleMask)];
+        hlf_x = x1 + ((scrad1 * cos_angl) >> 16);
+        hlf_y = y1 + ((scrad1 * sin_angl) >> 16);
+
+        cos_angl = lbSinTable[(angle & LbFPMath_AngleMask) + LbFPMath_PI/2];
+        sin_angl = lbSinTable[angle & LbFPMath_AngleMask];
+        nxt_x = x1 + ((scrad1 * cos_angl) >> 16);
+        nxt_y = y1 + ((scrad1 * sin_angl) >> 16);
+
+        if (pt4 + 3 > screen_points_limit) {
+            break;
+        }
+
+        p_face4 = draw_item_add_special_obj_face4_no_pts(DrIT_SpObFace4, depth_shift);
+
+        if (p_face4 == NULL) {
+            break;
+        }
+
+        p_face4->Flags = 17;
+        p_face4->PointNo[0] = pt4 + 2;
+        p_face4->PointNo[1] = pt4 + 1;
+        p_face4->PointNo[2] = pt3;
+        p_face4->PointNo[3] = pt4 + 0;
+        p_face4->Shade0 = bright1;
+        p_face4->Shade1 = bright1;
+        p_face4->Shade3 = bright1;
+        p_face4->Shade2 = bright2;
+        p_face4->GFlags = 0;
+        p_face4->ExCol = col;
+
+        p_specpt = &game_screen_point_pool[pt4 + 0];
+        p_specpt->X = cur_x;
+        p_specpt->Y = cur_y;
+
+        p_specpt = &game_screen_point_pool[pt4 + 1];
+        p_specpt->X = hlf_x;
+        p_specpt->Y = hlf_y;
+
+        p_specpt = &game_screen_point_pool[pt4 + 2];
+        p_specpt->X = nxt_x;
+        p_specpt->Y = nxt_y;
+
+        pt4 += 3;
+        cur_x = nxt_x;
+        cur_y = nxt_y;
+        angle += dt_angle;
+    }
+    next_screen_point = pt4;
+}
+
+void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
+  struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
+{
+    int pp_X, pp_Y;
+    int bckt;
+
+    {
+        struct EnginePoint ep;
+        ep.X3d = x1 - engn_xc;
+        ep.Z3d = z1 - engn_zc;
+        ep.Y3d = 8 * y1 - (engn_yc >> 3);
+        ep.Flags = 0;
+        transform_point(&ep);
+
+        pp_X = ep.pp.X;
+        pp_Y = ep.pp.Y;
+        bckt = BUCKET_MID + ep.Z3d - 16 * r1;
+    }
+
+    build_polygon_circle_2d(pp_X, pp_Y, r1, r2, flag,
+      p_tex, col, bright1, bright2, bckt);
+}
+
 struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1)
 {
     struct EnginePoint ep;
@@ -1040,6 +1165,48 @@ void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object)
         enlist_draw_wobble_line(p_specpt1->X, p_specpt1->Y, p_specpt1->Z - 1024,
           p_specpt2->X, p_specpt2->Y, p_specpt2->Z - 1024, 10, slflags, is_player);
     }
+}
+
+void enlist_draw_long_health_bar_2d(int scr_x, int scr_y,
+  int scr_depth, int bckt, int val, int val_max,
+  intptr_t p_sitm, TbPixel lvl_col, TbPixel bar_col)
+{
+    struct SortSprite *p_sspr;
+
+    if (bckt > BUCKET_MID + scr_depth)
+        bckt = BUCKET_MID + scr_depth;
+    p_sspr = draw_item_add_sprite(DrIT_LongPropBar, bckt);
+    if (p_sspr == NULL) {
+        return;
+    }
+
+    p_sspr->X = scr_x;
+    p_sspr->Y = scr_y;
+    p_sspr->Z = scr_depth;
+    p_sspr->SrcItem = p_sitm;
+    p_sspr->Frame = val_max;
+    p_sspr->Scale = val;
+    p_sspr->Brightness = lvl_col;
+    p_sspr->Angle = bar_col;
+}
+
+void enlist_draw_long_health_bar(int cor_x, int cor_y, int cor_z,
+  int depth_shift, int bckt, int val, int val_max,
+  intptr_t p_sitm, TbPixel lvl_col, TbPixel bar_col)
+{
+    struct ShEnginePoint sp;
+    int cor_dx, cor_dy, cor_dz;
+    int scr_depth;
+
+    cor_dx = cor_x - engn_xc;
+    cor_dy = cor_y - engn_yc;
+    cor_dz = cor_z - engn_zc;
+    transform_shpoint(&sp, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
+
+    scr_depth = sp.Depth + depth_shift;
+
+    enlist_draw_long_health_bar_2d(sp.X, sp.Y + 20, scr_depth, bckt,
+      val, val_max, p_sitm, lvl_col, bar_col);
 }
 
 /******************************************************************************/

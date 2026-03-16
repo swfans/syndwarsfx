@@ -1066,24 +1066,11 @@ int mech_unkn_func_03(struct Thing *p_thing)
 
 void draw_vehicle_health(struct Thing *p_thing, int bckt)
 {
-    struct ShEnginePoint sp;
-    int x, y, z;
-    struct SortSprite *p_sspr;
-    int scr_depth;
+    int cor_x, cor_y, cor_z;
+    int depth_shift;
     TbPixel lvl_col, bar_col;
 
-    x = (p_thing->X >> 8) - engn_xc;
-    y = PRCCOORD_TO_YCOORD(p_thing->Y) - engn_yc;
-    z = (p_thing->Z >> 8) - engn_zc;
-    transform_shpoint(&sp, x, y - 8 * engn_yc, z);
-
-    scr_depth = sp.Depth - 2 * p_thing->Radius;
-    if (bckt > BUCKET_MID + scr_depth)
-        bckt = BUCKET_MID + scr_depth;
-    p_sspr = draw_item_add_sprite(DrIT_LongPropBar, bckt);
-    if (p_sspr == NULL) {
-        return;
-    }
+    depth_shift = - 2 * p_thing->Radius;
 
     if (ingame.PanelPermutation == -3) {
         lvl_col = 33;
@@ -1093,149 +1080,13 @@ void draw_vehicle_health(struct Thing *p_thing, int bckt)
         bar_col = 19;
     }
 
-    p_sspr->X = sp.X;
-    p_sspr->Y = sp.Y + 20;
-    p_sspr->Z = scr_depth;
-    p_sspr->SrcItem = (intptr_t)p_thing;
-    p_sspr->Frame = p_thing->U.UVehicle.MaxHealth;
-    p_sspr->Scale = p_thing->Health;
-    p_sspr->Brightness = lvl_col;
-    p_sspr->Angle = bar_col;
+    cor_x = (p_thing->X >> 8);
+    cor_y = (p_thing->Y >> 5);
+    cor_z = (p_thing->Z >> 8);
+
+    enlist_draw_long_health_bar(cor_x, cor_y, cor_z, depth_shift,
+      bckt, p_thing->Health, p_thing->U.UVehicle.MaxHealth,
+      (intptr_t)p_thing, lvl_col, bar_col);
 }
 
-void build_polygon_circle_2d(int x1, int y1, int r1, int r2, int flag,
-  struct SingleFloorTexture *p_tex, int col, int bright1, int bright2, int sort_key)
-{
-#if 0
-    asm volatile (
-      "push %9\n"
-      "push %8\n"
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_build_polygon_circle_2d\n"
-        : : "a" (x1), "d" (y1), "b" (r1), "c" (r2), "g" (flag), "g" (p_tex), "g" (col), "g" (bright1), "g" (bright2), "g" (sort_key));
-    return;
-#endif
-    int pt3, pt4;
-    int scrad1;
-    int cur_x, cur_y;
-    short angle, dt_angle, angle_detail;
-
-    scrad1 = (overall_scale * r1) >> 8;
-
-    if ((x1 + scrad1 < 0) || (x1 - scrad1 > vec_window_width))
-        return;
-    if ((y1 + scrad1 < 0) || (y1 - scrad1 > vec_window_height))
-        return;
-
-    if (scrad1 > 150)
-        angle_detail = 16;
-    else if (scrad1 > 50)
-        angle_detail = 32;
-    else if (scrad1 > 10)
-        angle_detail = 64;
-    else if (scrad1 > 5)
-        angle_detail = 128;
-    else
-        angle_detail = 256;
-
-    cur_x = x1 + scrad1;
-    cur_y = y1;
-
-    pt3 = next_screen_point;
-    pt4 = pt3 + 1;
-    {
-        struct SpecialPoint *p_specpt3;
-        p_specpt3 = &game_screen_point_pool[pt3];
-        p_specpt3->X = x1;
-        p_specpt3->Y = y1;
-    }
-
-    dt_angle = 2 * angle_detail;
-    angle = dt_angle;
-    while (angle <= 2048)
-    {
-        struct SingleObjectFace4 *p_face4;
-        struct SpecialPoint *p_specpt;
-        int nxt_x, nxt_y;
-        int sin_angl, half_angl, cos_angl;
-        int hlf_y, hlf_x;
-
-        half_angl = angle - angle_detail;
-        cos_angl = lbSinTable[(half_angl & LbFPMath_AngleMask) + LbFPMath_PI/2];
-        sin_angl = lbSinTable[(half_angl & LbFPMath_AngleMask)];
-        hlf_x = x1 + ((scrad1 * cos_angl) >> 16);
-        hlf_y = y1 + ((scrad1 * sin_angl) >> 16);
-
-        cos_angl = lbSinTable[(angle & LbFPMath_AngleMask) + LbFPMath_PI/2];
-        sin_angl = lbSinTable[angle & LbFPMath_AngleMask];
-        nxt_x = x1 + ((scrad1 * cos_angl) >> 16);
-        nxt_y = y1 + ((scrad1 * sin_angl) >> 16);
-
-        if (pt4 + 3 > screen_points_limit) {
-            break;
-        }
-
-        p_face4 = draw_item_add_special_obj_face4_no_pts(DrIT_SpObFace4, sort_key);
-
-        if (p_face4 == NULL) {
-            break;
-        }
-
-        p_face4->Flags = 17;
-        p_face4->PointNo[0] = pt4 + 2;
-        p_face4->PointNo[1] = pt4 + 1;
-        p_face4->PointNo[2] = pt3;
-        p_face4->PointNo[3] = pt4 + 0;
-        p_face4->Shade0 = bright1;
-        p_face4->Shade1 = bright1;
-        p_face4->Shade3 = bright1;
-        p_face4->Shade2 = bright2;
-        p_face4->GFlags = 0;
-        p_face4->ExCol = col;
-
-        p_specpt = &game_screen_point_pool[pt4 + 0];
-        p_specpt->X = cur_x;
-        p_specpt->Y = cur_y;
-
-        p_specpt = &game_screen_point_pool[pt4 + 1];
-        p_specpt->X = hlf_x;
-        p_specpt->Y = hlf_y;
-
-        p_specpt = &game_screen_point_pool[pt4 + 2];
-        p_specpt->X = nxt_x;
-        p_specpt->Y = nxt_y;
-
-        pt4 += 3;
-        cur_x = nxt_x;
-        cur_y = nxt_y;
-        angle += dt_angle;
-    }
-    next_screen_point = pt4;
-}
-
-void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
-  struct SingleFloorTexture *p_tex, int col, int bright1, int bright2)
-{
-    int pp_X, pp_Y;
-    int bckt;
-
-    {
-        struct EnginePoint ep;
-        ep.X3d = x1 - engn_xc;
-        ep.Z3d = z1 - engn_zc;
-        ep.Y3d = 8 * y1 - (engn_yc >> 3);
-        ep.Flags = 0;
-        transform_point(&ep);
-
-        pp_X = ep.pp.X;
-        pp_Y = ep.pp.Y;
-        bckt = BUCKET_MID + ep.Z3d - 16 * r1;
-    }
-
-    build_polygon_circle_2d(pp_X, pp_Y, r1, r2, flag,
-      p_tex, col, bright1, bright2, bckt);
-}
 /******************************************************************************/

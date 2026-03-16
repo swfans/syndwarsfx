@@ -36,6 +36,7 @@ struct SpecialPoint;
 struct FloorTile;
 struct SingleObject;
 struct SingleObjectFace4;
+struct SingleFloorTexture;
 
 #pragma pack()
 /******************************************************************************/
@@ -163,6 +164,9 @@ void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
 struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
   short x2, short y2, int w1, int w2, int col, int sort_key, ushort flag);
 
+void build_polygon_circle(int x1, int y1, int z1, int r1, int r2, int flag,
+  struct SingleFloorTexture *p_tex, int col, int bright1, int bright2);
+
 struct SingleObjectFace4 *build_glare(short x1, short y1, short z1, short r1);
 
 void enlist_draw_wobble_line(int x1, int y1, int z1,
@@ -178,6 +182,9 @@ int object_face_get_visible_max_depth(short pt1, short pt2,
 
 void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object);
 
+void enlist_draw_long_health_bar(int cor_x, int cor_y, int cor_z,
+  int depth_shift, int bckt, int val, int val_max,
+  intptr_t p_sitm, TbPixel lvl_col, TbPixel bar_col);
 /******************************************************************************/
 #ifdef __cplusplus
 }
