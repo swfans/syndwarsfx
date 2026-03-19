@@ -293,7 +293,7 @@ void build_vehicle(struct Thing *p_thing)
 void build_person(struct Thing *p_thing)
 {
     ushort frame, bri;
-    int cor_x, cor_y, cor_z;
+    int cor_dx, cor_dy, cor_dz;
     char locstr[12];
 
     if (p_thing->State == PerSt_BEING_PERSUADED)
@@ -334,15 +334,15 @@ void build_person(struct Thing *p_thing)
         bri = p_thing->U.UPerson.Brightness;
     }
 
-    cor_x = PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc;
-    cor_y = PRCCOORD_TO_YCOORD(p_thing->Y) >> 3;
-    cor_z = PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc;
+    cor_dx = PRCCOORD_TO_MAPCOORD(p_thing->X) - engn_xc;
+    cor_dy = PRCCOORD_TO_YCOORD(p_thing->Y) >> 3;
+    cor_dz = PRCCOORD_TO_MAPCOORD(p_thing->Z) - engn_zc;
 
-    draw_pers_e_graphic(p_thing, cor_x, cor_y, cor_z,
+    draw_pers_e_graphic(p_thing, cor_dx, cor_dy, cor_dz,
       frame, p_thing->Radius, bri);
 
     if (debug_hud_collision) {
-        enlist_draw_number(cor_x, cor_y, cor_z,
+        enlist_draw_number(cor_dx, cor_dy, cor_dz,
           0, 37, p_thing->U.UPerson.RecoilTimer,
           p_thing->Radius - 1, colour_lookup[ColLU_RED]);
     }
@@ -356,7 +356,7 @@ void build_person(struct Thing *p_thing)
         strcat(locstr, "B");
     }
     if (locstr[0] != '\0') {
-        enlist_draw_text(cor_x, cor_y, cor_z, -8, 37, locstr,
+        enlist_draw_text(cor_dx, cor_dy, cor_dz, -8, 37, locstr,
           p_thing->Radius - 1, colour_lookup[ColLU_RED]);
     }
 }

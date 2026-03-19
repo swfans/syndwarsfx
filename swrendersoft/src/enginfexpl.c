@@ -448,7 +448,7 @@ void draw_explode_type1(ushort exface, ushort npoints)
     struct ShEnginePoint sp1, sp2, sp3, sp4;
     struct ExplodeFace3 *p_exface;
     struct SpecialPoint *p_specpt;
-    int cor_x, cor_y, cor_z;
+    int cor_dx, cor_dy, cor_dz;
     ushort flags_all;
     short depth_max;
     ushort pt;
@@ -459,28 +459,28 @@ void draw_explode_type1(ushort exface, ushort npoints)
     p_exface->PointOffset = pt;
     next_screen_point += npoints;
 
-    cor_x = p_exface->X + p_exface->X0 - engn_xc;
-    cor_z = p_exface->Z + p_exface->Z0 - engn_zc;
-    cor_y = p_exface->Y + p_exface->Y0 - engn_yc;
-    transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X + p_exface->X0 - engn_xc;
+    cor_dz = p_exface->Z + p_exface->Z0 - engn_zc;
+    cor_dy = p_exface->Y + p_exface->Y0 - engn_yc;
+    transform_shpoint(&sp1, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 0];
     p_specpt->X = sp1.X;
     p_specpt->Y = sp1.Y;
 
-    cor_x = p_exface->X + p_exface->X1 - engn_xc;
-    cor_z = p_exface->Z + p_exface->Z1 - engn_zc;
-    cor_y = p_exface->Y + p_exface->Y1 - engn_yc;
-    transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X + p_exface->X1 - engn_xc;
+    cor_dz = p_exface->Z + p_exface->Z1 - engn_zc;
+    cor_dy = p_exface->Y + p_exface->Y1 - engn_yc;
+    transform_shpoint(&sp2, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 1];
     p_specpt->X = sp2.X;
     p_specpt->Y = sp2.Y;
 
-    cor_x = p_exface->X + p_exface->X2 - engn_xc;
-    cor_z = p_exface->Z + p_exface->Z2 - engn_zc;
-    cor_y = p_exface->Y + p_exface->Y2 - engn_yc;
-    transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X + p_exface->X2 - engn_xc;
+    cor_dz = p_exface->Z + p_exface->Z2 - engn_zc;
+    cor_dy = p_exface->Y + p_exface->Y2 - engn_yc;
+    transform_shpoint(&sp3, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 2];
     p_specpt->X = sp3.X;
@@ -498,10 +498,10 @@ void draw_explode_type1(ushort exface, ushort npoints)
 
     if (npoints >= 4)
     {
-        cor_x = p_exface->X + p_exface->X3 - engn_xc;
-        cor_z = p_exface->Z + p_exface->Z3 - engn_zc;
-        cor_y = p_exface->Y + p_exface->Y3 - engn_yc;
-        transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
+        cor_dx = p_exface->X + p_exface->X3 - engn_xc;
+        cor_dz = p_exface->Z + p_exface->Z3 - engn_zc;
+        cor_dy = p_exface->Y + p_exface->Y3 - engn_yc;
+        transform_shpoint(&sp4, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
         p_specpt = &game_screen_point_pool[pt + 3];
         p_specpt->X = sp4.X;
@@ -524,7 +524,7 @@ void draw_explode_type3(ushort exface, ushort npoints)
     struct ShEnginePoint sp1, sp2, sp3, sp4;
     struct ExplodeFace3 *p_exface;
     struct SpecialPoint *p_specpt;
-    int cor_x, cor_y, cor_z;
+    int cor_dx, cor_dy, cor_dz;
     ushort flags_all;
     short depth_max;
     ushort pt;
@@ -535,28 +535,28 @@ void draw_explode_type3(ushort exface, ushort npoints)
     p_exface->PointOffset = pt;
     next_screen_point += npoints;
 
-    cor_x = p_exface->X0 - engn_xc;
-    cor_z = p_exface->Z0 - engn_zc;
-    cor_y = p_exface->Y0 - engn_yc;
-    transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X0 - engn_xc;
+    cor_dz = p_exface->Z0 - engn_zc;
+    cor_dy = p_exface->Y0 - engn_yc;
+    transform_shpoint(&sp1, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 0];
     p_specpt->X = sp1.X;
     p_specpt->Y = sp1.Y;
 
-    cor_x = p_exface->X1 - engn_xc;
-    cor_z = p_exface->Z1 - engn_zc;
-    cor_y = p_exface->Y1 - engn_yc;
-    transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X1 - engn_xc;
+    cor_dz = p_exface->Z1 - engn_zc;
+    cor_dy = p_exface->Y1 - engn_yc;
+    transform_shpoint(&sp2, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 1];
     p_specpt->X = sp2.X;
     p_specpt->Y = sp2.Y;
 
-    cor_x = p_exface->X2 - engn_xc;
-    cor_z = p_exface->Z2 - engn_zc;
-    cor_y = p_exface->Y2 - engn_yc;
-    transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X2 - engn_xc;
+    cor_dz = p_exface->Z2 - engn_zc;
+    cor_dy = p_exface->Y2 - engn_yc;
+    transform_shpoint(&sp3, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 2];
     p_specpt->X = sp3.X;
@@ -574,10 +574,10 @@ void draw_explode_type3(ushort exface, ushort npoints)
 
     if (npoints >= 4)
     {
-        cor_x = p_exface->X3 - engn_xc;
-        cor_z = p_exface->Z3 - engn_zc;
-        cor_y = p_exface->Y3 - engn_yc;
-        transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
+        cor_dx = p_exface->X3 - engn_xc;
+        cor_dz = p_exface->Z3 - engn_zc;
+        cor_dy = p_exface->Y3 - engn_yc;
+        transform_shpoint(&sp4, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
         p_specpt = &game_screen_point_pool[pt + 3];
         p_specpt->X = sp4.X;
@@ -600,7 +600,7 @@ void draw_explode_type5(ushort exface, ushort npoints)
     struct ShEnginePoint sp1, sp2, sp3, sp4;
     struct ExplodeFace3 *p_exface;
     struct SpecialPoint *p_specpt;
-    int cor_x, cor_y, cor_z;
+    int cor_dx, cor_dy, cor_dz;
     ushort flags_all;
     short depth_max;
     ushort pt;
@@ -611,28 +611,28 @@ void draw_explode_type5(ushort exface, ushort npoints)
     p_exface->PointOffset = pt;
     next_screen_point += npoints;
 
-    cor_x = p_exface->X + p_exface->X0 - engn_xc;
-    cor_z = p_exface->Z + p_exface->Z0 - engn_zc;
-    cor_y = p_exface->Y + p_exface->Y0 - engn_yc;
-    transform_shpoint(&sp1, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X + p_exface->X0 - engn_xc;
+    cor_dz = p_exface->Z + p_exface->Z0 - engn_zc;
+    cor_dy = p_exface->Y + p_exface->Y0 - engn_yc;
+    transform_shpoint(&sp1, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 0];
     p_specpt->X = sp1.X;
     p_specpt->Y = sp1.Y;
 
-    cor_x = p_exface->X + p_exface->X1 - engn_xc;
-    cor_z = p_exface->Z + p_exface->Z1 - engn_zc;
-    cor_y = p_exface->Y + p_exface->Y1 - engn_yc;
-    transform_shpoint(&sp2, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X + p_exface->X1 - engn_xc;
+    cor_dz = p_exface->Z + p_exface->Z1 - engn_zc;
+    cor_dy = p_exface->Y + p_exface->Y1 - engn_yc;
+    transform_shpoint(&sp2, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 1];
     p_specpt->X = sp2.X;
     p_specpt->Y = sp2.Y;
 
-    cor_x = p_exface->X + p_exface->X2 - engn_xc;
-    cor_z = p_exface->Z + p_exface->Z2 - engn_zc;
-    cor_y = p_exface->Y + p_exface->Y2 - engn_yc;
-    transform_shpoint(&sp3, cor_x, cor_y - 8 * engn_yc, cor_z);
+    cor_dx = p_exface->X + p_exface->X2 - engn_xc;
+    cor_dz = p_exface->Z + p_exface->Z2 - engn_zc;
+    cor_dy = p_exface->Y + p_exface->Y2 - engn_yc;
+    transform_shpoint(&sp3, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
     p_specpt = &game_screen_point_pool[pt + 2];
     p_specpt->X = sp3.X;
@@ -650,10 +650,10 @@ void draw_explode_type5(ushort exface, ushort npoints)
 
     if (npoints >= 4)
     {
-        cor_x = p_exface->X + p_exface->X3 - engn_xc;
-        cor_z = p_exface->Z + p_exface->Z3 - engn_zc;
-        cor_y = p_exface->Y + p_exface->Y3 - engn_yc;
-        transform_shpoint(&sp4, cor_x, cor_y - 8 * engn_yc, cor_z);
+        cor_dx = p_exface->X + p_exface->X3 - engn_xc;
+        cor_dz = p_exface->Z + p_exface->Z3 - engn_zc;
+        cor_dy = p_exface->Y + p_exface->Y3 - engn_yc;
+        transform_shpoint(&sp4, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
         p_specpt = &game_screen_point_pool[pt + 3];
         p_specpt->X = sp4.X;

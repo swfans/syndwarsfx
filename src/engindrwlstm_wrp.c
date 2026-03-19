@@ -220,7 +220,9 @@ static void draw_pers_shield(struct Thing *p_thing, int scr_x, int scr_y, int sc
       frame, frv, angl, bright, (intptr_t)p_thing);
 }
 
-void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity)
+void draw_pers_e_graphic(struct Thing *p_thing,
+  int cor_dx, int cor_dy, int cor_dz,
+  int frame, int radius, int intensity)
 {
     struct ShEnginePoint sp;
     int scr_depth;
@@ -231,9 +233,9 @@ void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, 
     br_inc = person_shield_glow_brightness(p_thing);
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[gameturn & 0x1F] >> 3;
+        cor_dy += waft_table[gameturn & 0x1F] >> 3;
 
-    transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
+    transform_shpoint(&sp, cor_dx, 8 * cor_dy - 8 * engn_yc, cor_dz);
 
     scr_depth = sp.Depth - ((radius * overall_scale) >> 8);
     if (ingame.DisplayMode == 50)
@@ -745,7 +747,8 @@ int draw_rot_object2_faces(int offset_x, int offset_y, int offset_z,
     return bckt_max;
 }
 
-int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObject *point_object, struct Thing *p_thing)
+int draw_rot_object(int cor_dx, int cor_dy, int cor_dz,
+  struct SingleObject *point_object, struct Thing *p_thing)
 {
     int bckt_max;
     short depth_shift;
@@ -757,22 +760,22 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
     faceGF = 0;
     if ((p_thing->Type != TT_UNKN35) && (p_thing->SubType != SubTT_VEH_TRAIN))
     {
-        short pos_x, pos_z;
+        short cor_x, cor_z;
         ushort darken;
 
         // Cannot get absolute map position from p_thing as it might be relative; so get it from the offset
-        pos_x = engn_xc + offset_x;
-        pos_z = engn_zc + offset_z;
+        cor_x = engn_xc + cor_dx;
+        cor_z = engn_zc + cor_dz;
 
         darken = 9;
-        if (pos_x < TILE_TO_MAPCOORD(8, 0))
-            darken = min(darken, pos_x >> 7);
-        else if (pos_x > TILE_TO_MAPCOORD(MAP_TILE_WIDTH - 8, 0))
-            darken = min(darken, (MAP_COORD_WIDTH - pos_x) >> 7);
-        else if (pos_z < TILE_TO_MAPCOORD(8, 0))
-            darken = min(darken, pos_z >> 7);
-        else if (pos_z > TILE_TO_MAPCOORD(MAP_TILE_HEIGHT - 8, 0))
-            darken = min(darken, (MAP_COORD_HEIGHT - pos_z) >> 7);
+        if (cor_x < TILE_TO_MAPCOORD(8, 0))
+            darken = min(darken, cor_x >> 7);
+        else if (cor_x > TILE_TO_MAPCOORD(MAP_TILE_WIDTH - 8, 0))
+            darken = min(darken, (MAP_COORD_WIDTH - cor_x) >> 7);
+        else if (cor_z < TILE_TO_MAPCOORD(8, 0))
+            darken = min(darken, cor_z >> 7);
+        else if (cor_z > TILE_TO_MAPCOORD(MAP_TILE_HEIGHT - 8, 0))
+            darken = min(darken, (MAP_COORD_HEIGHT - cor_z) >> 7);
 
         if (darken < 9)
         {
@@ -802,14 +805,14 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
     assert((p_thing->U.UObject.MatrixIndex < next_local_mat) || (p_thing->Type == TT_ROCKET));
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        offset_y += waft_table[gameturn & 0x1F];
+        cor_dy += waft_table[gameturn & 0x1F];
 
     object_points_clear_flags(point_object);
 
     compute_normals_light_ratio(point_object->OffsetX, point_object->OffsetY,
       p_thing->U.UObject.MatrixIndex);
 
-    bckt_max = draw_rot_object_faces(offset_x, offset_y, offset_z,
+    bckt_max = draw_rot_object_faces(cor_dx, cor_dy, cor_dz,
       point_object, depth_shift, p_thing->U.UObject.MatrixIndex,
       faceWH, faceGF);
 
@@ -829,58 +832,41 @@ int draw_rot_object(int offset_x, int offset_y, int offset_z, struct SingleObjec
     return bckt_max;
 }
 
-short draw_rot_object2(int offset_x, int offset_y, int offset_z,
+short draw_rot_object2(int cor_dx, int cor_dy, int cor_dz,
   struct SingleObject *point_object, struct Thing *p_thing)
 {
     int bckt_max;
 
     object_points_in_faces_clear_flags(point_object);
 
-    bckt_max = draw_rot_object2_faces(offset_x, offset_y, offset_z, point_object,
+    bckt_max = draw_rot_object2_faces(cor_dx, cor_dy, cor_dz, point_object,
       p_thing->U.UObject.MatrixIndex);
 
     return bckt_max;
 }
 
-short draw_object(int x, int y, int z, struct SingleObject *point_object)
+enum DrawObjectFacesFlags {
+    DrwObjF_NoWobblyElevation = 0x0100,
+    DrwObjF_StartBelowWindow = 0x0200,
+};
+
+short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
+  struct SingleObject *point_object, ushort doflags)
 {
+    struct ShEnginePoint sp1, sp2, sp3;
     int i, bckt_max;
     int face_beg, face;
     int snpoint;
-    int obj_x, obj_y, obj_z;
     int points_num;
     short depth_shift;
     short faces_num;
-    TbBool starts_below_window;
 
-    bckt_max = 0;
-
-    starts_below_window = 0;
-
-    if ((game_perspective == 2) && engine_render_lights)
-        return 0;
-
-    obj_x = point_object->MapX - engn_xc;
-    obj_y = point_object->OffsetY;
-    obj_z = point_object->MapZ - engn_zc;
     depth_shift = point_object->field_1E;
 
-    struct ShEnginePoint sp1, sp2, sp3;
+    if ((point_object->field_1C & 0x0100) != 0 && ((doflags & DrwObjF_NoWobblyElevation) == 0))
+        cor_dy += waft_table[gameturn & 0x1F];
 
-    if (((ingame.Flags & GamF_DeepRadar) != 0) && (current_map != 11)) // map011 Orbital Station
-    {
-        int scr_y;
-
-        scr_y = transform_shpoint_y(obj_x, obj_y - 8 * engn_yc, obj_z);
-        if (scr_y >= vec_window_height + 10)
-            starts_below_window = true;
-    }
-
-    if (things[point_object->ThingNo].U.UObject.BHeight <= 1400)
-        starts_below_window = 0;
-
-    if ((point_object->field_1C & 0x0100) != 0 && (word_1552F8 != 5))
-        obj_y += waft_table[gameturn & 0x1F];
+    bckt_max = 0;
 
     // Make sure we have enough free points to start drawing the object
     points_num = point_object->EndPoint - point_object->StartPoint;
@@ -899,9 +885,9 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
             next_screen_point++;
 
             p_snpoint = &game_object_points[snpoint];
-            dxc = p_snpoint->X + obj_x;
-            dzc = p_snpoint->Z + obj_z;
-            dyc = p_snpoint->Y + obj_y;
+            dxc = p_snpoint->X + cor_dx;
+            dzc = p_snpoint->Z + cor_dz;
+            dyc = p_snpoint->Y + cor_dy;
             transform_shpoint(&sp1, dxc, dyc - 8 * engn_yc, dzc);
 
             p_specpt = &game_screen_point_pool[specpt];
@@ -936,9 +922,9 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
             next_screen_point += 2;
 
             p_snpoint1 = &game_object_points[p_face4->PointNo[0]];
-            dxc = p_snpoint1->X + obj_x;
-            dzc = p_snpoint1->Z + obj_z;
-            dyc = p_snpoint1->Y + obj_y;
+            dxc = p_snpoint1->X + cor_dx;
+            dzc = p_snpoint1->Z + cor_dz;
+            dyc = p_snpoint1->Y + cor_dy;
             transform_shpoint(&sp2, dxc, dyc - 8 * engn_yc, dzc);
 
             p_snpoint1->PointOffset = specpt + 0;
@@ -950,9 +936,9 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
             p_specpt1->Z = sp2.Depth;
 
             p_snpoint2 = &game_object_points[p_face4->PointNo[1]];
-            dxc = p_snpoint2->X + obj_x;
-            dzc = p_snpoint2->Z + obj_z;
-            dyc = p_snpoint2->Y + obj_y;
+            dxc = p_snpoint2->X + cor_dx;
+            dzc = p_snpoint2->Z + cor_dz;
+            dyc = p_snpoint2->Y + cor_dy;
             transform_shpoint(&sp3, dxc, dyc - 8 * engn_yc, dzc);
 
             p_snpoint2->PointOffset = specpt + 1;
@@ -992,7 +978,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 continue;
 
             ubyte ditype;
-            if (starts_below_window)
+            if ((doflags & DrwObjF_StartBelowWindow) != 0)
                 ditype = DrIT_ObFace4Tran;
             else
                 ditype = DrIT_ObFace4Txtr;
@@ -1025,7 +1011,7 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
                 continue;
 
             ubyte ditype;
-            if (starts_below_window)
+            if ((doflags & DrwObjF_StartBelowWindow) != 0)
                 ditype = DrIT_ObFace3Tran;
             else
                 ditype = DrIT_ObFace3Txtr;
@@ -1040,6 +1026,39 @@ short draw_object(int x, int y, int z, struct SingleObject *point_object)
     }
 
     return bckt_max;
+}
+
+short draw_object(int sh_x, int sh_y, int sh_z,
+  struct SingleObject *point_object)
+{
+    int cor_dx, cor_dy, cor_dz;
+    ushort doflags;
+
+    doflags = 0;
+
+    if ((game_perspective == 2) && engine_render_lights)
+        return 0;
+
+    cor_dx = point_object->MapX - engn_xc;
+    cor_dy = point_object->OffsetY;
+    cor_dz = point_object->MapZ - engn_zc;
+
+    if (((ingame.Flags & GamF_DeepRadar) != 0) && (current_map != 11)) // map011 Orbital Station
+    {
+        int scr_y;
+
+        scr_y = transform_shpoint_y(cor_dx, cor_dy - 8 * engn_yc, cor_dz);
+        if (scr_y >= vec_window_height + 10)
+            doflags |= DrwObjF_StartBelowWindow;
+    }
+
+    if (things[point_object->ThingNo].U.UObject.BHeight <= 1400)
+        doflags &= ~DrwObjF_StartBelowWindow;
+
+    if (word_1552F8 == 5)
+        doflags |= DrwObjF_NoWobblyElevation;
+
+    return draw_object_faces(cor_dx, cor_dy, cor_dz, point_object, doflags);
 }
 
 int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4, struct M31 *p_bodypos, struct M33 *p_mat)

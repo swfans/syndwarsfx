@@ -317,7 +317,7 @@ void enlist_draw_bang_shrapnels(ushort shrapnel_beg)
     {
         struct ShEnginePoint sp1, sp2, sp3;
         struct SpecialPoint *p_scrpoint;
-        int x, y, z;
+        int cor_dx, cor_dy, cor_dz;
         int x_pcc, x_pcs, y_msc, y_mss, x_mmc, y_pps;
         int z_ps, z_ms;
         int scr_depth;
@@ -356,22 +356,22 @@ void enlist_draw_bang_shrapnels(ushort shrapnel_beg)
 
             sh_z = sin_yaw >> 10;
 
-            x = (p_shrapnel->x >> 8) - engn_xc;
-            y = (p_shrapnel->y >> 5) - engn_yc;
-            z = (p_shrapnel->z >> 8) - engn_zc;
+            cor_dx = (p_shrapnel->x >> 8) - engn_xc;
+            cor_dy = (p_shrapnel->y >> 5) - engn_yc;
+            cor_dz = (p_shrapnel->z >> 8) - engn_zc;
 
-            x_pcc = x + sh_cc;
-            y_msc = y - sh_sc;
-            x_pcs = x + sh_cs;
-            y_mss = y - sh_ss;
-            y_pps = y + sh_sc + sh_ss;
-            x_mmc = x - sh_cc - sh_cs;
-            z_ps = z + sh_z;
-            z_ms = z - sh_z;
+            x_pcc = cor_dx + sh_cc;
+            y_msc = cor_dy - sh_sc;
+            x_pcs = cor_dx + sh_cs;
+            y_mss = cor_dy - sh_ss;
+            y_pps = cor_dy + sh_sc + sh_ss;
+            x_mmc = cor_dx - sh_cc - sh_cs;
+            z_ps = cor_dz + sh_z;
+            z_ms = cor_dz - sh_z;
         }
 
         transform_shpoint(&sp1, x_pcc, y_msc - 8 * engn_yc, z_ms);
-        transform_shpoint(&sp2, x_pcs, y_mss - 8 * engn_yc, z);
+        transform_shpoint(&sp2, x_pcs, y_mss - 8 * engn_yc, cor_dz);
         transform_shpoint(&sp3, x_mmc, y_pps - 8 * engn_yc, z_ps);
 
         if (((sp2.Flags & sp1.Flags & sp3.Flags) & 0xF) != 0)
@@ -916,19 +916,19 @@ void enlist_draw_bang_wobble_line(ushort shrapnel_beg)
 
     {
         struct ShEnginePoint sp1, sp2;
-        int x, y, z;
+        int cor_dx, cor_dy, cor_dz;
 
-        x = (p_shrapnel1->x >> 8) - engn_xc;
-        z = (p_shrapnel1->z >> 8) - engn_zc;
-        y = (p_shrapnel1->y >> 5) - engn_yc;
+        cor_dx = (p_shrapnel1->x >> 8) - engn_xc;
+        cor_dz = (p_shrapnel1->z >> 8) - engn_zc;
+        cor_dy = (p_shrapnel1->y >> 5) - engn_yc;
 
-        transform_shpoint(&sp1, x, y - 8 * engn_yc, z);
+        transform_shpoint(&sp1, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
-        x = (p_shrapnel2->x >> 8) - engn_xc;
-        z = (p_shrapnel2->z >> 8) - engn_zc;
-        y = (p_shrapnel2->y >> 5) - engn_yc;
+        cor_dx = (p_shrapnel2->x >> 8) - engn_xc;
+        cor_dz = (p_shrapnel2->z >> 8) - engn_zc;
+        cor_dy = (p_shrapnel2->y >> 5) - engn_yc;
 
-        transform_shpoint(&sp2, x, y - 8 * engn_yc, z);
+        transform_shpoint(&sp2, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
         enlist_draw_wobble_line(sp1.X, sp1.Y, sp1.Depth,
           sp2.X, sp2.Y, sp2.Depth, 10, slflags, is_player);
