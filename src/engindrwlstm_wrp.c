@@ -134,12 +134,13 @@ ubyte byte_152EF0[] = {
 };
 
 
-void draw_thing_e_graphic(struct Thing *p_thing, int x, int y, int z, ushort frame,
-  int radius, int intensity)
+void draw_thing_e_graphic(struct Thing *p_thing, int x, int y, int z,
+  ushort frame, int radius, int intensity)
 {
     int depth_shift;
 
-    if ((ingame.DisplayMode != 50) && ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
+    if ((ingame.DisplayMode != 50) &&
+      ((p_thing->Flag2 & TgF2_InsideBuilding) != 0))
         depth_shift = BUCKETS_COUNT;
     else
         depth_shift = 0;
@@ -148,7 +149,8 @@ void draw_thing_e_graphic(struct Thing *p_thing, int x, int y, int z, ushort fra
       intensity, depth_shift, (intptr_t)p_thing);
 }
 
-static void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth)
+static void draw_pers_shadow(struct Thing *p_thing,
+  int scr_x, int scr_y, int scr_depth)
 {
     ushort frm, anmode;
     ushort shpak;
@@ -177,7 +179,8 @@ static void draw_pers_shadow(struct Thing *p_thing, int scr_x, int scr_y, int sc
       angl, shangl, shpak, strng, (intptr_t)p_thing);
 }
 
-static void draw_pers_frame_basic(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
+static void draw_pers_frame_basic(struct Thing *p_thing,
+  int scr_x, int scr_y, int scr_depth, int frame, short bright)
 {
     ubyte angl;
 
@@ -187,7 +190,8 @@ static void draw_pers_frame_basic(struct Thing *p_thing, int scr_x, int scr_y, i
       angl, bright, (intptr_t)p_thing);
 }
 
-static void draw_pers_frame_versioned(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, int frame, short bright)
+static void draw_pers_frame_versioned(struct Thing *p_thing,
+  int scr_x, int scr_y, int scr_depth, int frame, short bright)
 {
     ubyte *frv;
     ubyte angl;
@@ -205,7 +209,8 @@ static void draw_pers_frame_versioned(struct Thing *p_thing, int scr_x, int scr_
       frame, frv, angl, bright, (intptr_t)p_thing);
 }
 
-static void draw_pers_shield(struct Thing *p_thing, int scr_x, int scr_y, int scr_depth, short bright)
+static void draw_pers_shield(struct Thing *p_thing, int scr_x, int scr_y,
+  int scr_depth, short bright)
 {
     ubyte *frv;
     ushort frame, k;
@@ -253,18 +258,21 @@ void draw_pers_e_graphic(struct Thing *p_thing,
             scr_depth = -BUCKETS_COUNT;
     }
 
-    if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) && (ingame.DisplayMode == 50))
+    if (((p_thing->Flag2 & TgF2_InsideBuilding) != 0) &&
+      (ingame.DisplayMode == 50))
     {
         if ((ingame.Flags & GamF_ThermalView) != 0) {
             ushort frm;
             frm = nstart_ani[1066];
             bri = 32;
-            draw_pers_frame_basic(p_thing, sp.X, sp.Y, scr_depth, frm, bri);
+            draw_pers_frame_basic(p_thing, sp.X, sp.Y,
+              scr_depth, frm, bri);
         }
     }
     else
     {
-        draw_pers_frame_versioned(p_thing, sp.X, sp.Y, scr_depth, frame, bri + br_inc);
+        draw_pers_frame_versioned(p_thing, sp.X, sp.Y,
+          scr_depth, frame, bri + br_inc);
     }
 
     if (br_inc > 0) {
@@ -275,7 +283,8 @@ void draw_pers_e_graphic(struct Thing *p_thing,
       (p_thing->U.UPerson.OnFace == 0) &&
       (p_thing->SubType != SubTT_PERS_MECH_SPIDER))
     {
-        draw_pers_shadow(p_thing, sp.X, sp.Y, scr_depth - ((200 * overall_scale) >> 8));
+        draw_pers_shadow(p_thing, sp.X, sp.Y,
+          scr_depth - ((200 * overall_scale) >> 8));
     }
 }
 
@@ -310,7 +319,8 @@ void build_wobble_line(int x1, int y1, int z1,
     else
         slflags = 0x01;
 
-    enlist_draw_wobble_line(x1, y1, z1, x2, y2, z2, itime, slflags, is_player);
+    enlist_draw_wobble_line(x1, y1, z1, x2, y2, z2,
+      itime, slflags, is_player);
 }
 
 void draw_bang_wobble_line(struct SimpleThing *p_pow)
@@ -531,7 +541,81 @@ void object_points_in_faces_clear_flags(struct SingleObject *point_object)
     }
 }
 
-int draw_rot_object_faces(int offset_x, int offset_y, int offset_z,
+TbBool enlist_draw_face3_rot(int cor_dx, int cor_dy, int cor_dz,
+  int face, short depth_shift, ushort matx, ubyte ditype, int *bckt_max)
+{
+    struct ShEnginePoint sp;
+    struct SingleObjectFace3 *p_face;
+    int depth_max, bckt;
+
+    // each transform_rot_object_shpoint() call could reserve a point
+    if (next_screen_point + 4 > screen_points_limit) {
+        return false;
+    }
+
+    p_face = &game_object_faces3[face];
+
+    transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
+      matx, p_face->PointNo[0]);
+
+    transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
+      matx, p_face->PointNo[2]);
+
+    transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
+      matx, p_face->PointNo[1]);
+
+    depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
+      p_face->PointNo[2], p_face->PointNo[1], -1,
+      p_face->GFlags | VisMDF_SkipFlg20);
+    if (depth_max < SHRT_MIN)
+        return true;
+
+    bckt = BUCKET_MID + depth_shift + depth_max;
+    if (*bckt_max < bckt)
+        *bckt_max = bckt;
+    stat_drawlist_faces++;
+    return draw_item_add(ditype, face, bckt);
+}
+
+TbBool enlist_draw_face4_rot(int cor_dx, int cor_dy, int cor_dz,
+  int face, short depth_shift, ushort matx, ubyte ditype, int *bckt_max)
+{
+    struct ShEnginePoint sp;
+    struct SingleObjectFace4 *p_face4;
+    int depth_max, bckt;
+
+    if (next_screen_point + 5 > screen_points_limit) {
+        return false;
+    }
+
+    p_face4 = &game_object_faces4[face];
+
+    transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
+      matx, p_face4->PointNo[0]);
+
+    transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
+      matx, p_face4->PointNo[2]);
+
+    transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
+      matx, p_face4->PointNo[1]);
+
+    transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
+      matx, p_face4->PointNo[3]);
+
+    depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
+      p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
+      p_face4->GFlags | VisMDF_SkipFlg20);
+    if (depth_max < SHRT_MIN)
+        return true;
+
+    bckt = BUCKET_MID + depth_shift + depth_max;
+    if (*bckt_max < bckt)
+        *bckt_max = bckt;
+    stat_drawlist_faces++;
+    return draw_item_add(ditype, face, bckt);
+}
+
+int draw_rot_object_faces(int cor_dx, int cor_dy, int cor_dz,
   struct SingleObject *point_object, short depth_shift,
   ushort matx, ushort faceWH, ushort faceGF)
 {
@@ -547,47 +631,24 @@ int draw_rot_object_faces(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp;
         struct SingleObjectFace3 *p_face;
-        int depth_max, bckt;
-
-        // each transform_rot_object_shpoint() call could reserve a point
-        if (next_screen_point + 4 > screen_points_limit) {
-            break;
-        }
+        ubyte ditype;
+        TbBool enlisted;
 
         p_face = &game_object_faces3[face];
         p_face->GFlags &= ~(FGFlg_Unkn10|FGFlg_Unkn08|FGFlg_Unkn04);
         p_face->GFlags |= faceGF;
         p_face->WalkHeader = faceWH;
 
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face->PointNo[0]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face->PointNo[2]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face->PointNo[1]);
-
-        depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
-          p_face->PointNo[2], p_face->PointNo[1], -1,
-          p_face->GFlags | VisMDF_SkipFlg20);
-        if (depth_max < SHRT_MIN)
-            continue;
-
-        ubyte ditype;
         if ((p_face->GFlags & FGFlg_Unkn80) == 0)
             ditype = DrIT_Unkn7;
         else
             ditype = DrIT_ObFace3Refl;
-        bckt = BUCKET_MID + depth_shift + depth_max;
-        if (bckt_max < bckt)
-            bckt_max = bckt;
-        stat_drawlist_faces++;
-        if (!draw_item_add(ditype, face, bckt)) {
+
+        enlisted = enlist_draw_face3_rot(cor_dx, cor_dy, cor_dz,
+          face, depth_shift, matx, ditype, &bckt_max);
+        if (!enlisted)
             break;
-        }
     }
 
     faces_num = point_object->NumbFaces4;
@@ -596,55 +657,30 @@ int draw_rot_object_faces(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp;
         struct SingleObjectFace4 *p_face4;
-        int depth_max, bckt;
-
-        if (next_screen_point + 5 > screen_points_limit) {
-            break;
-        }
+        ubyte ditype;
+        TbBool enlisted;
 
         p_face4 = &game_object_faces4[face];
         p_face4->GFlags &= ~(FGFlg_Unkn10|FGFlg_Unkn08|FGFlg_Unkn04);
         p_face4->GFlags |= faceGF;
         p_face4->WalkHeader = faceWH;
 
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[0]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[2]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[1]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[3]);
-
-        depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
-          p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
-          p_face4->GFlags | VisMDF_SkipFlg20);
-        if (depth_max < SHRT_MIN)
-            continue;
-
-        ubyte ditype;
         if ((p_face4->GFlags & FGFlg_Unkn80) == 0)
             ditype = DrIT_Unkn16;
         else
             ditype = DrIT_ObFace4Refl;
-        bckt = BUCKET_MID + depth_shift + depth_max;
-        if (bckt_max < bckt)
-            bckt_max = bckt;
-        stat_drawlist_faces++;
-        if (!draw_item_add(ditype, face, bckt)) {
+
+        enlisted = enlist_draw_face4_rot(cor_dx, cor_dy, cor_dz,
+          face, depth_shift, matx, ditype, &bckt_max);
+        if (!enlisted)
             break;
-        }
     }
 
     return bckt_max;
 }
 
-int draw_rot_object2_faces(int offset_x, int offset_y, int offset_z,
+int draw_rot_object2_faces(int cor_dx, int cor_dy, int cor_dz,
   struct SingleObject *point_object,
   ushort matx)
 {
@@ -662,40 +698,15 @@ int draw_rot_object2_faces(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp;
-        struct SingleObjectFace3 *p_face;
-        int depth_max, bckt;
-
-        if (next_screen_point + 4 > screen_points_limit) {
-            break;
-        }
-
-        p_face = &game_object_faces3[face];
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face->PointNo[0]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face->PointNo[2]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face->PointNo[1]);
-
-        depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
-          p_face->PointNo[2], p_face->PointNo[1], -1,
-          p_face->GFlags | VisMDF_SkipFlg20);
-        if (depth_max < SHRT_MIN)
-            continue;
-
         ubyte ditype;
+        TbBool enlisted;
+
         ditype = DrIT_ObFace3Txtr;
-        bckt = BUCKET_MID + depth_shift + depth_max;
-        if (bckt_max < bckt)
-            bckt_max = bckt;
-        stat_drawlist_faces++;
-        if (!draw_item_add(ditype, face, bckt)) {
+
+        enlisted = enlist_draw_face3_rot(cor_dx, cor_dy, cor_dz,
+          face, depth_shift, matx, ditype, &bckt_max);
+        if (!enlisted)
             break;
-        }
     }
 
     faces_num = point_object->NumbFaces4;
@@ -705,43 +716,15 @@ int draw_rot_object2_faces(int offset_x, int offset_y, int offset_z,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct ShEnginePoint sp;
-        struct SingleObjectFace4 *p_face4;
-        int depth_max, bckt;
-
-        if (next_screen_point + 5 > screen_points_limit) {
-            break;
-        }
-
-        p_face4 = &game_object_faces4[face];
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[0]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[2]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[1]);
-
-        transform_rot_object_shpoint(&sp, offset_x, offset_y, offset_z,
-          matx, p_face4->PointNo[3]);
-
-        depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
-          p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
-          p_face4->GFlags | VisMDF_SkipFlg20);
-        if (depth_max < SHRT_MIN)
-            continue;
-
         ubyte ditype;
+        TbBool enlisted;
+
         ditype = DrIT_ObFace4Txtr;
-        bckt = BUCKET_MID + depth_shift + depth_max;
-        if (bckt_max < bckt)
-            bckt_max = bckt;
-        stat_drawlist_faces++;
-        if (!draw_item_add(ditype, face, bckt)) {
+
+        enlisted = enlist_draw_face4_rot(cor_dx, cor_dy, cor_dz,
+          face, depth_shift, matx, ditype, &bckt_max);
+        if (!enlisted)
             break;
-        }
     }
 
     return bckt_max;
@@ -850,10 +833,85 @@ enum DrawObjectFacesFlags {
     DrwObjF_StartBelowWindow = 0x0200,
 };
 
+
+TbBool enlist_draw_face4_pole(int cor_dx, int cor_dy, int cor_dz,
+  int face, short depth_shift, int *bckt_max)
+{
+    struct SingleObjectFace4 *p_face4;
+    int specpt;
+
+    specpt = next_screen_point;
+    if (specpt + 2 > screen_points_limit) {
+        return false;
+    }
+    next_screen_point += 2;
+
+    p_face4 = &game_object_faces4[face];
+
+    {
+        struct ShEnginePoint sp;
+        struct SinglePoint *p_snpoint;
+        struct SpecialPoint *p_specpt;
+        int dxc, dyc, dzc;
+
+        p_snpoint = &game_object_points[p_face4->PointNo[0]];
+        dxc = p_snpoint->X + cor_dx;
+        dzc = p_snpoint->Z + cor_dz;
+        dyc = p_snpoint->Y + cor_dy;
+        transform_shpoint(&sp, dxc, dyc - 8 * engn_yc, dzc);
+
+        p_snpoint->PointOffset = specpt + 0;
+        p_snpoint->Flags = sp.Flags;
+
+        p_specpt = &game_screen_point_pool[p_snpoint->PointOffset];
+        p_specpt->X = sp.X;
+        p_specpt->Y = sp.Y;
+        p_specpt->Z = sp.Depth;
+    }
+
+    {
+        struct ShEnginePoint sp;
+        struct SinglePoint *p_snpoint;
+        struct SpecialPoint *p_specpt;
+        int dxc, dyc, dzc;
+
+        p_snpoint = &game_object_points[p_face4->PointNo[1]];
+        dxc = p_snpoint->X + cor_dx;
+        dzc = p_snpoint->Z + cor_dz;
+        dyc = p_snpoint->Y + cor_dy;
+        transform_shpoint(&sp, dxc, dyc - 8 * engn_yc, dzc);
+
+        p_snpoint->PointOffset = specpt + 1;
+        p_snpoint->Flags = sp.Flags;
+
+        p_specpt = &game_screen_point_pool[p_snpoint->PointOffset];
+        p_specpt->X = sp.X;
+        p_specpt->Y = sp.Y;
+        p_specpt->Z = sp.Depth;
+    }
+
+    int depth_max, bckt;
+    ubyte ditype;
+
+    depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
+      p_face4->PointNo[1], -1, -1,
+      p_face4->GFlags);
+    if (depth_max < SHRT_MIN)
+        return true;
+
+    ditype = DrIT_ObFacePole;
+
+    bckt = BUCKET_MID + depth_shift + depth_max;
+    if (*bckt_max < bckt)
+        *bckt_max = bckt;
+    stat_drawlist_faces++;
+    return draw_item_add(ditype, face, bckt);
+}
+
 short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
   struct SingleObject *point_object, ushort doflags)
 {
-    struct ShEnginePoint sp1, sp2, sp3;
+    struct ShEnginePoint sp1;
     int i, bckt_max;
     int face_beg, face;
     int snpoint;
@@ -907,65 +965,16 @@ short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
     for (i = 0; i < faces_num; i++, face++)
     {
         struct SingleObjectFace4 *p_face4;
-        struct SinglePoint *p_snpoint1;
-        struct SpecialPoint *p_specpt1;
-        struct SinglePoint *p_snpoint2;
-        struct SpecialPoint *p_specpt2;
+        TbBool enlisted;
 
         p_face4 = &game_object_faces4[face];
         if ((p_face4->GFlags & FGFlg_Unkn08) != 0)
         {
-            int specpt;
-            int dxc, dyc, dzc;
-
-            specpt = next_screen_point;
-            next_screen_point += 2;
-
-            p_snpoint1 = &game_object_points[p_face4->PointNo[0]];
-            dxc = p_snpoint1->X + cor_dx;
-            dzc = p_snpoint1->Z + cor_dz;
-            dyc = p_snpoint1->Y + cor_dy;
-            transform_shpoint(&sp2, dxc, dyc - 8 * engn_yc, dzc);
-
-            p_snpoint1->PointOffset = specpt + 0;
-            p_snpoint1->Flags = sp2.Flags;
-
-            p_specpt1 = &game_screen_point_pool[p_snpoint1->PointOffset];
-            p_specpt1->X = sp2.X;
-            p_specpt1->Y = sp2.Y;
-            p_specpt1->Z = sp2.Depth;
-
-            p_snpoint2 = &game_object_points[p_face4->PointNo[1]];
-            dxc = p_snpoint2->X + cor_dx;
-            dzc = p_snpoint2->Z + cor_dz;
-            dyc = p_snpoint2->Y + cor_dy;
-            transform_shpoint(&sp3, dxc, dyc - 8 * engn_yc, dzc);
-
-            p_snpoint2->PointOffset = specpt + 1;
-            p_snpoint2->Flags = sp3.Flags;
-
-            p_specpt2 = &game_screen_point_pool[p_snpoint2->PointOffset];
-            p_specpt2->X = sp3.X;
-            p_specpt2->Y = sp3.Y;
-            p_specpt2->Z = sp3.Depth;
-
-            int depth_max, bckt;
-
-            depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
-              p_face4->PointNo[1], -1, -1,
-              p_face4->GFlags);
-            if (depth_max < SHRT_MIN)
-                continue;
-
-            ubyte ditype;
-            ditype = DrIT_Unkn14;
-            bckt = BUCKET_MID + depth_max;
-            if (bckt_max < bckt)
-                bckt_max = bckt;
-            stat_drawlist_faces++;
-            if (!draw_item_add(ditype, face, bckt)) {
+            // TODO why depth_shift is zero? deliberate or a mistake?
+            enlisted = enlist_draw_face4_pole(cor_dx, cor_dy, cor_dz,
+              face, 0, &bckt_max);
+            if (!enlisted)
                 break;
-            }
         }
         else
         {
@@ -1061,7 +1070,8 @@ short draw_object(int sh_x, int sh_y, int sh_z,
     return draw_object_faces(cor_dx, cor_dy, cor_dz, point_object, doflags);
 }
 
-int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4, struct M31 *p_bodypos, struct M33 *p_mat)
+int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,
+  struct M31 *p_bodypos, struct M33 *p_mat)
 {
     int ret;
     asm volatile ("call ASM_mech_unkn_func_11\n"

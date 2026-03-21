@@ -58,7 +58,8 @@ enum DrawItemType {
     DrIT_SpObFace4 = 0xC,
     /** Frame of sprite elements with version selections, representing a person thing. */
     DrIT_SFrmPersV = 0xD,
-    DrIT_Unkn14 = 0xE,
+    /** Pole stored as quadrangular face, with only two points storing real points. */
+    DrIT_ObFacePole,
     DrIT_Unkn15 = 0xF,
     DrIT_Unkn16 = 0x10,
     /** Reflective triangular face, from the object faces array. */

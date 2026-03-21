@@ -149,7 +149,7 @@ void draw_drawitem_1(ushort dihead)
       case DrIT_SFrmEfctV:
           draw_sort_sprite_frame_efct_v(itm->Offset);
           break;
-      case DrIT_Unkn14:
+      case DrIT_ObFacePole:
           draw_object_face4_pole(itm->Offset);
           break;
       case DrIT_Unkn15:
@@ -215,7 +215,7 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_SFrmEfctV:
           draw_sort_sprite_frame_efct_v(itm->Offset);
           break;
-      case DrIT_Unkn14:
+      case DrIT_ObFacePole:
           draw_object_face4_pole(itm->Offset);
           break;
       case DrIT_Unkn15:
