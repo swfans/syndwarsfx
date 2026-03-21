@@ -1227,7 +1227,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
 
     p_person->Flag |= TngF_Unkn40000000 | TngF_Unkn0004;
     p_person->Owner = p_attacker->ThingOffset;
-    p_person->Flag &= ~(TngF_Unkn00800000|TngF_Unkn00040000|TngF_Unkn00020000|TngF_TriggerUse|TngF_Unkn0080);
+    p_person->Flag &= ~(TngF_Unkn00800000|TngF_DangerFlee|TngF_Unkn00020000|TngF_TriggerUse|TngF_Unkn0080);
 
     set_person_animmode_walk(p_person);
     p_person->U.UPerson.ComTimer = -1;
@@ -4381,11 +4381,82 @@ void person_catch_ferry(struct Thing *p_person)
 
 void make_peep_flee(int b_x, int b_z, struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_make_peep_flee\n"
         : : "a" (b_x), "d" (b_z), "b" (p_person));
+#endif
+    short full_angle;
+
+    if ((p_person->Flag2 & (TgF2_Unkn0008|TgF2_KnockedOut)) != 0) {
+        return;
+    }
+    if (p_person->State == PerSt_PERSON_BURNING) {
+        return;
+    }
+    if ((p_person->Flag & (TngF_Persuaded|TngF_DangerFlee|TngF_WepRecoil)) != 0) {
+        return;
+    }
+    full_angle = arctan(b_x, -b_z);
+    p_person->U.UPerson.Angle = (full_angle >> 8) & 7;
+    set_person_animmode_run(p_person);
+    p_person->U.UPerson.Mood = -64;
+    p_person->U.UPerson.RecoilTimer = 50;
+    p_person->Flag |= TngF_DangerFlee;
+    p_person->U.UPerson.RecoilDir = full_angle >> 3;
+    p_person->Flag &= ~TngF_WepRecoil;
 }
 
-void alert_peeps_on_mapwho_tile(short tile_x, short tile_z, struct Thing *p_madman)
+void alert_person_to_madman(struct Thing *p_person, struct MapCoords *p_alert_pos, struct Thing *p_madman)
+{
+    ubyte subType;
+
+    if (p_person->Type != TT_PERSON ||
+      (p_person->Flag & (TngF_PlayerAgent|TngF_Destroyed)) != 0)
+        return;
+
+    if ((p_person->Flag2 & TgF2_AlteredSubType) != 0)
+        subType = p_person->U.UPerson.OldSubType;
+    else
+        subType = p_person->SubType;
+
+    if (subType == SubTT_PERS_BRIEFCASE_M
+      || subType == SubTT_PERS_WHITE_BRUN_F
+      || subType == SubTT_PERS_WHIT_BLOND_F
+      || subType == SubTT_PERS_LETH_JACKT_M)
+    {
+        if (((p_person->Flag2 & TgF2_IgnoreEnemies) == 0) &&
+          (person_mod_brain_level(p_person) < 3) &&
+          (!persons_have_truce(p_person, p_madman)))
+        {
+            short dx, dz;
+            dx = PRCCOORD_TO_MAPCOORD(p_person->X) - p_alert_pos->X;
+            dz = PRCCOORD_TO_MAPCOORD(p_person->Z) - p_alert_pos->Z;
+            // Make the escape direction slightly related to the direction the person was facing
+            dx += angle_direction[p_person->U.UPerson.Angle].DiX;
+            dz += angle_direction[p_person->U.UPerson.Angle].DiY;
+            make_peep_flee(dx, dz, p_person);
+        }
+    }
+    else
+    {
+        short check_grp, target_grp;
+        check_grp = p_person->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
+        target_grp = p_madman->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
+        if (check_grp != target_grp)
+        {
+            if (!groups_have_truce(check_grp, target_grp) &&
+              (groups_have_kill_on_sight(check_grp, target_grp) ||
+              groups_have_kill_if_armed(check_grp, target_grp) ||
+              groups_have_kill_if_weapon_out(check_grp, target_grp)))
+            {
+                set_interrupt_target(p_person, p_madman);
+            }
+        }
+    }
+}
+
+void alert_peeps_on_mapwho_tile(short tile_x, short tile_z,
+  struct MapCoords *p_alert_pos, struct Thing *p_madman)
 {
     ThingIdx thing;
     ulong k;
@@ -4405,46 +4476,7 @@ void alert_peeps_on_mapwho_tile(short tile_x, short tile_z, struct Thing *p_madm
             struct Thing *p_thing;
             p_thing = &things[thing];
             // Per thing code start
-            if (p_thing->Type == TT_PERSON && (p_thing->Flag & (TngF_PlayerAgent|TngF_Destroyed)) == 0)
-            {
-                ubyte subType;
-
-                if ((p_thing->Flag2 & TgF2_AlteredSubType) != 0)
-                    subType = p_thing->U.UPerson.OldSubType;
-                else
-                    subType = p_thing->SubType;
-
-                if (subType == SubTT_PERS_BRIEFCASE_M
-                  || subType == SubTT_PERS_WHITE_BRUN_F
-                  || subType == SubTT_PERS_WHIT_BLOND_F
-                  || subType == SubTT_PERS_LETH_JACKT_M)
-                {
-                    if (((p_thing->Flag2 & TgF2_IgnoreEnemies) == 0) && (person_mod_brain_level(p_thing) < 3) &&
-                      (!persons_have_truce(p_thing, p_madman)))
-                    {
-                        short dx, dz;
-                        dx = PRCCOORD_TO_MAPCOORD(p_thing->X) - TILE_TO_MAPCOORD(tile_x, p_thing->ThingOffset & 0xFF);
-                        dz = PRCCOORD_TO_MAPCOORD(p_thing->Z) - TILE_TO_MAPCOORD(tile_z, (p_thing->ThingOffset >> 2) & 0xFF);
-                        make_peep_flee(dx, dz, p_thing);
-                    }
-                }
-                else
-                {
-                    short check_grp, target_grp;
-                    check_grp = p_thing->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
-                    target_grp = p_madman->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
-                    if (check_grp != target_grp)
-                    {
-                        if (!groups_have_truce(check_grp, target_grp) &&
-                          (groups_have_kill_on_sight(check_grp, target_grp) ||
-                          groups_have_kill_if_armed(check_grp, target_grp) ||
-                          groups_have_kill_if_weapon_out(check_grp, target_grp)))
-                        {
-                            set_interrupt_target(p_thing, p_madman);
-                        }
-                    }
-                }
-            }
+            alert_person_to_madman(p_thing, p_alert_pos, p_madman);
             // Per thing code end
             thing = p_thing->Next;
         }
@@ -4464,16 +4496,20 @@ void alert_peeps(int cor_x, int cor_y, int cor_z, struct Thing *p_madman)
       "call ASM_alert_peeps\n"
         : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (p_madman));
 #endif
+    struct MapCoords alert_pos;
     short tile_x, tile_z;
     short dx, dz;
 
+    alert_pos.X = cor_x;
+    alert_pos.Y = cor_y;
+    alert_pos.Z = cor_z;
     tile_x = MAPCOORD_TO_TILE(cor_x);
     tile_z = MAPCOORD_TO_TILE(cor_z);
     for (dx = -ALERT_PEEPS_RANGE; dx <= ALERT_PEEPS_RANGE; dx++)
     {
         for (dz = -ALERT_PEEPS_RANGE; dz <= ALERT_PEEPS_RANGE; dz++)
         {
-            alert_peeps_on_mapwho_tile(tile_x + dx, tile_z + dz, p_madman);
+            alert_peeps_on_mapwho_tile(tile_x + dx, tile_z + dz, &alert_pos, p_madman);
         }
     }
 }
@@ -6670,7 +6706,7 @@ void process_person(struct Thing *p_person)
             process_im_shoved(p_person);
     }
     if (((p_person->Flag & TngF_Unkn40000000) == 0) || (((p_person->Flag & TngF_Destroyed) == 0)
-        && ((p_person->Flag & (TngF_Persuaded|TngF_Unkn00040000|TngF_WepRecoil|TngF_Unkn4000|TngF_StationrSht)) != 0)))
+        && ((p_person->Flag & (TngF_Persuaded|TngF_DangerFlee|TngF_WepRecoil|TngF_Unkn4000|TngF_StationrSht)) != 0)))
     {
         if ((p_person->Flag & TngF_Unkn4000) != 0)
         {
@@ -6691,7 +6727,7 @@ void process_person(struct Thing *p_person)
             process_weapon(p_person);
             return;
         }
-        if (((p_person->Flag & TngF_Unkn00040000) != 0) && ((p_person->Flag & (TngF_SelectedAgent|TngF_Destroyed)) == 0))
+        if (((p_person->Flag & TngF_DangerFlee) != 0) && ((p_person->Flag & (TngF_SelectedAgent|TngF_Destroyed)) == 0))
         {
             person_run_away(p_person);
             calc_lighting(p_person);

@@ -177,9 +177,6 @@ void enlist_draw_bang_wobble_line(ushort shrapnel_beg);
 void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
   int depth_shift, int itime, short ofs_x, short ofs_y, TbPixel colour);
 
-int object_face_get_visible_max_depth(short pt1, short pt2,
-  short pt3, short pt4, ushort gflags);
-
 TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
   ushort vmdflags, ubyte ditype, int *bckt_max);
 

@@ -26,6 +26,7 @@
 extern "C" {
 #endif
 /******************************************************************************/
+#pragma pack(1)
 
 /** Game turn number, used for in-game time computations. */
 typedef ulong GameTurn;
@@ -76,6 +77,15 @@ typedef u32 JoyButtonSet;
  */
 typedef short MapCoord;
 
+/** Type which stores point position on the ingame map.
+ */
+struct MapCoords {
+    MapCoord X;
+    MapCoord Y;
+    MapCoord Z;
+};
+
+#pragma pack()
 /******************************************************************************/
 #ifdef __cplusplus
 }

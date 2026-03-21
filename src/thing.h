@@ -152,6 +152,10 @@ enum ThingFlags {
  */
 #define TngF_PassageLocked TngF_TriggerUse
 
+/** Person is during flee from danger.
+ */
+#define TngF_DangerFlee TngF_Unkn00040000
+
 enum ThingFlags2 {
     TgF2_Unkn0001     = 0x0001,
     TgF2_Unkn0002     = 0x0002,

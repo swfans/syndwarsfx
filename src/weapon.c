@@ -4965,7 +4965,7 @@ void process_wielded_weapon(struct Thing *p_person)
                 }
                 else
                 {
-                    resp_time = 4 * (cybmod_brain_level(&p_person->U.UPerson.UMod) + 1);
+                    resp_time = 4 * (person_mod_brain_level(p_person) + 1);
                     if (resp_time > 15)
                         resp_time = 15;
                 }
