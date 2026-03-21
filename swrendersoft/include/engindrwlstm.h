@@ -180,6 +180,17 @@ void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
 int object_face_get_visible_max_depth(short pt1, short pt2,
   short pt3, short pt4, ushort gflags);
 
+TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
+  ushort vmdflags, ubyte ditype, int *bckt_max);
+
+TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
+  ushort vmdflags, ubyte ditype, int *bckt_max);
+
+/** Enlist drawing a pole, made of 2 points within quad face.
+ */
+TbBool enlist_draw_face4_pole(int cor_dx, int cor_dy, int cor_dz,
+  int face, short depth_shift, int *bckt_max);
+
 void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object);
 
 void enlist_draw_long_health_bar(int cor_x, int cor_y, int cor_z,

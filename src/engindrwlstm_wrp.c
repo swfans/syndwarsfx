@@ -546,7 +546,6 @@ TbBool enlist_draw_face3_rot(int cor_dx, int cor_dy, int cor_dz,
 {
     struct ShEnginePoint sp;
     struct SingleObjectFace3 *p_face;
-    int depth_max, bckt;
 
     // each transform_rot_object_shpoint() call could reserve a point
     if (next_screen_point + 4 > screen_points_limit) {
@@ -564,17 +563,8 @@ TbBool enlist_draw_face3_rot(int cor_dx, int cor_dy, int cor_dz,
     transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
       matx, p_face->PointNo[1]);
 
-    depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
-      p_face->PointNo[2], p_face->PointNo[1], -1,
-      p_face->GFlags | VisMDF_SkipFlg20);
-    if (depth_max < SHRT_MIN)
-        return true;
-
-    bckt = BUCKET_MID + depth_shift + depth_max;
-    if (*bckt_max < bckt)
-        *bckt_max = bckt;
-    stat_drawlist_faces++;
-    return draw_item_add(ditype, face, bckt);
+    return enlist_draw_face3_prealloc(face, depth_shift,
+      VisMDF_SkipFlg20, ditype, bckt_max);
 }
 
 TbBool enlist_draw_face4_rot(int cor_dx, int cor_dy, int cor_dz,
@@ -582,7 +572,6 @@ TbBool enlist_draw_face4_rot(int cor_dx, int cor_dy, int cor_dz,
 {
     struct ShEnginePoint sp;
     struct SingleObjectFace4 *p_face4;
-    int depth_max, bckt;
 
     if (next_screen_point + 5 > screen_points_limit) {
         return false;
@@ -602,17 +591,8 @@ TbBool enlist_draw_face4_rot(int cor_dx, int cor_dy, int cor_dz,
     transform_rot_object_shpoint(&sp, cor_dx, cor_dy, cor_dz,
       matx, p_face4->PointNo[3]);
 
-    depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
-      p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
-      p_face4->GFlags | VisMDF_SkipFlg20);
-    if (depth_max < SHRT_MIN)
-        return true;
-
-    bckt = BUCKET_MID + depth_shift + depth_max;
-    if (*bckt_max < bckt)
-        *bckt_max = bckt;
-    stat_drawlist_faces++;
-    return draw_item_add(ditype, face, bckt);
+    return enlist_draw_face4_prealloc(face, depth_shift,
+      VisMDF_SkipFlg20, ditype, bckt_max);
 }
 
 int draw_rot_object_faces(int cor_dx, int cor_dy, int cor_dz,
@@ -833,81 +813,6 @@ enum DrawObjectFacesFlags {
     DrwObjF_StartBelowWindow = 0x0200,
 };
 
-
-TbBool enlist_draw_face4_pole(int cor_dx, int cor_dy, int cor_dz,
-  int face, short depth_shift, int *bckt_max)
-{
-    struct SingleObjectFace4 *p_face4;
-    int specpt;
-
-    specpt = next_screen_point;
-    if (specpt + 2 > screen_points_limit) {
-        return false;
-    }
-    next_screen_point += 2;
-
-    p_face4 = &game_object_faces4[face];
-
-    {
-        struct ShEnginePoint sp;
-        struct SinglePoint *p_snpoint;
-        struct SpecialPoint *p_specpt;
-        int dxc, dyc, dzc;
-
-        p_snpoint = &game_object_points[p_face4->PointNo[0]];
-        dxc = p_snpoint->X + cor_dx;
-        dzc = p_snpoint->Z + cor_dz;
-        dyc = p_snpoint->Y + cor_dy;
-        transform_shpoint(&sp, dxc, dyc - 8 * engn_yc, dzc);
-
-        p_snpoint->PointOffset = specpt + 0;
-        p_snpoint->Flags = sp.Flags;
-
-        p_specpt = &game_screen_point_pool[p_snpoint->PointOffset];
-        p_specpt->X = sp.X;
-        p_specpt->Y = sp.Y;
-        p_specpt->Z = sp.Depth;
-    }
-
-    {
-        struct ShEnginePoint sp;
-        struct SinglePoint *p_snpoint;
-        struct SpecialPoint *p_specpt;
-        int dxc, dyc, dzc;
-
-        p_snpoint = &game_object_points[p_face4->PointNo[1]];
-        dxc = p_snpoint->X + cor_dx;
-        dzc = p_snpoint->Z + cor_dz;
-        dyc = p_snpoint->Y + cor_dy;
-        transform_shpoint(&sp, dxc, dyc - 8 * engn_yc, dzc);
-
-        p_snpoint->PointOffset = specpt + 1;
-        p_snpoint->Flags = sp.Flags;
-
-        p_specpt = &game_screen_point_pool[p_snpoint->PointOffset];
-        p_specpt->X = sp.X;
-        p_specpt->Y = sp.Y;
-        p_specpt->Z = sp.Depth;
-    }
-
-    int depth_max, bckt;
-    ubyte ditype;
-
-    depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
-      p_face4->PointNo[1], -1, -1,
-      p_face4->GFlags);
-    if (depth_max < SHRT_MIN)
-        return true;
-
-    ditype = DrIT_ObFacePole;
-
-    bckt = BUCKET_MID + depth_shift + depth_max;
-    if (*bckt_max < bckt)
-        *bckt_max = bckt;
-    stat_drawlist_faces++;
-    return draw_item_add(ditype, face, bckt);
-}
-
 short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
   struct SingleObject *point_object, ushort doflags)
 {
@@ -973,32 +878,21 @@ short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
             // TODO why depth_shift is zero? deliberate or a mistake?
             enlisted = enlist_draw_face4_pole(cor_dx, cor_dy, cor_dz,
               face, 0, &bckt_max);
-            if (!enlisted)
-                break;
         }
         else
         {
-            int depth_max, bckt;
-
-            depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
-              p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
-              p_face4->GFlags);
-            if (depth_max < SHRT_MIN)
-                continue;
-
             ubyte ditype;
+
             if ((doflags & DrwObjF_StartBelowWindow) != 0)
                 ditype = DrIT_ObFace4Tran;
             else
                 ditype = DrIT_ObFace4Txtr;
-            bckt = BUCKET_MID + depth_shift + depth_max;
-            if (bckt_max < bckt)
-                bckt_max = bckt;
-            stat_drawlist_faces++;
-            if (!draw_item_add(ditype, face, bckt)) {
-                break;
-            }
+
+            enlisted = enlist_draw_face4_prealloc(face, depth_shift,
+              0, ditype, &bckt_max);
         }
+        if (!enlisted)
+            break;
     }
 
     faces_num = point_object->NumbFaces;
@@ -1007,31 +901,20 @@ short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
     face = face_beg;
     for (i = 0; i < faces_num; i++, face++)
     {
-        struct SingleObjectFace3 *p_face;
-
-        p_face = &game_object_faces3[face];
+        TbBool enlisted;
         {
-            int depth_max, bckt;
-
-            depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
-              p_face->PointNo[2], p_face->PointNo[1], -1,
-              p_face->GFlags);
-            if (depth_max < SHRT_MIN)
-                continue;
-
             ubyte ditype;
+
             if ((doflags & DrwObjF_StartBelowWindow) != 0)
                 ditype = DrIT_ObFace3Tran;
             else
                 ditype = DrIT_ObFace3Txtr;
-            bckt = BUCKET_MID + depth_shift + depth_max;
-            if (bckt_max < bckt)
-                bckt_max = bckt;
-            stat_drawlist_faces++;
-            if (!draw_item_add(ditype, face, bckt)) {
-                break;
-            }
+
+            enlisted = enlist_draw_face3_prealloc(face, depth_shift,
+              0, ditype, &bckt_max);
         }
+        if (!enlisted)
+            break;
     }
 
     return bckt_max;
