@@ -266,13 +266,6 @@ void set_floor_texture_uv_damaged_ground(struct PolyPoint *p_pt1,
 int calculate_enginepoint_shade3(struct PolyPoint *p_pt1,
   struct SingleObjectFace3 *p_face, ushort pt2)
 {
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_calculate_enginepoint_shade3\n"
-        : "=r" (ret) : "a" (p_pt1), "d" (p_face), "b" (pt2));
-    return ret;
-#endif
     struct SinglePoint *p_pt2;
     struct SingleObject *p_sobj;
     int dist_x, dist_y, dist_z;
@@ -300,13 +293,6 @@ int calculate_enginepoint_shade3(struct PolyPoint *p_pt1,
 int calculate_enginepoint_shade4(struct PolyPoint *p_pt1,
   struct SingleObjectFace4 *p_face4, ushort pt2)
 {
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_calculate_enginepoint_shade4\n"
-        : "=r" (ret) : "a" (p_pt1), "d" (p_face4), "b" (pt2));
-    return ret;
-#endif
     struct SinglePoint *p_pt2;
     struct SingleObject *p_sobj;
     int dist_x, dist_y, dist_z;
@@ -442,12 +428,6 @@ void set_floor_texture_uv_shade4(ushort face4, struct PolyPoint *p_pt1,
  */
 void draw_object_face4g_textrd(ushort face4)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face4g_textrd\n"
-        : : "a" (face4));
-    return;
-#endif
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point4;
     struct PolyPoint point3;
@@ -618,12 +598,6 @@ void draw_object_face4g_textrd(ushort face4)
  */
 void draw_object_face3_reflect(ushort face3)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face3_reflect\n"
-        : : "a" (face3));
-    return;
-#endif
     struct SingleObjectFace3 *p_face;
     struct PolyPoint point3;
     struct PolyPoint point1;
@@ -684,12 +658,6 @@ void draw_object_face3_reflect(ushort face3)
  */
 void draw_object_face4_reflect(ushort face4)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face4_reflect\n"
-        : : "a" (face4));
-    return;
-#endif
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point4;
     struct PolyPoint point1;
@@ -769,12 +737,6 @@ void draw_object_face4_reflect(ushort face4)
 
 void draw_ex_face(ushort exface)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_ex_face\n"
-        : : "a" (exface));
-    return;
-#endif
     struct ExplodeFace3 *p_exface;
     struct PolyPoint point2;
     struct PolyPoint point3;
@@ -866,12 +828,6 @@ void draw_ex_face(ushort exface)
  */
 void draw_object_face3g_textrd(ushort face3)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face3g_textrd\n"
-        : : "a" (face3));
-    return;
-#endif
     struct SingleObjectFace3 *p_face;
     struct PolyPoint point1;
     struct PolyPoint point3;
@@ -985,12 +941,6 @@ void draw_object_face3g_textrd(ushort face3)
 
 void draw_object_face4d_textrd_dk(ushort face4)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face4d_textrd_dk\n"
-        : : "a" (face4));
-    return;
-#endif
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point4;
     struct PolyPoint point1;
@@ -1156,12 +1106,6 @@ void draw_object_face4d_textrd_dk(ushort face4)
 
 void draw_floor_tile1a(ushort tl)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_floor_tile1a\n"
-        : : "a" (tl));
-    return;
-#endif
     struct FloorTile *p_floortl;
     struct PolyPoint point3;
     struct PolyPoint point1;
@@ -1237,12 +1181,6 @@ void draw_floor_tile1a(ushort tl)
 
 void draw_floor_tile1b(ushort tl)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_floor_tile1b\n"
-        : : "a" (tl));
-    return;
-#endif
     struct FloorTile *p_floortl;
     struct PolyPoint point2;
     struct PolyPoint point1;
@@ -1335,13 +1273,6 @@ void draw_floor_tile1b(ushort tl)
  */
 void draw_special_object_face4(ushort face4)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_special_object_face4\n"
-        : : "a" (face4));
-    return;
-#endif
-
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point4;
     struct PolyPoint point2;
@@ -1423,12 +1354,6 @@ void draw_special_object_face4(ushort face4)
  */
 void draw_object_face4_pole(ushort face4)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face4_pole\n"
-        : : "a" (face4));
-    return;
-#endif
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point2;
     struct PolyPoint point3;
@@ -1502,12 +1427,6 @@ void draw_object_face4_pole(ushort face4)
  */
 void draw_object_face3_textrd(ushort face3)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face3_textrd\n"
-        : : "a" (face3));
-    return;
-#endif
     struct PolyPoint point1;
     struct PolyPoint point2;
     struct PolyPoint point3;
@@ -1667,12 +1586,6 @@ void draw_object_face3_textrd(ushort face3)
  */
 void draw_object_face4d_textrd(ushort face4)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face4d_textrd\n"
-        : : "a" (face4));
-    return;
-#endif
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point3;
     struct PolyPoint point4;
@@ -1878,12 +1791,6 @@ void draw_object_face4d_textrd(ushort face4)
  */
 void draw_object_face3_textrd_dk(ushort face3)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face3_textrd_dk\n"
-        : : "a" (face3));
-    return;
-#endif
     struct PolyPoint point1;
     struct PolyPoint point2;
     struct PolyPoint point3;
@@ -2008,12 +1915,6 @@ void draw_object_face3_textrd_dk(ushort face3)
 
 void draw_object_face3_tran_tint(ushort face)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face3_tran_tint\n"
-        : : "a" (face));
-    return;
-#endif
     struct SingleObjectFace3 *p_face;
     struct PolyPoint point2;
     struct PolyPoint point1;
@@ -2066,12 +1967,6 @@ void draw_object_face3_tran_tint(ushort face)
 
 void draw_object_face4_tran_tint(ushort face4)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_object_face4_tran_tint\n"
-        : : "a" (face4));
-    return;
-#endif
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point4;
     struct PolyPoint point1;

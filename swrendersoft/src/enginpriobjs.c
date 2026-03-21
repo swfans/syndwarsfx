@@ -158,11 +158,6 @@ ushort find_normal(struct Normal *p_normal)
 
 void calc_normal(short face, struct Normal *p_normal)
 {
-#if 0
-    asm volatile ("call ASM_calc_normal\n"
-        : : "a" (face), "d" (p_normal));
-    return;
-#endif
     struct SingleObjectFace3 *p_face;
     struct SinglePoint *p_objpt1;
     struct SinglePoint *p_objpt2;
@@ -231,11 +226,6 @@ void calc_normal(short face, struct Normal *p_normal)
 
 void calc_normal4(short face, struct Normal *p_normal)
 {
-#if 0
-    asm volatile ("call ASM_calc_normal4\n"
-        : : "a" (face), "d" (p_normal));
-    return;
-#endif
     struct SingleObjectFace4 *p_face;
     struct SinglePoint *p_objpt1;
     struct SinglePoint *p_objpt2;
@@ -305,13 +295,6 @@ void calc_normal4(short face, struct Normal *p_normal)
 
 ushort obj_face3_create_normal(short face)
 {
-#if 0
-    ushort ret;
-    asm volatile (
-      "call ASM_obj_face3_create_normal\n"
-        : "=r" (ret) : "a" (face));
-    return ret;
-#else
     struct Normal loc_nrml;
     struct Normal *p_nnrml;
     ushort i;
@@ -332,18 +315,10 @@ ushort obj_face3_create_normal(short face)
         i = nrml;
     }
     return i;
-#endif
 }
 
 ushort obj_face4_create_normal(short face)
 {
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_obj_face4_create_normal\n"
-        : "=r" (ret) : "a" (a1));
-    return ret;
-#endif
     struct Normal loc_nrml;
     struct Normal *p_nnrml;
     int i;
@@ -368,11 +343,6 @@ ushort obj_face4_create_normal(short face)
 
 void update_texture_from_anim_tmap(ushort ani_tmap)
 {
-#if 0
-    asm volatile (
-      "call ASM_update_texture_from_anim_tmap\n"
-        :  : "a" (ani_tmap));
-#else
     struct AnimTmap *p_panitmap;
     ushort i;
 
@@ -396,15 +366,10 @@ void update_texture_from_anim_tmap(ushort ani_tmap)
             p_panitmap->TMap[i] = new_txtr;
         }
     }
-#endif
 }
 
 ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty)
 {
-#if 0
-    asm volatile ("call ASM_copy_prim_obj_to_game_object\n"
-        : : "a" (tx), "d" (tz), "b" (prim_obj), "c" (ty));
-#else
     struct SingleObject *p_psngobj;
     struct SingleObject *p_nsngobj;
     ushort face_beg, face_num, face_dt;
@@ -640,7 +605,6 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
     if (prim_obj_mem_debug != NULL)
         prim_obj_mem_debug(PriEl_NONE, -10000, 0);
     return new_obj;
-#endif
 }
 
 /******************************************************************************/

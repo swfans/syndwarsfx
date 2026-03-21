@@ -77,12 +77,6 @@ ScreenSortSpriteRenderCallback screen_sorted_sprite_persn_render_cb = NULL;
 
 void draw_sort_line(struct SortLine *p_sline)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_sort_line\n"
-        : : "a" (p_sline));
-    return;
-#endif
     ushort ftcor;
     if ((p_sline->Flags & (0x01|0x02)) != 0)
     {

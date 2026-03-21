@@ -73,11 +73,6 @@ short angle_between_points(int x1, int z1, int x2, int z2)
 
 void local_to_worldr(int *dx, int *dy, int *dz)
 {
-#if 0
-    asm volatile (
-      "call ASM_local_to_worldr\n"
-        : : "a" (dx), "d" (dy), "b" (dz));
-#endif
     int x, z;
 
     z = *dz;
@@ -88,11 +83,6 @@ void local_to_worldr(int *dx, int *dy, int *dz)
 
 void transform_point(struct EnginePoint *p_ep)
 {
-#if 0
-    asm volatile ("call ASM_transform_point\n"
-        :  : "a" (p_ep));
-    return;
-#endif
     int fctr_a, fctr_b, fctr_c;
     int scr_shx, scr_shy;
 

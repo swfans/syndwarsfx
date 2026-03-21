@@ -398,13 +398,6 @@ TbResult read_textwalk(void)
 
 ubyte get_my_texture_bits(short textr)
 {
-#if 0
-    ubyte ret;
-    asm volatile (
-      "call ASM_get_my_texture_bits\n"
-        : "=r" (ret) : "a" (textr));
-    return ret;
-#endif
     struct SingleFloorTexture *p_fltextr;
     int tmapX_min, tmapY_min, tmapX_max, tmapY_max;
     ubyte v7;
@@ -506,11 +499,6 @@ static void animate_texture(ushort tmap)
 
 void animate_textures(void)
 {
-#if 0
-    asm volatile ("call ASM_animate_textures\n"
-        :  :  : "eax" );
-    return;
-#endif
     ushort i, k;
     short dt;
 

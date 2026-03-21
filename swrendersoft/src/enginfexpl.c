@@ -52,10 +52,6 @@ s32 dword_1E08BC = 0;
 
 void init_free_explode_faces(void)
 {
-#if 0
-    asm volatile ("call ASM_init_free_explode_faces\n"
-        :  :  : "eax" );
-#else
     int i;
 
     LbMemorySet(ex_faces, 0, sizeof(ex_faces));
@@ -69,7 +65,6 @@ void init_free_explode_faces(void)
     ex_faces[i].Flags = 0;
 
     dont_bother_with_explode_faces = 1;
-#endif
 }
 
 ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangemsk, ushort fbig, ushort ftype, ushort count)

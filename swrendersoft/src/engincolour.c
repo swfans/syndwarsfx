@@ -74,10 +74,6 @@ void update_unkn_changing_colors(void)
 
 void setup_color_lookups(void)
 {
-#if 0
-    asm volatile ("call ASM_setup_color_lookups\n"
-        :  :  : "eax" );
-#endif
     if (display_palette == NULL) {
         LOGERR("Display palette not set, skipping");
         return;

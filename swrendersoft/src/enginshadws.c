@@ -273,12 +273,6 @@ void copy_from_screen_ani(ubyte *buf)
 
 void get_frame_bounds_05(ushort frm, short *x1, short *x2, short *y1, short *y2)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_get_frame_bounds_05\n"
-        : : "a" (frm), "d" (x1), "b" (x2), "c" (y1), "g" (y2));
-#endif
     struct Element *p_el;
     struct Frame *p_frm;
     ushort el;

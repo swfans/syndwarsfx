@@ -311,13 +311,6 @@ TbBool get_prccoord_height_on_face_points(int *prc_y,
 
 int get_height_on_face(int x, int z, ushort face)
 {
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_get_height_on_face\n"
-        : "=r" (ret) : "a" (x), "d" (z), "b" (face));
-    return ret;
-#endif
     struct SingleObjectFace3 *p_oface;
     int pt0_x, pt0_y, pt0_z;
     int pt1_x, pt1_y, pt1_z;
@@ -385,13 +378,6 @@ int get_height_on_face(int x, int z, ushort face)
 
 int get_height_on_face_quad(int x, int z, ushort face)
 {
-#if 0
-    int ret;
-    asm volatile (
-      "call ASM_get_height_on_face_quad\n"
-        : "=r" (ret) : "a" (x), "d" (z), "b" (face));
-    return ret;
-#endif
     struct SingleObjectFace4 *p_face;
     struct SingleObject *p_sobj;
     struct SinglePoint *p_pt0;
@@ -481,10 +467,6 @@ TbBool face_is_blocking_walk(short face)
 
 void unkn_object_shift_03(ushort objectno)
 {
-#if 0
-    asm volatile ("call ASM_unkn_object_shift_03\n"
-        : : "a" (objectno));
-#endif
     struct SingleObject *p_psngobj;
     int sum_nx, sum_ny, sum_nz;
     int n;
@@ -612,10 +594,6 @@ void unkn_object_shift_03(ushort objectno)
 
 void unkn_object_shift_02(ushort norm1, ushort norm2, ushort objectno)
 {
-#if 0
-    asm volatile ("call ASM_unkn_object_shift_02\n"
-        : : "a" (norm1), "d" (norm2), "b" (objectno));
-#endif
     struct SingleObject *p_psngobj;
     int n_remove;
     int i;

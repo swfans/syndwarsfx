@@ -53,11 +53,6 @@ ubyte byte_1A7EE8[9004];
 
 void scene_post_effect_rain_init(void)
 {
-#if 0
-    asm volatile ("call ASM_scene_post_effect_rain_init\n"
-        :  :  : "eax" );
-    return;
-#endif
     uint i;
     ushort idx3;
 
@@ -87,10 +82,6 @@ void scene_post_effect_rain_init(void)
 
 void water_droplets_on_floor(void)
 {
-#if 0
-    asm volatile ("call ASM_water_droplets_on_floor\n"
-        :  : );
-#else
     ushort i, k;
 
     for (i = 0; i < 999; i++)
@@ -139,7 +130,6 @@ void water_droplets_on_floor(void)
         }
     }
     word_1A7314++;
-#endif
 }
 
 void scene_post_effect_texture_with_snow(void)
@@ -246,11 +236,6 @@ static void draw_static_dot(short x, short y, short w, short h, short ftpos)
 
 void draw_falling_snow(int bckt)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_falling_snow\n"
-        : : "a" (a1));
-#endif
     int height;
     uint seed_bkp;
     ushort m, scanln;
@@ -322,10 +307,6 @@ static void draw_distant_stars(short x, short y, short w, short h, TbPixel color
 
 void draw_background_stars(void)
 {
-#if 0
-    asm volatile ("call ASM_draw_background_stars\n"
-        :  :  : "eax" );
-#endif
     ulong seed_bkp;
     int i, limit;
     int scr_x0, scr_y0;
