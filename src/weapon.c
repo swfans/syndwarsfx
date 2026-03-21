@@ -3484,8 +3484,7 @@ void init_fire_weapon(struct Thing *p_person)
 
     if ((p_person->Type != TT_MINE) && ((p_person->State == PerSt_WAIT) || (p_person->State == PerSt_NONE)))
     {
-        p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 1);
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, gun_out_anim(p_person, 1));
     }
     if (p_person->U.UPerson.Energy <= wdef->EnergyUsed)
     {
@@ -3736,7 +3735,6 @@ void init_clone_disguise(struct Thing *p_person)
     if ((p_person->Flag2 & TgF2_AlteredSubType) != 0)
         return;
 
-    p_person->U.UPerson.AnimMode = ANIM_PERS_IDLE;
     p_person->U.UPerson.OldSubType = p_person->SubType;
     switch (LbRandomAnyShort() & 3)
     {
@@ -3755,9 +3753,10 @@ void init_clone_disguise(struct Thing *p_person)
     default:
         break;
     }
-    p_person->Speed = calc_person_speed(p_person);
-    reset_person_frame(p_person);
     p_person->Flag2 |= TgF2_AlteredSubType;
+
+    set_person_anim_mode(p_person, ANIM_PERS_IDLE);
+    p_person->Speed = calc_person_speed(p_person);
 }
 
 void reset_clone_disguise(struct Thing *p_person)
@@ -4533,8 +4532,7 @@ void process_move_while_firing(struct Thing *p_person)
     if (wtype != WEP_NULL && !weapon_is_for_spreading_on_ground(wtype) &&
       (p_person->Flag2 & TgF2_Unkn00080000) != 0)
     {
-        p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
         p_person->Timer1 = 48;
         p_person->StartTimer1 = 48;
         p_person->Flag2 &= ~TgF2_Unkn00080000;
@@ -4625,8 +4623,7 @@ void process_weapon_continuous_fire(struct Thing *p_person)
             if ((animMode == ANIM_PERS_Unkn14 || animMode == ANIM_PERS_WEPHEAVY_Unkn15)
               && p_person->Type != TT_MINE)
             {
-                p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-                reset_person_frame(p_person);
+                set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
             }
             switch (p_person->U.UPerson.CurrentWeapon)
             {

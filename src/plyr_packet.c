@@ -193,8 +193,7 @@ void player_agent_weapon_switch(PlayerIdx plyr, ThingIdx person, short shift)
 
     p_person->U.UPerson.CurrentWeapon = select_new_weapon(person, shift);
     peep_change_weapon(p_person);
-    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-    reset_person_frame(p_person);
+    set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
     p_person->Speed = calc_person_speed(p_person);
     p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
 
@@ -214,8 +213,7 @@ StateChRes player_agent_init_drop_item(PlayerIdx plyr, struct Thing *p_person, T
 {
     StateChRes res;
     if ((item == 0) || (item == p_person->U.UPerson.CurrentWeapon)) {
-        p_person->U.UPerson.AnimMode = ANIM_PERS_IDLE;
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, ANIM_PERS_IDLE);
     }
     if (p_person->State == PerSt_PROTECT_PERSON)
         p_person->Flag2 |= TgF2_Unkn10000000;
@@ -632,8 +630,7 @@ void player_agent_select_specific_weapon(PlayerIdx plyr, struct Thing *p_person,
 {
     thing_select_specific_weapon(p_person, wtype, flag);
     peep_change_weapon(p_person);
-    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-    reset_person_frame(p_person);
+    set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
     p_person->Speed = calc_person_speed(p_person);
     p_person->U.UPerson.TempWeapon = p_person->U.UPerson.CurrentWeapon;
     if ((plyr == local_player_no) && (p_person->U.UPerson.CurrentWeapon != 0))

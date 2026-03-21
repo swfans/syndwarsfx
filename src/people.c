@@ -1157,8 +1157,7 @@ void set_person_animmode_walk(struct Thing *p_person)
     if ((p_person->Flag & TngF_Destroyed) != 0)
         return;
 
-    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-    reset_person_frame(p_person);
+    set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
     p_person->Timer1 = 48;
     p_person->StartTimer1 = 48;
     p_person->Flag2 &= ~(TgF2_IgnoreEnemies|TgF2_Unkn00080000);
@@ -1840,8 +1839,23 @@ short find_peep_in_area(struct Thing *p_me, struct Command *p_cmd)
 
 void set_person_animmode_run(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_set_person_animmode_run\n"
         : : "a" (p_person));
+#endif
+    if (p_person->State == PerSt_PERSON_BURNING) {
+        return;
+    }
+    if ((p_person->Flag & TngF_Destroyed) != 0 || (p_person->Flag2 & TgF2_KnockedOut) != 0) {
+        return;
+    }
+    if (p_person->U.UPerson.AnimMode != ANIM_PERS_Unkn19) {
+        set_person_anim_mode(p_person, ANIM_PERS_Unkn19);
+    }
+    p_person->Timer1 = 48;
+    p_person->StartTimer1 = 48;
+    p_person->Flag2 |= TgF2_Unkn00080000;
+    p_person->Speed = calc_person_speed(p_person);
 }
 
 ushort build_navigate_path(struct Thing *p_thing, int x, int z, int face)
@@ -1897,9 +1911,8 @@ void person_init_drop(struct Thing *p_person, ThingIdx item)
     p_person->U.UPerson.Timer2 = 3;
 
     PrevAnimMode = p_person->U.UPerson.AnimMode;
-    p_person->U.UPerson.AnimMode = ANIM_PERS_Unkn13;
+    set_person_anim_mode(p_person, ANIM_PERS_Unkn13);
     p_person->U.UPerson.OldAnimMode = PrevAnimMode;
-    reset_person_frame(p_person);
 }
 
 void person_init_pickup(struct Thing *p_person, ThingIdx item)
@@ -3516,8 +3529,7 @@ int dead_person_hit_by_bullet(struct Thing *p_thing, short hp,
             p_thing->SubState = 26;
             p_thing->U.UPerson.FrameId.Version[4] = 0;
             p_thing->U.UPerson.FrameId.Version[3] = 0;
-            p_thing->U.UPerson.AnimMode = ANIM_PERS_Unkn10;
-            reset_person_frame(p_thing);
+            set_person_anim_mode(p_thing, ANIM_PERS_Unkn10);
             return 1;
         }
         if (type == DMG_UZI || type == DMG_MINIGUN || type == DMG_LONGRANGE || type == DMG_UNKN9)
@@ -3906,11 +3918,10 @@ void person_go_sleep(struct Thing *p_person)
         PrevAnimMode = p_person->U.UPerson.AnimMode;
         if (PrevAnimMode != ANIM_PERS_PUSH_BACK)
             p_person->U.UPerson.OldAnimMode = PrevAnimMode;
-        p_person->U.UPerson.AnimMode = ANIM_PERS_LAY_DOWN;
-         // make sure to draw without blood
+         // make sure to draw frame without blood
         p_person->U.UPerson.FrameId.Version[4] = 0;
         p_person->U.UPerson.FrameId.Version[3] = 0;
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, ANIM_PERS_LAY_DOWN);
 
         p_person->U.UPerson.RecoilTimer = 0;
         p_person->Timer1 = 48;
@@ -4966,8 +4977,7 @@ ubyte thing_select_specific_weapon(struct Thing *p_person, WeaponType wtype, uby
 ubyte thing_select_best_weapon_for_range(struct Thing *p_person, int range)
 {
     choose_best_weapon_for_range(p_person, range);
-    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-    reset_person_frame(p_person);
+    set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
     p_person->Speed = calc_person_speed(p_person);
 
     return (p_person->U.UPerson.CurrentWeapon != WEP_NULL) ? WepSel_SELECT : WepSel_HIDE;
@@ -4977,8 +4987,7 @@ ubyte thing_deselect_weapon(struct Thing *p_person)
 {
     person_weapons_update_previous(p_person);
     p_person->U.UPerson.CurrentWeapon = WEP_NULL;
-    p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-    reset_person_frame(p_person);
+    set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
     p_person->Speed = calc_person_speed(p_person);
 
     return WepSel_HIDE;
@@ -5234,8 +5243,7 @@ void process_knocked_out(struct Thing *p_person)
     p_person->U.UPerson.BumpCount--;
     if (p_person->U.UPerson.BumpCount == 0)
     {
-        p_person->U.UPerson.AnimMode = p_person->U.UPerson.OldAnimMode;
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, p_person->U.UPerson.OldAnimMode);
 
         p_person->Flag2 &= ~TgF2_KnockedOut;
         p_person->Timer1 = 48;
@@ -5305,10 +5313,7 @@ void process_protect_person(struct Thing *p_person)
         if ((p_leadtng->State == PerSt_WAIT) &&
           ((p_person->Flag2 & TgF2_Unkn00080000) != 0))
         {
-            ubyte anim;
-            anim = gun_out_anim(p_person, 0);
-            p_person->U.UPerson.AnimMode = anim;
-            reset_person_frame(p_person);
+            set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
             p_person->Timer1 = 48;
             p_person->StartTimer1 = 48;
             p_person->Flag2 &= ~TgF2_Unkn00080000;
@@ -5572,8 +5577,7 @@ void person_wait(struct Thing *p_person)
 #endif
     if ((p_person->Flag2 & TgF2_Unkn00080000) != 0)
     {
-        p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
         p_person->Timer1 = 48;
         p_person->StartTimer1 = 48;
         p_person->Flag2 &= ~TgF2_Unkn00080000;
@@ -5581,8 +5585,7 @@ void person_wait(struct Thing *p_person)
     }
     if ((p_person->U.UPerson.AnimMode != ANIM_PERS_Unkn21) && (p_person->U.UPerson.CurrentWeapon == WEP_NULL))
     {
-        p_person->U.UPerson.AnimMode = ANIM_PERS_Unkn21;
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, ANIM_PERS_Unkn21);
     }
     p_person->Flag &= ~TngF_Unkn0001;
     if (((p_person->Flag & TngF_WepCharging) != 0) || (p_person->U.UPerson.WeaponTurn != 0))
@@ -6132,8 +6135,7 @@ short person_move(struct Thing *p_person)
         play_dist_sample(p_person, 79, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_4EVER, 3);
     }
     if (p_person->U.UPerson.AnimMode == ANIM_PERS_Unkn21) {
-        p_person->U.UPerson.AnimMode = ANIM_PERS_IDLE;
-        reset_person_frame(p_person);
+        set_person_anim_mode(p_person, ANIM_PERS_IDLE);
     }
     if ((p_person->Flag & (TngF_InVehicle|TngF_Unkn4000)) != 0) {
         return 1;
@@ -6153,8 +6155,7 @@ short person_move(struct Thing *p_person)
             p_person->U.UPerson.Stamina = p_person->U.UPerson.Stamina - (7 - 2 * cybmod_legs_level(&p_person->U.UPerson.UMod));
         }
         if ((p_person->U.UPerson.Stamina < p_person->U.UPerson.MaxStamina >> 2) && (p_person->State != PerSt_PERSON_BURNING)) {
-            p_person->U.UPerson.AnimMode = gun_out_anim(p_person, 0);
-            reset_person_frame(p_person);
+            set_person_anim_mode(p_person, gun_out_anim(p_person, 0));
             p_person->Timer1 = 48;
             p_person->StartTimer1 = 48;
             p_person->Flag2 &= ~TgF2_Unkn00080000;
@@ -6668,7 +6669,7 @@ void process_person(struct Thing *p_person)
             p_person->PTarget = NULL;
             p_person->State = PerSt_NONE;
             p_person->Flag |= TngF_Unkn0040;
-            calc_person_speed(p_person);
+            p_person->Speed = calc_person_speed(p_person);
         }
     }
     else
