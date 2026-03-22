@@ -439,16 +439,14 @@ void draw_object_face4g_textrd(ushort face4)
     vec_mode = p_face4->Flags;
     if (p_face4->Texture != 0)
     {
-        {
-            if ((p_face4->GFlags & (FGFlg_Unkn40|FGFlg_Unkn02)) != 0) {
-                uint frame;
-                frame = render_anim_turn + 4 * p_face4->Object;
-                if ((frame & 0x0F) <= 7) {
-                    vec_mode = 2;
-                } else {
-                    vec_colour = 0;
-                    vec_mode = 0;
-                }
+        if ((p_face4->GFlags & (FGFlg_Unkn40|FGFlg_Unkn02)) != 0) {
+            uint frame;
+            frame = render_anim_turn + 4 * p_face4->Object;
+            if ((frame & 0x0F) <= 7) {
+                vec_mode = 2;
+            } else {
+                vec_colour = 0;
+                vec_mode = 0;
             }
         }
         if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
@@ -457,10 +455,7 @@ void draw_object_face4g_textrd(ushort face4)
             set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point2, &point4, p_face4->GFlags);
         }
     }
-#if 0 // unused, and breaks render-app separation, so disabled
-    if (ingame.draw_unknprop_01 == 0)
-        ingame.draw_unknprop_01 = face4;
-#endif
+
     {
         struct SinglePoint *p_point;
         struct SpecialPoint *p_scrpoint;
@@ -943,9 +938,9 @@ void draw_object_face4d_textrd_dk(ushort face4)
 {
     struct SingleObjectFace4 *p_face4;
     struct PolyPoint point4;
-    struct PolyPoint point1;
-    struct PolyPoint point2;
     struct PolyPoint point3;
+    struct PolyPoint point2;
+    struct PolyPoint point1;
 
     p_face4 = &game_object_faces4[face4];
     vec_mode = 4;
@@ -1082,12 +1077,12 @@ void draw_object_face4d_textrd_dk(ushort face4)
         struct SingleFloorTexture *p_sftex;
 
         p_sftex = &game_textures[p_face4->Texture];
-        point4.U = p_sftex->TMapX4 << 16;
-        point4.V = p_sftex->TMapY4 << 16;
-        point2.U = p_sftex->TMapX3 << 16;
-        point2.V = p_sftex->TMapY3 << 16;
         point3.U = p_sftex->TMapX2 << 16;
         point3.V = p_sftex->TMapY2 << 16;
+        point2.U = p_sftex->TMapX3 << 16;
+        point2.V = p_sftex->TMapY3 << 16;
+        point4.U = p_sftex->TMapX4 << 16;
+        point4.V = p_sftex->TMapY4 << 16;
     }
 
     {
@@ -1425,7 +1420,7 @@ void draw_object_face4_pole(ushort face4)
  *
  * @param face3 Index in `game_object_faces3` array.
  */
-void draw_object_face3_textrd(ushort face3)
+void draw_object_face3d_textrd(ushort face3)
 {
     struct PolyPoint point1;
     struct PolyPoint point2;
@@ -1789,7 +1784,7 @@ void draw_object_face4d_textrd(ushort face4)
  *
  * @param face3 Index in `game_object_faces3` array.
  */
-void draw_object_face3_textrd_dk(ushort face3)
+void draw_object_face3d_textrd_dk(ushort face3)
 {
     struct PolyPoint point1;
     struct PolyPoint point2;

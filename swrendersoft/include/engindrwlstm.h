@@ -27,8 +27,29 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-/** Flag for object_face_get_visible_max_depth(). */
-#define VisMDF_SkipFlg20 0x0100
+/** Skip drawing the face if flag20 set by transform.
+ *
+ * This flag is for `enlist_draw_face*()`.
+ */
+#define EnFaceF_SkipFlg20 0x0100
+
+/** The face is reflective - it reflects sky box texture.
+ *
+ * This flag is for `enlist_draw_face*()`.
+ */
+#define EnFaceF_Reflective 0x0200
+
+/** The face is semi-transparent - the area behind it is visible.
+ *
+ * This flag is for `enlist_draw_face*()`.
+ */
+#define EnFaceF_SemiTranspr 0x0400
+
+/** The face is belongs to a moving objects - has different light calc.
+ *
+ * This flag is for `enlist_draw_face*()`.
+ */
+#define EnFaceF_MovingObject 0x0800
 
 struct SortLine;
 struct SortSprite;
@@ -178,10 +199,10 @@ void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
   int depth_shift, int itime, short ofs_x, short ofs_y, TbPixel colour);
 
 TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
-  ushort vmdflags, ubyte ditype, int *bckt_max);
+  ushort edflags, ubyte ditype, int *bckt_max);
 
 TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
-  ushort vmdflags, ubyte ditype, int *bckt_max);
+  ushort edflags, ubyte ditype, int *bckt_max);
 
 /** Enlist drawing a pole, made of 2 points within quad face.
  */

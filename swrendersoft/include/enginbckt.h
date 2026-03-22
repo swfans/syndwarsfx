@@ -50,9 +50,9 @@ enum DrawItemType {
     DrIT_Unkn4 = 0x4,
     DrIT_Unkn5 = 0x5,
     DrIT_Unkn6 = 0x6,
-    DrIT_Unkn7 = 0x7,
+    DrIT_ObFace3G,
     DrIT_Unkn8 = 0x8,
-    DrIT_ObFace4Txtr = 0x9,
+    DrIT_ObFace4Txtr,
     DrIT_Unkn10 = 0xA,
     DrIT_Unkn11 = 0xB,
     DrIT_SpObFace4 = 0xC,
@@ -61,7 +61,7 @@ enum DrawItemType {
     /** Pole stored as quadrangular face, with only two points storing real points. */
     DrIT_ObFacePole,
     DrIT_Unkn15 = 0xF,
-    DrIT_Unkn16 = 0x10,
+    DrIT_ObFace4G,
     /** Reflective triangular face, from the object faces array. */
     DrIT_ObFace3Refl,
     /** Reflective quadrangular face, from the object faces array. */

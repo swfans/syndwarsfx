@@ -66,8 +66,8 @@ void draw_ex_face(ushort exface);
 void draw_special_object_face4(ushort face4);
 void draw_object_face4_pole(ushort face4);
 void draw_object_face4d_textrd(ushort face4);
-void draw_object_face3_textrd(ushort face);
-void draw_object_face3_textrd_dk(ushort face);
+void draw_object_face3d_textrd(ushort face);
+void draw_object_face3d_textrd_dk(ushort face);
 void draw_object_face3_tran_tint(ushort face);
 void draw_object_face4_tran_tint(ushort face4);
 void draw_shrapnel(ushort shrap);
@@ -111,7 +111,7 @@ void draw_drawitem_1(ushort dihead)
       {
       case DrIT_ObFace3Txtr:
       case DrIT_Unkn10:
-          draw_object_face3_textrd_dk(itm->Offset);
+          draw_object_face3d_textrd_dk(itm->Offset);
           break;
       case DrIT_Unkn2:
       case DrIT_Unkn8:
@@ -128,7 +128,7 @@ void draw_drawitem_1(ushort dihead)
       case DrIT_Unkn6:
           draw_floor_tile1b(itm->Offset);
           break;
-      case DrIT_Unkn7:
+      case DrIT_ObFace3G:
           draw_object_face3g_textrd(itm->Offset);
           break;
       case DrIT_ObFace4Txtr:
@@ -180,7 +180,7 @@ void draw_drawitem_2(ushort dihead)
       {
       case DrIT_ObFace3Txtr:
       case DrIT_Unkn10:
-          draw_object_face3_textrd(itm->Offset);
+          draw_object_face3d_textrd(itm->Offset);
           break;
       case DrIT_SFrmStatc:
           draw_sort_sprite1a(itm->Offset);
@@ -194,7 +194,7 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn6:
           draw_floor_tile1b(itm->Offset);
           break;
-      case DrIT_Unkn7:
+      case DrIT_ObFace3G:
           draw_object_face3g_textrd(itm->Offset);
           break;
       case DrIT_ObFace4Txtr:
@@ -221,7 +221,7 @@ void draw_drawitem_2(ushort dihead)
       case DrIT_Unkn15:
           draw_sort_sprite1c(itm->Offset);
           break;
-      case DrIT_Unkn16:
+      case DrIT_ObFace4G:
           draw_object_face4g_textrd(itm->Offset);
           break;
       case DrIT_ObFace3Refl:

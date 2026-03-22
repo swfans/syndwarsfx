@@ -1124,7 +1124,7 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
     if (p_snpoint4 != NULL)
         flags_any |= p_snpoint4->Flags;
 
-    if (((gflags & VisMDF_SkipFlg20) == 0) && ((flags_any & 0x20) != 0))
+    if (((gflags & EnFaceF_SkipFlg20) == 0) && ((flags_any & 0x20) != 0))
         return SHRT_MIN - 1;
 
     if ((flags_all & 0xF) != 0)
@@ -1138,7 +1138,7 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
 }
 
 TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
-  ushort vmdflags, ubyte ditype, int *bckt_max)
+  ushort edflags, ubyte ditype, int *bckt_max)
 {
     struct SingleObjectFace3 *p_face;
     int depth_max, bckt;
@@ -1147,7 +1147,7 @@ TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
 
     depth_max = object_face_get_visible_max_depth(p_face->PointNo[0],
       p_face->PointNo[2], p_face->PointNo[1], -1,
-      p_face->GFlags | vmdflags);
+      p_face->GFlags | edflags);
     if (depth_max < SHRT_MIN)
         return true;
 
@@ -1159,7 +1159,7 @@ TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
 }
 
 TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
-  ushort vmdflags, ubyte ditype, int *bckt_max)
+  ushort edflags, ubyte ditype, int *bckt_max)
 {
     struct SingleObjectFace4 *p_face4;
     int depth_max, bckt;
@@ -1168,7 +1168,7 @@ TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
 
     depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
       p_face4->PointNo[2], p_face4->PointNo[1], p_face4->PointNo[3],
-      p_face4->GFlags | vmdflags);
+      p_face4->GFlags | edflags);
     if (depth_max < SHRT_MIN)
         return true;
 
@@ -1180,7 +1180,7 @@ TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
 }
 
 TbBool enlist_draw_face2_2pt_prealloc(int face, short depth_shift,
-  ushort vmdflags, ubyte ditype, int *bckt_max)
+  ushort edflags, ubyte ditype, int *bckt_max)
 {
     struct SingleObjectFace4 *p_face4;
     int depth_max, bckt;
@@ -1189,7 +1189,7 @@ TbBool enlist_draw_face2_2pt_prealloc(int face, short depth_shift,
 
     depth_max = object_face_get_visible_max_depth(p_face4->PointNo[0],
       p_face4->PointNo[1], -1, -1,
-      p_face4->GFlags | vmdflags);
+      p_face4->GFlags | edflags);
     if (depth_max < SHRT_MIN)
         return true;
 
