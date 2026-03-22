@@ -450,9 +450,11 @@ void draw_object_face4g_textrd(ushort face4)
             }
         }
         if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
-            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point4, &point2, p_face4->GFlags);
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point4, &point2, p_face4->GFlags);
         } else {
-            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point2, &point4, p_face4->GFlags);
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point2, &point4, p_face4->GFlags);
         }
     }
 
@@ -565,9 +567,11 @@ void draw_object_face4g_textrd(ushort face4)
     if (p_face4->Texture != 0)
     {
         if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
-            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point4, &point2, p_face4->GFlags);
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point4, &point2, p_face4->GFlags);
         } else {
-            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point2, &point4, p_face4->GFlags);
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point2, &point4, p_face4->GFlags);
         }
     }
     dword_176D4C++;
@@ -775,7 +779,8 @@ void draw_ex_face(ushort exface)
     case 2:
     case 4:
     case 6:
-      set_floor_texture_uv(p_exface->Texture, &point1, &point2, &point3, &point4, 0);
+      set_floor_texture_uv(p_exface->Texture, &point1, &point2,
+        &point3, &point4, 0);
 
       point1.X = p_scrpoint[0].X;
       point1.Y = p_scrpoint[0].Y;
@@ -948,7 +953,8 @@ void draw_object_face4d_textrd_dk(ushort face4)
 
     if (p_face4->Texture != 0)
     {
-        set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point2, &point4, p_face4->GFlags);
+        set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+          &point2, &point4, p_face4->GFlags);
     }
 
     {
@@ -1074,15 +1080,8 @@ void draw_object_face4d_textrd_dk(ushort face4)
 
     if (p_face4->Texture != 0)
     {
-        struct SingleFloorTexture *p_sftex;
-
-        p_sftex = &game_textures[p_face4->Texture];
-        point3.U = p_sftex->TMapX2 << 16;
-        point3.V = p_sftex->TMapY2 << 16;
-        point2.U = p_sftex->TMapX3 << 16;
-        point2.V = p_sftex->TMapY3 << 16;
-        point4.U = p_sftex->TMapX4 << 16;
-        point4.V = p_sftex->TMapY4 << 16;
+        set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+          &point2, &point4, 0);
     }
 
     {
@@ -1122,7 +1121,8 @@ void draw_floor_tile1a(ushort tl)
             else
                 vec_mode = 19;
         }
-        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4, &point3, &point1, 0);
+        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4,
+          &point3, &point1, 0);
     }
     point1.X = p_floortl->X[0];
     point1.Y = p_floortl->Y[0];
@@ -1197,7 +1197,8 @@ void draw_floor_tile1b(ushort tl)
             else
                 vec_mode = 19;
         }
-        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4, &point3, &point1, 0);
+        set_floor_texture_uv(floor_texture_index(p_floortl->Texture), &point2, &point4,
+          &point3, &point1, 0);
     }
     point1.X = p_floortl->X[0];
     point1.Y = p_floortl->Y[0];
@@ -1313,7 +1314,8 @@ void draw_special_object_face4(ushort face4)
 
     if ((p_face4->Flags == 10) || (p_face4->Flags == 9))
     {
-        set_floor_texture_uv(p_face4->Texture, &point2, &point1, &point3, &point4, p_face4->GFlags);
+        set_floor_texture_uv(p_face4->Texture, &point2, &point1, &point3,
+          &point4, p_face4->GFlags);
     }
     {
         if (vec_mode == 2)
@@ -1361,7 +1363,8 @@ void draw_object_face4_pole(ushort face4)
 
     if (p_face4->Texture != 0)
     {
-        set_floor_texture_uv(p_face4->Texture, &point3, &point2, &point1, &point4, p_face4->GFlags);
+        set_floor_texture_uv(p_face4->Texture, &point3, &point2,
+          &point1, &point4, p_face4->GFlags);
     }
     {
         struct SinglePoint *p_point;
@@ -1599,9 +1602,11 @@ void draw_object_face4d_textrd(ushort face4)
                 vec_mode = 5;
         }
         if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
-            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point4, &point2, p_face4->GFlags);
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point4, &point2, p_face4->GFlags);
         } else {
-            set_floor_texture_uv(p_face4->Texture, &point1, &point3, &point2, &point4, p_face4->GFlags);
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point2, &point4, p_face4->GFlags);
         }
     }
 
@@ -1739,22 +1744,13 @@ void draw_object_face4d_textrd(ushort face4)
 
     if (p_face4->Texture != 0)
     {
-        struct SingleFloorTexture *p_sftex;
-
-        p_sftex = &game_textures[p_face4->Texture];
         if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
-            point4.U = p_sftex->TMapX3 << 16;
-            point4.V = p_sftex->TMapY3 << 16;
-            point2.U = p_sftex->TMapX4 << 16;
-            point2.V = p_sftex->TMapY4 << 16;
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point4, &point2, 0);
         } else {
-            point4.U = p_sftex->TMapX4 << 16;
-            point4.V = p_sftex->TMapY4 << 16;
-            point2.U = p_sftex->TMapX3 << 16;
-            point2.V = p_sftex->TMapY3 << 16;
+            set_floor_texture_uv(p_face4->Texture, &point1, &point3,
+              &point2, &point4, 0);
         }
-        point3.U = p_sftex->TMapX2 << 16;
-        point3.V = p_sftex->TMapY2 << 16;
     }
     dword_176D4C++;
 
