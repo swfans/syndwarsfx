@@ -199,10 +199,10 @@ void enlist_draw_laser(int x1, int y1, int z1, int x2, int y2, int z2,
   int depth_shift, int itime, short ofs_x, short ofs_y, TbPixel colour);
 
 TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
-  ushort edflags, ubyte ditype, int *bckt_max);
+  ushort edflags, int *bckt_max);
 
 TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
-  ushort edflags, ubyte ditype, int *bckt_max);
+  ushort edflags, int *bckt_max);
 
 /** Enlist drawing a pole, made of 2 points within quad face.
  */

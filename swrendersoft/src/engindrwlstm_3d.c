@@ -1138,10 +1138,11 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
 }
 
 TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
-  ushort edflags, ubyte ditype, int *bckt_max)
+  ushort edflags, int *bckt_max)
 {
     struct SingleObjectFace3 *p_face;
     int depth_max, bckt;
+    ubyte ditype;
 
     p_face = &game_object_faces3[face];
 
@@ -1151,6 +1152,15 @@ TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
     if (depth_max < SHRT_MIN)
         return true;
 
+    if ((edflags & EnFaceF_Reflective) != 0)
+        ditype = DrIT_ObFace3Refl;
+    else if ((edflags & EnFaceF_SemiTranspr) != 0)
+        ditype = DrIT_ObFace3Tran;
+    else if ((edflags & EnFaceF_MovingObject) != 0)
+        ditype = DrIT_ObFace3G;
+    else
+        ditype = DrIT_ObFace3Txtr;
+
     bckt = BUCKET_MID + depth_shift + depth_max;
     if (*bckt_max < bckt)
         *bckt_max = bckt;
@@ -1159,10 +1169,11 @@ TbBool enlist_draw_face3_prealloc(int face, short depth_shift,
 }
 
 TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
-  ushort edflags, ubyte ditype, int *bckt_max)
+  ushort edflags, int *bckt_max)
 {
     struct SingleObjectFace4 *p_face4;
     int depth_max, bckt;
+    ubyte ditype;
 
     p_face4 = &game_object_faces4[face];
 
@@ -1172,6 +1183,15 @@ TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
     if (depth_max < SHRT_MIN)
         return true;
 
+    if ((edflags & EnFaceF_Reflective) != 0)
+        ditype = DrIT_ObFace4Refl;
+    else if ((edflags & EnFaceF_SemiTranspr) != 0)
+        ditype = DrIT_ObFace4Tran;
+    else if ((edflags & EnFaceF_MovingObject) != 0)
+        ditype = DrIT_ObFace4G;
+    else
+        ditype = DrIT_ObFace4Txtr;
+
     bckt = BUCKET_MID + depth_shift + depth_max;
     if (*bckt_max < bckt)
         *bckt_max = bckt;
@@ -1180,10 +1200,11 @@ TbBool enlist_draw_face4_prealloc(int face, short depth_shift,
 }
 
 TbBool enlist_draw_face2_2pt_prealloc(int face, short depth_shift,
-  ushort edflags, ubyte ditype, int *bckt_max)
+  ushort edflags, int *bckt_max)
 {
     struct SingleObjectFace4 *p_face4;
     int depth_max, bckt;
+    ubyte ditype;
 
     p_face4 = &game_object_faces4[face];
 
@@ -1192,6 +1213,8 @@ TbBool enlist_draw_face2_2pt_prealloc(int face, short depth_shift,
       p_face4->GFlags | edflags);
     if (depth_max < SHRT_MIN)
         return true;
+
+    ditype = DrIT_ObFacePole;
 
     bckt = BUCKET_MID + depth_shift + depth_max;
     if (*bckt_max < bckt)
@@ -1256,12 +1279,8 @@ TbBool enlist_draw_face4_pole(int cor_dx, int cor_dy, int cor_dz,
         p_specpt->Z = sp.Depth;
     }
 
-    ubyte ditype;
-
-    ditype = DrIT_ObFacePole;
-
     return enlist_draw_face2_2pt_prealloc(face, depth_shift,
-      0, ditype, bckt_max);
+      0, bckt_max);
 }
 
 void enlist_draw_plasma_sparks_on_object(struct SingleObject *point_object)

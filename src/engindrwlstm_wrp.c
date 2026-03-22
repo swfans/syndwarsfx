@@ -546,21 +546,11 @@ TbBool enlist_draw_face3_rot(int cor_dx, int cor_dy, int cor_dz,
 {
     struct ShEnginePoint sp;
     struct SingleObjectFace3 *p_face;
-    ubyte ditype;
 
     // each transform_rot_object_shpoint() call could reserve a point
     if (next_screen_point + 4 > screen_points_limit) {
         return false;
     }
-
-    if ((edflags & EnFaceF_Reflective) != 0)
-        ditype = DrIT_ObFace3Refl;
-    else if ((edflags & EnFaceF_SemiTranspr) != 0)
-        ditype = DrIT_ObFace3Tran;
-    else if ((edflags & EnFaceF_MovingObject) != 0)
-        ditype = DrIT_ObFace3G;
-    else
-        ditype = DrIT_ObFace3Txtr;
 
     p_face = &game_object_faces3[face];
 
@@ -574,7 +564,7 @@ TbBool enlist_draw_face3_rot(int cor_dx, int cor_dy, int cor_dz,
       matx, p_face->PointNo[1]);
 
     return enlist_draw_face3_prealloc(face, depth_shift,
-      edflags, ditype, bckt_max);
+      edflags, bckt_max);
 }
 
 TbBool enlist_draw_face4_rot(int cor_dx, int cor_dy, int cor_dz,
@@ -582,20 +572,10 @@ TbBool enlist_draw_face4_rot(int cor_dx, int cor_dy, int cor_dz,
 {
     struct ShEnginePoint sp;
     struct SingleObjectFace4 *p_face4;
-    ubyte ditype;
 
     if (next_screen_point + 5 > screen_points_limit) {
         return false;
     }
-
-    if ((edflags & EnFaceF_Reflective) != 0)
-        ditype = DrIT_ObFace4Refl;
-    else if ((edflags & EnFaceF_SemiTranspr) != 0)
-        ditype = DrIT_ObFace4Tran;
-    else if ((edflags & EnFaceF_MovingObject) != 0)
-        ditype = DrIT_ObFace4G;
-    else
-        ditype = DrIT_ObFace4Txtr;
 
     p_face4 = &game_object_faces4[face];
 
@@ -612,7 +592,7 @@ TbBool enlist_draw_face4_rot(int cor_dx, int cor_dy, int cor_dz,
       matx, p_face4->PointNo[3]);
 
     return enlist_draw_face4_prealloc(face, depth_shift,
-      edflags, ditype, bckt_max);
+      edflags, bckt_max);
 }
 
 int draw_rot_object_faces(int cor_dx, int cor_dy, int cor_dz,
@@ -900,18 +880,13 @@ short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
         else
         {
             ushort edflags;
-            ubyte ditype;
 
             edflags = 0;
             if ((doflags & DrwObjF_StartBelowWindow) != 0)
                 edflags |= EnFaceF_SemiTranspr;
-            if ((doflags & DrwObjF_StartBelowWindow) != 0)
-                ditype = DrIT_ObFace4Tran;
-            else
-                ditype = DrIT_ObFace4Txtr;
 
             enlisted = enlist_draw_face4_prealloc(face, depth_shift,
-              edflags, ditype, &bckt_max);
+              edflags, &bckt_max);
         }
         if (!enlisted)
             break;
@@ -927,18 +902,13 @@ short draw_object_faces(int cor_dx, int cor_dy, int cor_dz,
 
         {
             ushort edflags;
-            ubyte ditype;
 
             edflags = 0;
             if ((doflags & DrwObjF_StartBelowWindow) != 0)
                 edflags |= EnFaceF_SemiTranspr;
-            if ((doflags & DrwObjF_StartBelowWindow) != 0)
-                ditype = DrIT_ObFace3Tran;
-            else
-                ditype = DrIT_ObFace3Txtr;
 
             enlisted = enlist_draw_face3_prealloc(face, depth_shift,
-              edflags, ditype, &bckt_max);
+              edflags, &bckt_max);
         }
         if (!enlisted)
             break;
