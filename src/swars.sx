@@ -15257,7 +15257,7 @@ GLOBAL_FUNC(ASM_check_person_within)	/* 0x047768 */
 
 
 /*----------------------------------------------------------------*/
-change_player_angle:	/* 0x0477E4 */
+ASM_change_person_angle:	/* 0x0477E4 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -60268,7 +60268,7 @@ GLOBAL_FUNC(ASM_can_i_see_thing)	/* 0x06C28C */
 		sar    $0x8,%eax
 		mov    %ax,%dx
 		mov    0x2c(%esp),%eax
-		call   change_player_angle
+		call   ac_change_person_angle
 	jump_6c969:
 		mov    0x28(%esp),%eax
 	jump_6c96d:
@@ -60328,7 +60328,7 @@ GLOBAL_FUNC(ASM_can_i_see_building)	/* 0x06C978 */
 		xor    %edx,%edx
 		mov    %ax,%dx
 		mov    %edi,%eax
-		call   change_player_angle
+		call   ac_change_person_angle
 		jmp    jump_6ca1e
 	jump_6c9f4:
 		xor    %edx,%edx
@@ -136394,7 +136394,7 @@ GLOBAL_FUNC(ASM_init_flamer)	/* 0x0C303C */
 		and    $0x7,%eax
 		mov    %ax,%dx
 		mov    0x18(%esp),%eax
-		call   change_player_angle
+		call   ac_change_person_angle
 	jump_c30ec:
 		mov    0x18(%esp),%edx
 		xor    %eax,%eax
@@ -142162,7 +142162,7 @@ GLOBAL_FUNC(ASM_process_drift_smoke)	/* 0x0C71CC */
 		and    $0x7,%al
 		mov    %ax,%dx
 		mov    %ebx,%eax
-		call   change_player_angle
+		call   ac_change_person_angle
 	jump_c74e0:
 		mov    $0x2,%edx
 		mov    %ebx,%eax
@@ -142504,7 +142504,7 @@ GLOBAL_FUNC(ASM_process_napalm_flame)	/* 0x0C7678 */
 		and    $0x7,%al
 		mov    %ax,%dx
 		mov    %ebx,%eax
-		call   change_player_angle
+		call   ac_change_person_angle
 	jump_c78b5:
 		mov    $0x1,%edx
 		mov    %ebx,%eax
@@ -142771,7 +142771,7 @@ GLOBAL_FUNC(ASM_process_flame1)	/* 0x0C7A80 */
 		and    $0x7,%al
 		mov    %ax,%dx
 		mov    %ebx,%eax
-		call   change_player_angle
+		call   ac_change_person_angle
 	jump_c7bc1:
 		mov    $0x1,%edx
 		mov    %ebx,%eax

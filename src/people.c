@@ -1064,19 +1064,26 @@ void set_person_anim_mode(struct Thing *p_person, ubyte animode)
     reset_person_frame(p_person);
 }
 
-void change_player_angle(struct Thing *p_person, ushort angle)
+void change_person_angle(struct Thing *p_person, ubyte angl)
 {
     short person_anim, sframe;
 
-    if (angle == p_person->U.UPerson.Angle)
+    if (angl == p_person->U.UPerson.Angle)
         return;
 
-    p_person->U.UPerson.Angle = angle;
+    p_person->U.UPerson.Angle = angl;
     person_anim = people_frames[p_person->SubType][p_person->U.UPerson.AnimMode];
 
     // TODO why are we not updating p_person->StartFrame here?
     sframe = person_anim - 1;
     p_person->Frame = nstart_ani[sframe + 1 + p_person->U.UPerson.Angle];
+}
+
+void change_person_angle_full(struct Thing *p_person, short full_angle)
+{
+    ubyte angl;
+    angl = (((full_angle + 128) >> 8) + 8) & 7;
+    change_person_angle(p_person, angl);
 }
 
 void init_person_thing(struct Thing *p_person)
@@ -4408,7 +4415,7 @@ void make_peep_flee(int b_x, int b_z, struct Thing *p_person)
         return;
     }
     full_angle = arctan(b_x, -b_z);
-    p_person->U.UPerson.Angle = (full_angle >> 8) & 7;
+    change_person_angle_full(p_person, full_angle);
     set_person_animmode_run(p_person);
     p_person->U.UPerson.Mood = -64;
     p_person->U.UPerson.RecoilTimer = 50;
@@ -4624,12 +4631,10 @@ void thing_shoot_at_point(struct Thing *p_thing, short x, short y, short z, uint
 
     {
         short full_angle;
-        ubyte angl;
 
         full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_thing->X),
           PRCCOORD_TO_MAPCOORD(p_thing->Z), x, z);
-        angl = (((full_angle + 128) >> 8) + 8) & 7;
-        change_player_angle(p_thing, angl);
+        change_person_angle_full(p_thing, full_angle);
     }
 
     p_thing->PTarget = NULL;
@@ -4838,13 +4843,11 @@ void thing_shoot_at_thing(struct Thing *p_thing, short target)
     if (p_targetng != NULL)
     {
         short full_angle;
-        ubyte angl;
 
         full_angle = angle_between_points(
           PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),
           PRCCOORD_TO_MAPCOORD(p_targetng->X), PRCCOORD_TO_MAPCOORD(p_targetng->Z));
-        angl = (((ushort)(full_angle + 128) >> 8) + 8) & 7;
-        change_player_angle(p_thing, angl);
+        change_person_angle_full(p_thing, full_angle);
     }
 }
 
@@ -5440,12 +5443,10 @@ void process_protect_person(struct Thing *p_person)
 
             {
                 short full_angle;
-                ubyte angl;
 
                 full_angle = angle_between_points(PRCCOORD_TO_MAPCOORD(p_person->X),
                   PRCCOORD_TO_MAPCOORD(p_person->Z), face_cor_x, face_cor_z);
-                angl = (((ushort)(full_angle + 128) >> 8) + 8) & 7;
-                change_player_angle(p_person, angl);
+                change_person_angle_full(p_person, full_angle);
             }
         }
     }
@@ -6417,7 +6418,7 @@ void process_avoid_group(struct Thing *p_person)
         change = (LbRandomAnyShort() & 3) - 2;
         if (change >= 0) change++;
         angl = (p_person->U.UPerson.Angle + change) & 7;
-        change_player_angle(p_person, angl);
+        change_person_angle(p_person, angl);
     }
 
     p_person->Timer1 -= fifties_per_gameturn;
@@ -6493,7 +6494,7 @@ void person_burning(struct Thing *p_person)
             p_person->U.UPerson.Timer2--;
             if (p_person->U.UPerson.Timer2 < 0)
             {
-                ushort angle;
+                short angle;
 
                 p_person->U.UPerson.Timer2 = (LbRandomAnyShort() & 7) + p_person->U.UPerson.StartTimer2;
                 angle = p_person->U.UPerson.Angle;
@@ -6501,8 +6502,7 @@ void person_burning(struct Thing *p_person)
                     angle++;
                 else
                     angle--;
-                angle = (angle + 8) & 7;
-                change_player_angle(p_person,angle);
+                change_person_angle(p_person, (angle + 8) & 7);
             }
         }
     }

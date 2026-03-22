@@ -34,6 +34,7 @@
 #include "building.h"
 #include "engincolour.h"
 #include "enginsngtxtr.h"
+#include "engintrns.h"
 #include "enginzoom.h"
 #include "frame_sprani.h"
 #include "game.h"
@@ -4560,13 +4561,14 @@ void process_move_while_firing(struct Thing *p_person)
             p_target = p_person->PTarget;
             if (p_target != NULL)
             {
-                int dt_x, dt_z;
-                ushort i;
+                short full_angle;
 
-                dt_x = PRCCOORD_TO_MAPCOORD(p_target->X - p_person->X);
-                dt_z = PRCCOORD_TO_MAPCOORD(p_target->Z - p_person->Z);
-                i = (arctan(dt_x, -dt_z) + 128) & 0x7FF;
-                change_player_angle(p_person, i >> 8);
+                full_angle = angle_between_points(
+                  PRCCOORD_TO_MAPCOORD(p_person->X),
+                  PRCCOORD_TO_MAPCOORD(p_person->Z),
+                  PRCCOORD_TO_MAPCOORD(p_target->X),
+                  PRCCOORD_TO_MAPCOORD(p_target->Z));
+                change_person_angle_full(p_person, full_angle);
             }
         }
     }
