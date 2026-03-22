@@ -275,6 +275,22 @@ void load_peep_type_stats(void);
  */
 const char *person_type_name(ushort ptype);
 
+TbBool person_type_is_synd_agent(ushort ptype);
+TbBool person_type_is_scientist(ushort ptype);
+TbBool person_type_is_security(ushort ptype);
+
+TbBool person_type_is_wide_definition_civilian(ushort ptype);
+
+TbBool person_type_faction_is_syndicate(ushort ptype);
+
+TbBool person_type_faction_is_church(ushort ptype);
+
+TbBool person_type_faction_is_punks(ushort ptype);
+
+TbBool person_type_is_any_major_faction(ushort ptype);
+
+int person_type_get_persuasion_credit(ushort ptype);
+
 /** Returns if a given type of person requires advanced persuadertron to be affected.
  */
 TbBool person_type_only_affected_by_adv_persuader(ushort ptype);

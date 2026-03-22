@@ -463,9 +463,20 @@ const char *person_type_name(ushort ptype)
 TbBool person_type_is_basic_civilian(ushort ptype)
 {
     return (ptype == SubTT_PERS_BRIEFCASE_M
-          || ptype == SubTT_PERS_WHITE_BRUN_F
-          || ptype == SubTT_PERS_WHIT_BLOND_F
-          || ptype == SubTT_PERS_LETH_JACKT_M);
+         || ptype == SubTT_PERS_WHITE_BRUN_F
+         || ptype == SubTT_PERS_WHIT_BLOND_F
+         || ptype == SubTT_PERS_LETH_JACKT_M);
+}
+
+TbBool person_type_is_tough_civilian(ushort ptype)
+{
+    return (ptype == SubTT_PERS_SHADY_M
+         || ptype == SubTT_PERS_FAST_BLOND_F);
+}
+
+TbBool person_type_is_synd_agent(ushort ptype)
+{
+    return (ptype == SubTT_PERS_AGENT);
 }
 
 TbBool person_type_is_scientist(ushort ptype)
@@ -473,9 +484,47 @@ TbBool person_type_is_scientist(ushort ptype)
     return (ptype == SubTT_PERS_SCIENTIST);
 }
 
+TbBool person_type_is_security(ushort ptype)
+{
+    return (ptype == SubTT_PERS_MERCENARY
+         || ptype == SubTT_PERS_MECH_SPIDER
+         || ptype == SubTT_PERS_POLICE);
+}
+
+TbBool person_type_is_wide_definition_civilian(ushort ptype)
+{
+    return (person_type_is_basic_civilian(ptype)
+         || person_type_is_tough_civilian(ptype)
+         || person_type_is_scientist(ptype));
+}
+
+TbBool person_type_is_any_major_faction(ushort ptype)
+{
+    return (person_type_faction_is_syndicate(ptype)
+         || person_type_faction_is_church(ptype)
+         || person_type_faction_is_punks(ptype));
+}
+
 TbBool person_type_only_affected_by_adv_persuader(ushort ptype)
 {
     return (ptype == SubTT_PERS_ZEALOT);
+}
+
+TbBool person_type_faction_is_syndicate(ushort ptype)
+{
+    return (ptype == SubTT_PERS_AGENT);
+}
+
+TbBool person_type_faction_is_church(ushort ptype)
+{
+    return (ptype == SubTT_PERS_ZEALOT
+      || ptype == SubTT_PERS_HIGH_PRIEST);
+}
+
+TbBool person_type_faction_is_punks(ushort ptype)
+{
+    return (ptype == SubTT_PERS_PUNK_M
+      || ptype == SubTT_PERS_PUNK_F);
 }
 
 WeaponType person_type_get_favourite_weapon(ushort ptype)
@@ -488,6 +537,7 @@ WeaponType person_type_get_favourite_weapon(ushort ptype)
     case SubTT_PERS_HIGH_PRIEST:
         return WEP_ELLASER;
     case SubTT_PERS_PUNK_F:
+    case SubTT_PERS_PUNK_M:
         return WEP_UZI;
     case SubTT_PERS_BRIEFCASE_M:
     case SubTT_PERS_WHITE_BRUN_F:
@@ -500,13 +550,24 @@ WeaponType person_type_get_favourite_weapon(ushort ptype)
         return WEP_LASER;
     case SubTT_PERS_POLICE:
         return WEP_LASER;
-    case SubTT_PERS_PUNK_M:
-        return WEP_UZI;
     case SubTT_PERS_SHADY_M:
         return WEP_UZI;
     default:
         return WEP_NULL;
     }
+}
+
+int person_type_get_persuasion_credit(ushort ptype)
+{
+    if (person_type_faction_is_church(ptype))
+        return 1000;
+    if (person_type_faction_is_syndicate(ptype))
+        return 1000;
+    if (person_type_faction_is_punks(ptype))
+        return 150;
+    if (person_type_is_scientist(ptype))
+        return 500;
+    return 100;
 }
 
 void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing)

@@ -4072,25 +4072,7 @@ ulong calculate_cash_gain_from_persuaded_person(struct Thing *p_person)
     ulong credits;
 
     credits = 0;
-    switch (p_person->SubType)
-    {
-    case SubTT_PERS_AGENT:
-        credits += 1000;
-        break;
-    case SubTT_PERS_ZEALOT:
-        credits += 1000;
-        break;
-    case SubTT_PERS_PUNK_M:
-    case SubTT_PERS_PUNK_F:
-        credits += 150;
-        break;
-    case SubTT_PERS_SCIENTIST:
-        credits += 500;
-        break;
-    default:
-        credits += 100;
-        break;
-    }
+    credits += person_type_get_persuasion_credit(p_person->SubType);
     credits += person_carried_weapons_pesuaded_sell_value(p_person);
 
     return credits;
@@ -4111,6 +4093,7 @@ ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
             continue;
         if (p_person->U.UPerson.EffectiveGroup != tgroup)
             continue;
+
         credits += calculate_cash_gain_from_persuaded_person(p_person);
     }
     return credits;
@@ -4129,15 +4112,12 @@ void mission_over_gain_personnel_from_persuaded_crowd(void)
             continue;
         if (p_person->U.UPerson.EffectiveGroup != ingame.MyGroup)
             continue;
-        switch (p_person->SubType)
-        {
-        case SubTT_PERS_AGENT:
+
+        if (person_type_is_synd_agent(p_person->SubType))
             add_agent(p_person->U.UPerson.WeaponsCarried, p_person->U.UPerson.UMod.Mods);
-            break;
-        case SubTT_PERS_SCIENTIST:
+
+        if (person_type_is_scientist(p_person->SubType))
             research.Scientists++;
-            break;
-        }
     }
 }
 

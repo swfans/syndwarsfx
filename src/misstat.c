@@ -76,34 +76,15 @@ void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief)
 
     p_mistat = &mission_status[brief];
 
-    switch (p_person->SubType)
-    {
-    case SubTT_PERS_AGENT:
-          p_mistat->AgentsGained++;
-          // fall through
-    case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_HIGH_PRIEST:
-    case SubTT_PERS_PUNK_F:
-    case SubTT_PERS_PUNK_M:
-          p_mistat->SP.EnemiesPersuaded++;
-          break;
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
-    case SubTT_PERS_SCIENTIST:
-    case SubTT_PERS_SHADY_M:
-    case SubTT_PERS_WHIT_BLOND_F:
-    case SubTT_PERS_LETH_JACKT_M:
-    case SubTT_PERS_FAST_BLOND_F:
-          p_mistat->SP.CivsPersuaded++;
-          break;
-    case SubTT_PERS_MERCENARY:
-    case SubTT_PERS_MECH_SPIDER:
-    case SubTT_PERS_POLICE:
-          p_mistat->SP.SecurityPersuaded++;
-          break;
-    default:
-          break;
-    }
+    if (person_type_is_synd_agent(p_person->SubType))
+        p_mistat->AgentsGained++;
+
+    if (person_type_is_any_major_faction(p_person->SubType))
+        p_mistat->SP.EnemiesPersuaded++;
+    else if (person_type_is_wide_definition_civilian(p_person->SubType))
+        p_mistat->SP.CivsPersuaded++;
+    else if (person_type_is_security(p_person->SubType))
+        p_mistat->SP.SecurityPersuaded++;
 }
 
 void killed_person_add_to_stats(struct Thing *p_person, ushort brief)
@@ -112,34 +93,17 @@ void killed_person_add_to_stats(struct Thing *p_person, ushort brief)
 
     p_mistat = &mission_status[brief];
 
-    switch (p_person->SubType)
-    {
-    case SubTT_PERS_AGENT:
-          //p_mistat->AgentsKilled++; -- only in MP
-          // fall through
-    case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_HIGH_PRIEST:
-    case SubTT_PERS_PUNK_F:
-    case SubTT_PERS_PUNK_M:
-          p_mistat->SP.EnemiesKilled++;
-          break;
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
-    case SubTT_PERS_SCIENTIST:
-    case SubTT_PERS_SHADY_M:
-    case SubTT_PERS_WHIT_BLOND_F:
-    case SubTT_PERS_LETH_JACKT_M:
-    case SubTT_PERS_FAST_BLOND_F:
-          p_mistat->SP.CivsKilled++;
-          break;
-    case SubTT_PERS_MERCENARY:
-    case SubTT_PERS_MECH_SPIDER:
-    case SubTT_PERS_POLICE:
-          p_mistat->SP.SecurityKilled++;
-          break;
-    default:
-          break;
-    }
+#if 0 // only in MP
+    if (person_type_is_synd_agent(p_person->SubType))
+        p_mistat->AgentsKilled++;
+#endif
+
+    if (person_type_is_any_major_faction(p_person->SubType))
+        p_mistat->SP.EnemiesKilled++;
+    else if (person_type_is_wide_definition_civilian(p_person->SubType))
+        p_mistat->SP.CivsKilled++;
+    else if (person_type_is_security(p_person->SubType))
+        p_mistat->SP.SecurityKilled++;
 }
 
 void killed_mp_agent_add_to_stats(struct Thing *p_victim, PlayerIdx attack_plyr)
@@ -167,34 +131,15 @@ void persuaded_person_remove_from_stats(struct Thing *p_person, ushort brief)
 
     p_mistat = &mission_status[brief];
 
-    switch (p_person->SubType)
-    {
-    case SubTT_PERS_AGENT:
+    if (person_type_is_synd_agent(p_person->SubType))
         p_mistat->AgentsGained--;
-        // fall through
-    case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_PUNK_F:
-    case SubTT_PERS_PUNK_M:
-    case SubTT_PERS_HIGH_PRIEST:
+
+    if (person_type_is_any_major_faction(p_person->SubType))
         p_mistat->SP.EnemiesPersuaded--;
-        break;
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
-    case SubTT_PERS_SCIENTIST:
-    case SubTT_PERS_SHADY_M:
-    case SubTT_PERS_WHIT_BLOND_F:
-    case SubTT_PERS_LETH_JACKT_M:
-    case SubTT_PERS_FAST_BLOND_F:
+    else if (person_type_is_wide_definition_civilian(p_person->SubType))
         p_mistat->SP.CivsPersuaded--;
-        break;
-    case SubTT_PERS_MERCENARY:
-    case SubTT_PERS_MECH_SPIDER:
-    case SubTT_PERS_POLICE:
+    else if (person_type_is_security(p_person->SubType))
         p_mistat->SP.SecurityPersuaded--;
-        break;
-    default:
-        break;
-    }
 }
 
 int stats_mp_count_players_agents_killed(PlayerIdx plyr)
