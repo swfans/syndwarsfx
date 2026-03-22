@@ -460,9 +460,53 @@ const char *person_type_name(ushort ptype)
     return p_pestata->Name;
 }
 
+TbBool person_type_is_basic_civilian(ushort ptype)
+{
+    return (ptype == SubTT_PERS_BRIEFCASE_M
+          || ptype == SubTT_PERS_WHITE_BRUN_F
+          || ptype == SubTT_PERS_WHIT_BLOND_F
+          || ptype == SubTT_PERS_LETH_JACKT_M);
+}
+
+TbBool person_type_is_scientist(ushort ptype)
+{
+    return (ptype == SubTT_PERS_SCIENTIST);
+}
+
 TbBool person_type_only_affected_by_adv_persuader(ushort ptype)
 {
     return (ptype == SubTT_PERS_ZEALOT);
+}
+
+WeaponType person_type_get_favourite_weapon(ushort ptype)
+{
+    switch (ptype)
+    {
+    case SubTT_PERS_AGENT:
+        return WEP_MINIGUN;
+    case SubTT_PERS_ZEALOT:
+    case SubTT_PERS_HIGH_PRIEST:
+        return WEP_ELLASER;
+    case SubTT_PERS_PUNK_F:
+        return WEP_UZI;
+    case SubTT_PERS_BRIEFCASE_M:
+    case SubTT_PERS_WHITE_BRUN_F:
+    case SubTT_PERS_MERCENARY:
+    case SubTT_PERS_SCIENTIST:
+    case SubTT_PERS_WHIT_BLOND_F:
+    case SubTT_PERS_LETH_JACKT_M:
+        return WEP_NULL;
+    case SubTT_PERS_MECH_SPIDER:
+        return WEP_LASER;
+    case SubTT_PERS_POLICE:
+        return WEP_LASER;
+    case SubTT_PERS_PUNK_M:
+        return WEP_UZI;
+    case SubTT_PERS_SHADY_M:
+        return WEP_UZI;
+    default:
+        return WEP_NULL;
+    }
 }
 
 void snprint_person_state(char *buf, ulong buflen, struct Thing *p_thing)
@@ -986,6 +1030,29 @@ TbBool person_has_weapon_target_within_range(struct Thing *p_person, ThingIdx ta
     return  (dist <= range + p_target->Radius);
 }
 
+TbBool person_is_basic_civilian(struct Thing *p_person, TbBool ignore_disguise)
+{
+    ubyte subType;
+
+    if (ignore_disguise && ((p_person->Flag2 & TgF2_AlteredSubType) != 0))
+        subType = p_person->U.UPerson.OldSubType;
+    else
+        subType = p_person->SubType;
+
+    return person_type_is_basic_civilian(subType);
+}
+
+TbBool person_is_scientist(struct Thing *p_person, TbBool ignore_disguise)
+{
+    ubyte subType;
+
+    if (ignore_disguise && ((p_person->Flag2 & TgF2_AlteredSubType) != 0))
+        subType = p_person->U.UPerson.OldSubType;
+    else
+        subType = p_person->SubType;
+
+    return person_type_is_scientist(subType);
+}
 
 ushort calc_person_radius_type(struct Thing *p_person, ushort stype)
 {
@@ -1370,45 +1437,20 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
     p_person->U.UPerson.OnFace = 0;
     p_person->Type = TT_PERSON;
     p_person->Radius = calc_person_radius_type(p_person, ptype);
+    p_person->U.UPerson.CurrentWeapon = person_type_get_favourite_weapon(ptype);
     switch (ptype)
     {
     case SubTT_PERS_AGENT:
         p_person->U.UPerson.Angle = 0;
-        p_person->U.UPerson.CurrentWeapon = WEP_MINIGUN;
-        break;
-    case SubTT_PERS_ZEALOT:
-    case SubTT_PERS_HIGH_PRIEST:
-        p_person->U.UPerson.CurrentWeapon = WEP_ELLASER;
         break;
     case SubTT_PERS_PUNK_F:
-        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
         p_person->U.UPerson.FrameId.Version[0] = rnd % 3;
-        break;
-    case SubTT_PERS_BRIEFCASE_M:
-    case SubTT_PERS_WHITE_BRUN_F:
-    case SubTT_PERS_MERCENARY:
-    case SubTT_PERS_SCIENTIST:
-    case SubTT_PERS_WHIT_BLOND_F:
-    case SubTT_PERS_LETH_JACKT_M:
-        p_person->U.UPerson.CurrentWeapon = WEP_NULL;
-        break;
-    case SubTT_PERS_MECH_SPIDER:
-        p_person->U.UPerson.CurrentWeapon = WEP_LASER;
-        break;
-    case SubTT_PERS_POLICE:
-        p_person->U.UPerson.CurrentWeapon = WEP_LASER;
-        break;
-    case SubTT_PERS_PUNK_M:
-        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
-        break;
-    case SubTT_PERS_SHADY_M:
-        p_person->U.UPerson.CurrentWeapon = WEP_UZI;
         break;
     default:
         break;
     }
     p_person->SubType = ptype;
-    p_person->U.UPerson.Group = ptype + 4;
+    p_person->U.UPerson.Group = 4 + ptype;
     p_person->U.UPerson.EffectiveGroup = p_person->U.UPerson.Group;
     person_reset_default_anim_mode(p_person);
     init_person_thing(p_person);
@@ -3486,8 +3528,7 @@ void persons_set_groups_kill_on_sight_if_player_attacked(struct Thing *p_attacke
         return;
     }
 
-    if (p_victim->SubType == SubTT_PERS_BRIEFCASE_M || p_victim->SubType == SubTT_PERS_WHITE_BRUN_F ||
-      p_victim->SubType == SubTT_PERS_WHIT_BLOND_F || p_victim->SubType == SubTT_PERS_LETH_JACKT_M) {
+    if (person_is_basic_civilian(p_victim, false)) {
         return;
     }
 
@@ -4426,21 +4467,11 @@ void make_peep_flee(int b_x, int b_z, struct Thing *p_person)
 
 void alert_person_to_madman(struct Thing *p_person, struct MapCoords *p_alert_pos, struct Thing *p_madman)
 {
-    ubyte subType;
-
     if (p_person->Type != TT_PERSON ||
       (p_person->Flag & (TngF_PlayerAgent|TngF_Destroyed)) != 0)
         return;
 
-    if ((p_person->Flag2 & TgF2_AlteredSubType) != 0)
-        subType = p_person->U.UPerson.OldSubType;
-    else
-        subType = p_person->SubType;
-
-    if (subType == SubTT_PERS_BRIEFCASE_M
-      || subType == SubTT_PERS_WHITE_BRUN_F
-      || subType == SubTT_PERS_WHIT_BLOND_F
-      || subType == SubTT_PERS_LETH_JACKT_M)
+    if (person_is_basic_civilian(p_person, true))
     {
         if (((p_person->Flag2 & TgF2_IgnoreEnemies) == 0) &&
           (person_mod_brain_level(p_person) < 3) &&
@@ -6751,14 +6782,8 @@ void process_person(struct Thing *p_person)
       && ((gameturn + p_person->ThingOffset) & 3) == 0
       && (p_person->Flag & TngF_Destroyed) == 0)
     {
-        ushort subType;
-
-        subType = p_person->SubType;
-        if (subType == SubTT_PERS_BRIEFCASE_M
-          || subType == SubTT_PERS_WHITE_BRUN_F
-          || subType == SubTT_PERS_WHIT_BLOND_F
-          || subType == SubTT_PERS_LETH_JACKT_M
-          || subType == SubTT_PERS_SCIENTIST)
+        if (person_is_basic_civilian(p_person, false)
+          || person_is_scientist(p_person, false))
         {
             process_danger(p_person);
         }
