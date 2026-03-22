@@ -4414,7 +4414,7 @@ void make_peep_flee(int b_x, int b_z, struct Thing *p_person)
     if ((p_person->Flag & (TngF_Persuaded|TngF_DangerFlee|TngF_WepRecoil)) != 0) {
         return;
     }
-    full_angle = arctan(b_x, -b_z);
+    full_angle = LbArcTanAngle(b_x, -b_z);
     change_person_angle_full(p_person, full_angle);
     set_person_animmode_run(p_person);
     p_person->U.UPerson.Mood = -64;
