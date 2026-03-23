@@ -3897,10 +3897,6 @@ ubyte save_game_slot(ubyte click)
 
 void init_variables(void)
 {
-#if 0
-    asm volatile ("call ASM_init_variables\n"
-        :  :  : "eax" );
-#endif
     selected_city_id = -1;
     reset_equip_screen_player_state();
     reset_cryo_screen_player_state();

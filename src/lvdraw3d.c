@@ -27,6 +27,7 @@
 #include "enginbckt.h"
 #include "engincam.h"
 #include "engincolour.h"
+#include "engindrwlstm.h"
 #include "enginfloor.h"
 #include "enginlights.h"
 #include "enginpeff.h"

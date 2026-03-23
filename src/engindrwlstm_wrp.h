@@ -27,7 +27,6 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct FloorTile;
 struct Thing;
 struct SimpleThing;
 struct SingleObject;
@@ -53,10 +52,6 @@ void draw_vehicle_health(struct Thing *p_thing, int bckt);
 int mech_unkn_func_03(struct Thing *p_thing);
 
 void build_laser(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner, int colour);
-
-// Lowest level functions, to be used only if previous ones really do not match
-
-struct FloorTile *draw_item_add_floor_tile(ubyte ditype, int bckt);
 
 /******************************************************************************/
 #ifdef __cplusplus

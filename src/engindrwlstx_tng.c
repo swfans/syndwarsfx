@@ -179,6 +179,7 @@ void number_player(struct Thing *p_person, ubyte n)
 
     unscaled = (lbDisplay.GraphicsScreenHeight < 400);
 
-    draw_frame_on_map_coords(tng_cor_x, tng_cor_y, tng_cor_z, shift_x, shift_y, frm, unscaled);
+    draw_frame_on_map_coords(tng_cor_x, tng_cor_y, tng_cor_z,
+      shift_x, shift_y, frm, unscaled);
 }
 /******************************************************************************/

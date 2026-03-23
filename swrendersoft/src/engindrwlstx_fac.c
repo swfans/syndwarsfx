@@ -1226,6 +1226,7 @@ void draw_floor_tile1b(ushort tl)
             vec_mode = 27;
         draw_trigpoly(&point1, &point2, &point4);
     }
+
     dist = (point3.X - point4.X) * (point1.Y - point3.Y)
        - (point3.Y - point4.Y) * (point1.X - point3.X);
     if (dist > 0)
