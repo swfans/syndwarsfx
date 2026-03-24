@@ -274,7 +274,7 @@ void init_storage_screen_boxes(void)
 #endif
 
     init_screen_text_box(&storage_slots_box, 213u, 72u, 420u, 354, 6, med2_font, 1);
-    storage_slots_box.DrawTextFn = ac_show_menu_storage_slots_box;
+    storage_slots_box.DrawTextFn = show_menu_storage_slots_box;
     storage_slots_box.ScrollWindowHeight = 208;
     storage_slots_box.Lines = 99;
     storage_slots_box.Flags |= (GBxFlg_RadioBtn | GBxFlg_IsMouseOver);

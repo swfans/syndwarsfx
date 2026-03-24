@@ -814,10 +814,7 @@ ubyte flashy_draw_purple_label(struct ScreenButton *p_btn)
           lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_CENTER;
     }
     if (p_btn->DrawTextFn != NULL) {
-        ubyte drawn;
-        //p_btn->DrawTextFn(p_btn); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-          : "=r" (drawn) : "a" (p_btn), "g" (p_btn->DrawTextFn));
+        p_btn->DrawTextFn(p_btn);
     }
     ret = (p_btn->Timer > 1) ? 3 : 0;
     if (p_btn->Timer < 24) {
@@ -834,7 +831,7 @@ void init_screen_label(struct ScreenButton *p_box, ScrCoord x, ScrCoord y,
     p_box->Border = 0;
     p_box->AccelKey = 0;
     p_box->DrawFn = ac_flashy_draw_purple_label;
-    p_box->DrawTextFn = ac_label_text;
+    p_box->DrawTextFn = label_text;
 }
 
 void init_options_audio_screen_boxes(void)

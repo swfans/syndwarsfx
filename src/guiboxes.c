@@ -323,7 +323,7 @@ void init_screen_button(struct ScreenButton *p_box, ScrCoord x, ScrCoord y,
         x -= p_box->Width;
     p_box->X = x;
     p_box->DrawFn = ac_flashy_draw_purple_button;
-    p_box->DrawTextFn = ac_button_text;
+    p_box->DrawTextFn = button_text;
     p_box->CallBackFn = NULL;
     p_box->Border = 1;
     p_box->Colour = 0xAE;
@@ -368,7 +368,7 @@ void init_screen_info_box(struct ScreenInfoBox *p_box, ScrCoord x, ScrCoord y, u
     p_box->Height = font_h + 6;
     p_box->Flags = GBxFlg_Unkn0001;
     p_box->DrawFn = ac_flashy_draw_purple_info_box;
-    p_box->DrawTextFn = ac_info_box_text;
+    p_box->DrawTextFn = info_box_text;
     p_box->Colour = 0xF7;
     p_box->BGColour = 0x38;
     p_box->DrawSpeed = drawspeed;

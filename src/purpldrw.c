@@ -537,9 +537,7 @@ ubyte flashy_draw_purple_text_box_text(struct ScreenTextBox *p_box)
     if (p_box->DrawTextFn != NULL)
     {
         ubyte drawn;
-        //drawn = p_box->DrawTextFn(p_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-          : "=r" (drawn) : "a" (p_box), "g" (p_box->DrawTextFn));
+        drawn = p_box->DrawTextFn(p_box);
         text_drawn = text_drawn && drawn;
     }
     else if (p_box->Text != NULL)
@@ -1043,12 +1041,6 @@ ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 
 ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_flashy_draw_purple_info_box\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     short box_w, box_h;
 
     box_w = p_box->Width - 1;
@@ -1130,10 +1122,7 @@ ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
         }
     }
     if (p_box->DrawTextFn != NULL) {
-            ubyte drawn;
-            //p_box->DrawTextFn(p_box); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (drawn) : "a" (p_box), "g" (p_box->DrawTextFn));
+        p_box->DrawTextFn(p_box);
     }
     return 3;
 }
@@ -1474,10 +1463,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
           lbDisplay.DrawFlags |= Lb_TEXT_HALIGN_CENTER;
     }
     if (p_btn->DrawTextFn != NULL) {
-        ubyte drawn;
-        //p_btn->DrawTextFn(p_btn); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-          : "=r" (drawn) : "a" (p_btn), "g" (p_btn->DrawTextFn));
+        p_btn->DrawTextFn(p_btn);
     }
     lbDisplay.DrawFlags = 0;
     return ret;

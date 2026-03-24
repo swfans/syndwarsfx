@@ -665,7 +665,7 @@ void init_system_menu_boxes(void)
     x = 7;
     y = 25;
     init_screen_text_box(&heading_box, x, y, 640 - 2*7, 38, 6, big_font, 1);
-    heading_box.DrawTextFn = ac_show_title_box;
+    heading_box.DrawTextFn = show_title_box;
     heading_box.Text = options_title_text;
 
     start_x = (scr_w - heading_box.Width) / 2;
@@ -674,7 +674,7 @@ void init_system_menu_boxes(void)
     init_screen_text_box(&unkn13_SYSTEM_button, x, y, 197u, 38, 6,
       big_font, 1);
     unkn13_SYSTEM_button.Text = gui_strings[366];
-    unkn13_SYSTEM_button.DrawTextFn = ac_show_title_box;
+    unkn13_SYSTEM_button.DrawTextFn = show_title_box;
 
     val = 0;
     y += unkn13_SYSTEM_button.Height + 9;

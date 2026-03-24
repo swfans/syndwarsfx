@@ -1396,21 +1396,21 @@ void init_equip_screen_boxes(void)
     init_screen_info_box(&equip_cost_box, 504u, 404u, 124u,
       gui_strings[442], misc_text[0], 6, med_font, small_med_font, 1);
     weapon_slots.SpecialDrawFn = show_weapon_slots;
-    equip_name_box.DrawTextFn = ac_show_weapon_name;
+    equip_name_box.DrawTextFn = show_weapon_name;
     equip_name_box.Text = unkn41_text;
     equip_name_box.Font = med_font;
 
     equip_cost_box.Text2 = equip_cost_text;
-    equip_display_box.DrawTextFn = ac_display_weapon_info;
+    equip_display_box.DrawTextFn = display_weapon_info;
     equip_display_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     equip_display_box.ScrollWindowHeight = 117;
 
-    equip_list_head_box.DrawTextFn = ac_show_title_box;
+    equip_list_head_box.DrawTextFn = show_title_box;
     equip_list_head_box.Text = gui_strings[408];
     equip_list_head_box.Font = med_font;
 
     equip_list_box.ScrollWindowOffset += 27;
-    equip_list_box.DrawTextFn = ac_show_weapon_list;
+    equip_list_box.DrawTextFn = show_weapon_list;
     equip_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     equip_list_box.LineHeight = fepanel_sprites[15].SHeight + 3;
     equip_list_box.ScrollWindowHeight -= 27;

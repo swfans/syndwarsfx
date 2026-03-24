@@ -783,7 +783,7 @@ void init_world_screen_boxes(void)
     init_screen_button(&world_info_CANCEL_button, 548u, 405u, gui_strings[437], 6,
         med2_font, 1, 0);
 
-    world_city_info_box.DrawTextFn = ac_show_world_city_info_box;
+    world_city_info_box.DrawTextFn = show_world_city_info_box;
     world_city_info_box.Flags |= GBxFlg_TextCenter;
     world_info_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
     world_info_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;

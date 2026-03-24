@@ -39,7 +39,7 @@ void init_sys_scr_shared_header_box(void)
     scr_w = lbDisplay.GraphicsWindowWidth;
 
     init_screen_text_box(&system_screen_shared_header_box, 213u, 25u, 420u, 38, 6, big_font, 1);
-    system_screen_shared_header_box.DrawTextFn = ac_show_title_box;
+    system_screen_shared_header_box.DrawTextFn = show_title_box;
 
     content_box_width = 420;
     start_x = (scr_w - unkn13_SYSTEM_button.Width - 16 - content_box_width - 7) / 2;

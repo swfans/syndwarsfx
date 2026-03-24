@@ -866,7 +866,7 @@ void init_controls_screen_boxes(void)
 #endif
 
     init_screen_text_box(&controls_list_box, 213u, 72u, 420u, 354, 6, small_med_font, 1);
-    controls_list_box.DrawTextFn = ac_show_menu_controls_list_box;
+    controls_list_box.DrawTextFn = show_menu_controls_list_box;
     controls_list_box.ScrollWindowHeight = 296;
     controls_list_box.Lines = GKey_KEYS_COUNT;
     controls_list_box.Flags |= (GBxFlg_RadioBtn | GBxFlg_IsMouseOver);

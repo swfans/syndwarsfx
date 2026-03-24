@@ -809,13 +809,13 @@ void init_research_screen_boxes(void)
     unkn12_WEAPONS_MODS_button.CallBackFn = ac_do_unkn12_WEAPONS_MODS;
     unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
 
-    research_unkn21_box.DrawTextFn = ac_show_unkn21_box;
+    research_unkn21_box.DrawTextFn = show_unkn21_box;
     research_unkn21_box.Buttons[0] = &research_submit_button;
     research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
     research_unkn21_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
     research_submit_button.Text = gui_strings[417];
     research_submit_button.CallBackFn = ac_do_research_submit;
-    research_progress_button.DrawTextFn = ac_show_title_box;
+    research_progress_button.DrawTextFn = show_title_box;
     research_progress_button.Text = gui_strings[449];
 
     research_graph_box.SpecialDrawFn = show_research_graph;

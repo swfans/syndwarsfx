@@ -726,7 +726,7 @@ void init_brief_screen_boxes(void)
       gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
     brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
     brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
-    brief_netscan_box.DrawTextFn = ac_show_brief_netscan_box;
+    brief_netscan_box.DrawTextFn = show_brief_netscan_box;
 
     init_screen_text_box(&brief_mission_text_box, 338u, 72u, 295u, 354, 6, small_font, 3);
     init_screen_button(&unkn1_ACCEPT_button, 343u, 405u,

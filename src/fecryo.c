@@ -1911,7 +1911,7 @@ void init_cryo_screen_boxes(void)
     init_screen_text_box(&cryo_agent_list_box, 7u, 122u, 196u, 303, 6,
         small_med_font, 1);
     cryo_agent_list_box.LineHeight = 25;
-    cryo_agent_list_box.DrawTextFn = ac_show_cryo_agent_list;
+    cryo_agent_list_box.DrawTextFn = show_cryo_agent_list;
     cryo_agent_list_box.ScrollWindowOffset += 27;
     cryo_agent_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     cryo_agent_list_box.ScrollWindowHeight -= 27;
@@ -1921,7 +1921,7 @@ void init_cryo_screen_boxes(void)
 
     init_screen_text_box(&cryo_cybmod_list_box, 425u, 153u, 208u, 272,
       6, small_med_font, 1);
-    cryo_cybmod_list_box.DrawTextFn = ac_show_cryo_cybmod_list_box;
+    cryo_cybmod_list_box.DrawTextFn = show_cryo_cybmod_list_box;
     cryo_cybmod_list_box.Flags |= (GBxFlg_RadioBtn|GBxFlg_IsMouseOver);
     cryo_cybmod_list_box.ScrollWindowHeight = 117;
     // Re-use equip_name_box above cryo_cybmod_list_box
