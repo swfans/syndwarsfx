@@ -1113,12 +1113,6 @@ ubyte flashy_draw_purple_info_box(struct ScreenInfoBox *p_box)
 
 ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_flashy_draw_purple_button\n"
-        : "=r" (ret) : "a" (p_btn));
-    return ret;
-#else
     short box_w, box_h;
     TbKeyCode akey;
     TbBool mouse_over, event_from_key;
@@ -1330,9 +1324,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
                 if (p_btn->CallBackFn != NULL)
                 {
                     ubyte clicked;
-                    //p_btn->CallBackFn(0); -- incompatible calling convention
-                    asm volatile ("call *%2\n"
-                      : "=r" (clicked) : "a" (0), "g" (p_btn->CallBackFn));
+                    clicked = p_btn->CallBackFn(0);
                     if (clicked)
                         smpl_id = 111;
                     else
@@ -1371,9 +1363,7 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
                 if (p_btn->CallBackFn != NULL)
                 {
                     ubyte clicked;
-                    //clicked = p_btn->CallBackFn(1); -- incompatible calling convention
-                    asm volatile ("call *%2\n"
-                      : "=r" (clicked) : "a" (1), "g" (p_btn->CallBackFn));
+                    clicked = p_btn->CallBackFn(1);
                     if (clicked)
                         smpl_id = 111;
                     else
@@ -1451,7 +1441,6 @@ ubyte flashy_draw_purple_button(struct ScreenButton *p_btn)
     }
     lbDisplay.DrawFlags = 0;
     return ret;
-#endif
 }
 
 ubyte label_text(struct ScreenButton *p_btn)

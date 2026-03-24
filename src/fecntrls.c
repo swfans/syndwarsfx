@@ -865,10 +865,10 @@ void init_controls_screen_boxes(void)
     controls_list_box.ScrollWindowOffset += 27;
     init_screen_button(&controls_defaults_button, 219u, 405u,
       gui_strings[484], 6, med2_font, 1, 0);
-    controls_defaults_button.CallBackFn = ac_do_controls_defaults;
+    controls_defaults_button.CallBackFn = do_controls_defaults;
     init_screen_button(&controls_save_button, 627u, 405u,
       gui_strings[439], 6, med2_font, 1, 0x80);
-    controls_save_button.CallBackFn = ac_do_controls_save;
+    controls_save_button.CallBackFn = do_controls_save;
 
     controls_list_box.Buttons[0] = &controls_defaults_button;
     controls_list_box.Buttons[1] = &controls_save_button;
@@ -877,7 +877,7 @@ void init_controls_screen_boxes(void)
     controls_joystick_box.SpecialDrawFn = show_controls_joystick_box;
     init_screen_button(&controls_calibrate_button, 57u, 405u,
       gui_strings[485], 6, med2_font, 1, 0);
-    controls_calibrate_button.CallBackFn = ac_do_controls_calibrate;
+    controls_calibrate_button.CallBackFn = do_controls_calibrate;
 
     // Reposition the components to current resolution
 

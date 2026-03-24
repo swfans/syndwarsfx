@@ -93,9 +93,9 @@ extern uint32_t sessionlist_last_update[20];
 extern ubyte byte_1C6D48;
 extern struct TbNetworkSessionList unkstruct04_arr[20];
 
-ubyte ac_do_net_protocol_option(ubyte click);
+ubyte do_net_protocol_option(ubyte click);
 ubyte ac_do_net_unkn40(ubyte click);
-ubyte ac_do_serial_speed_switch(ubyte click);
+ubyte do_serial_speed_switch(ubyte click);
 ubyte ac_do_net_SET2(ubyte click);
 ubyte ac_do_net_SET(ubyte click);
 ubyte ac_do_net_INITIATE(ubyte click);
@@ -194,7 +194,7 @@ void net_service_gui_switch(void)
     {
     case NetSvc_IPX:
         net_protocol_option_button.Text = net_proto_param_text;
-        net_protocol_option_button.CallBackFn = ac_do_net_protocol_option;
+        net_protocol_option_button.CallBackFn = do_net_protocol_option;
         text = gui_strings[GSTR_NET_PROTO_NAMES + nsvc.I.Type];
         net_protocol_select_button.Text = text;
         break;
@@ -203,7 +203,7 @@ void net_service_gui_switch(void)
     case NetSvc_COM3:
     case NetSvc_COM4:
         net_protocol_option_button.Text = net_baudrate_text;
-        net_protocol_option_button.CallBackFn = ac_do_serial_speed_switch;
+        net_protocol_option_button.CallBackFn = do_serial_speed_switch;
         if (byte_1C4A6F)
             text = gui_strings[GSTR_NET_PROTO_MODEM_NAMES - NetSvc_COM1 + nsvc.I.Type];
         else
@@ -2157,8 +2157,8 @@ void init_net_screen_boxes(void)
     net_unkn40_button.Width = 21;
     net_protocol_select_button.Width = 157;
     net_protocol_option_button.Width = net_protocol_select_button.Width;
-    net_protocol_option_button.CallBackFn = ac_do_net_protocol_option;
-    net_INITIATE_button.CallBackFn = ac_do_net_INITIATE;
+    net_protocol_option_button.CallBackFn = do_net_protocol_option;
+    net_INITIATE_button.CallBackFn = do_net_INITIATE;
     net_faction_box.SpecialDrawFn = show_net_faction_box;
     net_team_box.SpecialDrawFn = show_net_team_box;
     net_groups_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
@@ -2166,15 +2166,15 @@ void init_net_screen_boxes(void)
     net_groups_box.SpecialDrawFn = show_net_groups_box;
     net_users_box.SpecialDrawFn = show_net_users_box;
     net_benefits_box.SpecialDrawFn = show_net_benefits_box;
-    net_unkn40_button.CallBackFn = ac_do_net_unkn40;
-    net_SET_button.CallBackFn = ac_do_net_SET;
-    net_protocol_select_button.CallBackFn = ac_do_net_protocol_select;
-    unkn8_EJECT_button.CallBackFn = ac_do_unkn8_EJECT;
+    net_unkn40_button.CallBackFn = do_net_unkn40;
+    net_SET_button.CallBackFn = do_net_SET;
+    net_protocol_select_button.CallBackFn = do_net_protocol_select;
+    unkn8_EJECT_button.CallBackFn = do_unkn8_EJECT;
     net_comms_box.SpecialDrawFn = show_net_comms_box;
     net_users_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
-    net_groups_LOGON_button.CallBackFn = ac_do_net_groups_LOGON;
+    net_groups_LOGON_button.CallBackFn = do_net_groups_LOGON;
     net_grpaint.SpecialDrawFn = show_net_grpaint;
-    net_SET2_button.CallBackFn = ac_do_net_SET2;
+    net_SET2_button.CallBackFn = do_net_SET2;
     net_protocol_box.SpecialDrawFn = show_net_protocol_box;
 
     // Reposition the components to current resolution

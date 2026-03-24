@@ -1054,7 +1054,7 @@ void init_options_gfx_screen_boxes(void)
       game_option_desc(GOpt_PanelPermutation), 6, med_font, 1, 0);
     init_screen_button(&options_gfx_buttons[14], 320u, 274u,
         gui_strings[579 + val], 6, med2_font, 1, 0);
-    options_gfx_buttons[14].CallBackFn = ac_change_panel_permutation;
+    options_gfx_buttons[14].CallBackFn = change_panel_permutation;
     options_gfx_buttons[14].Width += 60;
     n++;
     start_y += 18;
@@ -1065,7 +1065,7 @@ void init_options_gfx_screen_boxes(void)
       game_option_desc(GOpt_TrenchcoatPreference), 6, med_font, 1, 0);
     init_screen_button(&options_gfx_buttons[15], 320u, 310u,
         gui_strings[583 + val], 6, med2_font, 1, 0);
-    options_gfx_buttons[15].CallBackFn = ac_change_trenchcoat_preference;
+    options_gfx_buttons[15].CallBackFn = change_trenchcoat_preference;
     options_gfx_buttons[15].Width = options_gfx_buttons[14].Width;
 
     val = 0;

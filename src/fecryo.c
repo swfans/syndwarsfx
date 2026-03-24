@@ -85,7 +85,7 @@ ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
 ubyte ac_show_cryo_cybmod_list_box(struct ScreenTextBox *box);
 ubyte ac_do_cryo_all_agents_set(ubyte click);
 void ac_weapon_flic_data_to_screen(void);
-ubyte ac_do_equip_offer_buy(ubyte click);
+ubyte do_equip_offer_buy(ubyte click);
 
 struct ScreenRect equip_blokey_rect[] = {
     {23,  0,  93, 197},
@@ -1910,7 +1910,7 @@ void init_cryo_screen_boxes(void)
 
     init_screen_button(&cryo_offer_cancel_button, 628u, 404u,
       gui_strings[437], 6, med2_font, 1, 0x80);
-    cryo_offer_cancel_button.CallBackFn = ac_do_cryo_offer_cancel;
+    cryo_offer_cancel_button.CallBackFn = do_cryo_offer_cancel;
 
     // Reposition the components to current resolution
 
@@ -1964,7 +1964,7 @@ void switch_shared_equip_screen_buttons_to_cybmod(void)
     equip_cost_box.Y = cryo_offer_cancel_button.Y - space_h - equip_cost_box.Height;
 
     equip_name_box.Text = cybmod_name_text;
-    equip_all_agents_button.CallBackFn = ac_do_cryo_all_agents_set;
+    equip_all_agents_button.CallBackFn = do_cryo_all_agents_set;
 
     update_cybmod_name_text();
     switch_equip_offer_to_buy();

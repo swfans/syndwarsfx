@@ -100,7 +100,7 @@ struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
 
 ubyte ac_main_do_my_quit(ubyte click);
 ubyte ac_main_do_login_1(ubyte click);
-ubyte ac_goto_savegame(ubyte click);
+ubyte goto_savegame(ubyte click);
 ubyte ac_main_do_map_editor(ubyte click);
 ubyte ac_alert_OK(ubyte click);
 ubyte ac_do_sysmnu_button(ubyte click);
@@ -331,10 +331,10 @@ void init_main_screen_boxes(void)
     main_quit_button.Border = 3;
     main_load_button.Border = 3;
 
-    main_map_editor_button.CallBackFn = ac_main_do_map_editor;
-    main_login_button.CallBackFn = ac_main_do_login_1;
-    main_quit_button.CallBackFn = ac_main_do_my_quit;
-    main_load_button.CallBackFn = ac_goto_savegame;
+    main_map_editor_button.CallBackFn = main_do_map_editor;
+    main_login_button.CallBackFn = main_do_login_1;
+    main_quit_button.CallBackFn = main_do_my_quit;
+    main_load_button.CallBackFn = goto_savegame;
 
     main_login_button.AccelKey = KC_RETURN;
     main_quit_button.AccelKey = KC_ESCAPE;
@@ -418,7 +418,7 @@ void init_alert_screen_boxes(void)
     init_screen_box(&alert_box, 219u, 189u, 200u, 100, 6);
     init_screen_button(&alert_OK_button, 10u, 269u,
       gui_strings[458], 6, med2_font, 1, 0);
-    alert_OK_button.CallBackFn = ac_alert_OK;
+    alert_OK_button.CallBackFn = alert_OK;
 
     alert_box.X = (scr_w - alert_box.Width) / 2 - 1;
     alert_OK_button.X = (scr_w - alert_OK_button.Width) / 2 - 1;
@@ -671,7 +671,7 @@ void init_system_menu_boxes(void)
           gui_strings[378 + val], 6, med2_font, 1, 0);
         sysmnu_buttons[i].Width = unkn13_SYSTEM_button.Width;
         sysmnu_buttons[i].Height = 21;
-        sysmnu_buttons[i].CallBackFn = ac_do_sysmnu_button;
+        sysmnu_buttons[i].CallBackFn = do_sysmnu_button;
         sysmnu_buttons[i].Flags |= GBxFlg_Unkn0010;
         sysmnu_buttons[i].Border = 3;
         val++;

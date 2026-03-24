@@ -261,8 +261,8 @@ void init_login_screen_boxes(void)
     init_screen_button(&login_abort_button, 260u, 329u,
       gui_strings[388], 6, med2_font, 1, 0);
 
-    login_continue_button.CallBackFn = ac_do_login_2;
-    login_abort_button.CallBackFn = ac_do_abort_2;
+    login_continue_button.CallBackFn = do_login_2;
+    login_abort_button.CallBackFn = do_abort_2;
     login_campaigns_box.SpecialDrawFn = show_campaigns_list;
     login_name_box.SpecialDrawFn = show_login_name;
 

@@ -58,8 +58,8 @@ extern ubyte byte_1551E4[5];
 
 /******************************************************************************/
 
-ubyte ac_do_research_submit(ubyte click);
-ubyte ac_do_research_suspend(ubyte click);
+ubyte do_research_submit(ubyte click);
+ubyte do_research_suspend(ubyte click);
 ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
 ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 
@@ -137,12 +137,12 @@ void switch_research_screen_boxes_weapons_mods(void)
         if (research.CurrentWeapon == -1)
         {
             text = gui_strings[417];
-            research_submit_button.CallBackFn = ac_do_research_submit;
+            research_submit_button.CallBackFn = do_research_submit;
         }
         else
         {
             text = gui_strings[418];
-            research_submit_button.CallBackFn = ac_do_research_suspend;
+            research_submit_button.CallBackFn = do_research_suspend;
         }
     }
     else
@@ -151,12 +151,12 @@ void switch_research_screen_boxes_weapons_mods(void)
         if (research.CurrentMod == -1)
         {
             text = gui_strings[417];
-            research_submit_button.CallBackFn = ac_do_research_submit;
+            research_submit_button.CallBackFn = do_research_submit;
         }
         else
         {
             text = gui_strings[418];
-            research_submit_button.CallBackFn = ac_do_research_suspend;
+            research_submit_button.CallBackFn = do_research_suspend;
         }
     }
     research_submit_button.Text = text;
@@ -215,7 +215,7 @@ ubyte do_research_suspend(ubyte click)
     {
         research.CurrentMod = -1;
     }
-    research_submit_button.CallBackFn = ac_do_research_submit;
+    research_submit_button.CallBackFn = do_research_submit;
     research_submit_button.Text = gui_strings[417];
     return 0;
 }
@@ -303,9 +303,9 @@ ubyte show_unkn21_box(struct ScreenTextBox *p_box)
                       research_selected_wep = line;
                       if (research.CurrentWeapon == line) {
                           text = gui_strings[418];
-                          research_submit_button.CallBackFn = ac_do_research_suspend;
+                          research_submit_button.CallBackFn = do_research_suspend;
                       } else {
-                          research_submit_button.CallBackFn = ac_do_research_submit;
+                          research_submit_button.CallBackFn = do_research_submit;
                           text = gui_strings[417];
                       }
                       research_submit_button.Text = text;
@@ -344,12 +344,12 @@ ubyte show_unkn21_box(struct ScreenTextBox *p_box)
                     if (research.CurrentMod == line)
                     {
                         text = gui_strings[418];
-                        research_submit_button.CallBackFn = ac_do_research_suspend;
+                        research_submit_button.CallBackFn = do_research_suspend;
                     }
                     else
                     {
                         text = gui_strings[417];
-                        research_submit_button.CallBackFn = ac_do_research_submit;
+                        research_submit_button.CallBackFn = do_research_submit;
                     }
                     research_submit_button.Text = text;
                 }
@@ -792,7 +792,7 @@ void init_research_screen_boxes(void)
         val++;
     }
 
-    unkn12_WEAPONS_MODS_button.CallBackFn = ac_do_unkn12_WEAPONS_MODS;
+    unkn12_WEAPONS_MODS_button.CallBackFn = do_unkn12_WEAPONS_MODS;
     unkn12_WEAPONS_MODS_button.Text = gui_strings[451];
 
     research_unkn21_box.DrawTextFn = show_unkn21_box;
@@ -800,7 +800,7 @@ void init_research_screen_boxes(void)
     research_unkn21_box.Buttons[1] = &unkn12_WEAPONS_MODS_button;
     research_unkn21_box.Flags |= GBxFlg_RadioBtn|GBxFlg_IsMouseOver;
     research_submit_button.Text = gui_strings[417];
-    research_submit_button.CallBackFn = ac_do_research_submit;
+    research_submit_button.CallBackFn = do_research_submit;
     research_progress_button.DrawTextFn = show_title_box;
     research_progress_button.Text = gui_strings[449];
 

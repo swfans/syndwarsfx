@@ -106,7 +106,7 @@ short agent_name_shape_points_y[] = {
 ubyte ac_display_weapon_info(struct ScreenTextBox *box);
 ubyte ac_show_weapon_name(struct ScreenTextBox *box);
 ubyte ac_show_weapon_list(struct ScreenTextBox *box);
-ubyte ac_do_equip_offer_buy(ubyte click);
+ubyte do_equip_offer_buy(ubyte click);
 ubyte ac_sell_equipment(ubyte click);
 ubyte ac_select_all_agents(ubyte click);
 void ac_weapon_flic_data_to_screen(void);
@@ -148,7 +148,7 @@ void update_equip_cost_text(void)
     }
 
     cost = 100 * weapon_defs[selected_weapon + 1].Cost;
-    if (equip_offer_buy_button.CallBackFn == ac_do_equip_offer_buy)
+    if (equip_offer_buy_button.CallBackFn == do_equip_offer_buy)
         sprintf(equip_cost_text, "%d", cost);
     else
         sprintf(equip_cost_text, "%d", cost >> 1);
@@ -465,12 +465,12 @@ void check_buy_sell_button(void)
     if (mode == 1)
     {
         equip_offer_buy_button.Text = gui_strings[436];
-        equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
+        equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
     }
     else if (mode == 2)
     {
         equip_offer_buy_button.Text = gui_strings[407];
-        equip_offer_buy_button.CallBackFn = ac_sell_equipment;
+        equip_offer_buy_button.CallBackFn = sell_equipment;
     }
 
     // The functions below may check callback function to figure out mode
@@ -494,13 +494,13 @@ ubyte select_all_agents(ubyte click)
 void switch_equip_offer_to_buy(void)
 {
     equip_offer_buy_button.Text = gui_strings[436];
-    equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
+    equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
 }
 
 void switch_equip_offer_to_sell(void)
 {
     equip_offer_buy_button.Text = gui_strings[407];
-    equip_offer_buy_button.CallBackFn = ac_sell_equipment;
+    equip_offer_buy_button.CallBackFn = sell_equipment;
 }
 
 void skip_flashy_draw_equipment_screen_boxes(void)
@@ -1402,7 +1402,7 @@ void init_equip_screen_boxes(void)
     else
         text = gui_strings[436];
     equip_offer_buy_button.Width = my_string_width(text) + 4;
-    equip_offer_buy_button.CallBackFn = ac_do_equip_offer_buy;
+    equip_offer_buy_button.CallBackFn = do_equip_offer_buy;
 
     init_screen_button(&equip_all_agents_button, 7u, 96u,
       gui_strings[534], 6, med2_font, 1, 0);
@@ -1469,7 +1469,7 @@ void switch_shared_equip_screen_buttons_to_equip(void)
     equip_cost_box.X = equip_display_box.X + equip_display_box.Width - (space_w - 1) - equip_cost_box.Width;
     equip_cost_box.Y = equip_display_box.Y + equip_display_box.Height - space_h - equip_cost_box.Height;
 
-    equip_all_agents_button.CallBackFn = ac_do_equip_all_agents_set;
+    equip_all_agents_button.CallBackFn = do_equip_all_agents_set;
 
     equip_display_box_redraw(&equip_display_box);
     equip_name_box_redraw(&equip_name_box);

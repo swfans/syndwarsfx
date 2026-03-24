@@ -82,8 +82,8 @@ short word_1C47E8 = 0;
 
 ubyte ac_brief_do_netscan_enhance(ubyte click);
 ubyte ac_show_brief_netscan_box(struct ScreenTextBox *box);
-ubyte ac_accept_mission(ubyte click);
-ubyte ac_do_unkn1_CANCEL(ubyte click);
+ubyte accept_mission(ubyte click);
+ubyte do_unkn1_CANCEL(ubyte click);
 void ac_purple_unkn2_data_to_screen(void);
 void ac_SCANNER_data_to_screen(void);
 void update_netscan_cost_button(ubyte city_id)
@@ -712,7 +712,7 @@ void init_brief_screen_boxes(void)
     init_screen_info_box(&brief_NETSCAN_COST_box, 12u, 405u, 213u,
       gui_strings[442], unkn39_text, 6, med_font, small_med_font, 1);
     brief_NETSCAN_COST_box.Text2 = brief_netscan_cost_text;
-    brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
+    brief_NETSCAN_button.CallBackFn = brief_do_netscan_enhance;
     brief_netscan_box.DrawTextFn = show_brief_netscan_box;
 
     init_screen_text_box(&brief_mission_text_box, 338u, 72u, 295u, 354, 6, small_font, 3);
@@ -723,8 +723,8 @@ void init_brief_screen_boxes(void)
     brief_mission_text_box.Buttons[0] = &unkn1_ACCEPT_button;
     brief_mission_text_box.Buttons[1] = &unkn1_CANCEL_button;
     brief_mission_text_box.Text = mission_briefing_text;
-    unkn1_ACCEPT_button.CallBackFn = ac_accept_mission;
-    unkn1_CANCEL_button.CallBackFn = ac_do_unkn1_CANCEL;
+    unkn1_ACCEPT_button.CallBackFn = accept_mission;
+    unkn1_CANCEL_button.CallBackFn = do_unkn1_CANCEL;
 
     init_screen_box(&brief_graphical_box, 7, 72, 322, 200, 6);
     brief_graphical_box.SpecialDrawFn = show_citymap_box;
@@ -779,7 +779,7 @@ void update_brief_screen_netscan_button(ushort text_id)
       brief_netscan_box.X + brief_netscan_box.Width - 17, brief_NETSCAN_COST_box.Y,
       text, 6, med2_font, 1, 0x80);
     brief_NETSCAN_COST_box.Width = brief_netscan_box.Width - 10 - brief_NETSCAN_button.Width - 17;
-    brief_NETSCAN_button.CallBackFn = ac_brief_do_netscan_enhance;
+    brief_NETSCAN_button.CallBackFn = brief_do_netscan_enhance;
 }
 
 void reset_brief_screen_player_state(void)

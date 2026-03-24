@@ -776,8 +776,8 @@ void init_world_screen_boxes(void)
 
     world_city_info_box.DrawTextFn = show_world_city_info_box;
     world_city_info_box.Flags |= GBxFlg_TextCenter;
-    world_info_CANCEL_button.CallBackFn = ac_do_unkn2_CANCEL;
-    world_info_ACCEPT_button.CallBackFn = ac_do_unkn2_ACCEPT;
+    world_info_CANCEL_button.CallBackFn = do_unkn2_CANCEL;
+    world_info_ACCEPT_button.CallBackFn = do_unkn2_ACCEPT;
     world_landmap_box.SpecialDrawFn = show_world_landmap_box;
 
     // Reposition the components to current resolution
