@@ -304,12 +304,6 @@ void flashy_draw_projector_vertical_lines(short box_x, short box_y, short box_w,
 
 ubyte flashy_draw_purple_box(struct ScreenBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_flashy_draw_purple_box\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     short box_w, box_h;
 
     box_w = p_box->Width - 1;
@@ -771,12 +765,6 @@ void input_purple_text_box_wth_scroll(struct ScreenTextBox *p_box, struct Screen
 
 ubyte flashy_draw_purple_text_box(struct ScreenTextBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_flashy_draw_purple_text_box\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     short box_w, box_h;
     short lines_visible;
     TbBool text_remains_dynamic; /**< text drawing callback never sets GBxFlg_TextCopied (maybe make this into a box flag?) */

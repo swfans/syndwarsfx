@@ -66,7 +66,6 @@ extern short textpos[10];
 
 ubyte ac_change_panel_permutation(ubyte click);
 ubyte ac_change_trenchcoat_preference(ubyte click);
-ubyte ac_show_options_visual_main_box(struct ScreenBox *box);
 ubyte ac_flashy_draw_purple_label(struct ScreenButton *p_button);
 
 void show_audio_volume_box_func_02(short scr_x, short scr_y, short a3, short a4, TbPixel colour)
@@ -359,12 +358,6 @@ void update_options_gfx_state(void)
 
 ubyte show_options_visual_main_box(struct ScreenBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_options_visual_main_box\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     int scr_x, scr_y;
     int i;
 
