@@ -254,7 +254,7 @@ void init_screen_box(struct ScreenBox *p_box, ScrCoord x, ScrCoord y, ushort wid
         : : "a" (p_box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
 #endif
     p_box->Flags = GBxFlg_Unkn0001;
-    p_box->DrawFn = ac_flashy_draw_purple_box;
+    p_box->DrawFn = flashy_draw_purple_box;
     p_box->SpecialDrawFn = NULL;
     p_box->Colour = 0xF7;
     p_box->BGColour = 0x38;
@@ -278,7 +278,7 @@ void init_screen_text_box(struct ScreenTextBox *p_box, ScrCoord x, ScrCoord y,
         : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (p_font), "g" (textspeed));
 #endif
     p_box->Flags = GBxFlg_Unkn0001;
-    p_box->DrawFn = ac_flashy_draw_purple_text_box;
+    p_box->DrawFn = flashy_draw_purple_text_box;
     p_box->Text = 0;
     p_box->LineSpacing = 4;
     p_box->DrawTextFn = NULL;
@@ -322,7 +322,7 @@ void init_screen_button(struct ScreenButton *p_box, ScrCoord x, ScrCoord y,
     if ((flags & 0x80) != 0)
         x -= p_box->Width;
     p_box->X = x;
-    p_box->DrawFn = ac_flashy_draw_purple_button;
+    p_box->DrawFn = flashy_draw_purple_button;
     p_box->DrawTextFn = button_text;
     p_box->CallBackFn = NULL;
     p_box->Border = 1;
@@ -367,7 +367,7 @@ void init_screen_info_box(struct ScreenInfoBox *p_box, ScrCoord x, ScrCoord y, u
     p_box->Width = width;
     p_box->Height = font_h + 6;
     p_box->Flags = GBxFlg_Unkn0001;
-    p_box->DrawFn = ac_flashy_draw_purple_info_box;
+    p_box->DrawFn = flashy_draw_purple_info_box;
     p_box->DrawTextFn = info_box_text;
     p_box->Colour = 0xF7;
     p_box->BGColour = 0x38;

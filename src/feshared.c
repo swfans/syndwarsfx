@@ -67,9 +67,7 @@ ubyte show_sys_scr_shared_header(void)
 {
     ubyte drawn;
 
-    //drawn = system_screen_shared_header_box.DrawFn(&system_screen_shared_header_box); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&system_screen_shared_header_box), "g" (system_screen_shared_header_box.DrawFn));
+    drawn = system_screen_shared_header_box.DrawFn(&system_screen_shared_header_box);
     return drawn;
 }
 

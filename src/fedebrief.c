@@ -77,19 +77,13 @@ void show_debrief_screen(void)
         drawn = draw_heading_box();
     }
     if (drawn) {
-        //drawn = debrief_mission_box.DrawFn(&debrief_mission_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&debrief_mission_box), "g" (debrief_mission_box.DrawFn));
+        drawn = debrief_mission_box.DrawFn(&debrief_mission_box);
     }
     if (drawn) {
-        //drawn = debrief_people_box.DrawFn(&debrief_people_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&debrief_people_box), "g" (debrief_people_box.DrawFn));
+        drawn = debrief_people_box.DrawFn(&debrief_people_box);
     }
     if (drawn) {
-        //drawn = world_city_info_box.DrawFn(&world_city_info_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&world_city_info_box), "g" (world_city_info_box.DrawFn));
+        drawn = world_city_info_box.DrawFn(&world_city_info_box);
     }
 }
 

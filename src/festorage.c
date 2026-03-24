@@ -234,17 +234,11 @@ ubyte show_menu_storage_slots_box(struct ScreenTextBox *p_box)
         draw_text_purple_list2(scr_x + 36, scr_y + 6, save_active_desc, 0);
     }
     lbDisplay.DrawFlags = 0;
-    //storage_LOAD_button.DrawFn(&storage_LOAD_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        :  : "a" (&storage_LOAD_button), "g" (storage_LOAD_button.DrawFn));
+    storage_LOAD_button.DrawFn(&storage_LOAD_button);
     if (!restore_savegame) {
-        //storage_SAVE_button.DrawFn(&storage_SAVE_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            :  : "a" (&storage_SAVE_button), "g" (storage_SAVE_button.DrawFn));
+        storage_SAVE_button.DrawFn(&storage_SAVE_button);
     }
-    //storage_NEW_MORTAL_button.DrawFn(&storage_NEW_MORTAL_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        :  : "a" (&storage_NEW_MORTAL_button), "g" (storage_NEW_MORTAL_button.DrawFn));
+    storage_NEW_MORTAL_button.DrawFn(&storage_NEW_MORTAL_button);
     return 0;
 }
 
@@ -252,9 +246,7 @@ ubyte show_storage_screen(void)
 {
     ubyte drawn;
 
-    //drawn = storage_slots_box.DrawFn(&storage_slots_box); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&storage_slots_box), "g" (storage_slots_box.DrawFn));
+    drawn = storage_slots_box.DrawFn(&storage_slots_box);
     return drawn;
 }
 

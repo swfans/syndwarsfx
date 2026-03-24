@@ -237,12 +237,6 @@ ubyte do_unkn12_WEAPONS_MODS(ubyte click)
 
 ubyte show_unkn21_box(struct ScreenTextBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_show_unkn21_box\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     char locstr[32];
     const char *text;
     short scr_x, scr_y;
@@ -513,9 +507,7 @@ ubyte show_unkn21_box(struct ScreenTextBox *p_box)
     {
         struct ScreenButton *p_btn;
         p_btn = &research_list_buttons[i];
-        //p_btn->DrawFn(p_btn); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            :  : "a" (p_btn), "g" (p_btn->DrawFn));
+        p_btn->DrawFn(p_btn);
     }
     return 0;
 }
@@ -629,19 +621,13 @@ void show_research_screen(void)
         drawn = draw_heading_box();
     }
     if (drawn) {
-        //drawn = research_progress_button.DrawFn(&research_progress_button); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&research_progress_button), "g" (research_progress_button.DrawFn));
+        drawn = research_progress_button.DrawFn(&research_progress_button);
     }
     if (drawn) {
-        //drawn = research_graph_box.DrawFn(&research_graph_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&research_graph_box), "g" (research_graph_box.DrawFn));
+        drawn = research_graph_box.DrawFn(&research_graph_box);
     }
     if (drawn) {
-        //drawn = research_unkn21_box.DrawFn(&research_unkn21_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&research_unkn21_box), "g" (research_unkn21_box.DrawFn));
+        drawn = research_unkn21_box.DrawFn(&research_unkn21_box);
     }
 
     if ((ingame.UserFlags & UsrF_Cheats) != 0)

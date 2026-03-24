@@ -988,7 +988,7 @@ void show_net_benefits_sub7(struct ScreenBox *box)
 
 ubyte show_net_benefits_box(struct ScreenBox *box)
 {
-    ubyte drawn = true;
+    ubyte drawn = 1;
 
     my_set_text_window(box->X + 4, box->Y + 4, box->Width - 8, box->Height - 8);
     if ((box->Flags & GBxFlg_TextCopied) == 0)
@@ -1018,12 +1018,8 @@ ubyte show_net_benefits_box(struct ScreenBox *box)
     lbDisplay.DrawFlags = 0;
     if (net_local_player_hosts_the_game() && (login_control__State == LognCt_Unkn5))
     {
-        //net_SET2_button.DrawFn(&net_SET2_button); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&net_SET2_button), "g" (net_SET2_button.DrawFn));
-        //net_SET_button.DrawFn(&net_SET_button); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&net_SET_button), "g" (net_SET_button.DrawFn));
+        drawn = net_SET2_button.DrawFn(&net_SET2_button);
+        drawn = net_SET_button.DrawFn(&net_SET_button);
     }
     return drawn;
 }
@@ -1529,9 +1525,7 @@ ubyte show_net_protocol_box(struct ScreenBox *p_box)
         {
             if (byte_1C4A6F)
             {
-              //drawn = net_unkn40_button.DrawFn(&net_unkn40_button); -- incompatible calling convention
-              asm volatile ("call *%2\n"
-                  : "=r" (drawn) : "a" (&net_unkn40_button), "g" (net_unkn40_button.DrawFn));
+              drawn = net_unkn40_button.DrawFn(&net_unkn40_button);
               if (drawn == 3)
               {
                   scr_y = net_unkn40_button.Y + 3;
@@ -1592,13 +1586,9 @@ ubyte show_net_protocol_box(struct ScreenBox *p_box)
             }
         }
         if (draw_option) {
-            //net_protocol_option_button.DrawFn(&net_protocol_option_button); -- incompatible calling convention
-            asm volatile ("call *%1\n"
-              :  : "a" (&net_protocol_option_button), "g" (net_protocol_option_button.DrawFn));
+            net_protocol_option_button.DrawFn(&net_protocol_option_button);
         }
-        //net_protocol_select_button.DrawFn(&net_protocol_select_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-          :  : "a" (&net_protocol_select_button), "g" (net_protocol_select_button.DrawFn));
+        net_protocol_select_button.DrawFn(&net_protocol_select_button);
     }
     return 0;
 }
@@ -1859,20 +1849,14 @@ ubyte show_net_groups_box(struct ScreenBox *p_box)
 
     if (net_local_player_hosts_the_game())
     {
-        //net_INITIATE_button.DrawFn(&net_INITIATE_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-          :  : "a" (&net_INITIATE_button), "g" (net_INITIATE_button.DrawFn));
+        net_INITIATE_button.DrawFn(&net_INITIATE_button);
         if (byte_15516D != -1) {
-            //unkn8_EJECT_button.DrawFn(&unkn8_EJECT_button); -- incompatible calling convention
-            asm volatile ("call *%1\n"
-              :  : "a" (&unkn8_EJECT_button), "g" (unkn8_EJECT_button.DrawFn));
+            unkn8_EJECT_button.DrawFn(&unkn8_EJECT_button);
         }
     }
     if ((byte_15516C != -1) || (login_control__State == 5))
     {
-        //net_groups_LOGON_button.DrawFn(&net_groups_LOGON_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-          :  : "a" (&net_groups_LOGON_button), "g" (net_groups_LOGON_button.DrawFn));
+        net_groups_LOGON_button.DrawFn(&net_groups_LOGON_button);
     }
     return 0;
 }
@@ -2109,30 +2093,14 @@ void show_netgame_unkn_case1(void)
             return;
         }
     }
-    //net_protocol_box.DrawFn(&net_protocol_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_protocol_box), "g" (net_protocol_box.DrawFn));
-    //net_groups_box.DrawFn(&net_groups_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_groups_box), "g" (net_groups_box.DrawFn));
-    //net_users_box.DrawFn(&net_users_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_users_box), "g" (net_users_box.DrawFn));
-    //net_faction_box.DrawFn(&net_faction_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_faction_box), "g" (net_faction_box.DrawFn));
-    //net_team_box.DrawFn(&net_team_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_team_box), "g" (net_team_box.DrawFn));
-    //net_benefits_box.DrawFn(&net_benefits_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_benefits_box), "g" (net_benefits_box.DrawFn));
-    //net_comms_box.DrawFn(&net_comms_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_comms_box), "g" (net_comms_box.DrawFn));
-    //net_grpaint.DrawFn(&net_grpaint); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-      :  : "a" (&net_grpaint), "g" (net_grpaint.DrawFn));
+    net_protocol_box.DrawFn(&net_protocol_box);
+    net_groups_box.DrawFn(&net_groups_box);
+    net_users_box.DrawFn(&net_users_box);
+    net_faction_box.DrawFn(&net_faction_box);
+    net_team_box.DrawFn(&net_team_box);
+    net_benefits_box.DrawFn(&net_benefits_box);
+    net_comms_box.DrawFn(&net_comms_box);
+    net_grpaint.DrawFn(&net_grpaint);
 
     if ((login_control__State == 6) && (nsvc.I.Type == NetSvc_IPX)) {
         net_unkn_func_30();

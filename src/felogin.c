@@ -232,18 +232,10 @@ ubyte show_login_screen(void)
         clear_key_pressed(KC_SPACE);
         skip_flashy_draw_login_screen_boxes();
     }
-    //drawn = login_name_box.DrawFn(&login_name_box); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&login_name_box), "g" (login_name_box.DrawFn));
-    //drawn = login_campaigns_box.DrawFn(&login_campaigns_box); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&login_campaigns_box), "g" (login_campaigns_box.DrawFn));
-    //drawn = login_continue_button.DrawFn(&login_continue_button); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&login_continue_button), "g" (login_continue_button.DrawFn));
-    //drawn = login_abort_button.DrawFn(&login_abort_button); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&login_abort_button), "g" (login_abort_button.DrawFn));
+    drawn = login_name_box.DrawFn(&login_name_box);
+    drawn = login_campaigns_box.DrawFn(&login_campaigns_box);
+    drawn = login_continue_button.DrawFn(&login_continue_button);
+    drawn = login_abort_button.DrawFn(&login_abort_button);
     return drawn;
 }
 

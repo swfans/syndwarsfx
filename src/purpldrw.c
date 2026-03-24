@@ -571,17 +571,13 @@ ubyte flashy_draw_purple_text_box_children(struct ScreenTextBox *p_box)
         p_button = p_box->Buttons[i];
         if (p_button != NULL) {
             ubyte drawn;
-            //p_button->DrawFn(p_button); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (drawn) : "a" (p_button), "g" (p_button->DrawFn));
+            drawn = p_button->DrawFn(p_button);
             all_drawn = all_drawn && drawn;
         }
         p_info = p_box->Infos[i];
         if (p_info != NULL) {
             ubyte drawn;
-            //p_info->DrawFn(p_info); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (drawn) : "a" (p_info), "g" (p_info->DrawFn));
+            drawn = p_info->DrawFn(p_info);
             all_drawn = all_drawn && drawn;
         }
     }

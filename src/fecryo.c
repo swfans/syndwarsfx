@@ -1609,15 +1609,9 @@ ubyte show_cryo_cybmod_list_box(struct ScreenTextBox *p_box)
         draw_display_box_content_mod(p_box);
         input_display_box_content_mod(p_box);
 
-        //equip_offer_buy_button.DrawFn(&equip_offer_buy_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&equip_offer_buy_button), "g" (equip_offer_buy_button.DrawFn));
-        //cryo_offer_cancel_button.DrawFn(&cryo_offer_cancel_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&cryo_offer_cancel_button), "g" (cryo_offer_cancel_button.DrawFn));
-        //equip_cost_box.DrawFn(&equip_cost_box); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&equip_cost_box), "g" (equip_cost_box.DrawFn));
+        equip_offer_buy_button.DrawFn(&equip_offer_buy_button);
+        cryo_offer_cancel_button.DrawFn(&cryo_offer_cancel_button);
+        equip_cost_box.DrawFn(&equip_cost_box);
 
         if (selected_mod == -1)
         {
@@ -1864,31 +1858,18 @@ ubyte show_cryo_chamber_screen(void)
         drawn = boxes_drawn;
     }
 
-    if (drawn)
-    {
-        //drawn = equip_all_agents_button.DrawFn(&equip_all_agents_button); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&equip_all_agents_button), "g" (equip_all_agents_button.DrawFn));
-        //drawn = cryo_agent_list_box.DrawFn(&cryo_agent_list_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&cryo_agent_list_box), "g" (cryo_agent_list_box.DrawFn));
+    if (drawn) {
+        drawn = equip_all_agents_button.DrawFn(&equip_all_agents_button);
+        drawn = cryo_agent_list_box.DrawFn(&cryo_agent_list_box);
     }
 
-    if (drawn)
-    {
-        //drawn = cryo_blokey_box.DrawFn(&cryo_blokey_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&cryo_blokey_box), "g" (cryo_blokey_box.DrawFn));
+    if (drawn) {
+        drawn = cryo_blokey_box.DrawFn(&cryo_blokey_box);
     }
 
-    if (drawn)
-    {
-        //drawn = cryo_cybmod_list_box.DrawFn(&cryo_cybmod_list_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&cryo_cybmod_list_box), "g" (cryo_cybmod_list_box.DrawFn));
-        //drawn = equip_name_box.DrawFn(&equip_name_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&equip_name_box), "g" (equip_name_box.DrawFn));
+    if (drawn) {
+        drawn = cryo_cybmod_list_box.DrawFn(&cryo_cybmod_list_box);
+        drawn = equip_name_box.DrawFn(&equip_name_box);
     }
 
     return drawn;

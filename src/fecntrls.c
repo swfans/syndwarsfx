@@ -317,12 +317,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     }
     lbDisplay.DrawFlags &= ~0x8000;
 
-    //controls_calibrate_button.DrawFn(&controls_calibrate_button); -- incompatible calling convention
-    {
-        ubyte drawn;
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&controls_calibrate_button), "g" (controls_calibrate_button.DrawFn));
-    }
+    controls_calibrate_button.DrawFn(&controls_calibrate_button);
     return 0;
 }
 
@@ -835,14 +830,10 @@ ubyte show_options_controls_screen(void)
 {
     ubyte drawn;
 
-    //drawn = controls_list_box.DrawFn(&controls_list_box); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&controls_list_box), "g" (controls_list_box.DrawFn));
+    drawn = controls_list_box.DrawFn(&controls_list_box);
     if (drawn == 3) {
         update_settings_controls_alert(&controls_list_box);
-        //drawn = controls_joystick_box.DrawFn(&controls_joystick_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&controls_joystick_box), "g" (controls_joystick_box.DrawFn));
+        drawn = controls_joystick_box.DrawFn(&controls_joystick_box);
     }
     return drawn;
 }

@@ -301,15 +301,9 @@ void show_main_screen(void)
         clear_key_pressed(KC_SPACE);
         skip_flashy_draw_main_screen_boxes();
     }
-    //main_quit_button.DrawFn(&main_quit_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&main_quit_button), "g" (main_quit_button.DrawFn));
-    //main_load_button.DrawFn(&main_load_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&main_load_button), "g" (main_load_button.DrawFn));
-    //main_login_button.DrawFn(&main_login_button); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&main_login_button), "g" (main_login_button.DrawFn));
+    main_quit_button.DrawFn(&main_quit_button);
+    main_load_button.DrawFn(&main_load_button);
+    main_login_button.DrawFn(&main_login_button);
 }
 
 void init_main_screen_boxes(void)
@@ -390,9 +384,8 @@ void show_alert_box(void)
         alert_box.Y = alert_OK_button.Y - lnheight * nlines - 4;
         alert_box.Height = alert_OK_button.Height + 8 + lnheight * nlines;
     }
-    asm volatile ("call *%2\n"
-      : "=r" (drawn) : "a" (&alert_box), "g" (alert_box.DrawFn));
-    //drawn = alert_box.DrawFn(&alert_box);
+
+    drawn = alert_box.DrawFn(&alert_box);
     if (drawn == 3)
     {
         lbFontPtr = small_med_font;
@@ -400,9 +393,7 @@ void show_alert_box(void)
         lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
         flashy_draw_text(0, 0, alert_text, 3, 0, &alert_textpos, 0);
         lbDisplay.DrawFlags = 0;
-        asm volatile ("call *%2\n"
-          : "=r" (drawn) : "a" (&alert_OK_button), "g" (alert_OK_button.DrawFn));
-        //alert_OK_button.DrawFn(&alert_OK_button);
+        drawn = alert_OK_button.DrawFn(&alert_OK_button);
     }
 }
 
@@ -540,9 +531,7 @@ void show_sysmenu_screen(void)
         enter_game = 0;
     }
 
-    //drawn = unkn13_SYSTEM_button.DrawFn(&unkn13_SYSTEM_button); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&unkn13_SYSTEM_button), "g" (unkn13_SYSTEM_button.DrawFn));
+    drawn = unkn13_SYSTEM_button.DrawFn(&unkn13_SYSTEM_button);
     if (drawn)
     {
         for (i = 0; i < SYSMNU_BUTTONS_COUNT; i++)
@@ -551,9 +540,7 @@ void show_sysmenu_screen(void)
                 continue;
             if (restore_savegame && i < 5)
                 continue;
-            //drawn = sysmnu_buttons[i].DrawFn(&sysmnu_buttons[i]); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (drawn) : "a" (&sysmnu_buttons[i]), "g" (sysmnu_buttons[i].DrawFn));
+            drawn = sysmnu_buttons[i].DrawFn(&sysmnu_buttons[i]);
             if (!drawn)
                 v2 = 0;
             if (enter_game) {
@@ -744,9 +731,7 @@ void skip_flashy_draw_heading_screen_boxes(void)
 ubyte draw_heading_box(void)
 {
     ubyte drawn = true;
-    //drawn = heading_box.DrawFn(&heading_box); -- incompatible calling convention
-    asm volatile ("call *%2\n"
-        : "=r" (drawn) : "a" (&heading_box), "g" (heading_box.DrawFn));
+    drawn = heading_box.DrawFn(&heading_box);
     return drawn;
 }
 
@@ -1112,9 +1097,7 @@ void show_mission_loading_screen(void)
             clear_key_pressed(KC_SPACE);
             skip_flashy_draw_loading_screen_boxes();
         }
-        //loading_INITIATING_box.DrawFn(&loading_INITIATING_box); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&loading_INITIATING_box), "g" (loading_INITIATING_box.DrawFn));
+        loading_INITIATING_box.DrawFn(&loading_INITIATING_box);
         if ((loading_INITIATING_box.Flags & GBxFlg_TextCopied) != 0)
             finished++;
         draw_purple_screen();

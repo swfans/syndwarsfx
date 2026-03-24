@@ -193,12 +193,8 @@ ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
 
     if (login_control__State != LognCt_Unkn5 && screentype == SCRT_WORLDMAP)
     {
-        //world_info_ACCEPT_button.DrawFn(&world_info_ACCEPT_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            :  : "a" (&world_info_ACCEPT_button), "g" (world_info_ACCEPT_button.DrawFn));
-        //world_info_CANCEL_button.DrawFn(&world_info_CANCEL_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            :  : "a" (&world_info_CANCEL_button), "g" (world_info_CANCEL_button.DrawFn));
+        world_info_ACCEPT_button.DrawFn(&world_info_ACCEPT_button);
+        world_info_CANCEL_button.DrawFn(&world_info_CANCEL_button);
     }
     return 0;
 }
@@ -744,20 +740,15 @@ ubyte show_worldmap_screen(void)
     }
 
     // Draw sequentially
-    if (drawn)
+    if (drawn) {
         drawn = draw_heading_box();
-
-    if (drawn)
-    {
-        //drawn = world_landmap_box.DrawFn(&world_landmap_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&world_landmap_box), "g" (world_landmap_box.DrawFn));
     }
-    if (drawn)
-    {
-        //drawn = world_city_info_box.DrawFn(&world_city_info_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&world_city_info_box), "g" (world_city_info_box.DrawFn));
+
+    if (drawn) {
+        drawn = world_landmap_box.DrawFn(&world_landmap_box);
+    }
+    if (drawn) {
+        drawn = world_city_info_box.DrawFn(&world_city_info_box);
     }
     return drawn;
 }

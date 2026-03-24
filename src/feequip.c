@@ -883,34 +883,19 @@ ubyte show_equipment_screen(void)
         drawn = boxes_drawn;
     }
 
-    if (drawn)
-    {
-        //drawn = equip_all_agents_button.DrawFn(&equip_all_agents_button); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&equip_all_agents_button), "g" (equip_all_agents_button.DrawFn));
-        //drawn = equip_list_head_box.DrawFn(&equip_list_head_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&equip_list_head_box), "g" (equip_list_head_box.DrawFn));
-        //drawn = weapon_slots.DrawFn(&weapon_slots); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&weapon_slots), "g" (weapon_slots.DrawFn));
+    if (drawn) {
+        drawn = equip_all_agents_button.DrawFn(&equip_all_agents_button);
+        drawn = equip_list_head_box.DrawFn(&equip_list_head_box);
+        drawn = weapon_slots.DrawFn(&weapon_slots);
     }
 
-    if (drawn)
-    {
-        //drawn = equip_list_box.DrawFn(&equip_list_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&equip_list_box), "g" (equip_list_box.DrawFn));
+    if (drawn) {
+        drawn = equip_list_box.DrawFn(&equip_list_box);
     }
 
-    if (drawn)
-    {
-        //drawn = equip_name_box.DrawFn(&equip_name_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&equip_name_box), "g" (equip_name_box.DrawFn));
-        //drawn = equip_display_box.DrawFn(&equip_display_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&equip_display_box), "g" (equip_display_box.DrawFn));
+    if (drawn) {
+        drawn = equip_name_box.DrawFn(&equip_name_box);
+        drawn = equip_display_box.DrawFn(&equip_display_box);
     }
 
     if (mo_weapon != -1)
@@ -1079,14 +1064,10 @@ ubyte display_weapon_info(struct ScreenTextBox *box)
 
     if (equip_offer_can_buy_or_sell(selected_weapon + 1))
     {
-        //equip_offer_buy_button.DrawFn(&equip_offer_buy_button); -- incompatible calling convention
-        asm volatile ("call *%1\n"
-            : : "a" (&equip_offer_buy_button), "g" (equip_offer_buy_button.DrawFn));
+        equip_offer_buy_button.DrawFn(&equip_offer_buy_button);
     }
 
-    //equip_cost_box.DrawFn(&equip_cost_box); -- incompatible calling convention
-    asm volatile ("call *%1\n"
-        : : "a" (&equip_cost_box), "g" (equip_cost_box.DrawFn));
+    equip_cost_box.DrawFn(&equip_cost_box);
 
     // Add control hotspot for the view / description switch
     draw_hotspot_purple_list(box->X + box->Width / 2, box->Y + 104);

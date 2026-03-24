@@ -233,15 +233,11 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *p_box)
             nlines += p_nsobv->TextLines;
         }
         if (cities[selected_city_id].Info < netscan_objectives_count) {
-            //drawn = brief_NETSCAN_button.DrawFn(&brief_NETSCAN_button); -- incompatible calling convention
-            asm volatile ("call *%2\n"
-                : "=r" (drawn) : "a" (&brief_NETSCAN_button), "g" (brief_NETSCAN_button.DrawFn));
+            drawn = brief_NETSCAN_button.DrawFn(&brief_NETSCAN_button);
         }
     }
     if (drawn) {
-        //brief_NETSCAN_COST_box.DrawFn(&brief_NETSCAN_COST_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-          : "=r" (drawn) : "a" (&brief_NETSCAN_COST_box), "g" (brief_NETSCAN_COST_box.DrawFn));
+        drawn = brief_NETSCAN_COST_box.DrawFn(&brief_NETSCAN_COST_box);
     }
     return 0;
 }
@@ -665,26 +661,17 @@ ubyte show_mission_screen(void)
     if (drawn)
         drawn = draw_heading_box();
 
-    if (drawn)
-    {
-        //drawn = brief_mission_text_box.DrawFn(&brief_mission_text_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&brief_mission_text_box), "g" (brief_mission_text_box.DrawFn));
+    if (drawn) {
+        drawn = brief_mission_text_box.DrawFn(&brief_mission_text_box);
     }
 
-    if (drawn)
-    {
+    if (drawn) {
         input_brief_mission_text_box(&brief_mission_text_box);
-        //drawn = brief_graphical_box.DrawFn(&brief_graphical_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&brief_graphical_box), "g" (brief_graphical_box.DrawFn));
+        drawn = brief_graphical_box.DrawFn(&brief_graphical_box);
     }
 
-    if (drawn)
-    {
-        //drawn = brief_netscan_box.DrawFn(&brief_netscan_box); -- incompatible calling convention
-        asm volatile ("call *%2\n"
-            : "=r" (drawn) : "a" (&brief_netscan_box), "g" (brief_netscan_box.DrawFn));
+    if (drawn) {
+        drawn = brief_netscan_box.DrawFn(&brief_netscan_box);
     }
 
     return drawn;
