@@ -52,8 +52,8 @@ ushort find_closest_hotspot_down(void)
         short ms_x, ms_y;
         short shift_w, shift_h;
 
-        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        ms_x = lbDisplay.MMouseX;
+        ms_y = lbDisplay.MMouseY;
         shift_w = hotspot_buffer[i].X - ms_x;
         shift_h = hotspot_buffer[i].Y - ms_y;
         if ((shift_h > 0) && (shift_h > abs(shift_w)))
@@ -86,8 +86,8 @@ ushort find_closest_hotspot_up(void)
         short ms_x, ms_y;
         short shift_w, shift_h;
 
-        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        ms_x = lbDisplay.MMouseX;
+        ms_y = lbDisplay.MMouseY;
         shift_w = hotspot_buffer[i].X - ms_x;
         shift_h = ms_y - hotspot_buffer[i].Y;
         if ((shift_h > 0) && (shift_h > abs(shift_w)))
@@ -120,8 +120,8 @@ ushort find_closest_hotspot_right(void)
         short ms_x, ms_y;
         short shift_w, shift_h;
 
-        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        ms_x = lbDisplay.MMouseX;
+        ms_y = lbDisplay.MMouseY;
         shift_w = hotspot_buffer[i].X - ms_x;
         shift_h = hotspot_buffer[i].Y - ms_y;
         if ((shift_w > 0) && (shift_w > abs(shift_h)))
@@ -154,8 +154,8 @@ ushort find_closest_hotspot_left(void)
         short ms_x, ms_y;
         short shift_w, shift_h;
 
-        ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
-        ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+        ms_x = lbDisplay.MMouseX;
+        ms_y = lbDisplay.MMouseY;
         shift_w = ms_x - hotspot_buffer[i].X;
         shift_h = hotspot_buffer[i].Y - ms_y;
         if ((shift_w > 0) && (shift_w > abs(shift_h)))

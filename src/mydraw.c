@@ -193,10 +193,87 @@ u32 my_string_width(const char *text)
 
 ushort my_count_lines(const char *text)
 {
+#if 0
     ushort ret;
     asm volatile ("call ASM_my_count_lines\n"
         : "=r" (ret) : "a" (text));
     return ret;
+#endif
+    int pos, line_beg_pos, last_brkpoint_pos;
+    int txline_len, last_brkpoint_lnlen;
+    ushort nlines;
+    ubyte chr;
+
+    pos = 0;
+    nlines = 0;
+    if (text == NULL)
+        return 1;
+
+    last_brkpoint_lnlen = 0;
+    txline_len = 0;
+    last_brkpoint_pos = 0;
+    line_beg_pos = 0;
+    while ( 1 )
+    {
+        chr = text[pos++];
+        if (chr == '\0')
+            return nlines + 1;
+        if (lbFontPtr != small_med_font || language_3str[0] != 'e')
+        {
+            chr = fontchrtoupper(chr);
+        }
+        if (chr == 0x0E) // skip next char
+        {
+            pos++;
+        }
+        else if ((chr == ' ') || (chr == '-'))
+        {
+            last_brkpoint_pos = pos;
+            last_brkpoint_lnlen = txline_len;
+        }
+        else if (chr == '\n')
+        {
+            if (text[pos] != '\0')
+                nlines++;
+            line_beg_pos = pos;
+            last_brkpoint_pos = pos;
+            txline_len = 0;
+        }
+        if (chr >= 0x0E)
+        {
+            txline_len += LbSprFontCharWidth(lbFontPtr, chr);
+        }
+
+      if (txline_len > (text_window_x2 - text_window_x1))
+      {
+        if (last_brkpoint_pos == line_beg_pos)
+        {
+            // No to finish a word place, but also no position for proper
+            // word break. Back any control chars, and just break where we are.
+            do {
+                pos--;
+            } while (text[pos] < 0x1F);
+            do {
+                pos--;
+            } while (text[pos] < 0x1F);
+            last_brkpoint_pos = pos;
+            line_beg_pos = pos;
+            nlines++;
+            txline_len = 0;
+            last_brkpoint_lnlen = 0;
+        }
+        else
+        {
+            line_beg_pos = last_brkpoint_pos;
+            txline_len -= last_brkpoint_lnlen;
+            nlines++;
+            if (text[last_brkpoint_pos - 1] == ' ') {
+                txline_len -= LbSprFontCharWidth(lbFontPtr, ' ');
+            }
+        }
+      }
+    }
+    return 1;
 }
 
 /** Parse control char from given string, return num bytes recognized.
