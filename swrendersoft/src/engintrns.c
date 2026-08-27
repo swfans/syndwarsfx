@@ -56,12 +56,16 @@ s32 mul_shift16_sign_pad_lo(s32 ar1, s32 ar2)
     tmp |= ((ar1 * (s64)ar2) >> 32) & 0xFFFF;
     return bw_rotl32(tmp, 16);
 #else
-    s32 ret;
+    s32 ret, hi;
+    /* The asm overwrites both eax and edx, so both have to be outputs with the
+     * inputs tied to them; declaring them as inputs only lets the compiler
+     * assume they still hold ar1 and ar2 afterwards. Harmless at -O0, wrong
+     * at any higher optimisation level. */
     asm volatile (
       "imul   %%edx\n"
       "mov    %%dx,%%ax\n"
       "rol    $0x10,%%eax\n"
-        : "=r" (ret) : "a" (ar1), "d" (ar2));
+        : "=a" (ret), "=d" (hi) : "0" (ar1), "1" (ar2) : "cc");
     return ret;
 #endif
 }
