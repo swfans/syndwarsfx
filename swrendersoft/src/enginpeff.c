@@ -46,6 +46,18 @@ ushort gamep_scene_effect_intensity = 1000;
 short gamep_scene_effect_change = -1;
 ushort gamep_scene_effect_type = ScEff_NONE;
 
+ushort rain_drop_max_width = 0;
+ushort snow_flake_max_size = 0;
+ushort star_max_size = 0;
+
+/** Applies one of the effect size limits, a limit of zero meaning none. */
+static ushort size_limited(ushort size, ushort limit)
+{
+    if ((limit != 0) && (size > limit))
+        return limit;
+    return size;
+}
+
 ushort word_1A7314;
 ushort word_1A7330[1000];
 ubyte byte_1A7B00[1000];
@@ -210,7 +222,7 @@ void draw_falling_rain(int bckt)
     y = m * ((rnd + (shift_y >> 10)) % limit_y);
     lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
     o = &lbDisplay.WScreen[scanln * y + x];
-    w = m;
+    w = size_limited(m, rain_drop_max_width);
     h = m;
     if (bckt < 4000) h += m;
     if (bckt < 3000) h += m;
@@ -252,6 +264,7 @@ void draw_falling_snow(int bckt)
         uint x, y;
         ushort speed;
         ushort angXZs, angXZc;
+        ushort dm;
 
         angXZs = ((engn_anglexz >> 5)) & 0x7FF;
         angXZc = ((engn_anglexz >> 5) + LbFPMath_PI/2) & 0x7FF;
@@ -264,7 +277,8 @@ void draw_falling_snow(int bckt)
         shift2 = (BUCKETS_COUNT - bckt) * render_anim_turn;
         y = (shift2 >> (12 - speed/2)) + ((engn_xc * lbSinTable[angXZs]) >> 20) + ((engn_zc * lbSinTable[angXZc]) >> 20) + LbRandomAnyShort();
         lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
-        draw_static_dot((x * m) % scanln, (y % height) * m, m, m, 128 * ((BUCKETS_COUNT - bckt) / 416) + colour_lookup[ColLU_WHITE]);
+        dm = size_limited(m, snow_flake_max_size);
+        draw_static_dot((x * m) % scanln, (y % height) * m, dm, dm, 128 * ((BUCKETS_COUNT - bckt) / 416) + colour_lookup[ColLU_WHITE]);
         lbSeed = seed_bkp;
         lbDisplay.DrawFlags = 0;
     }
@@ -310,10 +324,11 @@ void draw_background_stars(void)
     ulong seed_bkp;
     int i, limit;
     int scr_x0, scr_y0;
-    ushort m;
+    ushort m, dm;
 
     m = lbDisplay.GraphicsScreenHeight / 300;
     if (m == 0) m++;
+    dm = size_limited(m, star_max_size);
     scr_x0 = lbDisplay.GraphicsScreenWidth / 2;
     scr_y0 = lbDisplay.GraphicsScreenHeight / 2;
 
@@ -340,7 +355,7 @@ void draw_background_stars(void)
         scr_x = scr_x0 + ((simp_x * m * dword_176D14 - simp_y * m * dword_176D10) >> 16);
         scr_y = scr_y0 - ((simp_x * m * dword_176D10 + simp_y * m * dword_176D14) >> 16);
 
-        draw_distant_stars(scr_x, scr_y, m, m, 79 - (plane >> 1));
+        draw_distant_stars(scr_x, scr_y, dm, dm, 79 - (plane >> 1));
     }
     lbSeed = seed_bkp;
 }

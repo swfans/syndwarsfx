@@ -22,6 +22,7 @@
 #include "bfini.h"
 #include "bfmemory.h"
 
+#include "enginpeff.h"
 #include "enginzoom.h"
 #include "game_data.h"
 #include "hud_target.h"
@@ -75,6 +76,12 @@ enum RulesRevenueConfigCmd {
     RRevenuCmd_PersuadedPersonWeaponsSellCostPermil = 1,
 };
 
+enum RulesAtmosphericConfigCmd {
+    RAtmosCmd_RainDropMaxWidth = 1,
+    RAtmosCmd_SnowFlakeMaxSize,
+    RAtmosCmd_StarMaxSize,
+};
+
 const struct TbNamedEnum rules_conf_research_cmnds[] = {
   {"DailyScientistDeathChancePermil",	RResrchCmd_DailyScientistDeathChance},
   {"ScientistsPerGroup",			RResrchCmd_ScientistsPerGroup},
@@ -85,6 +92,13 @@ const struct TbNamedEnum rules_conf_research_cmnds[] = {
 
 const struct TbNamedEnum rules_conf_revenue_cmnds[] = {
   {"PersuadedPersonWeaponsSellCostPermil",	RRevenuCmd_PersuadedPersonWeaponsSellCostPermil},
+  {NULL,							0},
+};
+
+const struct TbNamedEnum rules_conf_atmospheric_cmnds[] = {
+  {"RainDropMaxWidth",				RAtmosCmd_RainDropMaxWidth},
+  {"SnowFlakeMaxSize",				RAtmosCmd_SnowFlakeMaxSize},
+  {"StarMaxSize",					RAtmosCmd_StarMaxSize},
   {NULL,							0},
 };
 
@@ -370,6 +384,64 @@ TbBool read_rules_file(void)
             }
             persuaded_person_weapons_sell_cost_permil = k;
             CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)persuaded_person_weapons_sell_cost_permil);
+            break;
+        case 0: // comment
+            break;
+        case -1: // end of buffer
+        case -3: // end of section
+            done = true;
+            break;
+        default:
+            CONFWRNLOG("Unrecognized command.");
+            break;
+        }
+        LbIniSkipToNextLine(&parser);
+    }
+#undef COMMAND_TEXT
+
+    // Parse the [atmospheric] section of loaded file
+    done = false;
+    if (LbIniFindSection(&parser, "atmospheric") != Lb_SUCCESS) {
+        CONFWRNLOG("Could not find \"[%s]\" section.", "atmospheric");
+        done = true;
+    }
+#define COMMAND_TEXT(cmd_num) LbNamedEnumGetName(rules_conf_atmospheric_cmnds,cmd_num)
+    while (!done)
+    {
+        int cmd_num;
+
+        // Finding command number in this line
+        i = 0;
+        cmd_num = LbIniRecognizeKey(&parser, rules_conf_atmospheric_cmnds);
+        // Now store the config item in correct place
+        switch (cmd_num)
+        {
+        case RAtmosCmd_RainDropMaxWidth:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            rain_drop_max_width = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)rain_drop_max_width);
+            break;
+        case RAtmosCmd_SnowFlakeMaxSize:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            snow_flake_max_size = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)snow_flake_max_size);
+            break;
+        case RAtmosCmd_StarMaxSize:
+            i = LbIniValueGetLongInt(&parser, &k);
+            if (i <= 0) {
+                CONFWRNLOG("Could not read \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            star_max_size = k;
+            CONFDBGLOG("%s %d", COMMAND_TEXT(cmd_num), (int)star_max_size);
             break;
         case 0: // comment
             break;

@@ -39,6 +39,23 @@ enum GamePostSceneEffectType {
 extern ushort gamep_scene_effect_type;
 extern ushort gamep_scene_effect_intensity;
 
+/** Widest a rain drop may be drawn, in pixels; 0 means no limit.
+ *
+ * The drop is sized from the screen height, so the one pixel streak of the
+ * original display becomes a wide bar on a modern one. Only the width is
+ * capped; the length still follows the resolution.
+ */
+extern ushort rain_drop_max_width;
+
+/** Largest a snow flake may be drawn, in pixels; 0 means no limit.
+ *
+ * The flake is a square sized the same way as the rain drop above.
+ */
+extern ushort snow_flake_max_size;
+
+/** Largest a background star may be drawn, in pixels; 0 means no limit. */
+extern ushort star_max_size;
+
 /* Wavy float table with even number of elements.
  *
  * The period of this table is 31, last element repeats first.
