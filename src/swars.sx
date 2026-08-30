@@ -32,6 +32,7 @@
 .text
 
 .global EXPORT_SYMBOL(lbInkeyToAscii);
+.global EXPORT_SYMBOL(lbInkeyToAsciiShift);
 .global EXPORT_SYMBOL(lbInkey_prefixed);
 .global EXPORT_SYMBOL(lbInkey);
 .global EXPORT_SYMBOL(lbShift);
@@ -8950,7 +8951,7 @@ GLOBAL_FUNC (ASM_player_chat_message_add_key)	/* 0x3E580 */
 		test   %edi,%edi
 		je     jump_3e674
 		xor    %ecx,%eax
-		mov    EXPORT_SYMBOL(lbInkeyToAscii)+128(%edx),%al
+		mov    EXPORT_SYMBOL(lbInkeyToAsciiShift)(%edx),%al
 		jmp    jump_3e67c
 	jump_3e674:
 		xor    %ecx,%eax
@@ -131120,7 +131121,7 @@ GLOBAL_FUNC(ASM_user_read_value)	/* 0x0D0380 */
 		testb  $0x1,EXPORT_SYMBOL(lbShift)
 		je     jump_d049f
 	jump_d0499:
-		mov    EXPORT_SYMBOL(lbInkeyToAscii)+128(%esi),%al
+		mov    EXPORT_SYMBOL(lbInkeyToAsciiShift)(%esi),%al
 	jump_d049f:
 		mov    %al,0xc(%esp)
 	jump_d04a3:
