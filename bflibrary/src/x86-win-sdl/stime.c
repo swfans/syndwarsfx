@@ -18,6 +18,7 @@
  */
 /******************************************************************************/
 #include <time.h>
+#include <SDL.h>
 #include "bftime.h"
 
 #include "bfwindows.h"
@@ -78,6 +79,15 @@ TbClockMSec LbTimerClock(void)
 #endif
 }
 
+/** @internal
+ * Sleeps for the given amount of milliseconds.
+ */
+static void LbI_SleepShort(TbClockMSec delay)
+{
+    if (delay > 0)
+        SDL_Delay(delay);
+}
+
 TbBool LbSleepUntil(TbClockMSec endtime)
 {
     TbClockMSec currclk;
@@ -87,8 +97,8 @@ TbBool LbSleepUntil(TbClockMSec endtime)
         LbDoMultitasking();
         currclk = LbTimerClock();
     }
-    while (currclk < endtime)
-        currclk = LbTimerClock();
+    if (currclk < endtime)
+        LbI_SleepShort(endtime - currclk);
     return true;
 }
 
