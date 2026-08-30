@@ -26,7 +26,6 @@
 extern "C" {
 #endif
 
-#define LB_LARGE_DELAY_TIME 20
 #define LB_IDLE_HANDLERS_MAX 4
 
 typedef TbBool (*TbIdleControl)(void);

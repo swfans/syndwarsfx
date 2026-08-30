@@ -80,6 +80,14 @@ AC_ARG_WITH([lb-memory-low-available],
 AC_DEFINE_UNQUOTED([MEMORY_LOW_AVAILABLE], [$lb_memory_low_available],
     [Set to amount of memory available for allocations in below 1MB arena, in kilobytes; only used in memory arenas mode])
 
+AC_ARG_WITH([lb-large-delay-time],
+    [AS_HELP_STRING([--with-lb-large-delay-time=N],
+        [set the sleep period used while waiting for time to pass to N milliseconds (default: 20)])],
+    [lb_large_delay_time="$withval"], [lb_large_delay_time=20])
+
+AC_DEFINE_UNQUOTED([LARGE_DELAY_TIME], [$lb_large_delay_time],
+    [Set to the length of the sleep period used while waiting for time to pass, in milliseconds])
+
 AC_ARG_ENABLE([lb-mouse-wheel],
     AS_HELP_STRING([--disable-lb-mouse-wheel],
         [make the bflibrary to not define mouse wheel properties within lbDisplay]),
