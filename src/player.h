@@ -172,7 +172,7 @@ MapCoord player_agent_clear_user_vect_y(PlayerIdx plyr, short plagent);
 
 /** Get player agent user vector.
  */
-void player_agent_get_user_vect(PlayerIdx plyr, ushort plagent, struct MapCoords *p_usrv);
+void player_agent_get_user_vect(PlayerIdx plyr, short plagent, struct MapCoords *p_usrv);
 
 TbBool player_can_toggle_thermal(PlayerIdx plyr);
 void player_toggle_thermal(PlayerIdx plyr);

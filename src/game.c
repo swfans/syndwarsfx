@@ -1130,8 +1130,46 @@ TbResult load_outro_sprites(void)
 
 void fill_floor_textures(void)
 {
+#if 0
     asm volatile ("call ASM_fill_floor_textures\n"
         :  :  : "eax" );
+#endif
+    struct SingleFloorTexture *p_fltextr;
+    uint i;
+
+    for (i = 1; i < next_floor_texture; i++)
+    {
+        p_fltextr = &game_textures[i];
+        if (p_fltextr->Page == 5)
+        {
+            p_fltextr->TMapX1 += 64;
+            p_fltextr->TMapX2 += 64;
+            p_fltextr->TMapX3 += 64;
+            p_fltextr->TMapX4 += 64;
+            p_fltextr->TMapY1 -= 96;
+            p_fltextr->TMapY2 -= 96;
+            p_fltextr->TMapY3 -= 96;
+            p_fltextr->TMapY4 -= 96;
+            p_fltextr->Page = 4;
+        }
+    }
+
+    for (i = 1; i < prim4_textures_count; i++)
+    {
+        p_fltextr = &prim4_textures[i];
+        if (p_fltextr->Page == 5)
+        {
+            p_fltextr->TMapX1 += 64;
+            p_fltextr->TMapX2 += 64;
+            p_fltextr->TMapX3 += 64;
+            p_fltextr->TMapX4 += 64;
+            p_fltextr->TMapY1 -= 96;
+            p_fltextr->TMapY2 -= 96;
+            p_fltextr->TMapY3 -= 96;
+            p_fltextr->TMapY4 -= 96;
+            p_fltextr->Page = 4;
+        }
+    }
 }
 
 void fill_netgame_agent_pos(int plyr, int group, int num_agents)
@@ -6604,12 +6642,44 @@ ubyte critical_action_input(void)
     return (key == KC_Y);
 }
 
-ubyte process_send_person(ushort player, int i)
+ubyte process_send_person(PlayerIdx plyr, ubyte dmuser)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_process_send_person\n"
-        : "=r" (ret) : "a" (player), "d" (i));
+        : "=r" (ret) : "a" (plyr), "d" (dmuser));
     return ret;
+#endif
+    PlayerInfo *p_player;
+    TbBool usrinp_is_goto_point;
+
+    p_player = &players[plyr];
+
+    if (p_player->State[dmuser] != 1)
+    {
+        p_player->State[dmuser] = 1;
+        p_player->SubState[dmuser] = 0;
+    }
+
+    usrinp_is_goto_point = ((p_player->UserInput[dmuser].Bits & SpUIn_GotoPoint) != 0);
+
+    if (!usrinp_is_goto_point && (p_player->SubState[dmuser] == 0))
+    {
+        p_player->SubState[dmuser] = 1;
+        return 0;
+    }
+    if (usrinp_is_goto_point && (p_player->SubState[dmuser] == 1))
+    {
+        p_player->SubState[dmuser] = 2;
+        return 0;
+    }
+    if (!usrinp_is_goto_point && (p_player->SubState[dmuser] == 2))
+    {
+        p_player->SubState[dmuser] = 3;
+        p_player->State[dmuser] = 0;
+        return 1;
+    }
+    return 0;
 }
 
 void do_agent_track_only(void)

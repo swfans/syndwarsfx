@@ -332,7 +332,7 @@ void ingame_palette_reload(void);
 void game_set_cam_track_thing_xz(ThingIdx thing);
 TbBool game_cam_tracked_thing_is_player_agent(void);
 
-ubyte process_send_person(ushort player, int i);
+ubyte process_send_person(PlayerIdx plyr, ubyte dmuser);
 
 short test_missions(ubyte flag);
 void init_level_3d(ubyte flag);

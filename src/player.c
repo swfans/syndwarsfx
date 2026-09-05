@@ -561,7 +561,7 @@ MapCoord player_agent_clear_user_vect_y(PlayerIdx plyr, short plagent)
     return vy;
 }
 
-void player_agent_get_user_vect(PlayerIdx plyr, ushort plagent, struct MapCoords *p_usrv)
+void player_agent_get_user_vect(PlayerIdx plyr, short plagent, struct MapCoords *p_usrv)
 {
     PlayerInfo *p_player;
 

@@ -109,15 +109,15 @@ void killed_person_add_to_stats(struct Thing *p_person, ushort brief)
 void killed_mp_agent_add_to_stats(struct Thing *p_victim, PlayerIdx attack_plyr)
 {
     struct MissionStatus *p_mistat;
-    PlayerIdx victim_plyr;
+    short victim_plyr;
 
     if (attack_plyr >= PLAYERS_LIMIT) {
         LOGERR("Attacking player %d out of range", (int)attack_plyr);
         return;
     }
-    victim_plyr = p_victim->U.UPerson.ComCur >> 2;
-    if (victim_plyr >= PLAYERS_LIMIT) {
-        LOGERR("Victim player %d out of range", (int)victim_plyr);
+    victim_plyr = person_get_dcontrol_player(p_victim->ThingOffset);
+    if (victim_plyr < 0) {
+        LOGERR("Victim thing not player controlled");
         return;
     }
     p_mistat = &mission_status[attack_plyr];
