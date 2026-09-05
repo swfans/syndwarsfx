@@ -30,7 +30,8 @@ extern "C" {
 
 #pragma pack()
 /******************************************************************************/
-TbBool AppTextDrawMissionChatMessage(int posx, int *posy, int plyr, const char *text);
+TbBool AppTextDrawMissionChatMessage(int posx, int *posy, int plyr, int timer,
+  const char *text);
 
 TbBool AppTextDrawMissionStatus(int posx, int posy, const char *text);
 /******************************************************************************/

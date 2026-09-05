@@ -151,8 +151,6 @@ extern struct TbPoint *game_panel_shifts;
 extern ubyte byte_153198;
 extern long scanner_unkn370;
 
-extern char player_message_text[8][128];
-extern ubyte player_message_timer[8];
 extern long scanner_unkn3CC;
 
 /** Scale factor for figuring out GUI size.
@@ -163,6 +161,11 @@ int SCANNER_objective_info_height(void);
 
 TbBool panel_any_visible(void);
 void draw_new_panel(void);
+
+void player_chat_clear(void);
+void player_message_clear(PlayerIdx plyr);
+void player_message_fmt(PlayerIdx plyr, const char *fmt, ...);
+TbBool player_message_add_allowed(PlayerIdx plyr);
 
 TbResult load_pop_sprites_for_current_mode(void);
 

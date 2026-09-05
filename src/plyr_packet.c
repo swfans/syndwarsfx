@@ -64,8 +64,7 @@ void net_player_leave(PlayerIdx plyr)
     else
     {
         net_players_num--;
-        sprintf(player_message_text[plyr], "%s %s", unkn2_names[plyr], gui_strings[GSTR_NET_LEFT_GAME]);
-        player_message_timer[plyr] = 150;
+        player_message_fmt(plyr, "%s %s", unkn2_names[plyr], gui_strings[GSTR_NET_LEFT_GAME]);
         LbNetworkSessionStop();
         ingame.InNetGame_UNSURE &= ~(1 << plyr);
     }

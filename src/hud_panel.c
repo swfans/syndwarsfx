@@ -64,6 +64,9 @@
 /******************************************************************************/
 extern long dword_1DC36C;
 
+extern char player_message_text[PLAYERS_LIMIT][128];
+extern ubyte player_message_timer[PLAYERS_LIMIT];
+
 /** Over which agent weapon the cursor is currently placed.
  *
  * Used just for the graphical detail of highliting current weapon when mouse over.
@@ -412,6 +415,49 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
     }
 }
 
+void player_message_clear(PlayerIdx plyr)
+{
+    player_message_timer[plyr] = 0;
+    player_message_text[plyr][0] =  '\0';
+}
+
+void player_chat_clear(void)
+{
+    PlayerIdx plyr;
+
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        player_message_clear(plyr);
+    }
+}
+
+void player_message_timer_tick(PlayerIdx plyr)
+{
+    player_message_timer[plyr]--;
+    if (player_message_timer[plyr] == 0) {
+        player_message_text[plyr][0] = '\0';
+    }
+}
+
+TbBool player_message_add_allowed(PlayerIdx plyr)
+{
+    return player_message_timer[plyr] <= 140;
+}
+
+static void player_message_fmt_va(PlayerIdx plyr, const char *fmt, va_list arg)
+{
+    vsnprintf(player_message_text[plyr], sizeof(player_message_text[0]), fmt, arg);
+    player_message_timer[plyr] = 150;
+}
+
+void player_message_fmt(PlayerIdx plyr, const char *fmt, ...)
+{
+    va_list val;
+    va_start(val, fmt);
+    player_message_fmt_va(plyr, fmt, val);
+    va_end(val);
+}
+
 void draw_players_chat_talk(int x, int y)
 {
     char locstr[164];
@@ -447,12 +493,9 @@ void draw_players_chat_talk(int x, int y)
         LbStringToUpper(locstr);
 
         lbDisplay.DrawColour = net_player_colours[plyr];
-        AppTextDrawMissionChatMessage(base_x, &pos_y, plyr, locstr);
-
-        player_message_timer[plyr]--;
-        if (player_message_timer[plyr] == 0) {
-            player_message_text[plyr][0] = '\0';
-        }
+        AppTextDrawMissionChatMessage(base_x, &pos_y, plyr,
+          player_message_timer[plyr], locstr);
+        player_message_timer_tick(plyr);
     }
 }
 

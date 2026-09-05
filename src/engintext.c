@@ -314,7 +314,8 @@ void draw_text_linewrap2(int base_x, int *p_pos_y, int plyr, const char *text)
 }
 #endif
 
-TbBool AppTextDrawMissionChatMessage(int posx, int *posy, int plyr, const char *text)
+TbBool AppTextDrawMissionChatMessage(int posx, int *posy, int plyr, int timer,
+  const char *text)
 {
     ushort space_bkp;
     int tx_height;
@@ -343,7 +344,7 @@ TbBool AppTextDrawMissionChatMessage(int posx, int *posy, int plyr, const char *
     }
 #endif
     space_bkp = FontSpacingAlter(small_font, 12);
-    ret = AppTextDrawShadClFlashResized(posx, posy, units_per_px, player_message_timer[plyr], text);
+    ret = AppTextDrawShadClFlashResized(posx, posy, units_per_px, timer, text);
     FontSpacingRestore(small_font, space_bkp);
     return ret;
 }

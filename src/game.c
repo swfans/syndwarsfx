@@ -2695,11 +2695,7 @@ void init_level(void)
     if (in_network_game)
     {
         ingame.DetailLevel = 1;
-        for (plyr_no = 0; plyr_no < PLAYERS_LIMIT; plyr_no++)
-        {
-            player_message_timer[plyr_no] = 0;
-            player_message_text[plyr_no][0] =  '\0';
-        }
+        player_chat_clear();
     }
     else
     {
@@ -5422,12 +5418,11 @@ ubyte do_user_interface(void)
         {
             clear_key_pressed(KC_RETURN);
             if ((p_locplayer->PanelState[mouser] != PANEL_STATE_SEND_MESSAGE)
-              && (player_message_timer[local_player_no] <= 140))
+              && player_message_add_allowed(local_player_no))
             {
                 p_locplayer->PanelState[mouser] = PANEL_STATE_SEND_MESSAGE;
                 reset_buffered_keys();
-                player_message_text[local_player_no][0] = '\0';
-                player_message_timer[local_player_no] = 0;
+                player_message_clear(local_player_no);
                 scanner_unkn370 = 0;
                 scanner_unkn3CC = 0;
                 did_inp |= GINPUT_DIRECT;
