@@ -637,11 +637,6 @@ void player_agent_select_specific_weapon(PlayerIdx plyr, struct Thing *p_person,
     }
 }
 
-void player_set_control_mode(PlayerIdx plyr, ushort ctrmode)
-{
-    players[plyr].UserInput[0].ControlMode = ctrmode;
-}
-
 void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
 {
     struct Thing *p_thing;
@@ -1029,7 +1024,7 @@ void process_packet(PlayerIdx plyr, struct Packet *p_pckt, ushort i)
             result = PARes_EINVAL;
             break;
         }
-        player_set_control_mode(plyr, p_pckt->Data);
+        user_input_control_mode_set(plyr, 0, p_pckt->Data);
         result = PARes_DONE;
         break;
     case PAct_AGENT_GOTO_FACE_PT_ABS:

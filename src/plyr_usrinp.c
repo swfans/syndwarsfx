@@ -124,10 +124,25 @@ void reset_user_input(void)
     }
 }
 
+void user_input_control_mode_set(PlayerIdx plyr, ubyte dmuser, ushort ctrmode)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+    p_player->UserInput[dmuser].ControlMode = ctrmode;
+}
+
+ushort user_input_control_mode_get(PlayerIdx plyr, ubyte dmuser)
+{
+    PlayerInfo *p_player;
+
+    p_player = &players[plyr];
+    return p_player->UserInput[dmuser].ControlMode & ~UInpCtr_AllFlagsMask;
+}
+
 void init_user_input_local_controls(void)
 {
     PlayerInfo *p_locplayer;
-    struct SpecialUserInput *p_usrinp;
     ushort ctlmode;
 
     p_locplayer = &players[local_player_no];
@@ -138,32 +153,28 @@ void init_user_input_local_controls(void)
         return;
     }
 
-    p_usrinp = &p_locplayer->UserInput[0];
-    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    ctlmode = user_input_control_mode_get(local_player_no, 0);
     if (ctlmode == UInpCtr_Mouse) {
         mouser = 0;
         my_build_packet = build_packet;
         return;
     }
 
-    p_usrinp = &p_locplayer->UserInput[1];
-    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    ctlmode = user_input_control_mode_get(local_player_no, 1);
     if (ctlmode == UInpCtr_Mouse) {
         mouser = 1;
         my_build_packet = build_packet2;
         return;
     }
 
-    p_usrinp = &p_locplayer->UserInput[2];
-    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    ctlmode = user_input_control_mode_get(local_player_no, 2);
     if (ctlmode == UInpCtr_Mouse) {
         mouser = 2;
         my_build_packet = build_packet3;
         return;
     }
 
-    p_usrinp = &p_locplayer->UserInput[3];
-    ctlmode = p_usrinp->ControlMode & ~UInpCtr_AllFlagsMask;
+    ctlmode = user_input_control_mode_get(local_player_no, 3);
     if (ctlmode == UInpCtr_Mouse) {
         mouser = 3;
         my_build_packet = build_packet4;

@@ -113,6 +113,9 @@ void reset_user_groups(void);
  */
 void reset_user_input(void);
 
+void user_input_control_mode_set(PlayerIdx plyr, ubyte dmuser, ushort ctrmode);
+ushort user_input_control_mode_get(PlayerIdx plyr, ubyte dmuser);
+
 /** Initialize selected control scheme for local users.
  *
  * Finds and setups mouse user, resets controls state for mission start.

@@ -4816,7 +4816,7 @@ void do_scroll_map(void)
         }
         if (dcthing)
         {
-            ctlmode = p_locplayer->UserInput[0].ControlMode & ~UInpCtr_AllFlagsMask;
+            ctlmode = user_input_control_mode_get(local_player_no, 0);
             if (ctlmode == UInpCtr_Mouse || PacketRecord_IsPlayback())
                 move_camera(ingame.TrackX, engn_yc, ingame.TrackZ);
             else
@@ -4825,7 +4825,7 @@ void do_scroll_map(void)
     }
     dy = 0;
     dx = 0;
-    ctlmode = p_locplayer->UserInput[byte_153198-1].ControlMode & ~UInpCtr_AllFlagsMask;
+    ctlmode = user_input_control_mode_get(local_player_no, byte_153198-1);
     engn_xc_orig = engn_xc;
     engn_zc_orig = engn_zc;
     if (ctlmode == UInpCtr_Mouse || PacketRecord_IsPlayback())
@@ -5189,8 +5189,8 @@ ubyte process_mouse_inputs(void)
 
         if (!p_locplayer->DoubleMode)
         {
-            short ctlmode;
-            ctlmode = p_locplayer->UserInput[0].ControlMode & ~UInpCtr_AllFlagsMask;
+            ushort ctlmode;
+            ctlmode = user_input_control_mode_get(local_player_no, 0);
             if (ctlmode != UInpCtr_Mouse)
             {
                 do_change_mouse(8);
@@ -5223,7 +5223,7 @@ ubyte process_mouse_inputs(void)
         return did_inp;
     }
 
-    if (lbDisplay.RightButton && ((p_locplayer->UserInput[mouser].ControlMode & 0x4000) == 0))
+    if (lbDisplay.RightButton && ((p_locplayer->UserInput[mouser].ControlMode & UInpCtrF_Unkn4000) == 0))
     {
         WeaponType wtype;
         lbDisplay.RightButton = 0;
@@ -5287,7 +5287,7 @@ ubyte process_mouse_inputs(void)
         }
     }
 
-    if ( lbDisplay.MRightButton && ((p_locplayer->UserInput[mouser].ControlMode & 0x4000) == 0))
+    if ( lbDisplay.MRightButton && ((p_locplayer->UserInput[mouser].ControlMode & UInpCtrF_Unkn4000) == 0))
     {
         p_pckt = &packets[local_player_no];
         map_y = (alt_at_point(mouse_map_x, mouse_map_z) >> 8) + 20;
@@ -6889,8 +6889,8 @@ void load_packet(void)
         for (dmuser = 0; dmuser < p_locplayer->DoubleMode + 1; dmuser++)
         {
             if (p_locplayer->DoubleMode != 0) {
-                ulong ctlmode;
-                ctlmode = p_locplayer->UserInput[dmuser].ControlMode & ~UInpCtr_AllFlagsMask;
+                ushort ctlmode;
+                ctlmode = user_input_control_mode_get(local_player_no, dmuser);
                 if (ctlmode == UInpCtr_Mouse)
                     continue;
             }

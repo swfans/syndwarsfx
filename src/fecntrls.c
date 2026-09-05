@@ -248,7 +248,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     {
         ushort ctlmode;
 
-        ctlmode = p_locplayer->UserInput[dmuser].ControlMode;
+        ctlmode = user_input_control_mode_get(local_player_no, dmuser);
         if (ctlmode >= UInpCtr_Joystick0)
         {
             int n_found;

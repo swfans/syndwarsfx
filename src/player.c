@@ -492,19 +492,19 @@ void players_init_default_control_mode(void)
     reset_user_input();
 
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
-      players[plyr].UserInput[0].ControlMode = UInpCtr_Mouse;
+        user_input_control_mode_set(plyr, 0, UInpCtr_Mouse);
     }
 }
 
 void set_default_player_control(void)
 {
     PlayerInfo *p_locplayer;
-    short i;
+    ubyte dmuser;
 
     p_locplayer = &players[local_player_no];
     p_locplayer->DoubleMode = 0;
-    for (i = 0; i < LOCAL_USERS_MAX_COUNT; i++) {
-        p_locplayer->UserInput[i].ControlMode = UInpCtr_Mouse;
+    for (dmuser = 0; dmuser < LOCAL_USERS_MAX_COUNT; dmuser++) {
+        p_locplayer->UserInput[dmuser].ControlMode = UInpCtr_Mouse;
     }
 }
 
