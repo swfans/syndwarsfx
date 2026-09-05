@@ -1793,11 +1793,313 @@ void screen_sorted_sprite_persn_render_callback(ushort sspr)
     }
 }
 
-void process_engine_unk3(void)
+/******************************************************************************/
+/* Drawing several frames within one game turn.
+ *
+ * The simulation still advances once per game turn. The extra frames drawn in
+ * between differ only by the camera position, which is moved along the path
+ * the camera travelled during the previous turn. This costs one turn worth of
+ * camera latency, and makes map scrolling smooth.
+ */
+
+static s32 cam_frm_prev_x, cam_frm_prev_z, cam_frm_prev_angle;
+static s32 cam_frm_curr_x, cam_frm_curr_z, cam_frm_curr_angle;
+static s32 cam_frm_save_x, cam_frm_save_z, cam_frm_save_angle;
+
+/** Distance above which a camera move is considered a jump rather than a
+ * scroll, and is therefore not interpolated. Two map tiles. */
+#define CAM_FRM_JUMP_DIST 512
+
+/** A full camera turn, in the units engn_anglexz is kept in. Readers shift it
+ * right by 5 before masking with LbFPMath_AngleMask. */
+#define CAM_FRM_ANGLE_FULL ((LbFPMath_AngleMask + 1) << 5)
+
+/** Records where the camera ended up for the turn whose input was just
+ * processed. To be called once per game turn, right after input(). */
+static void camera_turn_recorded(void)
+{
+    cam_frm_prev_x = cam_frm_curr_x;
+    cam_frm_prev_z = cam_frm_curr_z;
+    cam_frm_prev_angle = cam_frm_curr_angle;
+    cam_frm_curr_x = engn_xc;
+    cam_frm_curr_z = engn_zc;
+    cam_frm_curr_angle = engn_anglexz;
+}
+
+/** Moves the camera to where it should be for the given frame of the current
+ * turn, keeping the real position aside. Frames are numbered from 0, and the
+ * last one lands exactly on the real position. */
+static void camera_frame_begin(ushort frame)
+{
+    s32 dx, dz, dangle;
+
+    cam_frm_save_x = engn_xc;
+    cam_frm_save_z = engn_zc;
+    cam_frm_save_angle = engn_anglexz;
+
+    if (render_frames_this_turn <= 1)
+        return;
+    if (ingame.DisplayMode != DpM_ENGINEPLY)
+        return;
+
+    dx = cam_frm_curr_x - cam_frm_prev_x;
+    dz = cam_frm_curr_z - cam_frm_prev_z;
+    // A jump rather than a scroll - snap instead of sliding across the map.
+    // Checked on its own, so that a camera teleport does not also freeze the
+    // rotation for that turn.
+    if ((abs(dx) <= CAM_FRM_JUMP_DIST) && (abs(dz) <= CAM_FRM_JUMP_DIST))
+    {
+        engn_xc = cam_frm_prev_x + dx * (frame + 1) / render_frames_this_turn;
+        engn_zc = cam_frm_prev_z + dz * (frame + 1) / render_frames_this_turn;
+    }
+
+    // engn_anglexz is a free running accumulator, never masked anywhere in the
+    // tree; readers take (engn_anglexz >> 5) & LbFPMath_AngleMask, so a full
+    // turn is CAM_FRM_ANGLE_FULL and not LbFPMath_AngleMask + 1. Masking it
+    // here used to squeeze the camera into a thirty-second of a turn, which
+    // froze byte_176D49 and with it the facing of every person sprite.
+    dangle = cam_frm_curr_angle - cam_frm_prev_angle;
+    if (labs(dangle) < CAM_FRM_ANGLE_FULL / 2)
+    {
+        engn_anglexz = cam_frm_prev_angle
+          + dangle * (frame + 1) / render_frames_this_turn;
+        camera_update_angle_derived();
+    }
+}
+
+/** Puts the real camera position back after a frame has been drawn. */
+static void camera_frame_end(void)
+{
+    engn_xc = cam_frm_save_x;
+    engn_zc = cam_frm_save_z;
+    engn_anglexz = cam_frm_save_angle;
+}
+
+/* Interpolation of moving things between game turns.
+ *
+ * Same principle as the camera above. The position of every active thing is
+ * recorded once per game turn; the frames drawn within a turn place each thing
+ * along the path it travelled during the previous turn, and the real positions
+ * are put back as soon as the frame is drawn. The simulation therefore never
+ * sees an interpolated position.
+ */
+
+struct TngFrmPos {
+    long X;
+    long Y;
+    long Z;
+    ulong Turn;
+};
+
+struct TngFrmSaved {
+    ThingIdx Index;
+    long X;
+    long Y;
+    long Z;
+};
+
+static struct TngFrmPos tng_frm_prev[THINGS_LIMIT];
+static struct TngFrmPos tng_frm_curr[THINGS_LIMIT];
+static struct TngFrmPos sth_frm_prev[STHINGS_LIMIT];
+static struct TngFrmPos sth_frm_curr[STHINGS_LIMIT];
+static struct TngFrmSaved tng_frm_saved[THINGS_LIMIT + STHINGS_LIMIT];
+static ushort tng_frm_saved_count = 0;
+
+/** Distance above which a move is taken for a teleport rather than a walk,
+ * and is therefore not interpolated. One map tile: thing coordinates count
+ * 65536 to the tile, which is what the map lookups shift out with `X >> 16`;
+ * the 256 of the render coordinates is a tile there, not here. */
+#define TNG_FRM_JUMP_DIST 65536
+
+/** Records where every active thing stands at the end of the turn whose input
+ * was just processed. To be called once per game turn. */
+static void things_turn_recorded(void)
+{
+    struct Thing *p_thing;
+    struct SimpleThing *p_sthing;
+    ThingIdx thing, nxthing;
+    int remain;
+
+    if (render_frames_per_turn <= 1)
+        return;
+
+    remain = things_used;
+    for (thing = things_used_head; thing > 0; thing = nxthing)
+    {
+        if (--remain == -1)
+            break;
+        p_thing = &things[thing];
+        nxthing = p_thing->LinkChild;
+        if (thing >= THINGS_LIMIT)
+            continue;
+        tng_frm_prev[thing] = tng_frm_curr[thing];
+        tng_frm_curr[thing].X = p_thing->X;
+        tng_frm_curr[thing].Y = p_thing->Y;
+        tng_frm_curr[thing].Z = p_thing->Z;
+        tng_frm_curr[thing].Turn = gameturn;
+        // Not followed on the previous turn - a new thing, or a reused slot
+        if (tng_frm_prev[thing].Turn + 1 != gameturn)
+            tng_frm_prev[thing] = tng_frm_curr[thing];
+    }
+
+    remain = sthings_used;
+    for (thing = sthings_used_head; thing < 0; thing = nxthing)
+    {
+        if (--remain == -1)
+            break;
+        p_sthing = &sthings[thing];
+        nxthing = p_sthing->LinkChild;
+        if (-thing >= STHINGS_LIMIT)
+            continue;
+        sth_frm_prev[-thing] = sth_frm_curr[-thing];
+        sth_frm_curr[-thing].X = p_sthing->X;
+        sth_frm_curr[-thing].Y = p_sthing->Y;
+        sth_frm_curr[-thing].Z = p_sthing->Z;
+        sth_frm_curr[-thing].Turn = gameturn;
+        if (sth_frm_prev[-thing].Turn + 1 != gameturn)
+            sth_frm_prev[-thing] = sth_frm_curr[-thing];
+    }
+}
+
+/** Places one thing where it should be for the given frame, and remembers the
+ * position it had. Returns nothing; things which must not move are skipped. */
+static void tng_frm_shift(ThingIdx index, long *p_x, long *p_y, long *p_z,
+  const struct TngFrmPos *p_prev, const struct TngFrmPos *p_curr, ushort back)
+{
+    struct TngFrmSaved *p_saved;
+    long dx, dy, dz;
+
+    if (p_curr->Turn != gameturn)
+        return;
+    dx = p_curr->X - p_prev->X;
+    dy = p_curr->Y - p_prev->Y;
+    dz = p_curr->Z - p_prev->Z;
+    // A jump rather than a walk: the thing is placed on the recorded position
+    // instead of being slid across the map towards it
+    if ((labs(dx) > TNG_FRM_JUMP_DIST) || (labs(dz) > TNG_FRM_JUMP_DIST))
+    {
+        dx = 0;
+        dy = 0;
+        dz = 0;
+    }
+
+    p_saved = &tng_frm_saved[tng_frm_saved_count];
+    p_saved->Index = index;
+    p_saved->X = *p_x;
+    p_saved->Y = *p_y;
+    p_saved->Z = *p_z;
+    tng_frm_saved_count++;
+
+    *p_x = p_curr->X - dx * back / render_frames_this_turn;
+    *p_y = p_curr->Y - dy * back / render_frames_this_turn;
+    *p_z = p_curr->Z - dz * back / render_frames_this_turn;
+}
+
+/** Moves every active thing to where it should be for the given frame of the
+ * current turn. Frames are numbered from 0; the last one lands on the position
+ * recorded for this turn.
+ *
+ * Every frame has to be placed from the recording, the last one included. The
+ * live position cannot stand in for it: process_things() runs in the middle of
+ * the turn, between the first frame and the others, so from the second frame
+ * on the live position is a whole turn ahead of what is being drawn. */
+static void things_frame_begin(ushort frame)
+{
+    struct Thing *p_thing;
+    struct SimpleThing *p_sthing;
+    ThingIdx thing, nxthing;
+    int remain;
+    ushort back;
+
+    tng_frm_saved_count = 0;
+    if (render_frames_this_turn <= 1)
+        return;
+    if (ingame.DisplayMode != DpM_ENGINEPLY)
+        return;
+    // How many frames short of the real position this frame stands
+    back = render_frames_this_turn - 1 - frame;
+
+    remain = things_used;
+    for (thing = things_used_head; thing > 0; thing = nxthing)
+    {
+        if (--remain == -1)
+            break;
+        p_thing = &things[thing];
+        nxthing = p_thing->LinkChild;
+        if (thing >= THINGS_LIMIT)
+            continue;
+        tng_frm_shift(thing, &p_thing->X, &p_thing->Y, &p_thing->Z,
+          &tng_frm_prev[thing], &tng_frm_curr[thing], back);
+    }
+
+    remain = sthings_used;
+    for (thing = sthings_used_head; thing < 0; thing = nxthing)
+    {
+        if (--remain == -1)
+            break;
+        p_sthing = &sthings[thing];
+        nxthing = p_sthing->LinkChild;
+        if (-thing >= STHINGS_LIMIT)
+            continue;
+        tng_frm_shift(thing, &p_sthing->X, &p_sthing->Y, &p_sthing->Z,
+          &sth_frm_prev[-thing], &sth_frm_curr[-thing], back);
+    }
+}
+
+/** Puts back the real position of everything moved for the frame just drawn.
+ * Walks exactly what was moved, so a thing list changed meanwhile cannot
+ * leave a position behind. */
+static void things_frame_end(void)
+{
+    struct TngFrmSaved *p_saved;
+    ushort i;
+
+    for (i = 0; i < tng_frm_saved_count; i++)
+    {
+        p_saved = &tng_frm_saved[i];
+        if (p_saved->Index > 0)
+        {
+            struct Thing *p_thing;
+            p_thing = &things[p_saved->Index];
+            p_thing->X = p_saved->X;
+            p_thing->Y = p_saved->Y;
+            p_thing->Z = p_saved->Z;
+        }
+        else
+        {
+            struct SimpleThing *p_sthing;
+            p_sthing = &sthings[p_saved->Index];
+            p_sthing->X = p_saved->X;
+            p_sthing->Y = p_saved->Y;
+            p_sthing->Z = p_saved->Z;
+        }
+    }
+    tng_frm_saved_count = 0;
+}
+
+/** Prepares and draws one frame of the game engine.
+ *
+ * When advance is false, the parts which move the simulation forward are
+ * skipped, so the frame can be drawn again within the same game turn without
+ * the world ageing twice.
+ */
+void process_engine_frame(TbBool advance, ushort frame)
 {
     PlayerInfo *p_locplayer;
 
-    get_engine_inputs();
+    frame_advances_state = advance;
+
+    // Where the camera ended up for this turn. Recorded here rather than in
+    // the game loop, because the camera is moved during the drawing - by
+    // process_view_inputs() for scrolling and process_engine_unk1() for the
+    // rotation, both of which run just before this function. Recording it
+    // before those ran made every drawn frame show a camera one whole turn
+    // behind, and the last frame of a turn never landed on the real position.
+    if (advance)
+        camera_turn_recorded();
+
+    if (advance)
+        get_engine_inputs();
 
     reset_drawlist();
     ingame.NextRocket = 0;
@@ -1812,9 +2114,10 @@ void process_engine_unk3(void)
     mech_unkn_dw_1DC890 = mech_unkn_tile_x3;
     mech_unkn_dw_1DC894 = mech_unkn_tile_y3;
 
-    process_map_craters();
+    if (advance)
+        process_map_craters();
 
-    if (((ingame.Flags & GamF_BillboardBAT) == 0) &&
+    if (advance && ((ingame.Flags & GamF_BillboardBAT) == 0) &&
       ((ingame.Flags & GamF_BillboardMovies) != 0))
     {
         dword_176CBC += fifties_per_gameturn;
@@ -1832,6 +2135,9 @@ void process_engine_unk3(void)
     int rend_beg_x, rend_beg_z;
     int pos_beg_x, pos_beg_z;
     int tlcount_x, tlcount_z;
+
+    camera_frame_begin(frame);
+    things_frame_begin(frame);
 
     camera_setup_view(&pos_beg_x, &pos_beg_z, &rend_beg_x, &rend_beg_z, &tlcount_x, &tlcount_z);
 
@@ -1878,10 +2184,21 @@ void process_engine_unk3(void)
         ingame.NextRocket = 0;
     }
 
+    things_frame_end();
+    camera_frame_end();
+    frame_advances_state = true;
+
     // Which frame of an animated texture is on screen is not part of the game
     // state - no simulation code reads it. Advanced here, after the frame was
-    // enlisted, it keeps the pace it had within process_things().
-    animate_textures();
+    // enlisted, it keeps the pace it had within process_things() - once per
+    // turn, not once per drawn frame.
+    if (advance)
+        animate_textures();
+}
+
+void process_engine_unk3(void)
+{
+    process_engine_frame(true, 0);
 }
 
 void process_sound_heap(void)
@@ -2002,7 +2319,7 @@ void init_outro(void)
     outro_unkn02 = 0;
     outro_unkn03 = 0;
     gameturn = 0;
-    render_anim_turn = gameturn;
+    render_clock_set_turn(gameturn);
 
     screen_animate_draw_outro_text();
     // Sleep for up to 10 seconds
@@ -2046,7 +2363,7 @@ void init_outro(void)
         }
 
         gameturn++;
-        render_anim_turn = gameturn;
+        render_clock_set_turn(gameturn);
         traffic_unkn_func_01();
         process_engine_unk1();
         process_sound_heap();
@@ -6119,7 +6436,7 @@ void show_load_and_prep_mission(void)
         }
         debug_trace_place(19);
     }
-    render_anim_turn = gameturn;
+    render_clock_set_turn(gameturn);
 
     // Set up remaining graphics data and controls
     if (start_into_mission)
@@ -6584,8 +6901,9 @@ void draw_game(void)
 {
     // One more frame is about to be drawn. The counters the drawing uses
     // advance here, so that they follow the frames and not the game turns.
-    drawturn++;
-    render_anim_turn++;
+    // This is the first frame of the turn; the others are opened by
+    // render_extra_frames().
+    render_clock_next_frame(0, render_frames_this_turn);
 
     switch (ingame.DisplayMode)
     {
@@ -6992,6 +7310,25 @@ void game_process_orbital_station_explode(void)
     }
 }
 
+/** Draws the frames which follow the first one within a game turn. */
+static void render_extra_frames(void)
+{
+    ushort frame;
+
+    if (ingame.DisplayMode != DpM_ENGINEPLY)
+        return;
+    if (skip_redraw_this_turn())
+        return;
+
+    for (frame = 1; frame < render_frames_this_turn; frame++)
+    {
+        render_clock_next_frame(frame, render_frames_this_turn);
+        process_engine_frame(false, frame);
+        game_update();
+        LbScreenSwapClear(0);
+    }
+}
+
 void game_process(void)
 {
     debug_multicolor_sprite(193);
@@ -6999,6 +7336,7 @@ void game_process(void)
 
     while ( !exit_game )
     {
+        render_frames_this_turn = 1;
         process_sound_heap();
         navi2_unkn_counter -= 2;
         if (navi2_unkn_counter < 0)
@@ -7018,6 +7356,13 @@ void game_process(void)
         if ((ingame.DisplayMode == DpM_ENGINEPLY)
           && ((ingame.Flags & TngF_ProgressAction) != 0))
             process_explode();
+        things_turn_recorded();
+        // Only the in-mission view draws more than one frame per turn.
+        // Anywhere else the turn has to keep its full length, or every
+        // screen runs render_frames_per_turn times too fast. Decided before
+        // the first frame, because that frame is one of the several.
+        if ((ingame.DisplayMode == DpM_ENGINEPLY) && !skip_redraw_this_turn())
+            render_frames_this_turn = render_frames_per_turn;
         draw_game();
         debug_trace_turn_bound(gameturn);
         load_packet();
@@ -7044,6 +7389,7 @@ void game_process(void)
         {
             game_update();
             LbScreenSwapClear(0);
+            render_extra_frames();
         }
 
         update_unkn_changing_colors();

@@ -55,6 +55,15 @@ enum RenderFacesFlags {
  */
 extern u32 render_anim_turn;
 
+/** Position within the current animation turn, in 1/256th of a turn.
+ *
+ * Always zero when one frame is drawn per game turn. When several are, it
+ * tells how far into the turn the frame being drawn stands, so that an
+ * animation which only advances once per turn can be drawn in between its
+ * two steps rather than jumping.
+ */
+extern u32 render_anim_subturn;
+
 /** Animation speed limiter.
  *
  * Lowering this will speed up animation. Increasing will only have effect

@@ -106,6 +106,11 @@ int transform_shpoint_y(int dxc, int dyc, int dzc);
 void transform_screen_to_map_isometric(int *dxc, int *dzc, int scr_x, int scr_y);
 
 void process_engine_unk1(void);
+
+/** Recomputes the values derived from engn_anglexz, without advancing the
+ * camera rotation. Needed when the angle is set outside of
+ * process_engine_unk1(), as interpolated frames do. */
+void camera_update_angle_derived(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }
