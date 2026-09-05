@@ -271,7 +271,7 @@ void agents_copy_fourpacks_netplayer_to_player(int plyr, struct NetworkPlayer *p
     for (plagent = 0; plagent < 4; plagent++)
     {
         for (fp = 0; fp < WFRPK_COUNT; fp++) {
-            players[plyr].FourPacks[plagent][fp] = \
+            players[plyr].FourPacks[fp][plagent] = \
               p_netplyr->U.FourPacks.FourPacks[plagent][fp];
         }
     }
