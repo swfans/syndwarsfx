@@ -129728,7 +129728,7 @@ func_cc59c:
 		jmp    jump_cc5d6
 	jump_cc5a5:
 		xor    %ecx,%ecx
-		mov    EXPORT_SYMBOL(stru_1DDB70)+0x08(%esi),%cl
+		mov    EXPORT_SYMBOL(outro_hot_chars)+0x08(%esi),%cl
 		imul   $0x6,%ecx,%ecx
 		mov    EXPORT_SYMBOL(med2_font),%ebx
 	jump_cc5b6:
@@ -129743,17 +129743,17 @@ func_cc59c:
 		cmp    $0x60,%esi
 		je     jump_cc612
 	jump_cc5d6:
-		cmpb   $0x0,EXPORT_SYMBOL(stru_1DDB70)+0x08(%esi)
+		cmpb   $0x0,EXPORT_SYMBOL(outro_hot_chars)+0x08(%esi)
 		je     jump_cc5ce
-		mov    EXPORT_SYMBOL(stru_1DDB70)(%esi),%eax
+		mov    EXPORT_SYMBOL(outro_hot_chars)(%esi),%eax
 		xor    %ebx,%ebx
-		mov    EXPORT_SYMBOL(stru_1DDB70)+0x04(%esi),%edx
-		mov    EXPORT_SYMBOL(stru_1DDB70)+0x0A(%esi),%bl
-		movzbl EXPORT_SYMBOL(stru_1DDB70)+0x09(%esi),%edi
+		mov    EXPORT_SYMBOL(outro_hot_chars)+0x04(%esi),%edx
+		mov    EXPORT_SYMBOL(outro_hot_chars)+0x0A(%esi),%bl
+		movzbl EXPORT_SYMBOL(outro_hot_chars)+0x09(%esi),%edi
 		cmp    $0x1,%ebx
 		jne    jump_cc5a5
 		xor    %ebx,%ebx
-		mov    EXPORT_SYMBOL(stru_1DDB70)+0x08(%esi),%bl
+		mov    EXPORT_SYMBOL(outro_hot_chars)+0x08(%esi),%bl
 		imul   $0x6,%ebx,%ebx
 		mov    EXPORT_SYMBOL(big_font),%ecx
 		jmp    jump_cc5b6
@@ -129793,7 +129793,7 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 	jump_cc647:
 		add    $0xc,%eax
 		xor    %dl,%dl
-		mov    %dl,EXPORT_SYMBOL(stru_1DDB70)-0x04(%eax)
+		mov    %dl,EXPORT_SYMBOL(outro_hot_chars)-0x04(%eax)
 		cmp    $0x60,%eax
 		jne    jump_cc647
 		mov    $0xe,%edx
@@ -129805,20 +129805,20 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		je     jump_cc709
 	jump_cc671:
 		mov    0x0(%ebp),%al
-		mov    %al,data_1ddbcc
+		mov    %al,EXPORT_SYMBOL(outro_hot_chars)+0x5C
 		xor    %eax,%eax
 		mov    0x0(%ebp),%al
 		imul   $0x6,%eax,%eax
 		mov    $0x1,%dh
 		mov    $0xe,%esi
-		mov    %dh,data_1ddbce
+		mov    %dh,EXPORT_SYMBOL(outro_hot_chars)+0x5E
 		mov    EXPORT_SYMBOL(big_font),%edx
 		mov    $0x3f,%cl
 		add    %edx,%eax
-		mov    %ebx,data_1ddbc4
+		mov    %ebx,EXPORT_SYMBOL(outro_hot_chars)+0x54
 		sub    $0xba,%eax
-		mov    %esi,data_1ddbc8
-		mov    %cl,data_1ddbcd
+		mov    %esi,EXPORT_SYMBOL(outro_hot_chars)+0x58
+		mov    %cl,EXPORT_SYMBOL(outro_hot_chars)+0x5D
 		mov    0x4(%eax),%al
 		and    $0xff,%eax
 		inc    %ebp
@@ -129831,22 +129831,22 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		cmp    $0x60,%eax
 		je     jump_cc6f7
 	jump_cc6ce:
-		lea    EXPORT_SYMBOL(stru_1DDB70)-0x0C(%eax),%edi
-		lea    EXPORT_SYMBOL(stru_1DDB70)(%eax),%esi
+		lea    EXPORT_SYMBOL(outro_hot_chars)-0x0C(%eax),%edi
+		lea    EXPORT_SYMBOL(outro_hot_chars)(%eax),%esi
 		xor    %edx,%edx
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
-		mov    EXPORT_SYMBOL(stru_1DDB70)-0x03(%eax),%dl
+		mov    EXPORT_SYMBOL(outro_hot_chars)-0x03(%eax),%dl
 		cmp    $0x20,%edx
 		jle    jump_cc6c6
 		mov    %dl,%ch
 		sub    $0x4,%ch
-		mov    %ch,EXPORT_SYMBOL(stru_1DDB70)-0x03(%eax)
+		mov    %ch,EXPORT_SYMBOL(outro_hot_chars)-0x03(%eax)
 		jmp    jump_cc6c6
 	jump_cc6f7:
 		xor    %cl,%cl
-		mov    %cl,data_1ddbcc
+		mov    %cl,EXPORT_SYMBOL(outro_hot_chars)+0x5C
 		cmpb   $0x0,0x0(%ebp)
 		jne    jump_cc671
 	jump_cc709:
@@ -129927,20 +129927,20 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		jmp    jump_cc863
 	jump_cc801:
 		mov    0x4(%esp),%eax
-		mov    %eax,data_1ddbc4
+		mov    %eax,EXPORT_SYMBOL(outro_hot_chars)+0x54
 		mov    0x8(%esp),%eax
-		mov    %eax,data_1ddbc8
+		mov    %eax,EXPORT_SYMBOL(outro_hot_chars)+0x58
 		xor    %eax,%eax
 		mov    %dl,%al
 		imul   $0x6,%eax,%eax
 		mov    $0x2,%cl
-		mov    %dl,data_1ddbcc
+		mov    %dl,EXPORT_SYMBOL(outro_hot_chars)+0x5C
 		mov    EXPORT_SYMBOL(med2_font),%edx
-		mov    %cl,data_1ddbce
+		mov    %cl,EXPORT_SYMBOL(outro_hot_chars)+0x5E
 		add    %edx,%eax
 		mov    $0x3f,%ch
 		sub    $0xba,%eax
-		mov    %ch,data_1ddbcd
+		mov    %ch,EXPORT_SYMBOL(outro_hot_chars)+0x5D
 		mov    0x4(%eax),%al
 		mov    0x4(%esp),%edi
 		and    $0xff,%eax
@@ -129955,22 +129955,22 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		cmp    $0x60,%eax
 		je     jump_cc88c
 	jump_cc863:
-		lea    EXPORT_SYMBOL(stru_1DDB70)-0x0C(%eax),%edi
-		lea    EXPORT_SYMBOL(stru_1DDB70)(%eax),%esi
+		lea    EXPORT_SYMBOL(outro_hot_chars)-0x0C(%eax),%edi
+		lea    EXPORT_SYMBOL(outro_hot_chars)(%eax),%esi
 		xor    %edx,%edx
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
-		mov    EXPORT_SYMBOL(stru_1DDB70)-0x03(%eax),%dl
+		mov    EXPORT_SYMBOL(outro_hot_chars)-0x03(%eax),%dl
 		cmp    $0x20,%edx
 		jle    jump_cc85b
 		mov    %dl,%ch
 		sub    $0x4,%ch
-		mov    %ch,EXPORT_SYMBOL(stru_1DDB70)-0x03(%eax)
+		mov    %ch,EXPORT_SYMBOL(outro_hot_chars)-0x03(%eax)
 		jmp    jump_cc85b
 	jump_cc88c:
 		xor    %al,%al
-		mov    %al,data_1ddbcc
+		mov    %al,EXPORT_SYMBOL(outro_hot_chars)+0x5C
 		mov    0x1(%ebp),%ah
 		inc    %ebp
 		test   %ah,%ah
@@ -129985,7 +129985,7 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 	jump_cc8b1:
 		xor    %al,%al
 		inc    %ebx
-		mov    %al,data_1ddbcc
+		mov    %al,EXPORT_SYMBOL(outro_hot_chars)+0x5C
 		cmp    $0x8,%ebx
 		jge    jump_cc8f5
 		call   func_cc59c
@@ -129996,17 +129996,17 @@ GLOBAL_FUNC (ASM_func_cc638)	/* 0xcc638 */
 		cmp    $0x60,%eax
 		je     jump_cc8b1
 	jump_cc8cf:
-		lea    EXPORT_SYMBOL(stru_1DDB70)-0x0C(%eax),%edi
-		lea    EXPORT_SYMBOL(stru_1DDB70)(%eax),%esi
+		lea    EXPORT_SYMBOL(outro_hot_chars)-0x0C(%eax),%edi
+		lea    EXPORT_SYMBOL(outro_hot_chars)(%eax),%esi
 		xor    %edx,%edx
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
 		movsl  %ds:(%esi),%es:(%edi)
-		mov    EXPORT_SYMBOL(stru_1DDB70)-0x03(%eax),%dl
+		mov    EXPORT_SYMBOL(outro_hot_chars)-0x03(%eax),%dl
 		cmp    $0x20,%edx
 		jle    jump_cc8c7
 		sub    %cl,%dl
-		mov    %dl,EXPORT_SYMBOL(stru_1DDB70)-0x03(%eax)
+		mov    %dl,EXPORT_SYMBOL(outro_hot_chars)-0x03(%eax)
 		jmp    jump_cc8c7
 	jump_cc8f5:
 		add    $0xc,%esp
@@ -133499,15 +133499,5 @@ data_1ddb6c:
 		.long	0x0
 		.align	4
 
-GLOBAL (stru_1DDB70)	/* 0x1ddb70 */
-		.fill   0x54
-data_1ddbc4:
-		.long	0x0
-data_1ddbc8:
-		.long	0x0
-data_1ddbcc:
-		.byte	0x0
-data_1ddbcd:
-		.byte	0x0
-data_1ddbce:
-		.short  0x0
+GLOBAL (outro_hot_chars)	/* 0x1ddb70 */
+		.fill   0x60

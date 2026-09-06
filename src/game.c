@@ -198,14 +198,20 @@ enum ReloadMenuFlags {
     RelMnuF_ScrBoxesFull = 0x04,
 };
 
+#define OUTRO_HOT_CHARS_COUNT 8
+
 #pragma pack(1)
 
-struct struc_CC638 {
-    s32 field_0;
-    s32 field_4;
-    ubyte field_8;
-    ubyte field_9;
-    ubyte field_A;
+/** A character of the outro text which was already drawn, and is still
+ * bright enough to be worth drawing again while it fades out. */
+struct OutroHotChar {
+    s32 x;
+    s32 y;
+    ubyte chr;
+    /** Brightness, used as index within pixmap.fade_table[]. */
+    ubyte fade_lv;
+    /** Font to draw with; 1 selects big_font, anything else med2_font. */
+    ubyte font;
     ubyte field_B;
 };
 
@@ -291,7 +297,7 @@ extern long mech_unkn_tile_y2;
 extern long mech_unkn_tile_x3;
 extern long mech_unkn_tile_y3;
 
-extern struct struc_CC638 stru_1DDB70[8];
+extern struct OutroHotChar outro_hot_chars[OUTRO_HOT_CHARS_COUNT];
 
 //TODO this is not an extern only because I was unable to locate it in asm
 ushort next_bezier_pt = 1;
@@ -838,13 +844,13 @@ void sub_CC554(void)
 {
     ushort i;
 
-    for (i = 0; i < 8 - 1; i++)
+    for (i = 0; i < OUTRO_HOT_CHARS_COUNT - 1; i++)
     {
-        LbMemoryCopy(&stru_1DDB70[i], &stru_1DDB70[i+1], sizeof(struct struc_CC638));
-        if (stru_1DDB70[i].field_9 > 32)
-            stru_1DDB70[i].field_9 -= 4;
+        LbMemoryCopy(&outro_hot_chars[i], &outro_hot_chars[i+1], sizeof(struct OutroHotChar));
+        if (outro_hot_chars[i].fade_lv > 32)
+            outro_hot_chars[i].fade_lv -= 4;
     }
-    stru_1DDB70[8 - 1].field_8 = 0;
+    outro_hot_chars[OUTRO_HOT_CHARS_COUNT - 1].chr = 0;
 }
 
 char func_cc638(const char *text1, const char *text2)
