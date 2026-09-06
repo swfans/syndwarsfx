@@ -838,11 +838,11 @@ void sub_CC554(void)
 {
     ushort i;
 
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < 8 - 1; i++)
     {
         LbMemoryCopy(&stru_1DDB70[i], &stru_1DDB70[i+1], sizeof(struct struc_CC638));
-        if (stru_1DDB70[i + 1].field_9 > 32)
-            stru_1DDB70[i + 1].field_9 -= 4;
+        if (stru_1DDB70[i].field_9 > 32)
+            stru_1DDB70[i].field_9 -= 4;
     }
     stru_1DDB70[8 - 1].field_8 = 0;
 }
