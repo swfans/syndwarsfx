@@ -840,7 +840,7 @@ void play_intro(void)
     }
 }
 
-void sub_CC554(void)
+void outro_hot_chars_shift(void)
 {
     ushort i;
 
