@@ -1,4 +1,3 @@
-#pragma GCC optimize ("O2", "no-strict-aliasing")
 /******************************************************************************/
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
