@@ -394,23 +394,32 @@ void SCANNER_move_objective_info(int width, int height, int end_pos)
           scanner_unkn370 = -20;
       if (end_pos > lbDisplay.PhysicalScreenWidth - 16)
           scanner_unkn370 = 10;
-      if (scanner_unkn370 > 0)
+      // The chat scroller counts frames, so it only advances on the frame
+      // which carries the turn forward; that keeps its original pace whatever
+      // the number of frames drawn per turn
+      if (frame_advances_state)
       {
-          scanner_unkn370--;
-          scanner_unkn3CC -= 1 * height / 9;
-      }
-      if (scanner_unkn370 < 0)
-      {
-          scanner_unkn370++;
-          scanner_unkn3CC += 1 * height / 9;
-          if (scanner_unkn3CC > 0)
-              scanner_unkn3CC = 0;
+          if (scanner_unkn370 > 0)
+          {
+              scanner_unkn370--;
+              scanner_unkn3CC -= 1 * height / 9;
+          }
+          if (scanner_unkn370 < 0)
+          {
+              scanner_unkn370++;
+              scanner_unkn3CC += 1 * height / 9;
+              if (scanner_unkn3CC > 0)
+                  scanner_unkn3CC = 0;
+          }
       }
     }
     else
     {
         if (end_pos < 0)
             scanner_unkn3CC = width;
+        // Advanced once per game turn (the caller only runs this on the frame
+        // which carries the turn forward), so the step is the original one,
+        // independent of how many frames are drawn per turn.
         scanner_unkn3CC -= 2 * height / 9;
     }
 }
@@ -525,7 +534,10 @@ void draw_objective_info_text(int scr_x, int scr_y, int width, int height)
 
     LbScreenLoadGraphicsWindow(&bkpwnd);
 
-    SCANNER_move_objective_info(width, height, end_pos);
+    // Only on the frame which carries the turn forward, otherwise the text
+    // scrolls as many times faster as there are frames drawn per turn
+    if (frame_advances_state)
+        SCANNER_move_objective_info(width, height, end_pos);
 }
 
 void draw_players_chat(void)

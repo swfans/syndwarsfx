@@ -1,3 +1,4 @@
+#pragma GCC optimize ("O2", "no-strict-aliasing")
 /******************************************************************************/
 // Syndicate Wars Fan Expansion, source port of the classic game from Bullfrog.
 /******************************************************************************/
@@ -306,6 +307,16 @@ int transform_shpoint_y(int dxc, int dyc, int dzc)
     return scr_y;
 }
 
+void camera_update_angle_derived(void)
+{
+    int angle;
+
+    angle = (engn_anglexz >> 5) & LbFPMath_AngleMask;
+    dword_176D0C = angle;
+    dword_176D14 = lbSinTable[angle + LbFPMath_PI/2];
+    dword_176D10 = lbSinTable[angle];
+}
+
 void process_engine_unk1(void)
 {
     int angle;
@@ -315,10 +326,7 @@ void process_engine_unk1(void)
     dword_176D40 = vec_window_height / 2;
     engn_anglexz += cam_rotation_velocity;
     dword_176D44 = 4 * (vec_window_width / 2) / 3;
-    angle = (engn_anglexz >> 5) & LbFPMath_AngleMask;
-    dword_176D0C = angle;
-    dword_176D14 = lbSinTable[angle + LbFPMath_PI/2];
-    dword_176D10 = lbSinTable[angle];
+    camera_update_angle_derived();
     angle = cam_tilt & LbFPMath_AngleMask;
     dword_176D18 = lbSinTable[angle];
     dword_176D1C = lbSinTable[angle + LbFPMath_PI/2];

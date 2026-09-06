@@ -117,7 +117,7 @@ void enlist_draw_frame_graphic(int x, int y, int z, ushort frame,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_between_turns(render_anim_turn) >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
@@ -145,7 +145,7 @@ void enlist_draw_frame_graphic_scale(int x, int y, int z, ushort frame,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_between_turns(render_anim_turn) >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
@@ -262,7 +262,7 @@ void enlist_draw_fire_flames(ushort flame_beg)
         cor_dz = p_flame->z - engn_zc;
 
         if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-            cor_dy += waft_table[render_anim_turn & 0x1F];
+            cor_dy += waft_between_turns(render_anim_turn);
 
         transform_shpoint(&sp, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
@@ -413,7 +413,7 @@ void enlist_draw_number(int x, int y, int z, short scr_dx, short scr_dy,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_between_turns(render_anim_turn) >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
@@ -441,7 +441,7 @@ void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_between_turns(render_anim_turn) >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 

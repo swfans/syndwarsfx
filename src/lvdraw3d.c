@@ -72,6 +72,27 @@ extern short word_19CC66;
 TbBool nuclear_overexposure = false;
 
 
+/** Blends two values of an animation which steps once per animation turn.
+ *
+ * The surface animations below move by one table entry per turn. When more
+ * than one frame is drawn within a turn, taking the value of the turn alone
+ * makes the surface stand still and then jump; this places it where it should
+ * be for the frame instead. With one frame per turn the fraction is zero and
+ * the value is exactly the one of the turn.
+ */
+static int anim_between_turns(int val_this_turn, int val_next_turn)
+{
+    return val_this_turn
+      + ((val_next_turn - val_this_turn) * (int)render_anim_subturn) / 256;
+}
+
+static int floor_wobble_at_turn(int elcr_x, int elcr_z, int dvfactor, uint anim_turn)
+{
+    return (waft_table2[(anim_turn + (elcr_x >> 7)) & 0x1F]
+         + waft_table2[(anim_turn + (elcr_z >> 7)) & 0x1F]
+         + waft_table2[(32 * anim_turn / dvfactor) & 0x1F]) >> 3;
+}
+
 int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z, int mag)
 {
     int elcr_y;
@@ -85,7 +106,8 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
     {
         elcr_y = 8 * p_mapel->Alt;
         if ((p_mapel->Flags & 0x40) != 0)
-            elcr_y += waft_table[render_anim_turn & 0x1F];
+            elcr_y += anim_between_turns(waft_table[render_anim_turn & 0x1F],
+              waft_table[(render_anim_turn + 1) & 0x1F]);
         p_sp->ReflShade = 0;
     }
     else
@@ -94,9 +116,9 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
 
         elcr_y = 8 * p_mapel->Alt;
         dvfactor = 140 + ((bw_rotl32(0x5D3BA6C3, elcr_z >> 8) ^ bw_rotr32(0xA7B4D8AC, elcr_x >> 8)) & 0x7F);
-        wobble = (waft_table2[(render_anim_turn + (elcr_x >> 7)) & 0x1F]
-             + waft_table2[(render_anim_turn + (elcr_z >> 7)) & 0x1F]
-             + waft_table2[(32 * render_anim_turn / dvfactor) & 0x1F]) >> 3;
+        wobble = anim_between_turns(
+          floor_wobble_at_turn(elcr_x, elcr_z, dvfactor, render_anim_turn),
+          floor_wobble_at_turn(elcr_x, elcr_z, dvfactor, render_anim_turn + 1));
         elcr_y += mag * wobble;
         p_sp->ReflShade = (wobble + 32) << 9;
     }
