@@ -215,6 +215,7 @@ void init_mission_states(void);
 void missions_clear_bank_tests(void);
 
 ushort find_mission_with_map_and_level(ushort mapno, ushort level);
+ushort find_first_mission_with_map(short mapno);
 void fix_mission_used_objectives(short missi);
 
 TbBool mission_remain_until_success(ushort missi);

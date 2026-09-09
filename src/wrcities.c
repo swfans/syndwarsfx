@@ -547,6 +547,19 @@ void activate_cities(ubyte brief)
     }
 }
 
+ushort find_mission_for_city_in_brief(short brief, sbyte city)
+{
+    ushort missi;
+
+    for (missi = brief_store[brief].Mission; missi != 0;
+      missi = mission_list[missi].SpecialTrigger[0])
+    {
+        if (mission_list[missi].MapNo == cities[city].MapID)
+            break;
+    }
+    return missi;
+}
+
 sbyte find_closest_city(ushort x, ushort y)
 {
     sbyte ret;

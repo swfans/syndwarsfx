@@ -5534,7 +5534,7 @@ void show_menu_screen_st2(void)
               sizeof(struct MissionStatus));
             delete_mail(open_brief - 1, MlTp_Mission);
             open_brief = 0;
-            old_mission_brief = 0;
+            reset_brief_screen_player_state();
             cities[map_hl_city_id].Info = 0;
       }
       else
@@ -5576,33 +5576,6 @@ void show_menu_screen_st2(void)
     net_system_init2();
 }
 
-ushort find_mission_with_mapid(short mapID, short mission_limit)
-{
-    ushort i;
-    for (i = 1; i < mission_limit; i++)
-    {
-        if (mission_list[i].MapNo == mapID) {
-            return i;
-        }
-    }
-    return 0;
-}
-
-/** Searches for mission taking place in given city, within mission chain specified by the brief.
- */
-ushort find_mission_for_city_in_brief(short brief, sbyte city_no)
-{
-    ushort missi;
-
-    for (missi = brief_store[brief].Mission; missi != 0;
-      missi = mission_list[missi].SpecialTrigger[0])
-    {
-        if (mission_list[missi].MapNo == cities[city_no].MapID)
-            break;
-    }
-    return missi;
-}
-
 void update_open_brief(void)
 {
     short brief;
@@ -5638,7 +5611,7 @@ void show_load_and_prep_mission(void)
         {
             ushort missi;
             ingame.MissionNo = 1;
-            missi = find_mission_with_mapid(cities[login_control__City].MapID, next_mission);
+            missi = find_first_mission_with_map(cities[login_control__City].MapID);
             if (missi > 0) {
                 ingame.MissionNo = missi;
             }

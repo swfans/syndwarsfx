@@ -77,6 +77,10 @@ void load_city_data(ubyte type);
 void activate_cities(ubyte brief);
 void recount_city_credit_reward(ubyte city);
 
+/** Searches for mission taking place in given city, within mission chain in the brief.
+ */
+ushort find_mission_for_city_in_brief(short brief, sbyte city);
+
 sbyte find_closest_city(ushort x, ushort y);
 /******************************************************************************/
 #ifdef __cplusplus

@@ -100,7 +100,7 @@ ubyte do_unkn2_ACCEPT(ubyte click)
     if (map_hl_city_id == -1)
         return 0;
 
-    if ((cities[map_hl_city_id].Flags & 0x11) == 0)
+    if ((cities[map_hl_city_id].Flags & (CitF_Unkn10 | CitF_Unkn01)) == 0)
     {
         alert_box_text_fmt("%s", gui_strings[569]);
         return 1;

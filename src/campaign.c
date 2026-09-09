@@ -339,12 +339,23 @@ ushort find_mission_with_map_and_level(ushort mapno, ushort level)
 {
     ushort missi;
 
-    for (missi = 1; missi < MISSIONS_MAX_COUNT; missi++) {
+    for (missi = 1; missi < next_mission; missi++) {
         struct Mission *p_missi;
         p_missi = &mission_list[missi];
         if ((p_missi->MapNo == mapno) && (p_missi->LevelNo == level))
             return missi;
         if ((p_missi->MapNo == mapno) && (p_missi->ReLevelNo == level))
+            return missi;
+    }
+    return 0;
+}
+
+ushort find_first_mission_with_map(short mapno)
+{
+    ushort missi;
+    for (missi = 1; missi < next_mission; missi++)
+    {
+        if (mission_list[missi].MapNo == mapno)
             return missi;
     }
     return 0;
