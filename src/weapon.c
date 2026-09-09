@@ -2159,7 +2159,7 @@ void init_lay_razor(struct Thing *p_thing, short x, short y, short z, int flag)
     asm volatile (
       "push %4\n"
       "call ASM_init_lay_razor\n"
-        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" (flag));
+        : : "a" (p_thing), "d" (x), "b" (y), "c" (z), "g" ((u32)flag));
 }
 
 void update_razor_wire(struct Thing *p_person)

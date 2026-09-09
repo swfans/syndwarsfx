@@ -280,6 +280,8 @@ void count_selectable_cities(void)
     short city_id, last_city_id;
 
     mail_num_active_cities = 0;
+    last_city_id = -1;
+
     for (city_id = 0; city_id < num_cities; city_id++)
     {
         if (cities[city_id].Flags & CitF_Unkn01) {

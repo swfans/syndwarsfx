@@ -228,6 +228,7 @@ void srm_scanner_size_update(void)
         return;
     }
 
+    p_panel = &game_panel[panel];
     srm_scanner_set_size_to_panel_with_limit(p_panel);
 }
 

@@ -364,7 +364,7 @@ void apply_full_light(short lx, short lz, ushort b, ushort intens, ushort lid)
     asm volatile (
       "push %4\n"
       "call ASM_apply_full_light\n"
-        : : "a" (lx), "d" (lz), "b" (b), "c" (intens), "g" (lid));
+        : : "a" (lx), "d" (lz), "b" (b), "c" (intens), "g" ((u32)lid));
     return;
 }
 
@@ -1915,7 +1915,7 @@ struct SimpleThing *create_item(int x, int y, int z, ushort frame, ubyte subtype
     asm volatile (
       "push %5\n"
       "call ASM_create_item\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (subtype));
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (frame), "g" ((u32)subtype));
     return ret;
 }
 
@@ -1925,7 +1925,7 @@ struct SimpleThing *create_scale_effect(int x, int y, int z, ushort frame, short
     asm volatile (
       "push %5\n"
       "call ASM_create_scale_effect\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (frame), "g" (timer));
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (frame), "g" ((s32)timer));
     return ret;
 }
 

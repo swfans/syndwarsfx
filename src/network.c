@@ -462,6 +462,7 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
     struct TbIPXPlayerHeader ipxhead;
     ulong tm_start, tm_curr;
     TbResult ret;
+    ushort my_plyr;
     short i, k;
 
     LOGDBG("Starting");
@@ -481,6 +482,7 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
     strcpy(ipxhead.field_C, a2);
     strcpy(ipxhead.field_4, p_ipxsess->Session.Name);
     ipxhead.field_2 = IPXPlayer.Header.field_2;
+    my_plyr = 0;
 
     tm_start = clock();
     while ( 1 )
@@ -520,6 +522,7 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
                 if (memcmp(p_nplyr->field_4, ipxhead.field_1C, 6) == 0)
                 {
                     tm_start = 0;
+                    my_plyr = k;
                     ret = 1;
                     i = 31;
                     break;
@@ -554,13 +557,13 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
         memcpy(IPXPlayer.Header.field_1C, IPXHandler->field_2E, sizeof(IPXPlayer.Header.field_1C));
         memcpy(&IPXPlayer.Header.field_20, IPXHandler->field_2E + 4, sizeof(IPXPlayer.Header.field_20));
         memcpy(IPXPlayer.Header.field_22, &IPXHandler->field_2A, sizeof(IPXPlayer.Header.field_22));
-        IPXHandler->field_C = k;
+        IPXHandler->field_C = my_plyr;
         IPXHandler->SessionActive = 1;
         IPXHandler->field_D = p_plyrdt->Header.field_2B;
         IPXPlayer.Data.num_players = p_plyrdt->Data.num_players;
         IPXPlayer.Data.field_10E = p_plyrdt->Data.field_10E;
         IPXPlayer.Header.field_26 = p_plyrdt->Header.field_26;
-        IPXPlayer.Header.field_2B = k;
+        IPXPlayer.Header.field_2B = my_plyr;
         strcpy(IPXPlayer.Header.field_C, a2);
         strcpy(IPXPlayer.Header.field_4, p_plyrdt->Header.field_4);
         memcpy(&IPXPlayer.Data, &p_plyrdt->Data, 0xE0u);
@@ -770,7 +773,7 @@ TbResult ipx_send_packet_to_player_wait(int plyr, ubyte *data, int dtlen)
         LOGERR("Cond 1 not met");
         return Lb_OK;
     }
-    if ((plyr >= 8 && plyr != 0xFFFF)
+    if ((plyr >= NET_PLAYERS_COUNT && plyr != 0xFFFF)
       || (plyr == IPXPlayer.Header.field_2B)
       || (plyr != 0xFFFF && !IPXPlayer.Data.Data1.Sub1[plyr].field_47) )
     {
@@ -803,7 +806,7 @@ TbResult ipx_receive_packet_from_player_wait(int plyr, ubyte *data, int dtlen)
         LOGERR("Cond 1 not met");
         return Lb_OK;
     }
-    if ((plyr >= 8)
+    if ((plyr >= NET_PLAYERS_COUNT)
       || (plyr == IPXPlayer.Header.field_2B)
       || (!IPXPlayer.Data.Data1.Sub1[plyr].field_47) )
     {

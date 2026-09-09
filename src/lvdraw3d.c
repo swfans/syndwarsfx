@@ -296,6 +296,7 @@ int lvdraw_fill_ranges_x(int slt_zmin, struct Range *ranges_x, struct TbPoint *b
             int base_fcx;
             int x_cur;
 
+            base_fcx = 0;
             while (z_cur == bound_pts[slt1].y)
             {
               int x_tmp;
@@ -315,6 +316,7 @@ int lvdraw_fill_ranges_x(int slt_zmin, struct Range *ranges_x, struct TbPoint *b
             int base_fcx;
             int x_cur;
 
+            base_fcx = 0;
             while (z_cur == bound_pts[slt2].y)
             {
               int x_tmp;

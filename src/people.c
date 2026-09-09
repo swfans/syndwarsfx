@@ -3532,7 +3532,7 @@ void init_recoil(struct Thing *p_person, short vx, short vy, short vz, ushort ty
     asm volatile (
       "push %4\n"
       "call ASM_init_recoil\n"
-        :  : "a" (p_person), "d" (vx), "b" (vy), "c" (vz), "g" (type));
+        :  : "a" (p_person), "d" (vx), "b" (vy), "c" (vz), "g" ((u32)type));
 }
 
 void person_update_kill_stats(struct Thing *p_attacker, struct Thing *p_victim)

@@ -110,6 +110,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
     lbFontPtr = small_med_font;
     my_set_text_window(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
     ln_height = my_char_height('A');
+    wpos_x = 6;
 
     if ((p_box->Flags & GBxFlg_BkgndDrawn) == 0)
     {
@@ -120,7 +121,6 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
         lbDisplay.DrawFlags &= ~Lb_TEXT_HALIGN_CENTER;
 
         lbFontPtr = small_med_font;
-        wpos_x = 6;
         wpos_y = 10;
         text = gui_strings[GSTR_PLAYERS];
         draw_text_purple_list2(wpos_x, wpos_y, text, 0);

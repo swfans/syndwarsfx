@@ -489,7 +489,7 @@ void draw_unkn_func_07(short x, short y, short a3, short a4, ubyte a5)
     asm volatile (
       "push %4\n"
       "call ASM_draw_unkn_func_07\n"
-        : : "a" (x), "d" (y), "b" (a3), "c" (a4), "g" (a5));
+        : : "a" (x), "d" (y), "b" (a3), "c" (a4), "g" ((u32)a5));
 }
 
 // TODO separate get_person_commands_debug_hud_inputs() from the below

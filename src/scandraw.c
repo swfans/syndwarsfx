@@ -782,7 +782,7 @@ void draw_map_flat_circle(short cor_x, short cor_y, short cor_z, short radius, T
     asm volatile (
       "push %4\n"
       "call ASM_draw_map_flat_circle\n"
-        : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (radius), "g" (colour));
+        : : "a" (cor_x), "d" (cor_y), "b" (cor_z), "c" (radius), "g" ((u32)colour));
 #endif
     struct EnginePoint ep1;
     struct EnginePoint ep2;
@@ -840,7 +840,7 @@ void draw_map_flat_rect(int cor_x, int cor_y, int cor_z, int size_x, int size_z,
       "push %5\n"
       "push %4\n"
       "call ASM_draw_map_flat_rect\n"
-        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" (a6));
+        : : "a" (a1), "d" (a2), "b" (a3), "c" (a4), "g" (a5), "g" ((u32)colour));
 #endif
     struct EnginePoint ep1;
     struct EnginePoint ep2;

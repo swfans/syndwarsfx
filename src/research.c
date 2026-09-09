@@ -373,6 +373,7 @@ int research_daily_progress_for_type(ubyte rstype)
     int scientists_died;
 
     real_funding = 0;
+    progress = 0;
 
     switch (rstype)
     {
