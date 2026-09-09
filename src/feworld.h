@@ -30,6 +30,10 @@ extern "C" {
 #pragma pack()
 /******************************************************************************/
 
+/** Index of the city highlighted on world map screen.
+ */
+extern sbyte map_hl_city_id;
+
 ubyte show_worldmap_screen(void);
 void init_world_screen_boxes(void);
 

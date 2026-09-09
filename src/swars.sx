@@ -131577,7 +131577,7 @@ data_155163:
 
 GLOBAL (research_on_weapons)	/* 0x155168 */
 		.byte	0x1
-GLOBAL (unkn_city_no)	/* 0x155169 */
+GLOBAL (map_hl_city_id)	/* 0x155169 */
 		.byte	0xff
 GLOBAL (selected_city_id)	/* 0x15516A */
 		.byte	0xff

@@ -79,9 +79,7 @@ extern short word_1C48CC;
 extern short word_1C6E08;
 extern short word_1C6E0A;
 
-ubyte ac_show_world_city_info_box(struct ScreenTextBox *box);
-ubyte ac_do_unkn2_CANCEL(ubyte click);
-ubyte ac_do_unkn2_ACCEPT(ubyte click);
+/******************************************************************************/
 
 ubyte do_unkn2_CANCEL(ubyte click)
 {
@@ -99,10 +97,10 @@ ubyte do_unkn2_CANCEL(ubyte click)
 
 ubyte do_unkn2_ACCEPT(ubyte click)
 {
-    if (unkn_city_no == -1)
+    if (map_hl_city_id == -1)
         return 0;
 
-    if ((cities[unkn_city_no].Flags & 0x11) == 0)
+    if ((cities[map_hl_city_id].Flags & 0x11) == 0)
     {
         alert_box_text_fmt("%s", gui_strings[569]);
         return 1;
@@ -118,7 +116,7 @@ ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
     int n_lines;
     int tx_height, ln_height, scr_y;
 
-    if (unkn_city_no == -1)
+    if (map_hl_city_id == -1)
         return 0;
 
     if ((p_box->Flags & 0x0080) != 0)
@@ -136,7 +134,7 @@ ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
         const char *text;
 
         for (i = 0; i < 6 ; i++) {
-            text = (const char *)&memload[cities[unkn_city_no].TextIndex[i]];
+            text = (const char *)&memload[cities[map_hl_city_id].TextIndex[i]];
             word_155744[i] = strlen(text);
         }
         world_info_CANCEL_button.Flags |= 0x0002;
@@ -166,7 +164,7 @@ ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
         draw_text_purple_list2(0, scr_y, text, 0);
         n_lines = my_count_lines(text);
         scr_y += ln_height * n_lines;
-        text = (const char *)&memload[cities[unkn_city_no].TextIndex[i]];
+        text = (const char *)&memload[cities[map_hl_city_id].TextIndex[i]];
         flashy_draw_text(0, scr_y, text, p_box->TextSpeed, 0, &word_155744[i], 0);
         n_lines = my_count_lines(text);
         scr_y += tx_height + ln_height * n_lines;
@@ -411,15 +409,16 @@ TbBool draw_world_country_borders(struct ScreenBox *p_box)
 
 void draw_world_detached_city_square(struct ScreenBox *p_box, short city)
 {
+    ScrCoord ct_x, ct_y;
+
+    ct_x = cities[city].X;
+    ct_y = cities[city].Y;
+
     lbDisplay.DrawFlags = 0;
-    draw_line_purple_list(cities[city].X - 8, cities[city].Y - 8,
-      cities[city].X + 8, cities[city].Y - 8, 174);
-    draw_line_purple_list(cities[city].X + 8, cities[city].Y - 8,
-      cities[city].X + 8, cities[city].Y + 8, 174);
-    draw_line_purple_list(cities[city].X + 8, cities[city].Y + 8,
-      cities[city].X - 8, cities[city].Y + 8, 174);
-    draw_line_purple_list(cities[city].X - 8, cities[city].Y + 8,
-      cities[city].X - 8, cities[city].Y - 8, 174);
+    draw_line_purple_list(ct_x - 8, ct_y - 8, ct_x + 8, ct_y - 8, 174);
+    draw_line_purple_list(ct_x + 8, ct_y - 8, ct_x + 8, ct_y + 8, 174);
+    draw_line_purple_list(ct_x + 8, ct_y + 8, ct_x - 8, ct_y + 8, 174);
+    draw_line_purple_list(ct_x - 8, ct_y + 8, ct_x - 8, ct_y - 8, 174);
 }
 
 void draw_world_cities_names(struct ScreenBox *p_box)
@@ -430,12 +429,16 @@ void draw_world_cities_names(struct ScreenBox *p_box)
     for (city = 0; city < num_cities; city++)
     {
         char locstr[40];
+        ScrCoord ct_x, ct_y;
         short ms_x, ms_y;
         short px, py;
         int k;
 
         ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
+
+        ct_x = cities[city].X;
+        ct_y = cities[city].Y;
 
         k = cities[city].TextIndex[0];
         strncpy(locstr, (char *)&memload[k], sizeof(locstr) - 1);
@@ -446,32 +449,32 @@ void draw_world_cities_names(struct ScreenBox *p_box)
         {
             short w, dim;
 
-            draw_sprite_purple_list(cities[city].X - 1, cities[city].Y - 1, &fe_mouseptr_sprites[12]);
+            draw_sprite_purple_list(ct_x - 1, ct_y - 1, &fe_mouseptr_sprites[12]);
             if ((cities[city].Flags & CitF_Unkn20) != 0)
-                draw_sprite_purple_list(cities[city].X - 4, cities[city].Y - 14, &fe_icons_sprites[169]);
+                draw_sprite_purple_list(ct_x - 4, ct_y - 14, &fe_icons_sprites[169]);
             w = 4 - (gameturn & 3);
             dim = 2 * w + 1;
             if ((cities[city].Flags & CitF_Unkn01) != 0)
             {
                 lbDisplay.DrawFlags |= (0x8000|Lb_SPRITE_OUTLINE);
-                draw_box_purple_list(cities[city].X - w, cities[city].Y - w, dim, dim, 174);
+                draw_box_purple_list(ct_x - w, ct_y - w, dim, dim, 174);
                 lbDisplay.DrawFlags &= ~(0x8000|Lb_SPRITE_OUTLINE);
-                draw_hotspot_purple_list(cities[city].X, cities[city].Y);
+                draw_hotspot_purple_list(ct_x, ct_y);
             }
             else if ((cities[city].Flags & CitF_Unkn10) != 0)
             {
                 lbDisplay.DrawFlags |= (0x8000|Lb_SPRITE_OUTLINE);
                 if (gameturn & 8)
-                    draw_box_purple_list(cities[city].X - w, cities[city].Y - w, dim, dim, 87);
+                    draw_box_purple_list(ct_x - w, ct_y - w, dim, dim, 87);
                 lbDisplay.DrawFlags &= ~(0x8000|Lb_SPRITE_OUTLINE);
-                draw_hotspot_purple_list(cities[city].X, cities[city].Y);
+                draw_hotspot_purple_list(ct_x, ct_y);
             }
         }
 
-        px = ms_x - cities[city].X - p_box->X - 1;
-        py = ms_y - cities[city].Y - p_box->Y - 1;
+        px = ms_x - ct_x - p_box->X - 1;
+        py = ms_y - ct_y - p_box->Y - 1;
         if ((cities[city].Flags & (CitF_Unkn10|CitF_Unkn01)) || (byte_15511C == 2)
-           || (city == unkn_city_no) || ((px >= 0) && (py >= 0) && (px <= 3) && (py <= 3)))
+           || (city == map_hl_city_id) || ((px >= 0) && (py >= 0) && (px <= 3) && (py <= 3)))
         {
             const char *text;
 
@@ -495,12 +498,12 @@ void draw_world_cities_names(struct ScreenBox *p_box)
             landmap_8BC = my_string_width(locstr);
             text = loctext_to_gtext(locstr);
 
-            if (cities[city].X + 5 + landmap_8BC < p_box->Width - 2) {
-                px = cities[city].X + 5;
-                py = cities[city].Y - 3;
+            if (ct_x + 5 + landmap_8BC < p_box->Width - 2) {
+                px = ct_x + 5;
+                py = ct_y - 3;
             } else {
-                px = cities[city].X - 3 - landmap_8BC;
-                py = cities[city].Y - 3;
+                px = ct_x - 3 - landmap_8BC;
+                py = ct_y - 3;
             }
             draw_text_purple_list2(px, py, text, 0);
             lbDisplay.DrawFlags = 0;
@@ -512,25 +515,62 @@ void draw_world_cities_names(struct ScreenBox *p_box)
     }
 }
 
+void select_world_city(sbyte city)
+{
+    map_hl_city_id = city;
+    if (login_control__State == LognCt_Unkn5) {
+        login_control__City = city;
+        net_schedule_player_city_choice_sync();
+    }
+    word_1C48CC = 0;
+    world_city_info_box.Flags |= GBxFlg_Unkn0080;
+}
+
+sbyte world_city_find_first_active(void)
+{
+    sbyte ncity;
+
+    for (ncity = 0; ncity < num_cities; ncity++)
+    {
+        if (cities[ncity].Flags & (CitF_Unkn10|CitF_Unkn01)) {
+            return ncity;
+        }
+    }
+    return -1;
+}
+
+sbyte world_city_find_next_active(sbyte pvcity)
+{
+    sbyte ncity;
+
+    ncity = pvcity + 1;
+    if (ncity >= num_cities)
+        ncity = 0;
+    while (ncity != pvcity)
+    {
+        if (cities[ncity].Flags & (CitF_Unkn10|CitF_Unkn01)) {
+            return ncity;
+        }
+        ncity++;
+        if (ncity >= num_cities)
+            ncity = 0;
+    }
+    return -1;
+}
+
 void input_world_cities(struct ScreenBox *p_box)
 {
     if (byte_15511C < 3 && lbDisplay.LeftButton && mouse_move_over_box(p_box))
     {
         short ms_x, ms_y;
+        sbyte city;
 
         lbDisplay.LeftButton = 0;
         ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
-        landmap_8C4 = find_closest_city(ms_x - p_box->X, ms_y - p_box->Y);
-        if (unkn_city_no != landmap_8C4)
-        {
-            unkn_city_no = landmap_8C4;
-            if (login_control__State == LognCt_Unkn5) {
-                login_control__City = landmap_8C4;
-                net_schedule_player_city_choice_sync();
-            }
-            word_1C48CC = 0;
-            world_city_info_box.Flags |= GBxFlg_Unkn0080;
+        city = find_closest_city(ms_x - p_box->X, ms_y - p_box->Y);
+        if (map_hl_city_id != city) {
+            select_world_city(city);
         }
     }
 }
@@ -560,33 +600,16 @@ ubyte show_world_landmap_box(struct ScreenBox *p_box)
 
     if (is_key_pressed(KC_C, KMod_DONTCARE))
     {
+        sbyte city;
+
         clear_key_pressed(KC_C);
-        if (unkn_city_no == -1)
-        {
-            for (i = 0; i < num_cities; i++)
-            {
-                if (cities[i].Flags & (CitF_Unkn10|CitF_Unkn01)) {
-                    unkn_city_no = i;
-                    word_1C48CC = 0;
-                }
-            }
+        if (map_hl_city_id == -1) {
+            city = world_city_find_first_active();
+        } else {
+            city = world_city_find_next_active(map_hl_city_id);
         }
-        else
-        {
-            i = unkn_city_no + 1;
-            if (i == num_cities)
-                i = 0;
-            while (i != unkn_city_no)
-            {
-                if (cities[i].Flags & (CitF_Unkn10|CitF_Unkn01)) {
-                    unkn_city_no = i;
-                    word_1C48CC = 0;
-                    break;
-                }
-                i++;
-                if (i == num_cities)
-                    i = 0;
-            }
+        if ((city != -1) && (city != map_hl_city_id)) {
+            select_world_city(city);
         }
     }
 
@@ -642,22 +665,22 @@ ubyte show_world_landmap_box(struct ScreenBox *p_box)
         my_set_text_window(p_box->X + 1, p_box->Y + 1,
           p_box->Width - 2, p_box->Height - 2);
 
-        if (word_1C6E08 != cities[unkn_city_no].X
-         || word_1C6E0A != cities[unkn_city_no].Y)
+        if (word_1C6E08 != cities[map_hl_city_id].X
+         || word_1C6E0A != cities[map_hl_city_id].Y)
             word_1C48CC = 0;
 
-        if ((unkn_city_no >= 0) && (word_1C48CC == 0))
+        if ((map_hl_city_id >= 0) && (word_1C48CC == 0))
         {
             short nshift, nchange;
 
-            landmap_8BC = cities[unkn_city_no].X - word_1C6E08;
-            landmap_8C0 = cities[unkn_city_no].Y - word_1C6E0A;
+            landmap_8BC = cities[map_hl_city_id].X - word_1C6E08;
+            landmap_8C0 = cities[map_hl_city_id].Y - word_1C6E0A;
             play_sample_using_heap(0, 110, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 1u);
 
             nshift = 10;
             if (abs(landmap_8BC) < nshift)
             {
-                word_1C6E08 = cities[unkn_city_no].X;
+                word_1C6E08 = cities[map_hl_city_id].X;
             }
             else if (landmap_8BC != 0)
             {
@@ -669,7 +692,7 @@ ubyte show_world_landmap_box(struct ScreenBox *p_box)
 
             if (abs(landmap_8C0) < nshift)
             {
-                word_1C6E0A = cities[unkn_city_no].Y;
+                word_1C6E0A = cities[map_hl_city_id].Y;
             }
             else if (landmap_8C0 != 0)
             {
@@ -793,7 +816,7 @@ void init_world_screen_boxes(void)
 
 void reset_world_screen_player_state(void)
 {
-    unkn_city_no = -1;
+    map_hl_city_id = -1;
     word_1C6E0A = 0;
     word_1C6E08 = 0;
 }

@@ -86,6 +86,7 @@ ubyte accept_mission(ubyte click);
 ubyte do_unkn1_CANCEL(ubyte click);
 void ac_purple_unkn2_data_to_screen(void);
 void ac_SCANNER_data_to_screen(void);
+
 void update_netscan_cost_button(ubyte city_id)
 {
     int k, max_width;

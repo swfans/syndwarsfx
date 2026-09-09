@@ -236,7 +236,7 @@ extern sbyte byte_15516D;
 extern ubyte byte_1C5C28[8];
 extern long dword_153194;
 extern ulong starting_cash_amounts[8];
-extern sbyte unkn_city_no;
+
 extern ubyte group_types[8];
 extern ubyte byte_1C4AA3;
 extern ubyte net_unkn_pos_02;

@@ -46,6 +46,7 @@
 #include "feresearch.h"
 #include "feshared.h"
 #include "festorage.h"
+#include "feworld.h"
 #include "guiboxes.h"
 #include "guitext.h"
 #include "game_data.h"
@@ -947,8 +948,8 @@ static void global_citydrop_box_draw(void)
     if (login_control__City == -1) {
         subtext = "";
     } else {
-        unkn_city_no = login_control__City;
-        n = cities[unkn_city_no].TextIndex[0];
+        map_hl_city_id = login_control__City;
+        n = cities[map_hl_city_id].TextIndex[0];
         subtext = (char *)&memload[n];
     }
     sprintf(locstr, "%s: %s", gui_strings[446], subtext);

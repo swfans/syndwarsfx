@@ -5535,7 +5535,7 @@ void show_menu_screen_st2(void)
             delete_mail(open_brief - 1, MlTp_Mission);
             open_brief = 0;
             old_mission_brief = 0;
-            cities[unkn_city_no].Info = 0;
+            cities[map_hl_city_id].Info = 0;
       }
       else
       {
@@ -5611,7 +5611,7 @@ void update_open_brief(void)
     {
         ushort missi;
 
-        missi = find_mission_for_city_in_brief(brief, unkn_city_no);
+        missi = find_mission_for_city_in_brief(brief, map_hl_city_id);
         if (missi != 0) {
             open_brief = brief + 1;
             break;
@@ -5649,7 +5649,7 @@ void show_load_and_prep_mission(void)
         else
         {
             ushort missi;
-            missi = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
+            missi = find_mission_for_city_in_brief(open_brief - 1, map_hl_city_id);
             load_mission_name_text(missi);
             ingame.CurrentMission = missi;
             // The names are propagated by fenet only in network game
@@ -5694,7 +5694,7 @@ void show_load_and_prep_mission(void)
         }
         else
         {
-            cities[unkn_city_no].Info = 0;
+            cities[map_hl_city_id].Info = 0;
             mission_result = 0;
         }
         if (!in_network_game)
@@ -5887,7 +5887,7 @@ void apply_change_screen(void)
         change_screen = ChSCRT_NONE;
         screentype = SCRT_WORLDMAP;
         if (selected_city_id != -1)
-          unkn_city_no = selected_city_id;
+          map_hl_city_id = selected_city_id;
     }
     if (change_screen == ChSCRT_CRYO)
     {
