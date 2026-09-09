@@ -340,6 +340,7 @@ struct Smack * RADAPI SMACKOPEN(uint32_t extrabuf, uint32_t flags, char *name)
         int v36;
         uint32_t limit32;
         uint32_t *v64;
+        v62 = 0;
         v64 = 0;
         v33 = 0;
         for (i = 0; i < v63; i++)
