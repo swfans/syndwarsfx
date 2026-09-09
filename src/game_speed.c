@@ -21,6 +21,7 @@
 #include <assert.h>
 #include "bfkeybd.h"
 #include "bftime.h"
+#include "enginprops.h"
 #include "game.h"
 #include "keyboard.h"
 #include "swlog.h"
@@ -37,6 +38,17 @@ ushort game_num_fps = 16;
 ushort fifties_per_gameturn = 3;
 
 /******************************************************************************/
+
+void render_clock_set_turn(ulong turn)
+{
+    render_anim_turn = (u32)turn << RENDER_ANIM_TURN_SHIFT;
+}
+
+void render_clock_next_frame(u32 anim_turn_incr)
+{
+    drawturn++;
+    render_anim_turn += anim_turn_incr;
+}
 
 void frameskip_clip(void)
 {

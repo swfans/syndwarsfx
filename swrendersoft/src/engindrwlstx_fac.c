@@ -441,7 +441,7 @@ void draw_object_face4g_textrd(ushort face4)
     {
         if ((p_face4->GFlags & (FGFlg_Unkn40|FGFlg_Unkn02)) != 0) {
             uint frame;
-            frame = render_anim_turn + 4 * p_face4->Object;
+            frame = (render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + 4 * p_face4->Object;
             if ((frame & 0x0F) <= 7) {
                 vec_mode = 2;
             } else {
@@ -837,7 +837,7 @@ void draw_object_face3g_textrd(ushort face3)
     {
         if ((p_face->GFlags & FGFlg_Unkn40) != 0) {
             uint frame;
-            frame = render_anim_turn + p_face->Object;
+            frame = (render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + p_face->Object;
             if ((frame & 0x1F) > 0x10)
                 vec_mode = 5;
         }
@@ -1439,7 +1439,7 @@ void draw_object_face3d_textrd(ushort face3)
     {
         if ((p_face->GFlags & FGFlg_Unkn40) != 0) {
             uint frame;
-            frame = render_anim_turn + p_face->Object;
+            frame = (render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + p_face->Object;
             if ((frame & 0x1FF) > 0x100 && !byte_153014[frame & 0x3F])
                 vec_mode = 5;
         }
@@ -1598,7 +1598,7 @@ void draw_object_face4d_textrd(ushort face4)
     {
         if ((p_face4->GFlags & FGFlg_Unkn40) != 0) {
             uint frame;
-            frame = render_anim_turn + p_face4->Object;
+            frame = (render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + p_face4->Object;
             if ((frame & 0x1FF) > 0x100 && !byte_153014[frame & 0x3F])
                 vec_mode = 5;
         }

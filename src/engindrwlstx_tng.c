@@ -90,14 +90,14 @@ ushort number_player_get_frame(struct Thing *p_person, ubyte n)
         p_locplayer = &players[local_player_no];
         if (p_locplayer->DoubleMode == 0)
         {
-            if ((p_person->ThingOffset != (ThingIdx)p_locplayer->DirectControl[0]) || ((render_anim_turn & 4) != 0))
+            if ((p_person->ThingOffset != (ThingIdx)p_locplayer->DirectControl[0]) || (((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 4) != 0))
             {
                 frm = frame[frm].Next;
             }
             else
             {
                 ushort i;
-                for (i = 0; i <= (render_anim_turn & 3); i++)
+                for (i = 0; i <= ((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 3); i++)
                     frm = frame[frm].Next;
             }
         }

@@ -90,18 +90,20 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
     {
         elcr_y = 8 * p_mapel->Alt;
         if ((p_mapel->Flags & 0x40) != 0)
-            elcr_y += waft_table[render_anim_turn & 0x1F];
+            elcr_y += waft_table[(render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x1F];
         p_sp->ReflShade = 0;
     }
     else
     {
         int wobble, dvfactor;
+        uint anim_turn;
 
         elcr_y = 8 * p_mapel->Alt;
         dvfactor = 140 + ((bw_rotl32(0x5D3BA6C3, elcr_z >> 8) ^ bw_rotr32(0xA7B4D8AC, elcr_x >> 8)) & 0x7F);
-        wobble = (waft_table2[(render_anim_turn + (elcr_x >> 7)) & 0x1F]
-             + waft_table2[(render_anim_turn + (elcr_z >> 7)) & 0x1F]
-             + waft_table2[(32 * render_anim_turn / dvfactor) & 0x1F]) >> 3;
+        anim_turn = render_anim_turn >> RENDER_ANIM_TURN_SHIFT;
+        wobble = (waft_table2[(anim_turn + (elcr_x >> 7)) & 0x1F]
+             + waft_table2[(anim_turn + (elcr_z >> 7)) & 0x1F]
+             + waft_table2[(32 * anim_turn / dvfactor) & 0x1F]) >> 3;
         elcr_y += mag * wobble;
         p_sp->ReflShade = (wobble + 32) << 9;
     }

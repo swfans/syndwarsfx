@@ -49,6 +49,22 @@ extern ushort fifties_per_gameturn;
  * turns per second. */
 extern ushort game_num_fps;
 
+/** Opens a drawn frame: advances drawturn, and moves the animation clock on
+ * by the given amount.
+ *
+ * The amount is in the units of render_anim_turn, so RENDER_ANIM_TURN_UNIT is
+ * one animation turn - the pace the game has always drawn at, one animation
+ * frame per game turn. Smaller amounts spread an animation frame over several
+ * drawn frames, larger ones run animations faster, and zero opens a frame
+ * which shows the animations exactly where the previous one left them.
+ */
+void render_clock_next_frame(u32 anim_turn_incr);
+
+/** Places the animation clock on the given animation turn, on a mission or
+ * the outro starting.
+ */
+void render_clock_set_turn(ulong turn);
+
 /**
  * Handles game speed control inputs.
  * @return Returns true if packet was created, false otherwise.

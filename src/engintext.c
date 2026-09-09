@@ -26,6 +26,7 @@
 #include "app_text_cw.h"
 #include "app_text_sf.h"
 #include "engincolour.h"
+#include "enginprops.h"
 
 #include "game_sprts.h"
 #include "hud_panel.h"
@@ -103,7 +104,7 @@ void draw_text_linewrap1b(int base_x, int *p_pos_y, const char *text)
             const struct TbSprite *p_spr;
             ushort fade_lv;
 
-            fade_lv = 40 - (lbSinTable[128 * ((render_anim_turn + base_shift) & 0xF)] >> 13);
+            fade_lv = 40 - (lbSinTable[128 * (((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + base_shift) & 0xF)] >> 13);
             p_spr =  LbFontCharSprite(lbFontPtr, my_char_to_upper(*str));
             AppSpriteDrawDoubleOneColour(p_spr, pos_x + 1, pos_y + 1, colour_lookup[ColLU_BLACK]);
             AppSpriteDrawDoubleOneColour(p_spr, pos_x, pos_y, pixmap.fade_table[256 * fade_lv + col2]);
@@ -162,7 +163,7 @@ void draw_text_linewrap2b(int base_x, int *p_pos_y, const char *text)
             const struct TbSprite *p_spr;
             ushort fade_lv;
 
-            fade_lv = cw_base + cw_vari/2 - (cw_vari/2 * lbSinTable[LbFPMath_PI/8 * ((render_anim_turn + base_shift) & 0xF)] >> 16);
+            fade_lv = cw_base + cw_vari/2 - (cw_vari/2 * lbSinTable[LbFPMath_PI/8 * (((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + base_shift) & 0xF)] >> 16);
             p_spr =  LbFontCharSprite(lbFontPtr, my_char_to_upper(*str));
             LbSpriteDrawOneColour(pos_x + 1, pos_y + 1, p_spr, colour_lookup[ColLU_BLACK]);
             LbSpriteDrawOneColour(pos_x, pos_y,  p_spr, pixmap.fade_table[fade_lv * PALETTE_8b_COLORS + col2]);
@@ -196,7 +197,7 @@ TbBool AppTextDrawMissionStatus(int posx, int posy, const char *text)
     lbDisplay.ShadowColour = colour_lookup[ColLU_BLACK];
 #endif
 #if 0 // old way of drawing mission status - remove pending
-    if (render_anim_turn & 0x40) {
+    if ((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x40) {
     if (units_per_px < 24)
         draw_text_linewrap2b(posx, &posy, text);
     else
@@ -335,7 +336,7 @@ TbBool AppTextDrawMissionChatMessage(int posx, int *posy, int plyr, int timer,
     lbDisplay.ShadowColour = colour_lookup[ColLU_GREYLT];
 #endif
 #if 0 // old way of drawing mission status - remove pending
-    if (render_anim_turn & 0x20) {
+    if ((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x20) {
     if (units_per_px < 24)
         draw_text_linewrap2(posx, posy, plyr, text);
     else
