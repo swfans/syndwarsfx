@@ -19,8 +19,10 @@
 /******************************************************************************/
 #include <string.h>
 #include "bftringl.h"
+
 #include "bfscreen.h"
 #include "bfline.h"
+#include "privbflog.h"
 
 #define DRAW_RANGES_COUNT (MAX_SUPPORTED_SCREEN_HEIGHT * 6 / 5)
 
@@ -585,6 +587,9 @@ void LbDrawTriangleFilled(short x1, short y1, short x2, short y2, short x3, shor
         }
         ramp = Ramp_Single;
         break;
+    default:
+        LOGERR("internal error - bad triangle case");
+        return;
     }
 
     // Fill the ranges array with two areas

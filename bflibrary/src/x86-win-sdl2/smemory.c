@@ -172,6 +172,7 @@ TbBool split_arena(mem_arena *arena, size_t size)
         return true;
     }
 
+    curarena = NULL;
     for (n = 0; n < TABLE_SIZE; n++)
     {
         curarena = &memory_arenas[n];
