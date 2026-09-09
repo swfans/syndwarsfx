@@ -317,6 +317,8 @@ int32_t SS_configure_buffers(DIG_DRIVER *digdrv)
             digdrv->DDT->format_data[digdrv->hw_format].nominal_physical_sample_rate;
         pref[2] =
             digdrv->DDT->format_data[digdrv->hw_format].maximum_physical_sample_rate;
+
+        match = DIG_F_STEREO_16;
         delta = LONG_MAX;
         for (i = 0; i < 3; i++)
         {
