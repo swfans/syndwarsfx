@@ -1569,7 +1569,7 @@ void init_outro(void)
     outro_unkn02 = 0;
     outro_unkn03 = 0;
     gameturn = 0;
-    render_anim_turn = gameturn;
+    render_clock_set_turn(gameturn);
 
     screen_animate_draw_outro_text();
     // Sleep for up to 10 seconds
@@ -1613,7 +1613,7 @@ void init_outro(void)
         }
 
         gameturn++;
-        render_anim_turn = gameturn;
+        render_clock_set_turn(gameturn);
         traffic_unkn_func_01();
         camera_apply_velocity();
         prepare_drawlist();
@@ -5873,7 +5873,7 @@ void show_load_and_prep_mission(void)
         }
         debug_trace_place(19);
     }
-    render_anim_turn = gameturn;
+    render_clock_set_turn(gameturn);
 
     // Set up remaining graphics data and controls
     if (start_into_mission)
@@ -6337,8 +6337,7 @@ void draw_game(void)
 {
     // One more frame is about to be drawn. The counters the drawing uses
     // advance here, so that they follow the frames and not the game turns.
-    drawturn++;
-    render_anim_turn++;
+    render_clock_next_frame(RENDER_ANIM_TURN_UNIT);
 
     switch (ingame.DisplayMode)
     {

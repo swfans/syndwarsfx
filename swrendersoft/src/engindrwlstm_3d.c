@@ -117,7 +117,7 @@ void enlist_draw_frame_graphic(int x, int y, int z, ushort frame,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_table[(render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
@@ -145,7 +145,7 @@ void enlist_draw_frame_graphic_scale(int x, int y, int z, ushort frame,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_table[(render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
@@ -262,7 +262,7 @@ void enlist_draw_fire_flames(ushort flame_beg)
         cor_dz = p_flame->z - engn_zc;
 
         if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-            cor_dy += waft_table[render_anim_turn & 0x1F];
+            cor_dy += waft_table[(render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x1F];
 
         transform_shpoint(&sp, cor_dx, cor_dy - 8 * engn_yc, cor_dz);
 
@@ -413,7 +413,7 @@ void enlist_draw_number(int x, int y, int z, short scr_dx, short scr_dy,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_table[(render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
@@ -441,7 +441,7 @@ void enlist_draw_text(int x, int y, int z, short scr_dx, short scr_dy,
     int scr_depth;
 
     if ((render_floor_flags & RendFlrF_WobblyTerrain) != 0)
-        y += waft_table[render_anim_turn & 0x1F] >> 3;
+        y += waft_table[(render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x1F] >> 3;
 
     transform_shpoint(&sp, x, 8 * y - 8 * engn_yc, z);
 
@@ -818,9 +818,9 @@ void enlist_draw_wobble_line(int x1, int y1, int z1,
         }
         else if (step == 1)
         {
-            shift = ((zig_zag[(render_anim_turn + x1) & 0x1F] & 7) << 7) - 512;
+            shift = ((zig_zag[((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + x1) & 0x1F] & 7) << 7) - 512;
             prc_cur_x1 = prc_cur_x2 + ((shift * overall_scale) >> 8);
-            shift = ((zig_zag[(render_anim_turn + y1) & 0x1F] & 7) << 7) - 512;
+            shift = ((zig_zag[((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + y1) & 0x1F] & 7) << 7) - 512;
             prc_cur_y1 = prc_cur_y2 + ((shift * overall_scale) >> 8);
             shift = ((LbRandomPosShort() & 7) << 7) - 512;
             prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
@@ -829,9 +829,9 @@ void enlist_draw_wobble_line(int x1, int y1, int z1,
         }
         else if (step == num_steps)
         {
-            shift = ((zig_zag[(render_anim_turn + x2) & 0x1F] & 7) << 7) - 512;
+            shift = ((zig_zag[((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + x2) & 0x1F] & 7) << 7) - 512;
             prc_cur_x2 = prc_x1 + ((shift * overall_scale) >> 8);
-            shift = ((zig_zag[(y2 + render_anim_turn) & 0x1F] & 7) << 7) - 512;
+            shift = ((zig_zag[(y2 + (render_anim_turn >> RENDER_ANIM_TURN_SHIFT)) & 0x1F] & 7) << 7) - 512;
             prc_cur_y2 = prc_y1 + ((shift * overall_scale) >> 8);
         }
 

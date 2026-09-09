@@ -211,10 +211,12 @@ void put_down_cw_sprites(const char *sbuf, const char *ebuf,
 {
     if (units_per_px == 16)
     {
-        put_down_colwavetext_sprites(sbuf, ebuf, x, y, space_len, 32, 16, render_anim_turn);
+        put_down_colwavetext_sprites(sbuf, ebuf, x, y, space_len, 32, 16,
+          render_anim_turn >> RENDER_ANIM_TURN_SHIFT);
     } else
     {
-        put_down_colwavetext_sprites_resized(sbuf, ebuf, x, y, space_len, units_per_px, 32, 16, render_anim_turn);
+        put_down_colwavetext_sprites_resized(sbuf, ebuf, x, y, space_len, units_per_px, 32, 16,
+          render_anim_turn >> RENDER_ANIM_TURN_SHIFT);
     }
 }
 

@@ -40,6 +40,15 @@ enum RenderFacesFlags {
 
 #pragma pack()
 /******************************************************************************/
+/** Amount of low bits of render_anim_turn which hold the position within
+ * the current animation turn.
+ */
+#define RENDER_ANIM_TURN_SHIFT 8
+
+/** Amount by which render_anim_turn advances over one animation turn.
+ */
+#define RENDER_ANIM_TURN_UNIT (1 << RENDER_ANIM_TURN_SHIFT)
+
 /** Animation turn for the animations controlled within the render engine.
  *
  * Animations which are independent of game action, like moving colours
@@ -48,10 +57,17 @@ enum RenderFacesFlags {
  * Such animations use this value as a measure of progressing time, and
  * therefore progressing animation frames.
  *
- * The value is expected to be incremented once per drawn frame within the
- * game code. It is deliberately not tied to game turns: nothing in the
- * simulation reads it, and an animation which does not touch the game world
- * has no reason to wait for one.
+ * The value is expected to be advanced once per drawn frame within the game
+ * code. It is deliberately not tied to game turns: nothing in the simulation
+ * reads it, and an animation which does not touch the game world has no
+ * reason to wait for one.
+ *
+ * It is a fixed point value: one animation turn is RENDER_ANIM_TURN_UNIT,
+ * and the low RENDER_ANIM_TURN_SHIFT bits hold the position within the turn.
+ * An animation which steps once per animation turn therefore reads
+ * `render_anim_turn >> RENDER_ANIM_TURN_SHIFT`, and one which is to step at
+ * half that speed shifts by one more bit; the fraction is there for anything
+ * which can place itself in between two steps.
  */
 extern u32 render_anim_turn;
 
