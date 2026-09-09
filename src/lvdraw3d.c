@@ -77,6 +77,20 @@ extern short word_19CC66;
 TbBool nuclear_overexposure = false;
 
 
+/** Height of the wobbly surface at the given map spot on the given animation
+ * turn.
+ *
+ * Pulled out of shpoint_compute_coord_y() so that the surface can be asked
+ * for the turn being drawn and for the one after it, and placed in between
+ * when a game turn is drawn in more than one frame.
+ */
+static int floor_wobble_at_turn(int elcr_x, int elcr_z, int dvfactor, uint anim_turn)
+{
+    return (waft_table2[(anim_turn + (elcr_x >> 7)) & 0x1F]
+         + waft_table2[(anim_turn + (elcr_z >> 7)) & 0x1F]
+         + waft_table2[(32 * anim_turn / dvfactor) & 0x1F]) >> 3;
+}
+
 int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int elcr_x, int elcr_z, int mag)
 {
     int elcr_y;
@@ -90,20 +104,26 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
     {
         elcr_y = 8 * p_mapel->Alt;
         if ((p_mapel->Flags & 0x40) != 0)
-            elcr_y += waft_table[(render_anim_turn >> RENDER_ANIM_TURN_SHIFT) & 0x1F];
+            elcr_y += waft_between_turns(render_anim_turn);
         p_sp->ReflShade = 0;
     }
     else
     {
         int wobble, dvfactor;
-        uint anim_turn;
+        uint anim_turn, within_turn;
 
         elcr_y = 8 * p_mapel->Alt;
         dvfactor = 140 + ((bw_rotl32(0x5D3BA6C3, elcr_z >> 8) ^ bw_rotr32(0xA7B4D8AC, elcr_x >> 8)) & 0x7F);
         anim_turn = render_anim_turn >> RENDER_ANIM_TURN_SHIFT;
-        wobble = (waft_table2[(anim_turn + (elcr_x >> 7)) & 0x1F]
-             + waft_table2[(anim_turn + (elcr_z >> 7)) & 0x1F]
-             + waft_table2[(32 * anim_turn / dvfactor) & 0x1F]) >> 3;
+        within_turn = render_anim_turn & (RENDER_ANIM_TURN_UNIT - 1);
+        wobble = floor_wobble_at_turn(elcr_x, elcr_z, dvfactor, anim_turn);
+        if (within_turn != 0)
+        {
+            int wobble_next;
+
+            wobble_next = floor_wobble_at_turn(elcr_x, elcr_z, dvfactor, anim_turn + 1);
+            wobble += ((wobble_next - wobble) * (int)within_turn) / RENDER_ANIM_TURN_UNIT;
+        }
         elcr_y += mag * wobble;
         p_sp->ReflShade = (wobble + 32) << 9;
     }
