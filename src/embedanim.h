@@ -66,6 +66,12 @@ TbPixel *embanim_type_get_output_buffer(ubyte anislot);
  */
 void embanim_clear_output_buffer(ubyte anislot);
 
+/** Initialize the slots to unused, discarding existing values.
+ *
+ * To be used once, during application setup; later, use reinit.
+ */
+void embanim_init(void);
+
 /** Finalize previous playback and initialize new animation at given slot.
  */
 void embanim_reinit(ubyte anislot);

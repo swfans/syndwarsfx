@@ -1948,7 +1948,7 @@ TbBool setup_host(void)
 
     setup_host_sub6();
     play_intro();
-    embanim_reinit(AniSl_BILLBOARD);
+    embanim_init();
 
     return ret;
 }
@@ -2728,9 +2728,15 @@ void prep_single_mission(void)
     if (PacketRecord_IsPlayback())
     {
         PacketRecord_OpenRead();
+    }
+
+    // TODO this code repeats for starting game from menu, close into one function
+    if (PacketRecord_IsPlayback())
+    {
         packet_read_whole_player_init();
     }
     init_game(0);
+    preprogress_game_turns();
     if (!in_network_game)
     {
         if (PacketRecord_IsRecord()) {
@@ -2738,11 +2744,13 @@ void prep_single_mission(void)
             packet_write_whole_player_init();
         }
     }
-    preprogress_game_turns();
     prep_multicolor_sprites();
     LbScreenClear(0);
     generate_shadows_for_multicolor_sprites();
     adjust_mission_engine_to_video_mode();
+
+    embanim_reinit(AniSl_BILLBOARD);
+    embanim_do_next_frame(AniSl_BILLBOARD);
 }
 
 void restart_back_into_mission(ushort missi)
@@ -5644,6 +5652,9 @@ void show_load_and_prep_mission(void)
             missi = find_mission_for_city_in_brief(open_brief - 1, unkn_city_no);
             load_mission_name_text(missi);
             ingame.CurrentMission = missi;
+            // The names are propagated by fenet only in network game
+            net_unkn2_names_clear();
+            strncpy(unkn2_names[0], login_name, 16);
             debug_trace_place(12);
         }
     }
@@ -5676,17 +5687,13 @@ void show_load_and_prep_mission(void)
     if (start_into_mission)
     {
         clear_open_mission_status();
+        update_mission_time(1);
         if (in_network_game)
         {
-            update_mission_time(1);
             gameturn = 0;
         }
         else
         {
-            net_unkn2_names_clear();
-            strncpy(unkn2_names[0], login_name, 16);
-
-            update_mission_time(1);
             cities[unkn_city_no].Info = 0;
             mission_result = 0;
         }

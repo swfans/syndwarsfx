@@ -338,6 +338,18 @@ void embanim_reinit(ubyte anislot)
     p_anim->anfield_4 += 12;
 }
 
+void embanim_init(void)
+{
+    uint k;
+
+    for (k = 0; k < sizeof(animations)/sizeof(animations[0]); k++) {
+        struct Animation *p_anim;
+
+        p_anim = &animations[k];
+        anim_flic_init(p_anim, AniSl_SCRATCH, 0x00);
+    }
+}
+
 void embanim_set_netscan_file(ubyte anislot, ubyte netno)
 {
     struct Animation *p_anim;
