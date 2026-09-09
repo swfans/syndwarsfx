@@ -503,6 +503,11 @@ void clear_cities_decor(ushort flags)
     }
 }
 
+void clear_city_netscan(ubyte city)
+{
+    cities[city].Info = 0;
+}
+
 void activate_cities(ubyte brief)
 {
     ushort missi, spmissi;

@@ -226,8 +226,6 @@ long dword_153194 = 0x100;
 
 ushort word_1531E0 = 1;
 
-ushort next_mission = 1;
-
 ulong stored_l3d_next_object;
 ulong stored_l3d_next_object_face3;
 ulong stored_l3d_next_object_face4;
@@ -3848,10 +3846,10 @@ void update_mission_list_to_mission_state(ushort missi, sbyte state)
     if (state == MResol_COMPLETED) {
         mission_list[missi].Complete = state;
     } else if (mission_remain_until_success(missi)) {
-          mission_list[missi].Complete = MResol_UNDECIDED;
-          set_mission_state_using_state_slot(missi, MResol_UNDECIDED);
+        mission_list[missi].Complete = MResol_UNDECIDED;
+        set_mission_state_using_state_slot(missi, MResol_UNDECIDED);
     } else {
-          mission_list[missi].Complete = state;
+        mission_list[missi].Complete = state;
     }
 }
 
@@ -5526,16 +5524,16 @@ void show_menu_screen_st2(void)
     {
       update_mission_time(0);
       selected_city_id = -1;
-      byte_1C4AA3 = brief_store[open_brief - 1].RefNum;
+      open_ref = brief_store[open_brief - 1].RefNum;
       // Original code compared MissionStatus to 0 and 2, is 2 a valid value?
       if ((ingame.MissionStatus != ObvStatu_UNDECIDED) && (ingame.MissionStatus != ObvStatu_FAILED))
       {
-            memcpy(&mission_status[0], &mission_status[open_brief],
+            LbMemoryCopy(&mission_status[0], &mission_status[open_brief],
               sizeof(struct MissionStatus));
             delete_mail(open_brief - 1, MlTp_Mission);
             open_brief = 0;
+            clear_city_netscan(map_hl_city_id);
             reset_brief_screen_player_state();
-            cities[map_hl_city_id].Info = 0;
       }
       else
       {
@@ -5667,7 +5665,7 @@ void show_load_and_prep_mission(void)
         }
         else
         {
-            cities[map_hl_city_id].Info = 0;
+            clear_city_netscan(map_hl_city_id);
             mission_result = 0;
         }
         if (!in_network_game)

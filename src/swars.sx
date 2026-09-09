@@ -132897,7 +132897,7 @@ GLOBAL (display_box_content)	/* 0x1C4AA0 */
 		.byte	0x0
 GLOBAL (data_1c4aa2)	/* 0x1c4aa2 */
 		.byte	0x0
-GLOBAL (byte_1C4AA3)	/* 0x1c4aa3 */
+GLOBAL (open_ref)	/* 0x1c4aa3 */
 		.byte	0x0
 GLOBAL (old_screentype)	/* 0x1C4AA4 */
 		.byte	0x0

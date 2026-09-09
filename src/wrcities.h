@@ -76,6 +76,7 @@ void load_city_data(ubyte type);
 
 void activate_cities(ubyte brief);
 void recount_city_credit_reward(ubyte city);
+void clear_city_netscan(ubyte city);
 
 /** Searches for mission taking place in given city, within mission chain in the brief.
  */

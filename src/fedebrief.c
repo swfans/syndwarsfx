@@ -344,7 +344,7 @@ void draw_mission_stats_vals_dynamic(struct ScreenBox *box,
 
 void debrief_report_fill(struct DebriefReport *p_rep)
 {
-    p_rep->RefNo = byte_1C4AA3;
+    p_rep->RefNo = open_ref;
     p_rep->BriefNo = open_brief;
     p_rep->Status = ingame.MissionStatus;
     p_rep->Income = (ingame.Credits + ingame.Expenditure) - ingame.CashAtStart;
