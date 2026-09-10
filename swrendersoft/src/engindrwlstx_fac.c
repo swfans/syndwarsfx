@@ -731,7 +731,7 @@ void draw_object_face4_reflect(ushort face4)
 
 void draw_ex_face(ushort exface)
 {
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     struct PolyPoint point2;
     struct PolyPoint point3;
     struct PolyPoint point1;

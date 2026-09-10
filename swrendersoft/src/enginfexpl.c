@@ -33,7 +33,7 @@
 #include "frame_sprani.h"
 #include "privrdlog.h"
 /******************************************************************************/
-struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
+struct ExplodeFace ex_faces[EXPLODE_FACES_COUNT];
 u32 next_ex_face = 1;
 
 u32 dont_bother_with_explode_faces = false;
@@ -199,9 +199,9 @@ void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z)
     *p_cor_z = (dword_1AA5E4 * dist + dword_1AA5E0 * cor_y) >> 16;
 }
 
-void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface)
+void explode_face3_tri_divide_face(struct ExplodeFace *p_exface)
 {
-    struct ExplodeFace3 *p_neface;
+    struct ExplodeFace *p_neface;
     int avg_x0, avg_y0, avg_z0;
     int avg_x1, avg_y1, avg_z1;
     int avg_x2, avg_y2, avg_z2;
@@ -318,9 +318,9 @@ void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface)
     }
 }
 
-void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
+void explode_face3_quad_divide_face(struct ExplodeFace *p_exface)
 {
-    struct ExplodeFace3 *p_neface;
+    struct ExplodeFace *p_neface;
     int avg_x0, avg_y0, avg_z0;
     int avg_x1, avg_y1, avg_z1;
     int avg_x2, avg_y2, avg_z2;
@@ -460,7 +460,7 @@ void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface)
 void draw_explode_type1(ushort exface, ushort npoints)
 {
     struct ShEnginePoint sp1, sp2, sp3, sp4;
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     struct SpecialPoint *p_specpt;
     int cor_dx, cor_dy, cor_dz;
     ushort flags_all;
@@ -536,7 +536,7 @@ void draw_explode_type1(ushort exface, ushort npoints)
 void draw_explode_type3(ushort exface, ushort npoints)
 {
     struct ShEnginePoint sp1, sp2, sp3, sp4;
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     struct SpecialPoint *p_specpt;
     int cor_dx, cor_dy, cor_dz;
     ushort flags_all;
@@ -612,7 +612,7 @@ void draw_explode_type3(ushort exface, ushort npoints)
 void draw_explode_type5(ushort exface, ushort npoints)
 {
     struct ShEnginePoint sp1, sp2, sp3, sp4;
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     struct SpecialPoint *p_specpt;
     int cor_dx, cor_dy, cor_dz;
     ushort flags_all;
@@ -694,7 +694,7 @@ void draw_explode(void)
 
     for (exface = 1; exface < EXPLODE_FACES_COUNT; exface++)
     {
-        struct ExplodeFace3 *p_exface;
+        struct ExplodeFace *p_exface;
 
         p_exface = &ex_faces[exface];
 

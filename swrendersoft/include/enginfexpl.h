@@ -29,7 +29,11 @@ extern "C" {
 
 #define EXPLODE_FACES_COUNT 1024
 
-struct ExplodeFace3 { // sizeof=46
+/** Remaining face from an exploded 3D object.
+ *
+ * The structure stores both tri and quad faces, selected by type.
+ */
+struct ExplodeFace { // sizeof=46
     ushort Texture;
     ushort Flags;
     ubyte Type;
@@ -61,7 +65,7 @@ struct ExplodeFace3 { // sizeof=46
 
 #pragma pack()
 /******************************************************************************/
-extern struct ExplodeFace3 ex_faces[EXPLODE_FACES_COUNT];
+extern struct ExplodeFace ex_faces[EXPLODE_FACES_COUNT];
 extern u32 next_ex_face;
 
 extern u32 dont_bother_with_explode_faces;
@@ -76,8 +80,8 @@ ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z,
 void init_free_explode_faces(void);
 void draw_explode(void);
 
-void explode_face3_tri_divide_face(struct ExplodeFace3 *p_exface);
-void explode_face3_quad_divide_face(struct ExplodeFace3 *p_exface);
+void explode_face3_tri_divide_face(struct ExplodeFace *p_exface);
+void explode_face3_quad_divide_face(struct ExplodeFace *p_exface);
 void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z);
 void set_explode_face_rotate_angle(ushort angX, ushort angY);
 void explode_face_delete(int exface);
