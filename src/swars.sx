@@ -49149,12 +49149,12 @@ GLOBAL_FUNC(ASM_unkn1_explode_faces)	/* 0x62114 */
 		mov    %al,0x29(%edx)
 		mov    0x20(%esp),%al
 		mov    %al,0x2a(%edx)
-		mov    data_1aa5d0,%eax
+		mov    EXPORT_SYMBOL(expl_unkn_cor_x),%eax
 		sub    %ecx,%eax
 		mov    %eax,%ecx
 		sar    $0x8,%ecx
 		imul   %ecx,%ecx
-		mov    data_1aa5d4,%eax
+		mov    EXPORT_SYMBOL(expl_unkn_cor_z),%eax
 		sub    %ebx,%eax
 		sar    $0x8,%eax
 		imul   %eax,%eax
@@ -49400,11 +49400,11 @@ GLOBAL_FUNC(ASM_unkn1_explode_faces)	/* 0x62114 */
 		mov    %al,0x29(%edx)
 		mov    0x20(%esp),%al
 		mov    %al,0x2a(%edx)
-		mov    data_1aa5d0,%eax
+		mov    EXPORT_SYMBOL(expl_unkn_cor_x),%eax
 		sub    %ecx,%eax
 		sar    $0x8,%eax
 		imul   %eax,%eax
-		mov    data_1aa5d4,%ecx
+		mov    EXPORT_SYMBOL(expl_unkn_cor_z),%ecx
 		sub    %ebx,%ecx
 		mov    %ecx,%ebx
 		sar    $0x8,%ebx
@@ -49621,12 +49621,12 @@ GLOBAL_FUNC(ASM_unkn2_explode_faces)	/* 0x6276C */
 		and    $0x7,%al
 		sub    $0x3,%al
 		mov    %al,0x2a(%edx)
-		mov    data_1aa5d0,%eax
+		mov    EXPORT_SYMBOL(expl_unkn_cor_x),%eax
 		sub    %ecx,%eax
 		mov    %eax,%ecx
 		sar    $0x8,%ecx
 		imul   %ecx,%ecx
-		mov    data_1aa5d4,%eax
+		mov    EXPORT_SYMBOL(expl_unkn_cor_z),%eax
 		sub    %ebx,%eax
 		sar    $0x8,%eax
 		imul   %eax,%eax
@@ -49660,11 +49660,11 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		call   ac_SCANNER_clear
 		mov    0x78(%esp),%eax
 		shl    $0x8,%eax
-		mov    %eax,data_1aa5d0
+		mov    %eax,EXPORT_SYMBOL(expl_unkn_cor_x)
 		mov    0x68(%esp),%eax
 		shl    $0x8,%eax
 		xor    %edi,%edi
-		mov    %eax,data_1aa5d4
+		mov    %eax,EXPORT_SYMBOL(expl_unkn_cor_z)
 		xor    %ebp,%ebp
 	jump_62a74:
 		call   ac_LbRandomAnyShort
@@ -132438,9 +132438,9 @@ GLOBAL (dword_1AA5C4)	/* 0x1AA5C4 */
 GLOBAL (dword_1AA5C8)	/* 0x1AA5C8 */
 		.long	0x0
 
-data_1aa5d0:
+GLOBAL (expl_unkn_cor_x)	/* 0x1AA5D0 */
 		.long	0x0
-data_1aa5d4:
+GLOBAL (expl_unkn_cor_z)
 		.long	0x0
 
 GLOBAL (minimum_explode_size)	/* 0x1AA5E8 */

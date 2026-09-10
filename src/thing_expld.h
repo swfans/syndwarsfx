@@ -25,6 +25,7 @@
 #pragma pack(1)
 
 struct SimpleThing;
+struct Thing;
 
 #pragma pack()
 
@@ -34,6 +35,9 @@ extern "C" {
 /******************************************************************************/
 
 void process_explode(void);
+
+void unkn1_explode_faces(struct Thing *p_thing);
+void unkn2_explode_faces(u32 tl_x, u32 tl_y);
 
 /******************************************************************************/
 #ifdef __cplusplus

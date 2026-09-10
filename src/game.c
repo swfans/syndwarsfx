@@ -247,6 +247,9 @@ extern short word_1C6E0A;
 
 extern long dword_1DDECC;
 
+extern s32 expl_unkn_cor_x;
+extern s32 expl_unkn_cor_z;
+
 u32 engine_mem_alloc_size = 5900000;
 
 extern struct GamePanel unknstrct7_arr2[];
@@ -3084,10 +3087,199 @@ TbBool game_setup(void)
     return ret;
 }
 
-void mapwho_unkn01(int a1, int a2)
+/** Triggers the orbital station self-destruct explosion at given map position.
+ *
+ * Sends a few decorative sparks near the position, clears the mapwho things
+ * within a 33x33 tile area centered on it (calling explode faces effects on
+ * the way), then removes every remaining Thing in the game and every
+ * SimpleThing still linked to the map.
+ */
+void mapwho_unkn01(int cent_tile_x, int cent_tile_z)
 {
+#if 0
     asm volatile ("call ASM_mapwho_unkn01\n"
-        : : "a" (a1), "d" (a2));
+        : : "a" (cent_tile_x), "d" (cent_tile_z));
+#endif
+    int i;
+    int dx, dz;
+    int tl_x, tl_z;
+    ThingIdx thing, nxthing;
+
+    dont_bother_with_explode_faces = 0;
+    SCANNER_clear();
+
+    expl_unkn_cor_x = TILE_TO_MAPCOORD(cent_tile_x, 0);
+    expl_unkn_cor_z = TILE_TO_MAPCOORD(cent_tile_z, 0);
+
+    for (i = 0; i < 5; i++)
+    {
+        int spk_tl_x, spk_tl_z;
+
+        spk_tl_z = cent_tile_z + (LbRandomAnyShort() & 0xF) - 7;
+        spk_tl_x = cent_tile_x + (LbRandomAnyShort() & 0xF) - 7;
+        bang_new4(TILE_TO_MAPCOORD(spk_tl_x, 0) << 8, 0, TILE_TO_MAPCOORD(spk_tl_z, 0) << 8, 95);
+    }
+
+    // Process the outer ring of the 33x33 area.
+    // Push explode faces effect onto every Thing.
+    for (dx = -16; dx <= 16; dx++)
+    {
+        for (dz = -16; dz <= 16; dz++)
+        {
+            struct MyMapElement *p_mapel;
+
+            if ((dx >= -8) && (dx <= 8) && (dz >= -8) && (dz <= 8))
+                continue;
+
+            tl_x = cent_tile_x + dx;
+            tl_z = cent_tile_z + dz;
+            if ((tl_x < 0) || (tl_x >= MAP_TILE_WIDTH))
+                continue;
+            if ((tl_z < 0) || (tl_z >= MAP_TILE_HEIGHT))
+                continue;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
+
+            for (thing = p_mapel->Child; thing != 0; thing = nxthing)
+            {
+                if (thing > 0)
+                {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    nxthing = p_thing->Next;
+
+                    unkn1_explode_faces(p_thing);
+                }
+                else
+                {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    nxthing = p_sthing->Next;
+                }
+            }
+        }
+    }
+
+    // Process the inner 17x17 area. Explode faces effect on every tile,
+    // plus explode faces effect on every Thing.
+    for (dx = -8; dx <= 8; dx++)
+    {
+        for (dz = -8; dz <= 8; dz++)
+        {
+            struct MyMapElement *p_mapel;
+
+            tl_x = cent_tile_x + dx;
+            tl_z = cent_tile_z + dz;
+            if ((tl_x < 0) || (tl_x >= MAP_TILE_WIDTH))
+                continue;
+            if ((tl_z < 0) || (tl_z >= MAP_TILE_HEIGHT))
+                continue;
+
+            unkn2_explode_faces(tl_x, tl_z);
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
+
+            for (thing = p_mapel->Child; thing != 0; thing = nxthing)
+            {
+                if (thing > 0)
+                {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    nxthing = p_thing->Next;
+
+                    unkn1_explode_faces(p_thing);
+                }
+                else
+                {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    nxthing = p_sthing->Next;
+                }
+            }
+        }
+    }
+
+    // Remove every Thing currently in the game.
+    for (thing = things_used_head; thing != 0; thing = nxthing)
+    {
+        struct Thing *p_thing;
+
+        p_thing = &things[thing];
+        nxthing = p_thing->LinkChild;
+
+        remove_thing(p_thing->ThingOffset);
+        if (on_mapwho(p_thing))
+              delete_node(p_thing);
+
+        p_thing->Flag2 = 0;
+        //TODO shouldn't dead state be only valid for people, not all things?
+        p_thing->State = PerSt_DEAD;
+        p_thing->Flag |= TngF_Destroyed;
+    }
+
+    // Remove every SimpleThing still linked to the mapwho chains.
+    for (tl_z = 0; tl_z < MAP_TILE_WIDTH; tl_z++)
+    {
+        for (tl_x = 0; tl_x < MAP_TILE_WIDTH; tl_x++)
+        {
+            struct MyMapElement *p_mapel;
+            ThingIdx thing;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
+
+            thing = p_mapel->Child;
+            while (thing != 0)
+            {
+                if (thing > 0)
+                {
+                    struct Thing *p_thing;
+                    p_thing = &things[thing];
+                    thing = p_thing->Next;
+                }
+                else
+                {
+                    struct SimpleThing *p_sthing;
+                    p_sthing = &sthings[thing];
+                    if (p_sthing->Type != SmTT_BANG) {
+                        remove_sthing(p_sthing->ThingOffset);
+                        delete_snode(p_sthing);
+                    }
+                    thing = p_sthing->Next;
+                }
+            }
+        }
+    }
+
+    // Reset per-tile collision data,
+    for (tl_z = 0; tl_z < MAP_TILE_WIDTH; tl_z++)
+    {
+        for (tl_x = 0; tl_x < MAP_TILE_WIDTH; tl_x++)
+        {
+            struct MyMapElement *p_mapel;
+            ThingIdx thing;
+
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
+            p_mapel->Flags |= 0x80;
+            p_mapel->ColHead = 0;
+            p_mapel->ColumnHead = 0;
+
+            thing = p_mapel->Child;
+            if (thing > 0)
+            {
+                struct Thing *p_thing;
+                p_thing = &things[thing];
+                if (p_thing->Type != SmTT_BANG)
+                    LOGWARN("Still thing on mapwho type %d", (int)p_thing->Type);
+            }
+            else if (thing < 0)
+            {
+                struct SimpleThing *p_sthing;
+                p_sthing = &sthings[thing];
+                if (p_sthing->Type != SmTT_BANG)
+                    LOGWARN("Still simple on mapwho type %d", (int)p_sthing->Type);
+            }
+        }
+    }
 }
 
 void show_unkn3A_screen(int a1)
@@ -6528,7 +6720,7 @@ void game_process_orbital_station_explode(void)
     {
         unkn01_downcount--;
         LOGDBG("unkn01_downcount = %ld", unkn01_downcount);
-        if ( unkn01_downcount == 40 ) {
+        if (unkn01_downcount == 40) {
             mapwho_unkn01(unkn01_pos_x, unkn01_pos_y);
         }
         else if (unkn01_downcount < 40) {
