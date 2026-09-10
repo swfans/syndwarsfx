@@ -42,7 +42,7 @@
 .global EXPORT_SYMBOL(dword_1E08BC);
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC (ASM_FIRE_init_or_samples_init)	/* 0x0D6650 */
+GLOBAL_FUNC (ASM_FIRE_init)	/* 0x0D6650 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx

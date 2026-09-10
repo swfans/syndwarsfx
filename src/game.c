@@ -60,6 +60,7 @@
 
 #include "engincam.h"
 #include "engincolour.h"
+#include "enginfexpl.h"
 #include "enginprops.h"
 #include "engintxtrmap.h"
 
@@ -462,12 +463,6 @@ void bang_set_detail(int a1)
 {
     asm volatile ("call ASM_bang_set_detail\n"
         : : "a" (a1));
-}
-
-void FIRE_init_or_samples_init(void)
-{
-    asm volatile ("call ASM_FIRE_init_or_samples_init\n"
-        :  :  : "eax" );
 }
 
 /** Remains of some Bf debug stuff.
@@ -2315,7 +2310,7 @@ void init_level(void)
     word_1AABD0 = next_floor_texture;
     init_crater_textures();
     bang_init();
-    FIRE_init_or_samples_init();
+    FIRE_init();
     func_749fc();
     preprogress_trains_turns(50);
     tnext_floor_texture = next_floor_texture + 1;
@@ -3026,7 +3021,7 @@ TbBool game_setup(void)
     init_free_explode_faces();
     init_search_spiral();
     bang_set_detail(0);
-    FIRE_init_or_samples_init();
+    FIRE_init();
     ingame.draw_unknprop_01 = 0;
     debug_trace_setup(-5);
     if (!game_setup_stuff()) {

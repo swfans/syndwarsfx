@@ -63842,7 +63842,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		mov    %ax,EXPORT_SYMBOL(word_1AABD0)
 		call   ac_init_crater_textures
 		call   ASM_bang_init
-		call   ac_FIRE_init_or_samples_init
+		call   ac_FIRE_init
 		call   ac_func_749fc
 	jump_74ee8:
 		dec    %esi
