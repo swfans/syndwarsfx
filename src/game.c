@@ -247,9 +247,6 @@ extern short word_1C6E0A;
 
 extern long dword_1DDECC;
 
-extern s32 expl_unkn_cor_x;
-extern s32 expl_unkn_cor_z;
-
 u32 engine_mem_alloc_size = 5900000;
 
 extern struct GamePanel unknstrct7_arr2[];
@@ -3148,7 +3145,7 @@ void mapwho_unkn01(int cent_tile_x, int cent_tile_z)
                     p_thing = &things[thing];
                     nxthing = p_thing->Next;
 
-                    unkn1_explode_faces(p_thing);
+                    thing_explode_faces(p_thing);
                 }
                 else
                 {
@@ -3187,7 +3184,7 @@ void mapwho_unkn01(int cent_tile_x, int cent_tile_z)
                     p_thing = &things[thing];
                     nxthing = p_thing->Next;
 
-                    unkn1_explode_faces(p_thing);
+                    thing_explode_faces(p_thing);
                 }
                 else
                 {

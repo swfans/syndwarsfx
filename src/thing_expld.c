@@ -23,6 +23,7 @@
 
 #include "enginfexpl.h"
 #include "enginshrapn.h"
+#include "enginsngobjs.h"
 
 #include "bigmap.h"
 #include "bmbang.h"
@@ -54,9 +55,11 @@ extern s32 minimum_explode_size;
 extern s32 dword_1AA5C4;
 extern s32 dword_1AA5C8;
 
+extern ushort word_1AA5CC;
+
 /******************************************************************************/
 
-static void explode_face3_move_above_ground(struct ExplodeFace3 *p_exface, ushort npoints)
+static void explode_face3_move_above_ground(struct ExplodeFace *p_exface, ushort npoints)
 {
     int rndv;
     {
@@ -106,7 +109,7 @@ static void explode_face3_move_above_ground(struct ExplodeFace3 *p_exface, ushor
 
 static void animate_explode_face1(ushort exface, ushort npoints)
 {
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
 
     p_exface = &ex_faces[exface];
 
@@ -152,7 +155,7 @@ static void animate_explode_face1(ushort exface, ushort npoints)
 
 static void explode_face3_tri_final_ground_hit(int exface, int cor_gnd_y)
 {
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     int cor_x, cor_z;
     int rndv;
 
@@ -167,7 +170,7 @@ static void explode_face3_tri_final_ground_hit(int exface, int cor_gnd_y)
 
 static void explode_face3_quad_final_ground_hit(int exface, int cor_gnd_y)
 {
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     int cor_x, cor_z;
     int base_x, base_z;
     short tile_x, tile_z;
@@ -204,7 +207,7 @@ static void explode_face3_quad_final_ground_hit(int exface, int cor_gnd_y)
 
 static void animate_explode_face3_tri(int exface)
 {
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     int cor_gnd_y;
     int dist_x, dist_y, dist_z;
 
@@ -237,7 +240,7 @@ static void animate_explode_face3_tri(int exface)
 
 static void animate_explode_face3_quad(ushort exface)
 {
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     int cor_gnd_y;
     int dist_x, dist_y, dist_z;
 
@@ -271,7 +274,7 @@ static void animate_explode_face3_quad(ushort exface)
 
 static void animate_explode_face5(ushort exface, ushort npoints)
 {
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     int rndv;
 
     p_exface = &ex_faces[exface];
@@ -321,7 +324,7 @@ void animate_explode(void)
         :  :  : "eax" );
     return;
 #endif
-    struct ExplodeFace3 *p_exface;
+    struct ExplodeFace *p_exface;
     int i;
     int remain;
 
@@ -384,10 +387,223 @@ void process_explode(void)
         animate_explode();
 }
 
-void unkn1_explode_faces(struct Thing *p_thing)
+/** Creates triangural explode face, filled with given point coords and properties.
+ *
+ * Coord and angle deltas (move data) need to be set separately, as are not initialized here.
+ */
+ushort create_explode_face3(struct MapCoords *p_face_pt0, struct MapCoords *p_face_pt1,
+  struct MapCoords *p_face_pt2, ushort txtr, ushort flags, ushort excol)
 {
-    asm volatile ("call ASM_unkn1_explode_faces\n"
+    struct ExplodeFace *p_exface;
+    struct MapCoords cent;
+    ushort eface;
+
+    eface = word_1AA5CC;
+    if (eface != 0) {
+        word_1AA5CC = ex_faces[eface].Flags;
+    }
+
+    if (eface == 0) {
+        return 0;
+    }
+
+    p_exface = &ex_faces[eface];
+
+    p_exface->Type = 5;
+    p_exface->Texture = txtr;
+    p_exface->Flags = flags;
+    p_exface->Col = (ubyte)excol;
+
+    cent.X = (p_face_pt0->X + p_face_pt1->X + p_face_pt2->X) / 3;
+    cent.Y = (p_face_pt0->Y + p_face_pt1->Y + p_face_pt2->Y) / 3;
+    cent.Z = (p_face_pt0->Z + p_face_pt1->Z + p_face_pt2->Z) / 3;
+
+    p_exface->X0 = p_face_pt0->X - cent.X;
+    p_exface->Y0 = p_face_pt0->Y - cent.Y;
+    p_exface->Z0 = p_face_pt0->Z - cent.Z;
+    p_exface->X1 = p_face_pt1->X - cent.X;
+    p_exface->Y1 = p_face_pt1->Y - cent.Y;
+    p_exface->Z1 = p_face_pt1->Z - cent.Z;
+    p_exface->X2 = p_face_pt2->X - cent.X;
+    p_exface->Y2 = p_face_pt2->Y - cent.Y;
+    p_exface->Z2 = p_face_pt2->Z - cent.Z;
+    p_exface->X = cent.X;
+    p_exface->Y = cent.Y;
+    p_exface->Z = cent.Z;
+
+    return eface;
+}
+
+/** Creates rectangular explode face, filled with given point coords and properties.
+ *
+ * Coord and angle deltas (move data) need to be set separately, as are not initialized here.
+ */
+ushort create_explode_face4(struct MapCoords *p_face_pt0, struct MapCoords *p_face_pt1,
+  struct MapCoords *p_face_pt2, struct MapCoords *p_face_pt3, ushort txtr, ushort flags, ushort excol)
+{
+    struct ExplodeFace *p_exface;
+    struct MapCoords cent;
+    ushort eface;
+
+    eface = word_1AA5CC;
+    if (eface != 0) {
+        word_1AA5CC = ex_faces[eface].Flags;
+    }
+
+    if (eface == 0) {
+        return 0;
+    }
+
+    cent.X = (p_face_pt0->X + p_face_pt1->X + p_face_pt2->X + p_face_pt3->X) / 4;
+    cent.Y = (p_face_pt0->Y + p_face_pt1->Y + p_face_pt2->Y + p_face_pt3->Y) / 4;
+    cent.Z = (p_face_pt0->Z + p_face_pt1->Z + p_face_pt2->Z + p_face_pt3->Z) / 4;
+
+    p_exface = &ex_faces[eface];
+
+    p_exface->Type = 6;
+    p_exface->Texture = txtr;
+    p_exface->Flags = flags;
+    p_exface->Col = (ubyte)excol;
+
+    p_exface->X0 = p_face_pt0->X - cent.X;
+    p_exface->Y0 = p_face_pt0->Y - cent.Y;
+    p_exface->Z0 = p_face_pt0->Z - cent.Z;
+    p_exface->X1 = p_face_pt1->X - cent.X;
+    p_exface->Y1 = p_face_pt1->Y - cent.Y;
+    p_exface->Z1 = p_face_pt1->Z - cent.Z;
+    p_exface->X2 = p_face_pt2->X - cent.X;
+    p_exface->Y2 = p_face_pt2->Y - cent.Y;
+    p_exface->Z2 = p_face_pt2->Z - cent.Z;
+    p_exface->X3 = p_face_pt3->X - cent.X;
+    p_exface->Y3 = p_face_pt3->Y - cent.Y;
+    p_exface->Z3 = p_face_pt3->Z - cent.Z;
+    p_exface->X = cent.X;
+    p_exface->Y = cent.Y;
+    p_exface->Z = cent.Z;
+
+    return eface;
+}
+
+void explode_face_setup_random_move(ushort eface, struct MapCoords *p_obj_cor)
+{
+    struct ExplodeFace *p_exface;
+    int dist_x, dist_z;
+    int rndv;
+
+    p_exface = &ex_faces[eface];
+
+    rndv = LbRandomAnyShort();
+    p_exface->AngleDX = (rndv & 0xF) - 7;
+    rndv = LbRandomAnyShort();
+    p_exface->AngleDY = (rndv & 0xF) - 7;
+
+    p_exface->DX = (p_exface->X - p_obj_cor->X) >> 5;
+    rndv = LbRandomAnyShort();
+    p_exface->DY = (1 - (rndv & 7)) >> 3;
+    p_exface->DZ = (p_exface->Z - p_obj_cor->Z) >> 5;
+
+    dist_x = (expl_unkn_cor_x - p_exface->X) >> 8;
+    dist_z = (expl_unkn_cor_z - p_exface->Z) >> 8;
+    p_exface->Timer = ((dist_x * dist_x + dist_z * dist_z) >> 3) + 1002;
+}
+
+void object_explode_faces(short obj)
+{
+    struct MapCoords face_pt0, face_pt1, face_pt2, face_pt3;
+    struct MapCoords obj_cor;
+    struct SingleObject *p_gobj;
+    struct SinglePoint *p_pt0, *p_pt1, *p_pt2, *p_pt3;
+    int k;
+    ushort eface;
+
+    p_gobj = &game_objects[obj];
+    obj_cor.X = p_gobj->MapX;
+    obj_cor.Y = p_gobj->OffsetY;
+    obj_cor.Z = p_gobj->MapZ;
+
+    for (k = 0; k < p_gobj->NumbFaces; k++)
+    {
+        struct SingleObjectFace3 *p_face3;
+
+        p_face3 = &game_object_faces3[p_gobj->StartFace + k];
+
+        p_pt0 = &game_object_points[p_face3->PointNo[0]];
+        face_pt0.X = obj_cor.X + p_pt0->X;
+        face_pt0.Y = obj_cor.Y + p_pt0->Y;
+        face_pt0.Z = obj_cor.Z + p_pt0->Z;
+
+        p_pt1 = &game_object_points[p_face3->PointNo[1]];
+        face_pt1.X = obj_cor.X + p_pt1->X;
+        face_pt1.Y = obj_cor.Y + p_pt1->Y;
+        face_pt1.Z = obj_cor.Z + p_pt1->Z;
+
+        p_pt2 = &game_object_points[p_face3->PointNo[2]];
+        face_pt2.X = obj_cor.X + p_pt2->X;
+        face_pt2.Y = obj_cor.Y + p_pt2->Y;
+        face_pt2.Z = obj_cor.Z + p_pt2->Z;
+
+        eface = create_explode_face3(&face_pt0, &face_pt1, &face_pt2,
+          p_face3->Texture, p_face3->Flags, p_face3->ExCol);
+
+        if (eface == 0)
+            continue;
+
+        explode_face_setup_random_move(eface, &obj_cor);
+    }
+
+    for (k = 0; k < p_gobj->NumbFaces4; k++)
+    {
+        struct SingleObjectFace4 *p_face4;
+
+        p_face4 = &game_object_faces4[p_gobj->StartFace4 + k];
+
+        p_pt0 = &game_object_points[p_face4->PointNo[0]];
+        face_pt0.X = obj_cor.X + p_pt0->X;
+        face_pt0.Y = obj_cor.Y + p_pt0->Y;
+        face_pt0.Z = obj_cor.Z + p_pt0->Z;
+
+        p_pt1 = &game_object_points[p_face4->PointNo[1]];
+        face_pt1.X = obj_cor.X + p_pt1->X;
+        face_pt1.Y = obj_cor.Y + p_pt1->Y;
+        face_pt1.Z = obj_cor.Z + p_pt1->Z;
+
+        p_pt2 = &game_object_points[p_face4->PointNo[2]];
+        face_pt2.X = obj_cor.X + p_pt2->X;
+        face_pt2.Y = obj_cor.Y + p_pt2->Y;
+        face_pt2.Z = obj_cor.Z + p_pt2->Z;
+
+        p_pt3 = &game_object_points[p_face4->PointNo[3]];
+        face_pt3.X = obj_cor.X + p_pt3->X;
+        face_pt3.Y = obj_cor.Y + p_pt3->Y;
+        face_pt3.Z = obj_cor.Z + p_pt3->Z;
+
+        eface = create_explode_face4(&face_pt0, &face_pt1, &face_pt2, &face_pt3,
+          p_face4->Texture, p_face4->Flags, p_face4->ExCol);
+
+        if (eface == 0)
+            continue;
+
+        explode_face_setup_random_move(eface, &obj_cor);
+    }
+}
+
+void thing_explode_faces(struct Thing *p_thing)
+{
+#if 0
+    asm volatile ("call ASM_thing_explode_faces\n"
         : : "a" (p_thing));
+    return;
+#endif
+    int i;
+    short obj;
+
+    dont_bother_with_explode_faces = 0;
+
+    obj = p_thing->U.UObject.Object;
+    for (i = 0; i < p_thing->U.UObject.NumbObjects; i++, obj++)
+    {
+        object_explode_faces(obj);
+    }
 }
 
 void unkn2_explode_faces(u32 tl_x, u32 tl_y)

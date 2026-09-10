@@ -48910,7 +48910,7 @@ apply_unkn_vehicle50_damage:	/* 0x061E30 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_unkn1_explode_faces)	/* 0x62114 */
+GLOBAL_FUNC(ASM_thing_explode_faces)	/* 0x62114 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -49752,7 +49752,7 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		mov    things,%edx
 		add    %eax,%edx
 		mov    %edx,%eax
-		call   ac_unkn1_explode_faces
+		call   ac_thing_explode_faces
 		mov    (%edx),%eax
 		jmp    jump_62b7c
 	jump_62b71:
@@ -49825,7 +49825,7 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		mov    things,%edx
 		add    %eax,%edx
 		mov    %edx,%eax
-		call   ac_unkn1_explode_faces
+		call   ac_thing_explode_faces
 		mov    (%edx),%eax
 		jmp    jump_62bde
 	jump_62c3b:
