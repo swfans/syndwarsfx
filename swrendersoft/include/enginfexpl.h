@@ -67,6 +67,9 @@ extern u32 next_ex_face;
 extern u32 dont_bother_with_explode_faces;
 extern ushort word_1E08B8;
 /******************************************************************************/
+
+void FIRE_init(void);
+
 ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z,
   ushort rangemsk, ushort fbig, ushort ftype, ushort count);
 

@@ -67,6 +67,25 @@ void init_free_explode_faces(void)
     dont_bother_with_explode_faces = 1;
 }
 
+void FIRE_init(void)
+{
+#if 0
+    asm volatile ("call ASM_FIRE_init\n"
+        :  :  : "eax" );
+#endif
+    int i;
+
+    LbMemorySet(FIRE_flame, 0, sizeof(FIRE_flame));
+
+    for (i = 1; i < 511; i++) {
+        FIRE_flame[i].next = i + 1;
+    }
+    FIRE_flame[i].next = 0;
+
+    word_1E08B8 = 1;
+    dword_1E08BC = 0;
+}
+
 ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangemsk, ushort fbig, ushort ftype, ushort count)
 {
     struct FireFlame *p_fflame;
