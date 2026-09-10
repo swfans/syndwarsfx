@@ -48910,7 +48910,7 @@ apply_unkn_vehicle50_damage:	/* 0x061E30 */
 
 
 /*----------------------------------------------------------------*/
-unkn1_explode_faces:	/* 0x62114 */
+GLOBAL_FUNC(ASM_unkn1_explode_faces)	/* 0x62114 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -49426,7 +49426,7 @@ unkn1_explode_faces:	/* 0x62114 */
 
 
 /*----------------------------------------------------------------*/
-func_6276c:
+GLOBAL_FUNC(ASM_unkn2_explode_faces)	/* 0x6276C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -49657,7 +49657,7 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		mov    %edx,0x68(%esp)
 		xor    %edx,%edx
 		mov    %edx,EXPORT_SYMBOL(dont_bother_with_explode_faces)
-		call   SCANNER_clear
+		call   ac_SCANNER_clear
 		mov    0x78(%esp),%eax
 		shl    $0x8,%eax
 		mov    %eax,data_1aa5d0
@@ -49752,7 +49752,7 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		mov    things,%edx
 		add    %eax,%edx
 		mov    %edx,%eax
-		call   unkn1_explode_faces
+		call   ac_unkn1_explode_faces
 		mov    (%edx),%eax
 		jmp    jump_62b7c
 	jump_62b71:
@@ -49809,7 +49809,7 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		jg     jump_62be5
 		mov    %ebx,%edx
 		mov    %ecx,%eax
-		call   func_6276c
+		call   ac_unkn2_explode_faces
 		mov    %ebx,%eax
 		shl    $0x7,%eax
 		add    %ecx,%eax
@@ -49825,7 +49825,7 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		mov    things,%edx
 		add    %eax,%edx
 		mov    %edx,%eax
-		call   unkn1_explode_faces
+		call   ac_unkn1_explode_faces
 		mov    (%edx),%eax
 		jmp    jump_62bde
 	jump_62c3b:
@@ -105419,7 +105419,7 @@ GLOBAL_FUNC(ASM_SCANNER_fill_in_a_little_bit)	/* 0x0B0C30 */
 
 
 /*----------------------------------------------------------------*/
-SCANNER_clear:	/* 0x0B0DE0 */
+GLOBAL_FUNC (ASM_SCANNER_clear)	/* 0x0B0DE0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx

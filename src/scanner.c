@@ -20,6 +20,7 @@
 
 #include "bfgentab.h"
 #include "bfmath.h"
+#include "bfmemut.h"
 #include "bfpalette.h"
 #include "bfscreen.h"
 #include "bfutility.h"
@@ -63,6 +64,8 @@ ushort SCANNER_base_zoom_factor = 180;
 ushort SCANNER_user_zoom_factor = 192;
 ubyte SCANNER_scale_dots = true;
 
+/******************************************************************************/
+
 void SCANNER_set_zoom(int zoom)
 {
     if (zoom < 8)
@@ -85,6 +88,11 @@ void SCANNER_init_bbpoints(void)
         SCANNER_bbpadds[i].du = lbSinTable[angle] >> 2;
         SCANNER_bbpadds[i].dv = lbSinTable[angle + 512] >> 2;
     }
+}
+
+void SCANNER_clear(void)
+{
+    LbMemorySet(SCANNER_data, SCANNER_colour[0], sizeof(SCANNER_data));
 }
 
 void SCANNER_init_people_colours(void)

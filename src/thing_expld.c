@@ -384,4 +384,16 @@ void process_explode(void)
         animate_explode();
 }
 
+void unkn1_explode_faces(struct Thing *p_thing)
+{
+    asm volatile ("call ASM_unkn1_explode_faces\n"
+        : : "a" (p_thing));
+}
+
+void unkn2_explode_faces(u32 tl_x, u32 tl_y)
+{
+    asm volatile ("call ASM_unkn2_explode_faces\n"
+        : : "a" (tl_x), "d" (tl_y));
+}
+
 /******************************************************************************/
