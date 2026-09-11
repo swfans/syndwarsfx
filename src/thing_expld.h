@@ -42,7 +42,7 @@ void process_explode(void);
 void draw_explode(void);
 
 void thing_explode_faces(struct Thing *p_thing);
-void unkn2_explode_faces(u32 tl_x, u32 tl_y);
+void floor_explode_faces(short tile_x, short tile_z);
 
 /******************************************************************************/
 #ifdef __cplusplus

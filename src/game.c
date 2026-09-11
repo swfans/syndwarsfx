@@ -3171,7 +3171,7 @@ void mapwho_unkn01(int cent_tile_x, int cent_tile_z)
             if ((tl_z < 0) || (tl_z >= MAP_TILE_HEIGHT))
                 continue;
 
-            unkn2_explode_faces(tl_x, tl_z);
+            floor_explode_faces(tl_x, tl_z);
 
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
 

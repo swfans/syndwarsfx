@@ -670,6 +670,31 @@ void explode_face_setup_move_from_epicenter(ushort eface, struct SortMapPoint *p
     p_exface->Timer = ((dist_x * dist_x + dist_z * dist_z) >> 3) + 1002;
 }
 
+void explode_face_setup_move_random(ushort eface)
+{
+    struct ExplodeFace *p_exface;
+    int dist_x, dist_z;
+    int rndv;
+
+    p_exface = &ex_faces[eface];
+
+    rndv = LbRandomAnyShort();
+    p_exface->AngleDX = (rndv & 0xF) - 7;
+    rndv = LbRandomAnyShort();
+    p_exface->AngleDY = (rndv & 0xF) - 7;
+
+    rndv = LbRandomAnyShort();
+    p_exface->DX = (rndv & 7) - 3;
+    rndv = LbRandomAnyShort();
+    p_exface->DY = (rndv & 7) - 3;
+    rndv = LbRandomAnyShort();
+    p_exface->DZ = (rndv & 7) - 3;
+
+    dist_x = (expl_unkn_cor_x - p_exface->X) >> 8;
+    dist_z = (expl_unkn_cor_z - p_exface->Z) >> 8;
+    p_exface->Timer = ((dist_x * dist_x + dist_z * dist_z) >> 3) + 1002;
+}
+
 void object_explode_faces(short obj)
 {
     struct SortMapPoint face_pt0, face_pt1, face_pt2, face_pt3;
@@ -769,10 +794,48 @@ void thing_explode_faces(struct Thing *p_thing)
     }
 }
 
-void unkn2_explode_faces(u32 tl_x, u32 tl_y)
+void floor_explode_faces(short tile_x, short tile_z)
 {
-    asm volatile ("call ASM_unkn2_explode_faces\n"
-        : : "a" (tl_x), "d" (tl_y));
+#if 0
+    asm volatile ("call ASM_floor_explode_faces\n"
+        : : "a" (tile_x), "d" (tile_z));
+    return;
+#endif
+    struct SortMapPoint face_pt0, face_pt1, face_pt2, face_pt3;
+    struct MyMapElement *p_mapel;
+    ushort eface;
+
+    dont_bother_with_explode_faces = 0;
+
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
+        return;
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return;
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+    if ((p_mapel->Flags & MEF1_Unkn80) != 0)
+        return;
+
+    face_pt0.X = TILE_TO_MAPCOORD(tile_x, 0);
+    face_pt0.Z = TILE_TO_MAPCOORD(tile_z, 0);
+    face_pt0.Y = alt_at_point(face_pt0.X, face_pt0.Z);
+
+    face_pt3.X = TILE_TO_MAPCOORD(tile_x + 1, 0);
+    face_pt3.Z = TILE_TO_MAPCOORD(tile_z + 1, 0);;
+    face_pt3.Y = alt_at_point(face_pt3.X, face_pt3.Z);
+
+    face_pt1.X = face_pt3.X;
+    face_pt1.Z = face_pt0.Z;
+    face_pt1.Y = alt_at_point(face_pt1.X, face_pt1.Z);
+
+    face_pt2.X = face_pt0.X;
+    face_pt2.Z = face_pt3.Z;
+    face_pt2.Y = alt_at_point(face_pt2.X, face_pt2.Z);
+
+    eface = create_explode_face_quad(&face_pt0, &face_pt1, &face_pt2, &face_pt3,
+      p_mapel->Texture & 0x3FFF, 0x04 | 0x02, 0);
+
+    explode_face_setup_move_random(eface);
 }
 
 void draw_explode(void)

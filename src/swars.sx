@@ -49426,7 +49426,7 @@ GLOBAL_FUNC(ASM_thing_explode_faces)	/* 0x62114 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_unkn2_explode_faces)	/* 0x6276C */
+GLOBAL_FUNC(ASM_floor_explode_faces)	/* 0x6276C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -49809,7 +49809,7 @@ GLOBAL_FUNC (ASM_mapwho_unkn01)	/* 0x62A38 */
 		jg     jump_62be5
 		mov    %ebx,%edx
 		mov    %ecx,%eax
-		call   ac_unkn2_explode_faces
+		call   ac_floor_explode_faces
 		mov    %ebx,%eax
 		shl    $0x7,%eax
 		add    %ecx,%eax
