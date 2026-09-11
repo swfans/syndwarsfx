@@ -29,6 +29,8 @@ extern "C" {
 
 #define EXPLODE_FACES_COUNT 1024
 
+struct SortMapPoint;
+
 /** Remaining face from an exploded 3D object.
  *
  * The structure stores both tri and quad faces, selected by type.
@@ -79,8 +81,24 @@ ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z,
 void init_free_explode_faces(void);
 void draw_explode(void);
 
-void explode_face3_tri_divide_face(struct ExplodeFace *p_exface);
-void explode_face3_quad_divide_face(struct ExplodeFace *p_exface);
+/** Creates triangural explode face, filled with given point coords and properties.
+ *
+ * Coord and angle deltas (move data) need to be set separately, as are not initialized here.
+ */
+ushort create_explode_face_tri(struct SortMapPoint *p_face_pt0,
+  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
+  ushort txtr, ushort flags, ushort excol);
+
+/** Creates quad explode face, filled with given point coords and properties.
+ *
+ * Coord and angle deltas (move data) need to be set separately, as are not initialized here.
+ */
+ushort create_explode_face_quad(struct SortMapPoint *p_face_pt0,
+  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
+  struct SortMapPoint *p_face_pt3, ushort txtr, ushort flags, ushort excol);
+
+void explode_face_tri_divide_face(struct ExplodeFace *p_exface);
+void explode_face_quad_divide_face(struct ExplodeFace *p_exface);
 void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z);
 void set_explode_face_rotate_angle(ushort angX, ushort angY);
 void explode_face_delete(int exface);

@@ -198,8 +198,102 @@ void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z)
     *p_cor_z = (dword_1AA5E4 * dist + dword_1AA5E0 * cor_y) >> 16;
 }
 
-ushort create_explode_face3_by_div(struct SortMapPoint *p_face_pt0, struct SortMapPoint *p_face_pt1,
-  struct SortMapPoint *p_face_pt2, struct ExplodeFace *p_exface)
+ushort create_explode_face_tri(struct SortMapPoint *p_face_pt0,
+  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
+  ushort txtr, ushort flags, ushort excol)
+{
+    struct ExplodeFace *p_exface;
+    struct SortMapPoint cent;
+    ushort eface;
+
+    eface = free_ex_face;
+    if (eface != 0) {
+        free_ex_face = ex_faces[eface].Flags;
+    }
+
+    if (eface == 0) {
+        return 0;
+    }
+
+    p_exface = &ex_faces[eface];
+
+    p_exface->Type = 5;
+    p_exface->Texture = txtr;
+    p_exface->Flags = flags;
+    p_exface->Col = (ubyte)excol;
+
+    cent.X = (p_face_pt0->X + p_face_pt1->X + p_face_pt2->X) / 3;
+    cent.Y = (p_face_pt0->Y + p_face_pt1->Y + p_face_pt2->Y) / 3;
+    cent.Z = (p_face_pt0->Z + p_face_pt1->Z + p_face_pt2->Z) / 3;
+
+    p_exface->X0 = p_face_pt0->X - cent.X;
+    p_exface->Y0 = p_face_pt0->Y - cent.Y;
+    p_exface->Z0 = p_face_pt0->Z - cent.Z;
+    p_exface->X1 = p_face_pt1->X - cent.X;
+    p_exface->Y1 = p_face_pt1->Y - cent.Y;
+    p_exface->Z1 = p_face_pt1->Z - cent.Z;
+    p_exface->X2 = p_face_pt2->X - cent.X;
+    p_exface->Y2 = p_face_pt2->Y - cent.Y;
+    p_exface->Z2 = p_face_pt2->Z - cent.Z;
+    p_exface->X = cent.X;
+    p_exface->Y = cent.Y;
+    p_exface->Z = cent.Z;
+
+    return eface;
+}
+
+ushort create_explode_face_quad(struct SortMapPoint *p_face_pt0,
+  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
+  struct SortMapPoint *p_face_pt3, ushort txtr, ushort flags, ushort excol)
+{
+    struct ExplodeFace *p_exface;
+    struct SortMapPoint cent;
+    ushort eface;
+
+    eface = free_ex_face;
+    if (eface != 0) {
+        free_ex_face = ex_faces[eface].Flags;
+    }
+
+    if (eface == 0) {
+        return 0;
+    }
+
+    cent.X = (p_face_pt0->X + p_face_pt1->X + p_face_pt2->X + p_face_pt3->X) / 4;
+    cent.Y = (p_face_pt0->Y + p_face_pt1->Y + p_face_pt2->Y + p_face_pt3->Y) / 4;
+    cent.Z = (p_face_pt0->Z + p_face_pt1->Z + p_face_pt2->Z + p_face_pt3->Z) / 4;
+
+    p_exface = &ex_faces[eface];
+
+    p_exface->Type = 6;
+    p_exface->Texture = txtr;
+    p_exface->Flags = flags;
+    p_exface->Col = (ubyte)excol;
+
+    p_exface->X0 = p_face_pt0->X - cent.X;
+    p_exface->Y0 = p_face_pt0->Y - cent.Y;
+    p_exface->Z0 = p_face_pt0->Z - cent.Z;
+    p_exface->X1 = p_face_pt1->X - cent.X;
+    p_exface->Y1 = p_face_pt1->Y - cent.Y;
+    p_exface->Z1 = p_face_pt1->Z - cent.Z;
+    p_exface->X2 = p_face_pt2->X - cent.X;
+    p_exface->Y2 = p_face_pt2->Y - cent.Y;
+    p_exface->Z2 = p_face_pt2->Z - cent.Z;
+    p_exface->X3 = p_face_pt3->X - cent.X;
+    p_exface->Y3 = p_face_pt3->Y - cent.Y;
+    p_exface->Z3 = p_face_pt3->Z - cent.Z;
+    p_exface->X = cent.X;
+    p_exface->Y = cent.Y;
+    p_exface->Z = cent.Z;
+
+    return eface;
+}
+
+/** Creates triangural explode face, filled as a slice of given face.
+ */
+ushort create_explode_face_tri_by_div(struct SortMapPoint *p_face_pt0,
+  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
+  struct ExplodeFace *p_exface)
 {
     struct ExplodeFace *p_neface;
     ushort eface;
@@ -236,7 +330,7 @@ ushort create_explode_face3_by_div(struct SortMapPoint *p_face_pt0, struct SortM
     return eface;
 }
 
-void explode_face3_tri_divide_face(struct ExplodeFace *p_exface)
+void explode_face_tri_divide_face(struct ExplodeFace *p_exface)
 {
     struct SortMapPoint avg_pt0, avg_pt1, avg_pt2, efac_pt;
 
@@ -254,25 +348,28 @@ void explode_face3_tri_divide_face(struct ExplodeFace *p_exface)
     efac_pt.Y = p_exface->Y0;
     efac_pt.Z = p_exface->Z0;
 
-    create_explode_face3_by_div(&efac_pt, &avg_pt0, &avg_pt2, p_exface);
+    create_explode_face_tri_by_div(&efac_pt, &avg_pt0, &avg_pt2, p_exface);
 
     efac_pt.X = p_exface->X1;
     efac_pt.Y = p_exface->Y1;
     efac_pt.Z = p_exface->Z1;
 
-    create_explode_face3_by_div(&avg_pt0, &efac_pt, &avg_pt1, p_exface);
+    create_explode_face_tri_by_div(&avg_pt0, &efac_pt, &avg_pt1, p_exface);
 
     efac_pt.X = p_exface->X2;
     efac_pt.Y = p_exface->Y2;
     efac_pt.Z = p_exface->Z2;
 
-    create_explode_face3_by_div(&avg_pt1, &efac_pt, &avg_pt2, p_exface);
+    create_explode_face_tri_by_div(&avg_pt1, &efac_pt, &avg_pt2, p_exface);
 
-    create_explode_face3_by_div(&avg_pt0, &avg_pt1, &avg_pt2, p_exface);
+    create_explode_face_tri_by_div(&avg_pt0, &avg_pt1, &avg_pt2, p_exface);
 }
 
-ushort create_explode_face4_by_div(struct SortMapPoint *p_face_pt0, struct SortMapPoint *p_face_pt1,
-  struct SortMapPoint *p_face_pt2, struct SortMapPoint *p_face_pt3, struct ExplodeFace *p_exface)
+/** Creates quad explode face, filled as a slice of given face.
+ */
+ushort create_explode_face_quad_by_div(struct SortMapPoint *p_face_pt0,
+  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
+  struct SortMapPoint *p_face_pt3, struct ExplodeFace *p_exface)
 {
     struct ExplodeFace *p_neface;
     ushort eface;
@@ -312,7 +409,7 @@ ushort create_explode_face4_by_div(struct SortMapPoint *p_face_pt0, struct SortM
     return eface;
 }
 
-void explode_face3_quad_divide_face(struct ExplodeFace *p_exface)
+void explode_face_quad_divide_face(struct ExplodeFace *p_exface)
 {
     struct SortMapPoint avg_pt0, avg_pt1, avg_pt2, avg_pt3, avg_pt4, efac_pt;
 
@@ -336,25 +433,25 @@ void explode_face3_quad_divide_face(struct ExplodeFace *p_exface)
     efac_pt.Y = p_exface->Y0;
     efac_pt.Z = p_exface->Z0;
 
-    create_explode_face4_by_div(&efac_pt, &avg_pt0, &avg_pt3, &avg_pt4, p_exface);
+    create_explode_face_quad_by_div(&efac_pt, &avg_pt0, &avg_pt3, &avg_pt4, p_exface);
 
     efac_pt.X = p_exface->X1;
     efac_pt.Y = p_exface->Y1;
     efac_pt.Z = p_exface->Z1;
 
-    create_explode_face4_by_div(&avg_pt0, &efac_pt, &avg_pt4, &avg_pt1, p_exface);
+    create_explode_face_quad_by_div(&avg_pt0, &efac_pt, &avg_pt4, &avg_pt1, p_exface);
 
     efac_pt.X = p_exface->X3;
     efac_pt.Y = p_exface->Y3;
     efac_pt.Z = p_exface->Z3;
 
-    create_explode_face4_by_div(&avg_pt4, &avg_pt1, &avg_pt2, &efac_pt, p_exface);
+    create_explode_face_quad_by_div(&avg_pt4, &avg_pt1, &avg_pt2, &efac_pt, p_exface);
 
     efac_pt.X = p_exface->X2;
     efac_pt.Y = p_exface->Y2;
     efac_pt.Z = p_exface->Z2;
 
-    create_explode_face4_by_div(&avg_pt3, &avg_pt4, &efac_pt, &avg_pt2, p_exface);
+    create_explode_face_quad_by_div(&avg_pt3, &avg_pt4, &efac_pt, &avg_pt2, p_exface);
 }
 
 void draw_explode_type1(ushort exface, ushort npoints)
