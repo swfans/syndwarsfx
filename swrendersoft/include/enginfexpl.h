@@ -69,7 +69,6 @@ struct ExplodeFace { // sizeof=46
 /******************************************************************************/
 extern struct ExplodeFace ex_faces[EXPLODE_FACES_COUNT];
 
-extern u32 dont_bother_with_explode_faces;
 extern ushort word_1E08B8;
 /******************************************************************************/
 
@@ -78,30 +77,16 @@ void FIRE_init(void);
 ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z,
   ushort rangemsk, ushort fbig, ushort ftype, ushort count);
 
-void init_free_explode_faces(void);
-void draw_explode(void);
+void init_explode_faces(void);
+void explode_face_delete(ushort exface);
+ushort explode_face_alloc(void);
 
-/** Creates triangural explode face, filled with given point coords and properties.
- *
- * Coord and angle deltas (move data) need to be set separately, as are not initialized here.
- */
-ushort create_explode_face_tri(struct SortMapPoint *p_face_pt0,
-  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
-  ushort txtr, ushort flags, ushort excol);
+void enlist_draw_explode_type1(ushort exface, ushort npoints);
+void enlist_draw_explode_type3(ushort exface, ushort npoints);
+void enlist_draw_explode_type5(ushort exface, ushort npoints);
 
-/** Creates quad explode face, filled with given point coords and properties.
- *
- * Coord and angle deltas (move data) need to be set separately, as are not initialized here.
- */
-ushort create_explode_face_quad(struct SortMapPoint *p_face_pt0,
-  struct SortMapPoint *p_face_pt1, struct SortMapPoint *p_face_pt2,
-  struct SortMapPoint *p_face_pt3, ushort txtr, ushort flags, ushort excol);
-
-void explode_face_tri_divide_face(struct ExplodeFace *p_exface);
-void explode_face_quad_divide_face(struct ExplodeFace *p_exface);
 void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z);
 void set_explode_face_rotate_angle(ushort angX, ushort angY);
-void explode_face_delete(ushort exface);
 /******************************************************************************/
 #ifdef __cplusplus
 }

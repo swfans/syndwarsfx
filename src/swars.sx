@@ -63827,7 +63827,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		mov    %bx,EXPORT_SYMBOL(ingame)+0x98B # ingame.SoundThing
 		mov    %bx,EXPORT_SYMBOL(ingame)+0x991 # ingame.fld_unkCB5
 		call   clear_mission_status
-		call   ac_init_free_explode_faces
+		call   ac_init_object_explode_faces
 		call   ac_StopAllSamples
 		mov    %bx,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		call   ac_func_74934

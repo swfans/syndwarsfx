@@ -27,7 +27,6 @@
 #include "drawtext.h"
 #include "engincam.h"
 #include "engincolour.h"
-#include "enginfexpl.h"
 #include "enginlights.h"
 
 #include "bat.h"
@@ -54,6 +53,7 @@
 #include "building.h"
 #include "pepgroup.h"
 #include "thing.h"
+#include "thing_expld.h"
 #include "tngcolisn.h"
 #include "vehicle.h"
 #include "vehtraffic.h"
@@ -1726,7 +1726,7 @@ TbResult load_mad_pc(ushort mapno)
     TbResult ret;
 
     ingame.Flags |= GamF_Unkn00010000;
-    init_free_explode_faces();
+    init_object_explode_faces();
     if (mapno != 0) {
         load_map_bnb(mapno);
         ret = load_map_mad(mapno);

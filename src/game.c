@@ -60,7 +60,6 @@
 
 #include "engincam.h"
 #include "engincolour.h"
-#include "enginfexpl.h"
 #include "enginprops.h"
 #include "engintxtrmap.h"
 
@@ -2299,7 +2298,7 @@ void init_level(void)
     ingame.SoundThing = 0;
     ingame.fld_unkCB5 = 0;
     clear_open_mission_status();
-    init_free_explode_faces();
+    init_object_explode_faces();
     StopAllSamples();
     ingame.TrackThing = 0;
     func_74934();
@@ -3018,7 +3017,7 @@ TbBool game_setup(void)
     read_weapons_conf_file();
     read_cybmods_conf_file();
     bang_init();
-    init_free_explode_faces();
+    init_object_explode_faces();
     init_search_spiral();
     bang_set_detail(0);
     FIRE_init();

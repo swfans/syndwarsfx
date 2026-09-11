@@ -33,10 +33,13 @@ struct Thing;
 extern "C" {
 #endif
 /******************************************************************************/
+extern u32 dont_bother_with_explode_faces;
 extern s32 expl_unkn_cor_x;
 extern s32 expl_unkn_cor_z;
 
+void init_object_explode_faces(void);
 void process_explode(void);
+void draw_explode(void);
 
 void thing_explode_faces(struct Thing *p_thing);
 void unkn2_explode_faces(u32 tl_x, u32 tl_y);
