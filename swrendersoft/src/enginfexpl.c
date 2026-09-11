@@ -34,11 +34,9 @@
 #include "privrdlog.h"
 /******************************************************************************/
 struct ExplodeFace ex_faces[EXPLODE_FACES_COUNT];
-u32 next_ex_face = 1;
+ushort free_ex_face = 1;
 
 u32 dont_bother_with_explode_faces = false;
-
-ushort word_1AA5CC = 1;
 
 s32 dword_1AA5D8 = 0;
 s32 dword_1AA5DC = 0;
@@ -55,7 +53,7 @@ void init_free_explode_faces(void)
     int i;
 
     LbMemorySet(ex_faces, 0, sizeof(ex_faces));
-    word_1AA5CC = 1;
+    free_ex_face = 1;
     for (i = 1; i < EXPLODE_FACES_COUNT - 1; i++)
     {
         ex_faces[i].Timer = 0;
@@ -86,7 +84,8 @@ void FIRE_init(void)
     dword_1E08BC = 0;
 }
 
-ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangemsk, ushort fbig, ushort ftype, ushort count)
+ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangemsk,
+  ushort fbig, ushort ftype, ushort count)
 {
     struct FireFlame *p_fflame;
     ushort fflame;
@@ -172,9 +171,9 @@ ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangems
 
 void explode_face_delete(int exface)
 {
-    ex_faces[exface].Flags = word_1AA5CC;
+    ex_faces[exface].Flags = free_ex_face;
     ex_faces[exface].Timer = 0;
-    word_1AA5CC = exface;
+    free_ex_face = exface;
 }
 
 void set_explode_face_rotate_angle(ushort angX, ushort angY)
@@ -199,262 +198,163 @@ void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z)
     *p_cor_z = (dword_1AA5E4 * dist + dword_1AA5E0 * cor_y) >> 16;
 }
 
-void explode_face3_tri_divide_face(struct ExplodeFace *p_exface)
+ushort create_explode_face3_by_div(struct SortMapPoint *p_face_pt0, struct SortMapPoint *p_face_pt1,
+  struct SortMapPoint *p_face_pt2, struct ExplodeFace *p_exface)
 {
     struct ExplodeFace *p_neface;
-    int avg_x0, avg_y0, avg_z0;
-    int avg_x1, avg_y1, avg_z1;
-    int avg_x2, avg_y2, avg_z2;
-    int eface;
+    ushort eface;
 
-    avg_y0 = (p_exface->Y1 + p_exface->Y0) >> 1;
-    avg_z0 = (p_exface->Z1 + p_exface->Z0) >> 1;
-    avg_x1 = (p_exface->X2 + p_exface->X1) >> 1;
-    avg_y1 = (p_exface->Y2 + p_exface->Y1) >> 1;
-    avg_z1 = (p_exface->Z2 + p_exface->Z1) >> 1;
-    avg_x2 = (p_exface->X2 + p_exface->X0) >> 1;
-    avg_z2 = (p_exface->Z0 + p_exface->Z2) >> 1;
-    avg_x0 = (p_exface->X1 + p_exface->X0) >> 1;
-    avg_y2 = (p_exface->Y0 + p_exface->Y2) >> 1;
-
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 3;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->X0 = p_exface->X0;
-        p_neface->Y0 = p_exface->Y0;
-        p_neface->Z0 = p_exface->Z0;
-        p_neface->X1 = avg_x0;
-        p_neface->Y2 = avg_y2;
-        p_neface->Y1 = avg_y0;
-        p_neface->Z1 = avg_z0;
-        p_neface->X2 = avg_x2;
-        p_neface->Z2 = avg_z2;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
+    eface = free_ex_face;
+    if (eface != 0) {
+        free_ex_face = ex_faces[eface].Flags;
+    }
+    if (eface == 0) {
+        return 0;
     }
 
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 3;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->X0 = avg_x0;
-        p_neface->Y0 = avg_y0;
-        p_neface->Z0 = avg_z0;
-        p_neface->X1 = p_exface->X1;
-        p_neface->Y1 = p_exface->Y1;
-        p_neface->Z1 = p_exface->Z1;
-        p_neface->X2 = avg_x1;
-        p_neface->Y2 = avg_y1;
-        p_neface->Z2 = avg_z1;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
+    p_neface = &ex_faces[eface];
+    p_neface->Type = 3;
+    p_neface->Texture = p_exface->Texture;
+    p_neface->Flags = p_exface->Flags;
+    p_neface->Col = p_exface->Col;
+
+    p_neface->X0 = p_face_pt0->X;
+    p_neface->Y0 = p_face_pt0->Y;
+    p_neface->Z0 = p_face_pt0->Z;
+    p_neface->X1 = p_face_pt1->X;
+    p_neface->Y1 = p_face_pt1->Y;
+    p_neface->Z1 = p_face_pt1->Z;
+    p_neface->X2 = p_face_pt2->X;
+    p_neface->Y2 = p_face_pt2->Y;
+    p_neface->Z2 = p_face_pt2->Z;
+
+    p_neface->DX = p_exface->DX;
+    p_neface->DY = p_exface->DY;
+    p_neface->DZ = p_exface->DZ;
+    p_neface->Timer = 1;
+
+    return eface;
+}
+
+void explode_face3_tri_divide_face(struct ExplodeFace *p_exface)
+{
+    struct SortMapPoint avg_pt0, avg_pt1, avg_pt2, efac_pt;
+
+    avg_pt0.X = (p_exface->X1 + p_exface->X0) >> 1;
+    avg_pt0.Y = (p_exface->Y1 + p_exface->Y0) >> 1;
+    avg_pt0.Z = (p_exface->Z1 + p_exface->Z0) >> 1;
+    avg_pt1.X = (p_exface->X2 + p_exface->X1) >> 1;
+    avg_pt1.Y = (p_exface->Y2 + p_exface->Y1) >> 1;
+    avg_pt1.Z = (p_exface->Z2 + p_exface->Z1) >> 1;
+    avg_pt2.X = (p_exface->X2 + p_exface->X0) >> 1;
+    avg_pt2.Z = (p_exface->Z0 + p_exface->Z2) >> 1;
+    avg_pt2.Y = (p_exface->Y0 + p_exface->Y2) >> 1;
+
+    efac_pt.X = p_exface->X0;
+    efac_pt.Y = p_exface->Y0;
+    efac_pt.Z = p_exface->Z0;
+
+    create_explode_face3_by_div(&efac_pt, &avg_pt0, &avg_pt2, p_exface);
+
+    efac_pt.X = p_exface->X1;
+    efac_pt.Y = p_exface->Y1;
+    efac_pt.Z = p_exface->Z1;
+
+    create_explode_face3_by_div(&avg_pt0, &efac_pt, &avg_pt1, p_exface);
+
+    efac_pt.X = p_exface->X2;
+    efac_pt.Y = p_exface->Y2;
+    efac_pt.Z = p_exface->Z2;
+
+    create_explode_face3_by_div(&avg_pt1, &efac_pt, &avg_pt2, p_exface);
+
+    create_explode_face3_by_div(&avg_pt0, &avg_pt1, &avg_pt2, p_exface);
+}
+
+ushort create_explode_face4_by_div(struct SortMapPoint *p_face_pt0, struct SortMapPoint *p_face_pt1,
+  struct SortMapPoint *p_face_pt2, struct SortMapPoint *p_face_pt3, struct ExplodeFace *p_exface)
+{
+    struct ExplodeFace *p_neface;
+    ushort eface;
+
+    eface = free_ex_face;
+    if (eface != 0) {
+        free_ex_face = ex_faces[eface].Flags;
+    }
+    if (eface == 0) {
+        return 0;
     }
 
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 3;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->X0 = avg_x1;
-        p_neface->Y0 = avg_y1;
-        p_neface->Z0 = avg_z1;
-        p_neface->X1 = p_exface->X2;
-        p_neface->Y1 = p_exface->Y2;
-        p_neface->Z1 = p_exface->Z2;
-        p_neface->Y2 = avg_y2;
-        p_neface->X2 = avg_x2;
-        p_neface->Z2 = avg_z2;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
-    }
+    p_neface = &ex_faces[eface];
+    p_neface->Type = 4;
+    p_neface->Texture = p_exface->Texture;
+    p_neface->Flags = p_exface->Flags;
+    p_neface->Col = p_exface->Col;
 
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 3;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->X0 = avg_x0;
-        p_neface->Y2 = avg_y2;
-        p_neface->Y0 = avg_y0;
-        p_neface->Z2 = avg_z2;
-        p_neface->Z0 = avg_z0;
-        p_neface->X1 = avg_x1;
-        p_neface->Y1 = avg_y1;
-        p_neface->Z1 = avg_z1;
-        p_neface->X2 = avg_x2;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
-    }
+    p_neface->X0 = p_face_pt0->X;
+    p_neface->Y0 = p_face_pt0->Y;
+    p_neface->Z0 = p_face_pt0->Z;
+    p_neface->X1 = p_face_pt1->X;
+    p_neface->Y1 = p_face_pt1->Y;
+    p_neface->Z1 = p_face_pt1->Z;
+    p_neface->X2 = p_face_pt2->X;
+    p_neface->Y2 = p_face_pt2->Y;
+    p_neface->Z2 = p_face_pt2->Z;
+    p_neface->X3 = p_face_pt3->X;
+    p_neface->Y3 = p_face_pt3->Y;
+    p_neface->Z3 = p_face_pt3->Z;
+
+    p_neface->DX = p_exface->DX;
+    p_neface->DY = p_exface->DY;
+    p_neface->DZ = p_exface->DZ;
+    p_neface->Timer = 1;
+
+    return eface;
 }
 
 void explode_face3_quad_divide_face(struct ExplodeFace *p_exface)
 {
-    struct ExplodeFace *p_neface;
-    int avg_x0, avg_y0, avg_z0;
-    int avg_x1, avg_y1, avg_z1;
-    int avg_x2, avg_y2, avg_z2;
-    int avg_x3, avg_y3, avg_z3;
-    int avg_x4, avg_y4, avg_z4;
-    int eface;
+    struct SortMapPoint avg_pt0, avg_pt1, avg_pt2, avg_pt3, avg_pt4, efac_pt;
 
-    avg_y0 = (p_exface->Y1 + p_exface->Y0) >> 1;
-    avg_z0 = (p_exface->Z1 + p_exface->Z0) >> 1;
-    avg_x1 = (p_exface->X3 + p_exface->X1) >> 1;
-    avg_y1 = (p_exface->Y3 + p_exface->Y1) >> 1;
-    avg_z1 = (p_exface->Z3 + p_exface->Z1) >> 1;
-    avg_x2 = (p_exface->X2 + p_exface->X3) >> 1;
-    avg_y2 = (p_exface->Y2 + p_exface->Y3) >> 1;
-    avg_z2 = (p_exface->Z2 + p_exface->Z3) >> 1;
-    avg_x3 = (p_exface->X0 + p_exface->X2) >> 1;
-    avg_x0 = (p_exface->X0 + p_exface->X1) >> 1;
-    avg_z3 = (p_exface->Z0 + p_exface->Z2) >> 1;
-    avg_y3 = (p_exface->Y2 + p_exface->Y0) >> 1;
-    avg_x4 = (avg_x3 + avg_x2 + avg_x0 + avg_x1) >> 2;
-    avg_y4 = (avg_y3 + avg_y2 + avg_y1 + avg_y0) >> 2;
-    avg_z4 = (avg_z3 + avg_z2 + avg_z1 + avg_z0) >> 2;
+    avg_pt0.Y = (p_exface->Y1 + p_exface->Y0) >> 1;
+    avg_pt0.Z = (p_exface->Z1 + p_exface->Z0) >> 1;
+    avg_pt1.X = (p_exface->X3 + p_exface->X1) >> 1;
+    avg_pt1.Y = (p_exface->Y3 + p_exface->Y1) >> 1;
+    avg_pt1.Z = (p_exface->Z3 + p_exface->Z1) >> 1;
+    avg_pt2.X = (p_exface->X2 + p_exface->X3) >> 1;
+    avg_pt2.Y = (p_exface->Y2 + p_exface->Y3) >> 1;
+    avg_pt2.Z = (p_exface->Z2 + p_exface->Z3) >> 1;
+    avg_pt3.X = (p_exface->X0 + p_exface->X2) >> 1;
+    avg_pt0.X = (p_exface->X0 + p_exface->X1) >> 1;
+    avg_pt3.Z = (p_exface->Z0 + p_exface->Z2) >> 1;
+    avg_pt3.Y = (p_exface->Y2 + p_exface->Y0) >> 1;
+    avg_pt4.X = (avg_pt3.X + avg_pt2.X + avg_pt1.X + avg_pt0.X) >> 2;
+    avg_pt4.Y = (avg_pt3.Y + avg_pt2.Y + avg_pt1.Y + avg_pt0.Y) >> 2;
+    avg_pt4.Z = (avg_pt3.Z + avg_pt2.Z + avg_pt1.Z + avg_pt0.Z) >> 2;
 
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 4;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->X0 = p_exface->X0;
-        p_neface->Y0 = p_exface->Y0;
-        p_neface->Z0 = p_exface->Z0;
-        p_neface->X1 = avg_x0;
-        p_neface->Y2 = avg_y3;
-        p_neface->Y1 = avg_y0;
-        p_neface->Z1 = avg_z0;
-        p_neface->X2 = avg_x3;
-        p_neface->Z2 = avg_z3;
-        p_neface->X3 = avg_x4;
-        p_neface->Y3 = avg_y4;
-        p_neface->Z3 = avg_z4;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
-    }
+    efac_pt.X = p_exface->X0;
+    efac_pt.Y = p_exface->Y0;
+    efac_pt.Z = p_exface->Z0;
 
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 4;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->X0 = avg_x0;
-        p_neface->Y0 = avg_y0;
-        p_neface->Z0 = avg_z0;
-        p_neface->X1 = p_exface->X1;
-        p_neface->Y1 = p_exface->Y1;
-        p_neface->Z1 = p_exface->Z1;
-        p_neface->X2 = avg_x4;
-        p_neface->Y2 = avg_y4;
-        p_neface->Z2 = avg_z4;
-        p_neface->X3 = avg_x1;
-        p_neface->Y3 = avg_y1;
-        p_neface->Z3 = avg_z1;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
-    }
+    create_explode_face4_by_div(&efac_pt, &avg_pt0, &avg_pt3, &avg_pt4, p_exface);
 
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 4;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->X0 = avg_x4;
-        p_neface->Y0 = avg_y4;
-        p_neface->Z0 = avg_z4;
-        p_neface->X1 = avg_x1;
-        p_neface->Y1 = avg_y1;
-        p_neface->Z1 = avg_z1;
-        p_neface->X2 = avg_x2;
-        p_neface->Y2 = avg_y2;
-        p_neface->Z2 = avg_z2;
-        p_neface->X3 = p_exface->X3;
-        p_neface->Y3 = p_exface->Y3;
-        p_neface->Z3 = p_exface->Z3;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
-    }
+    efac_pt.X = p_exface->X1;
+    efac_pt.Y = p_exface->Y1;
+    efac_pt.Z = p_exface->Z1;
 
-    eface = word_1AA5CC;
-    if (eface != 0)
-        word_1AA5CC = ex_faces[eface].Flags;
-    if (eface != 0)
-    {
-        p_neface = &ex_faces[eface];
-        p_neface->Type = 4;
-        p_neface->Texture = p_exface->Texture;
-        p_neface->Flags = p_exface->Flags;
-        p_neface->Col = p_exface->Col;
-        p_neface->Y0 = avg_y3;
-        p_neface->X0 = avg_x3;
-        p_neface->Z0 = avg_z3;
-        p_neface->X1 = avg_x4;
-        p_neface->Y1 = avg_y4;
-        p_neface->Z1 = avg_z4;
-        p_neface->X2 = p_exface->X2;
-        p_neface->Y2 = p_exface->Y2;
-        p_neface->Z2 = p_exface->Z2;
-        p_neface->X3 = avg_x2;
-        p_neface->Y3 = avg_y2;
-        p_neface->Z3 = avg_z2;
-        p_neface->DX = p_exface->DX;
-        p_neface->DY = p_exface->DY;
-        p_neface->DZ = p_exface->DZ;
-        p_neface->Timer = 1;
-    }
+    create_explode_face4_by_div(&avg_pt0, &efac_pt, &avg_pt4, &avg_pt1, p_exface);
+
+    efac_pt.X = p_exface->X3;
+    efac_pt.Y = p_exface->Y3;
+    efac_pt.Z = p_exface->Z3;
+
+    create_explode_face4_by_div(&avg_pt4, &avg_pt1, &avg_pt2, &efac_pt, p_exface);
+
+    efac_pt.X = p_exface->X2;
+    efac_pt.Y = p_exface->Y2;
+    efac_pt.Z = p_exface->Z2;
+
+    create_explode_face4_by_div(&avg_pt3, &avg_pt4, &efac_pt, &avg_pt2, p_exface);
 }
 
 void draw_explode_type1(ushort exface, ushort npoints)

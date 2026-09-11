@@ -66,7 +66,6 @@ struct ExplodeFace { // sizeof=46
 #pragma pack()
 /******************************************************************************/
 extern struct ExplodeFace ex_faces[EXPLODE_FACES_COUNT];
-extern u32 next_ex_face;
 
 extern u32 dont_bother_with_explode_faces;
 extern ushort word_1E08B8;
