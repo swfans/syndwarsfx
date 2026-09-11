@@ -1635,12 +1635,13 @@ void func_702c0(int a1, int a2, int a3, int a4, int a5, ubyte a6)
 
 void draw_transparent_slant_bar(short x, short y, ushort w, ushort h)
 {
-    long waftx, wafty;
-    ushort tmx, tmy;
     struct EnginePoint point4;
     struct EnginePoint point2;
     struct EnginePoint point1;
     struct EnginePoint point3;
+    u32 waftx, wafty;
+    uint anim_speed_x, anim_speed_y;
+    ushort tmx, tmy;
     short sh_x;
 
     sh_x = 3;
@@ -1656,18 +1657,20 @@ void draw_transparent_slant_bar(short x, short y, ushort w, ushort h)
     point3.pp.X = (x - sh_x);
 
     // The shield bar is animated, even if it's not possible to see
-    waftx = waft_table[(render_anim_turn >> (RENDER_ANIM_TURN_SHIFT + 3)) & 31];
-    wafty = waft_table[((render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + 16) & 31];
+    anim_speed_x = (render_anim_turn >> (RENDER_ANIM_TURN_SHIFT + 3));
+    anim_speed_y = (render_anim_turn >> RENDER_ANIM_TURN_SHIFT);
+    waftx = waft_table[(anim_speed_x) & 0x1F];
+    wafty = waft_table[(anim_speed_y + 16) & 0x1F];
     tmx = ((waftx + 30) >> 1);
-    tmy = ((wafty + 30) >> 3) + 64;
-    point1.pp.U = tmx << 16;
+    tmy = ((wafty + 30) >> 3);
+    point1.pp.U = (tmx +  0) << 16;
     point4.pp.U = (tmx + 64) << 16;
     point2.pp.U = (tmx + 64) << 16;
-    point1.pp.V = tmy << 16;
-    point4.pp.V = tmy << 16;
-    point2.pp.V = (tmy + 8) << 16;
-    point3.pp.U = tmx << 16;
-    point3.pp.V = (tmy + 8) << 16;
+    point1.pp.V = (tmy + 64) << 16;
+    point4.pp.V = (tmy + 64) << 16;
+    point2.pp.V = (tmy + 72) << 16;
+    point3.pp.U = (tmx +  0) << 16;
+    point3.pp.V = (tmy + 72) << 16;
 
     point1.pp.S = 0;
     point2.pp.S = 0;
