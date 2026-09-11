@@ -241,6 +241,9 @@ const char *primvehobj_fname = "qdata/primveh.obj";
 
 extern s32 dword_152E38[5]; // = {-1, -1, -1, -1, -1,};
 
+extern u32 dword_1C4B84;
+extern u32 dword_1C4B88;
+
 extern short word_1C6E08;
 extern short word_1C6E0A;
 
@@ -5677,11 +5680,21 @@ void net_new_game_prepare(void)
     draw_flic_purple_list(ac_purple_unkn1_data_to_screen);
 }
 
-
-void update_mission_time(char a1)
+void update_mission_time(TbBool a1)
 {
+#if 0
     asm volatile ("call ASM_update_mission_time\n"
         : : "a" (a1));
+#endif
+    if (a1)
+    {
+        dword_1C4B84 = gameturn;
+        return;
+    }
+    dword_1C4B88 = gameturn;
+
+    mission_status_time_rand_progress(open_brief);
+    global_date_update_after_mission();
 }
 
 void show_menu_screen_st2(void)

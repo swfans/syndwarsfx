@@ -130536,12 +130536,12 @@ GLOBAL_FUNC(ASM_update_mission_time)	/* 0x0CFD88 */
 		test   %al,%al
 		je     jump_cfda1
 		mov    EXPORT_SYMBOL(gameturn),%eax
-		mov    %eax,data_1c4b84
+		mov    %eax,EXPORT_SYMBOL(dword_1C4B84)
 		jmp    jump_cffb0
 	jump_cfda1:
 		mov    EXPORT_SYMBOL(gameturn),%eax
 		xor    %edx,%edx
-		mov    %eax,data_1c4b88
+		mov    %eax,EXPORT_SYMBOL(dword_1C4B88)
 		call   ac_LbRandomAnyShort
 		mov    %ax,%dx
 		mov    $0x48,%ebx
@@ -131561,18 +131561,7 @@ GLOBAL (net_proto_param_text)	/* 0x155140 */
 		.ascii  "\x00\x00\x00"
 GLOBAL (unkn_rate)	/* 0x155150 */
 		.byte	0x0
-data_155151:
 		.ascii  "\x4b\x00\x00"
-		.align  4
-
-GLOBAL (month_days)
-		.ascii  "\x1f\x1c\x1f\x1e\x1f\x1e\x1f\x1f\x1e"
-data_155161:
-		.byte	0x1f
-data_155162:
-		.byte	0x1e
-data_155163:
-		.byte	0x1f
 		.align  4
 
 GLOBAL (research_on_weapons)	/* 0x155168 */
@@ -132955,9 +132944,9 @@ GLOBAL (reload_background_flag)	/* 0x1C4B80 */
 GLOBAL (game_high_resolution)	/* 0x1c4b81 */
 		.byte   0x0
 		.ascii  "\x00\x00"
-data_1c4b84:
+GLOBAL (dword_1C4B84)	/* 0x1C4B84 */
 		.long	0x0
-data_1c4b88:
+GLOBAL (dword_1C4B88)	/* 0x1C4B88 */
 		.long	0x0
 GLOBAL (equip_cost_text)	/* 0x1C4B8C */
 		.fill   0x10

@@ -56,6 +56,7 @@
 #include "game_sprts.h"
 #include "game.h"
 #include "keyboard.h"
+#include "misstat.h"
 #include "mydraw.h"
 #include "network.h"
 #include "packetfe.h"
@@ -88,7 +89,6 @@ struct ScreenTextBox unkn13_SYSTEM_button = {0};
 extern ubyte research_curr_wep_daily_done;
 extern ubyte research_curr_mod_daily_done;
 extern ubyte byte_1C497D;
-extern ubyte month_days[12];
 
 extern ubyte enter_game;
 
@@ -107,26 +107,14 @@ ubyte ac_main_do_map_editor(ubyte click);
 ubyte ac_alert_OK(ubyte click);
 ubyte ac_do_sysmnu_button(ubyte click);
 
-long time_difference(struct SynTime *tm1, struct SynTime *tm2)
+void global_date_update_after_mission(void)
 {
-    return 60 * (tm1->Hour - (long)tm2->Hour) + tm1->Minute - (long)tm2->Minute;
-}
+    struct MissionStatus *p_mistat;
 
-/** Increment timestamp stored in given syntime by one day.
- */
-void syntime_inc_day(struct SynTime *tm)
-{
-    tm->Day++;
-    if (tm->Day > month_days[tm->Month-1])
-    {
-        tm->Month++;
-        tm->Day = 1;
-        if (tm->Month > 12) {
-            tm->Year++;
-            tm->Month = 1;
-            tm->Year %= 100;
-        }
-    }
+    p_mistat = &mission_status[open_brief];
+
+    syntime_inc_days(&global_date, p_mistat->CityDays);
+    syntime_inc_hours(&global_date, p_mistat->CityHours);
 }
 
 short get_fe_max_detail_for_screen_res(short screen_width, short screen_height)
@@ -715,7 +703,7 @@ void global_date_tick(void)
     {
         if (!byte_1C497D) {
             byte_1C497D = 1;
-            syntime_inc_day(&global_date);
+            syntime_inc_days(&global_date, 1);
         }
     }
 

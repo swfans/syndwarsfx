@@ -42,14 +42,6 @@ enum SysScreenType {
  */
 #define SySc_LOGOUT SySc_TYPES_COUNT
 
-struct SynTime {
-    ubyte Minute;
-    ubyte Hour;
-    ubyte Day;
-    ubyte Month;
-    ubyte Year;
-};
-
 struct ScreenButton;
 struct ScreenTextBox;
 
@@ -110,6 +102,7 @@ void mark_system_menu_screen_boxes_redraw(void);
 void show_mission_loading_screen(void);
 
 void show_purple_status_top_bar(void);
+void global_date_update_after_mission(void);
 void update_date_time(void);
 TbBool input_date_time(void);
 

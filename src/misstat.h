@@ -64,9 +64,21 @@ struct MissionStatus { // sizeof=40
 /******************************************************************************/
 extern struct MissionStatus mission_status[MISSION_STATUS_LIMIT];
 
+long time_difference(struct SynTime *tm1, struct SynTime *tm2);
+
+/** Increase timestamp stored in given SynTime by given amount of days.
+ */
+void syntime_inc_days(struct SynTime *tm, ushort ndays);
+
+/** Increase timestamp stored in given SynTime by given amount of hours.
+ */
+void syntime_inc_hours(struct SynTime *tm, ushort nhours);
+
 void clear_mission_status_all(void);
 void clear_mission_status(ushort brief);
 void clear_open_mission_status(void);
+
+void mission_status_time_rand_progress(ushort brief);
 
 void killed_person_add_to_stats(struct Thing *p_person, ushort brief);
 void persuaded_person_add_to_stats(struct Thing *p_person, ushort brief);

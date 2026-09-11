@@ -85,6 +85,14 @@ struct MapCoords {
     MapCoord Z;
 };
 
+struct SynTime {
+    ubyte Minute;
+    ubyte Hour;
+    ubyte Day;
+    ubyte Month;
+    ubyte Year;
+};
+
 #pragma pack()
 /******************************************************************************/
 #ifdef __cplusplus

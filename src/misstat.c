@@ -19,6 +19,7 @@
 #include "misstat.h"
 
 #include "bfmemut.h"
+#include "bfutility.h"
 
 #include "febrief.h"
 #include "game.h"
@@ -27,6 +28,50 @@
 #include "swlog.h"
 #include "thing.h"
 /******************************************************************************/
+
+const ubyte month_days[12] = {
+  31, 28, 31, 30, 31, 30, 31, 31, 30, 31,
+};
+
+long time_difference(struct SynTime *tm1, struct SynTime *tm2)
+{
+    return 60 * (tm1->Hour - (long)tm2->Hour) + tm1->Minute - (long)tm2->Minute;
+}
+
+void syntime_inc_days(struct SynTime *tm, ushort ndays)
+{
+    uint tmday, tmmonth;
+
+    tmday = tm->Day + ndays;
+    tmmonth = tm->Month;
+    while (tmday > month_days[(tmmonth - 1) % 12])
+    {
+        tmday -= month_days[(tmmonth - 1) % 12];
+        tmmonth++;
+    }
+
+    while (tmmonth > 12) {
+        tm->Year++;
+        tmmonth -= 12;
+    }
+
+    tm->Day = tmday;
+    tm->Month = tmmonth;
+    tm->Year %= 100;
+}
+
+void syntime_inc_hours(struct SynTime *tm, ushort nhours)
+{
+    uint tmhours;
+
+    tmhours = tm->Hour + nhours;
+    while (tmhours >= 24)
+    {
+        syntime_inc_days(tm, 1);
+        tmhours -= 24;
+    }
+    tm->Hour = tmhours;
+}
 
 void clear_mission_status_all(void)
 {
@@ -67,6 +112,36 @@ void clear_open_mission_status(void)
     {
         // Each mission has its status (unless in network game)
         clear_mission_status(open_brief);
+    }
+}
+
+void mission_status_time_rand_progress(ushort brief)
+{
+    struct MissionStatus *p_mistat;
+    uint parttime;
+
+    p_mistat = &mission_status[brief];
+
+    parttime = (LbRandomAnyShort() % 72) + 15;
+    p_mistat->CityDays = parttime / 24;
+    p_mistat->CityHours = parttime % 24;
+
+    p_mistat->CityDays += (LbRandomAnyShort() % 2) + 1;
+    parttime = p_mistat->CityHours + (LbRandomAnyShort() % 24);
+    if (parttime >= 24) {
+        p_mistat->CityDays++;
+        p_mistat->CityHours = parttime - 24;
+    } else {
+        p_mistat->CityHours = parttime;
+    }
+
+    p_mistat->Days += p_mistat->CityDays;
+    parttime = p_mistat->CityHours + p_mistat->Hours;
+    if (parttime >= 24) {
+        p_mistat->Days++;
+        p_mistat->Hours = parttime - 24;
+    } else {
+        p_mistat->Hours = parttime;
     }
 }
 
