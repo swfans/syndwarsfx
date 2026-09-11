@@ -101,7 +101,7 @@ void explode_face_tri_divide_face(struct ExplodeFace *p_exface);
 void explode_face_quad_divide_face(struct ExplodeFace *p_exface);
 void explode_face_point_rotate(short *p_cor_x, short *p_cor_y, short *p_cor_z);
 void set_explode_face_rotate_angle(ushort angX, ushort angY);
-void explode_face_delete(int exface);
+void explode_face_delete(ushort exface);
 /******************************************************************************/
 #ifdef __cplusplus
 }

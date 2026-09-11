@@ -169,11 +169,22 @@ ushort FIRE_spawn_flame(ushort cor_x, ushort cor_y, ushort cor_z, ushort rangems
     return fflame;
 }
 
-void explode_face_delete(int exface)
+void explode_face_delete(ushort exface)
 {
     ex_faces[exface].Flags = free_ex_face;
     ex_faces[exface].Timer = 0;
     free_ex_face = exface;
+}
+
+ushort explode_face_alloc(void)
+{
+    ushort eface;
+
+    eface = free_ex_face;
+    if (eface != 0) {
+        free_ex_face = ex_faces[eface].Flags;
+    }
+    return eface;
 }
 
 void set_explode_face_rotate_angle(ushort angX, ushort angY)
@@ -206,11 +217,7 @@ ushort create_explode_face_tri(struct SortMapPoint *p_face_pt0,
     struct SortMapPoint cent;
     ushort eface;
 
-    eface = free_ex_face;
-    if (eface != 0) {
-        free_ex_face = ex_faces[eface].Flags;
-    }
-
+    eface = explode_face_alloc();
     if (eface == 0) {
         return 0;
     }
@@ -250,11 +257,7 @@ ushort create_explode_face_quad(struct SortMapPoint *p_face_pt0,
     struct SortMapPoint cent;
     ushort eface;
 
-    eface = free_ex_face;
-    if (eface != 0) {
-        free_ex_face = ex_faces[eface].Flags;
-    }
-
+    eface = explode_face_alloc();
     if (eface == 0) {
         return 0;
     }
@@ -298,10 +301,7 @@ ushort create_explode_face_tri_by_div(struct SortMapPoint *p_face_pt0,
     struct ExplodeFace *p_neface;
     ushort eface;
 
-    eface = free_ex_face;
-    if (eface != 0) {
-        free_ex_face = ex_faces[eface].Flags;
-    }
+    eface = explode_face_alloc();
     if (eface == 0) {
         return 0;
     }
@@ -374,10 +374,7 @@ ushort create_explode_face_quad_by_div(struct SortMapPoint *p_face_pt0,
     struct ExplodeFace *p_neface;
     ushort eface;
 
-    eface = free_ex_face;
-    if (eface != 0) {
-        free_ex_face = ex_faces[eface].Flags;
-    }
+    eface = explode_face_alloc();
     if (eface == 0) {
         return 0;
     }
