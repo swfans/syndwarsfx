@@ -45,6 +45,7 @@ struct rectangle { // sizeof=4
 
 #pragma pack()
 
+TbBool ex_face_anim_enabled = true;
 
 extern struct rectangle redo_scanner[128];
 
@@ -55,7 +56,7 @@ extern s32 minimum_explode_size;
 extern s32 dword_1AA5C4;
 extern s32 dword_1AA5C8;
 
-extern ushort word_1AA5CC;
+extern ushort free_ex_face;
 
 /******************************************************************************/
 
@@ -383,7 +384,7 @@ void animate_explode(void)
 
 void process_explode(void)
 {
-    if (next_ex_face != 0)
+    if (ex_face_anim_enabled != 0)
         animate_explode();
 }
 
@@ -398,9 +399,9 @@ ushort create_explode_face3(struct MapCoords *p_face_pt0, struct MapCoords *p_fa
     struct MapCoords cent;
     ushort eface;
 
-    eface = word_1AA5CC;
+    eface = free_ex_face;
     if (eface != 0) {
-        word_1AA5CC = ex_faces[eface].Flags;
+        free_ex_face = ex_faces[eface].Flags;
     }
 
     if (eface == 0) {
@@ -445,9 +446,9 @@ ushort create_explode_face4(struct MapCoords *p_face_pt0, struct MapCoords *p_fa
     struct MapCoords cent;
     ushort eface;
 
-    eface = word_1AA5CC;
+    eface = free_ex_face;
     if (eface != 0) {
-        word_1AA5CC = ex_faces[eface].Flags;
+        free_ex_face = ex_faces[eface].Flags;
     }
 
     if (eface == 0) {
