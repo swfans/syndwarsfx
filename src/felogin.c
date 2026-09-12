@@ -48,9 +48,6 @@ struct ScreenBox login_name_box = {0};
 struct ScreenButton login_continue_button = {0};
 struct ScreenButton login_abort_button = {0};
 
-ubyte ac_do_abort_2(ubyte click);
-ubyte ac_do_login_2(ubyte click);
-
 ubyte do_login_2(ubyte click)
 {
     if (strlen(login_name) == 0)

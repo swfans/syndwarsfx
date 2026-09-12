@@ -53,6 +53,8 @@ void equip_update_for_selected_weapon(void);
 void draw_text_property_bk(struct ScreenBoxBase *box, const char *text);
 void draw_text_property_lv(struct ScreenBoxBase *box, const char *text);
 
+void weapon_flic_data_to_screen(void);
+
 /** Draw a background part of a bar of rectangles.
  */
 void draw_discrete_rects_bar_bk(struct ScreenBoxBase *box, const char *text, TbPixel color);
@@ -66,6 +68,8 @@ void draw_agent_panel_shape(struct ScreenShape *shape, ushort spridx, ubyte gbst
 
 void update_equip_cost_text(void);
 void update_cybmod_cost_text(void);
+
+ubyte do_equip_offer_buy(ubyte click);
 
 void switch_shared_equip_screen_buttons_to_equip(void);
 void switch_equip_offer_to_buy(void);

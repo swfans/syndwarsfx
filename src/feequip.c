@@ -103,15 +103,6 @@ ubyte mo_weapon = 0;
 
 /******************************************************************************/
 
-ubyte ac_display_weapon_info(struct ScreenTextBox *box);
-ubyte ac_show_weapon_name(struct ScreenTextBox *box);
-ubyte ac_show_weapon_list(struct ScreenTextBox *box);
-ubyte do_equip_offer_buy(ubyte click);
-ubyte ac_sell_equipment(ubyte click);
-ubyte ac_select_all_agents(ubyte click);
-void ac_weapon_flic_data_to_screen(void);
-ubyte ac_do_equip_all_agents_set(ubyte click);
-
 ubyte do_equip_offer_buy_cybmod(ubyte click);
 
 TbBool dragged_weapon_can_drop_on_research(void)
@@ -993,7 +984,7 @@ void draw_display_box_content_wep(struct ScreenTextBox *p_box)
             p_box->TextFadePos++;
         else
             embanim_do_next_frame(AniSl_EQVIEW);
-        draw_flic_purple_list(ac_weapon_flic_data_to_screen);
+        draw_flic_purple_list(weapon_flic_data_to_screen);
         break;
     }
 }

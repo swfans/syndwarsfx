@@ -59,8 +59,6 @@ ubyte research_selected_mod = 0;
 
 ubyte do_research_submit(ubyte click);
 ubyte do_research_suspend(ubyte click);
-ubyte ac_do_unkn12_WEAPONS_MODS(ubyte click);
-ubyte ac_show_unkn21_box(struct ScreenTextBox *box);
 
 TbBool research_weapon_daily_progress(void)
 {

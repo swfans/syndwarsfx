@@ -54,11 +54,6 @@ extern ubyte controls_hlight_gkey;
 
 short sheet_columns_x[] = {4, 200, 300};
 
-ubyte ac_do_controls_defaults(ubyte click);
-ubyte ac_do_controls_save(ubyte click);
-ubyte ac_do_controls_calibrate(ubyte click);
-ubyte ac_show_menu_controls_list_box(struct ScreenTextBox *p_box);
-
 /** Game key currently being edited in the controls screen.
  * Max value is 2x max GameKey index - because it also stored distinction
  * between entering keyboard key and joystick key.

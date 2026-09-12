@@ -344,8 +344,6 @@ char unk_credits_text_p[] = "";
 
 ubyte reload_menu_flags = 0;
 
-void ac_purple_unkn1_data_to_screen(void);
-
 short arctan(int dx, int dz)
 {
     ushort ret;
@@ -5660,7 +5658,7 @@ void net_new_game_prepare(void)
     load_objectives_text();
     srm_reset_research();
     init_net_players();
-    draw_flic_purple_list(ac_purple_unkn1_data_to_screen);
+    net_grpaint_clear_op();
 }
 
 void update_mission_time(TbBool a1)

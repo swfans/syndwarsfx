@@ -64,10 +64,6 @@ extern short textpos[10];
 
 /******************************************************************************/
 
-ubyte ac_change_panel_permutation(ubyte click);
-ubyte ac_change_trenchcoat_preference(ubyte click);
-ubyte ac_flashy_draw_purple_label(struct ScreenButton *p_button);
-
 void show_audio_volume_box_func_02(short scr_x, short scr_y, short a3, short a4, TbPixel colour)
 {
     short i;

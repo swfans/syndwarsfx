@@ -84,13 +84,6 @@ extern struct ScreenButton equip_offer_buy_button;
 struct ScreenButton equip_all_agents_button = {0};
 struct ScreenShape equip_agent_select_shapes[5] = {0};
 
-ubyte ac_do_cryo_offer_cancel(ubyte click);
-ubyte ac_show_cryo_agent_list(struct ScreenTextBox *box);
-ubyte ac_show_cryo_cybmod_list_box(struct ScreenTextBox *box);
-ubyte ac_do_cryo_all_agents_set(ubyte click);
-void ac_weapon_flic_data_to_screen(void);
-ubyte do_equip_offer_buy(ubyte click);
-
 ubyte selected_mod = 0;
 
 struct ScreenRect equip_blokey_rect[] = {
@@ -1388,7 +1381,7 @@ void draw_display_box_content_mod(struct ScreenTextBox *p_box)
             p_box->TextFadePos++;
         else
             embanim_do_next_frame(AniSl_EQVIEW);
-        draw_flic_purple_list(ac_weapon_flic_data_to_screen);
+        draw_flic_purple_list(weapon_flic_data_to_screen);
         break;
     }
 }

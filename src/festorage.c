@@ -49,7 +49,6 @@ extern ubyte byte_1C4880[8];
 ubyte do_storage_NEW_MORTAL(ubyte click);
 ubyte load_game_slot(ubyte click);
 ubyte save_game_slot(ubyte click);
-ubyte ac_show_menu_storage_slots_box(struct ScreenTextBox *p_box);
 
 int autosave_game(void)
 {

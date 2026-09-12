@@ -104,12 +104,7 @@ struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
 
 /******************************************************************************/
 
-ubyte ac_main_do_my_quit(ubyte click);
-ubyte ac_main_do_login_1(ubyte click);
 ubyte goto_savegame(ubyte click);
-ubyte ac_main_do_map_editor(ubyte click);
-ubyte ac_alert_OK(ubyte click);
-ubyte ac_do_sysmnu_button(ubyte click);
 
 void global_date_update_after_mission(void)
 {

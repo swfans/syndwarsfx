@@ -98,20 +98,7 @@ ushort grpaint_last_pt_x[8];
 ushort grpaint_last_pt_y[8];
 
 ubyte do_net_protocol_option(ubyte click);
-ubyte ac_do_net_unkn40(ubyte click);
 ubyte do_serial_speed_switch(ubyte click);
-ubyte ac_do_net_SET2(ubyte click);
-ubyte ac_do_net_SET(ubyte click);
-ubyte ac_do_net_INITIATE(ubyte click);
-ubyte ac_do_net_groups_LOGON(ubyte click);
-ubyte ac_do_unkn8_EJECT(ubyte click);
-ubyte ac_show_net_benefits_box(struct ScreenBox *box);
-ubyte ac_show_net_grpaint(struct ScreenBox *box);
-ubyte ac_do_net_protocol_select(ubyte click);
-ubyte ac_show_net_protocol_box(struct ScreenBox *box);
-
-void ac_purple_unkn1_data_to_screen(void);
-void ac_purple_unkn3_data_to_screen(void);
 
 void net_sessionlist_clear(void)
 {
@@ -1022,7 +1009,8 @@ void net_grpaint_draw_op(short scr_x2, short scr_y2, ubyte colno, sbyte op, ubyt
 
 void net_grpaint_clear_op(void)
 {
-    draw_flic_purple_list(ac_purple_unkn1_data_to_screen);
+    //TODO this is enlisting drawlist item at very strange moment; maybe we should set a variable to rmeember enlist it later?
+    draw_flic_purple_list(purple_unkn1_data_to_screen);
 }
 
 ubyte show_net_grpaint(struct ScreenBox *p_box)
@@ -1048,9 +1036,9 @@ ubyte show_net_grpaint(struct ScreenBox *p_box)
             draw_box_purple_list(p_box->X + 265, p_box->Y + dy + 6, 9, 21, byte_155170[i]);
             dy += 24;
         }
-        draw_flic_purple_list(ac_purple_unkn3_data_to_screen);
+        draw_flic_purple_list(purple_unkn3_data_to_screen);
         if (login_control__State != LognCt_Unkn5)
-            draw_flic_purple_list(ac_purple_unkn1_data_to_screen);
+            draw_flic_purple_list(purple_unkn1_data_to_screen);
 
         copy_box_purple_list(p_box->X - 3, p_box->Y - 3,
           p_box->Width + 6, p_box->Height + 6);

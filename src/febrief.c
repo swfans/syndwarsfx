@@ -82,11 +82,6 @@ short word_1C47E8 = 0;
 
 /******************************************************************************/
 
-ubyte accept_mission(ubyte click);
-ubyte do_unkn1_CANCEL(ubyte click);
-void ac_purple_unkn2_data_to_screen(void);
-void ac_SCANNER_data_to_screen(void);
-
 ubyte accept_mission(ubyte click)
 {
     ubyte ret;
@@ -537,7 +532,7 @@ ubyte show_citymap_box(struct ScreenBox *p_box)
             brief_citymap_content = BriCtM_AUTO_SCANNER;
         if (embanim_do_next_frame(AniSl_NETSCAN))
             brief_citymap_content = BriCtM_AUTO_SCANNER;
-        draw_flic_purple_list(ac_purple_unkn2_data_to_screen);
+        draw_flic_purple_list(purple_unkn2_data_to_screen);
     }
     else if (brief_state_city_selected)
     {
@@ -545,7 +540,7 @@ ubyte show_citymap_box(struct ScreenBox *p_box)
         {
             input_citymap_scanner(p_box);
         }
-        draw_flic_purple_list(ac_SCANNER_data_to_screen);
+        draw_flic_purple_list(SCANNER_data_to_screen);
         if (mail_num_active_cities != 1)
             draw_hotspot_purple_list(p_box->X + (p_box->Width >> 1), p_box->Y + (p_box->Height >> 1));
         if (mouse_move_over_box(p_box))
