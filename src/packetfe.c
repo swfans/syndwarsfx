@@ -648,11 +648,11 @@ void net_player_action_execute(int plyr, int netplyr)
             if (in_network_game) {
                 LOGWARN("Partial team in network game, mask 0x%x; switching to full",
                   (uint)players[plyr].MissionAgents);
-                player_mission_agents_reset(plyr);
+                player_mission_agents_toggle_reset(plyr);
             }
             if ((players[plyr].MissionAgents & 0x0F) == 0) {
                 LOGWARN("Cannot start a game with empty team, switching to full");
-                player_mission_agents_reset(plyr);
+                player_mission_agents_toggle_reset(plyr);
             }
         }
         break;

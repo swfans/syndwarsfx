@@ -106,6 +106,13 @@ struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
 
 ubyte goto_savegame(ubyte click);
 
+void global_date_new_game_reset(void)
+{
+    global_date.Day = 2;
+    global_date.Month = 6;
+    global_date.Year = 74;
+}
+
 void global_date_update_after_mission(void)
 {
     struct MissionStatus *p_mistat;
@@ -1213,6 +1220,18 @@ TbBool init_purple_mode_colors_and_sprites(void)
 
     LOGSYNC("Done, ret=%s", ret ? "success" : "fail");
     return ret;
+}
+
+void reset_frontend_player_state(void)
+{
+    selected_city_id = -1;
+    reset_equip_screen_player_state();
+    reset_cryo_screen_player_state();
+    reset_world_screen_player_state();
+    reset_brief_screen_player_state();
+    reset_research_screen_player_state();
+    clear_all_scanner_signals();
+    reset_app_bar_player_state();
 }
 
 /******************************************************************************/

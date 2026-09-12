@@ -108,6 +108,8 @@ TbBool input_date_time(void);
 
 void show_sysmenu_screen(void);
 
+void reset_frontend_player_state(void);
+void global_date_new_game_reset(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

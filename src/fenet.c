@@ -537,12 +537,13 @@ void netgame_state_enter_5(void)
     PlayerIdx plyr;
 
     switch_net_screen_boxes_to_execute();
+    reset_frontend_player_state();
     init_variables();
     init_agents();
     srm_reset_research();
     login_control__State = LognCt_Unkn5;
-    for (plyr = 0; plyr < 8; plyr++) {
-        player_mission_agents_reset(plyr);
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
+        player_mission_agents_toggle_reset(plyr);
     }
 }
 

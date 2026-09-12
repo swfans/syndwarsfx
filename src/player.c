@@ -49,7 +49,7 @@ ushort netgame_agent_pos_z[PLAYERS_LIMIT][4];
 ubyte playable_agents;
 /******************************************************************************/
 
-void player_mission_agents_reset(PlayerIdx plyr)
+void player_mission_agents_toggle_reset(PlayerIdx plyr)
 {
     PlayerInfo *p_plyr;
 

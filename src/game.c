@@ -3038,7 +3038,7 @@ TbBool game_setup(void)
     setup_sprites_small_font();
     load_peep_type_stats();
     load_campaigns();
-    player_mission_agents_reset(local_player_no);
+    player_mission_agents_toggle_reset(local_player_no);
     debug_trace_setup(-1);
     if ( is_single_game || cmdln_param_bcg )
     {
@@ -3568,19 +3568,8 @@ ubyte save_game_slot(ubyte click)
 
 void init_variables(void)
 {
-    selected_city_id = -1;
-    reset_equip_screen_player_state();
-    reset_cryo_screen_player_state();
-    reset_world_screen_player_state();
-    reset_brief_screen_player_state();
-    reset_research_screen_player_state();
-    clear_all_scanner_signals();
-    reset_app_bar_player_state();
-    //word_1C6F48 = 0; -- set but never used - remove pending
-    global_date.Day = 2;
-    global_date.Month = 6;
-    global_date.Year = 74;
-    //word_15518A = -1; -- set but never used - remove pending
+    global_date_new_game_reset();
+
     ingame.MissionStatus = ObvStatu_COMPLETED;
     login_control__Money = starting_cash_amounts[4];
     if (login_control__State == LognCt_Unkn6)
@@ -4348,7 +4337,8 @@ void campaign_new_game_prepare(void)
     load_city_data(0);
     load_wep_mod_desc_text();
     load_city_prop_text();
-    player_mission_agents_reset(local_player_no);
+    player_mission_agents_toggle_reset(local_player_no);
+    reset_frontend_player_state();
     init_variables();
     srm_reset_research();
     init_agents();
@@ -4374,7 +4364,8 @@ ubyte goto_savegame(ubyte click)
     load_city_data(0);
     load_wep_mod_desc_text();
     load_city_prop_text();
-    player_mission_agents_reset(local_player_no);
+    player_mission_agents_toggle_reset(local_player_no);
+    reset_frontend_player_state();
     init_variables();
     srm_reset_research();
     init_agents();
@@ -5609,13 +5600,11 @@ void show_menu_screen_st0(void)
 
     ingame.Credits = 50000;
 
-    global_date.Day = 2;
-    global_date.Month = 6;
-    global_date.Year = 74;
+    global_date_new_game_reset();
 
     load_city_data(0);
     load_city_prop_text();
-    player_mission_agents_reset(local_player_no);
+    player_mission_agents_toggle_reset(local_player_no);
 
     debug_trace_place(17);
     // Need to set screen type before gfx background is reloaded

@@ -141,7 +141,9 @@ const char *get_cryo_agent_name(short cryo_no);
 void remove_agent(ubyte cryo_no);
 void add_agent(ulong weapons, ushort mods);
 
-void player_mission_agents_reset(PlayerIdx plyr);
+/** Reset agents toggled to reduce team size during mission.
+ */
+void player_mission_agents_toggle_reset(PlayerIdx plyr);
 
 void player_agent_reset_prev_weapon(PlayerIdx plyr, ushort plagent);
 void player_agent_update_prev_weapon(PlayerIdx plyr, ushort plagent);
