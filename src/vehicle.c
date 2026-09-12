@@ -115,17 +115,18 @@ struct unkn_mech_struc4 { // sizeof=0x7A
 };
 
 struct unkn_mech_struc5_s1 { // sizeof=24
-    s32 field_0;
-    s32 field_4;
-    s32 field_8;
-    ubyte field_C[12];
+    s32 unkst5sub_04;
+    s32 unkst5sub_08;
+    s32 unkst5sub_0C;
+    s32 unkst5sub_10;
+    s32 unkst5sub_14;
+    ubyte unkst5sub_18[4];
 };
 
 struct unkn_mech_struc5 { // sizeof=0x1A9
     s32 field_0;
-    s32 field_4;
-    s32 field_8;
-    struct unkn_mech_struc5_s1 field_C[16];
+    struct unkn_mech_struc5_s1 field_4[16];
+    ubyte field_184[8];
     ubyte field_18C[24];
     ubyte field_1A4[4];
     ubyte field_1A8;
@@ -342,10 +343,48 @@ void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing)
 
 int load_mech_dat(const char *fname)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_load_mech_dat\n"
         : "=r" (ret) : "a" (fname));
     return ret;
+#endif
+    TbFileHandle fh;
+    int i, k;
+
+    fh = LbFileOpen(fname, Lb_FILE_MODE_READ_ONLY);
+    if (fh == INVALID_FILE) {
+        return 0;
+    }
+
+    for (i = 0; i < 64; i++)
+    {
+        struct unkn_mech_struc5 *p_u5itm;
+
+        p_u5itm = &unkn_mech_arr5[i];
+        LbFileRead(fh, p_u5itm, sizeof(struct unkn_mech_struc5));
+
+        for (k = 0; k < 17; k++)
+        {
+            p_u5itm->field_4[k].unkst5sub_0C = 0x800 - p_u5itm->field_4[k].unkst5sub_0C;
+            p_u5itm->field_4[k].unkst5sub_14 = 0x800 - p_u5itm->field_4[k].unkst5sub_14;
+            p_u5itm->field_4[k].unkst5sub_0C &= 0x7FF;
+            p_u5itm->field_4[k].unkst5sub_10 &= 0x7FF;
+            p_u5itm->field_4[k].unkst5sub_14 &= 0x7FF;
+            p_u5itm->field_4[k].unkst5sub_04 = -p_u5itm->field_4[k].unkst5sub_04;
+        }
+    }
+
+    for (i = 0; i < 16; i++) {
+        LbFileRead(fh, &unkn_mech_arr2[i], sizeof(struct unkn_mech_struc2));
+    }
+
+    for (i = 0; i < 1024; i++) {
+        LbFileRead(fh, &unkn_mech_arr1[i], sizeof(struct unkn_mech_struc1));
+    }
+
+    LbFileClose(fh);
+    return 1;
 }
 
 void init_mech(void)
