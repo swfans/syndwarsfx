@@ -38,7 +38,6 @@
 #include "guiboxes.h"
 #include "guitext.h"
 #include "display.h"
-#include "campaign.h"
 #include "cybmod.h"
 #include "game_sprts.h"
 #include "game_data.h"
@@ -164,12 +163,7 @@ void equip_name_box_redraw(struct ScreenTextBox *p_box)
     }
     else if (is_research_weapon_completed(selected_weapon) || (login_control__State != LognCt_Unkn6))
     {
-        struct Campaign *p_campgn;
-        ushort strid;
-
-        p_campgn = &campaigns[background_type];
-        strid = p_campgn->WeaponsTextIdShift + selected_weapon - 1;
-        text = gui_strings[strid];
+        text = weapon_full_name(selected_weapon);
     }
     else
     {
@@ -1091,7 +1085,7 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
     int h0;
     int sheight;
     short wep_line;
-    struct TbSprite *spr;
+    struct TbSprite *p_spr;
 
     if ((box->Flags & 0x8000) == 0)
     {
@@ -1117,8 +1111,8 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
       box->Width - 20, box->ScrollWindowHeight + 23);
     lbFontPtr = small_med_font;
     h0 = 3;
-    spr = &fepanel_sprites[15 + 0];
-    sheight = spr->SHeight;
+    p_spr = &fepanel_sprites[15 + 0];
+    sheight = p_spr->SHeight;
 
     for (wep_line = box->TextTopLine; (wep_line < WEP_TYPES_COUNT) && (h0 + sheight < box->ScrollWindowHeight + 23); wep_line++)
     {
@@ -1154,22 +1148,15 @@ ubyte show_weapon_list(struct ScreenTextBox *box)
             lbDisplay.DrawFlags = 0;
             lbDisplay.DrawColour = 247;
         }
-        struct TbSprite *spr;
+        struct TbSprite *p_spr;
 
-        spr = &fepanel_sprites[weapon_sprite_index(wtype, true)];
+        p_spr = &fepanel_sprites[weapon_sprite_index(wtype, true)];
         lbDisplay.DrawFlags |= 0x8000;
-        draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1, spr);
+        draw_sprite_purple_list(text_window_x1 + 2, h0 + text_window_y1, p_spr);
         lbDisplay.DrawFlags &= ~0x8000;
-        {
-            struct Campaign *p_campgn;
-            ushort strid;
-
-            p_campgn = &campaigns[background_type];
-            strid = p_campgn->WeaponsTextIdShift + wtype - 1;
-            text = gui_strings[strid];
-        }
-        spr = &fepanel_sprites[15 + wtype - 1];
-        draw_text_purple_list2(spr->SWidth + 4, h0 + 1, text, 0);
+        text = weapon_full_name(wtype);
+        p_spr = &fepanel_sprites[15 + wtype - 1];
+        draw_text_purple_list2(p_spr->SWidth + 4, h0 + 1, text, 0);
         h0 += sheight + 3;
     }
     return 0;

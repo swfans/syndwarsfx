@@ -32,6 +32,7 @@
 #include "bigmap.h"
 #include "bmbang.h"
 #include "building.h"
+#include "campaign.h"
 #include "engincolour.h"
 #include "enginsngtxtr.h"
 #include "engintrns.h"
@@ -40,6 +41,7 @@
 #include "game.h"
 #include "game_data.h"
 #include "game_speed.h"
+#include "guitext.h"
 #include "matrix.h"
 #include "network.h"
 #include "thing.h"
@@ -463,6 +465,20 @@ const char *weapon_codename(WeaponType wtype)
 
     wdefa = &weapon_defs_a[wtype];
     return wdefa->Name;
+}
+
+const char *weapon_full_name(WeaponType wtype)
+{
+    struct Campaign *p_campgn;
+    ushort strid;
+
+    if (wtype >= WEP_TYPES_COUNT)
+        return "";
+
+    p_campgn = &campaigns[background_type];
+    strid = p_campgn->WeaponsTextIdShift + wtype - 1;
+
+    return gui_strings[strid];
 }
 
 void init_weapon_text(void)

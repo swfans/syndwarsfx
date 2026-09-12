@@ -31,7 +31,6 @@
 #include "app_gentab.h"
 #include "app_sprite.h"
 #include "specblit.h"
-#include "campaign.h"
 #include "cybmod.h"
 #include "display.h"
 #include "embedanim.h"
@@ -1318,17 +1317,7 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
       {
           const char *text;
 
-          if (background_type == 1)
-          {
-              if ((cryo_agents.Sex & (1 << plagent1)) != 0)
-                  text = gui_strings[227 + cryo_agents.RandomName[plagent1]];
-              else
-                  text = gui_strings[177 + cryo_agents.RandomName[plagent1]];
-          }
-          else
-          {
-              text = gui_strings[77 + cryo_agents.RandomName[plagent1]];
-          }
+          text = get_cryo_agent_name(plagent1);
           draw_text_purple_list2(30, pos_y + 6, text, 0);
       }
       lbDisplay.DrawFlags = 0;

@@ -23,7 +23,6 @@
 #include "bfutility.h"
 #include <string.h>
 
-#include "campaign.h"
 #include "display.h"
 #include "febrief.h"
 #include "fecryo.h"
@@ -202,13 +201,12 @@ void draw_mission_stats_vals_static(struct ScreenBox *box,
 void snprint_concat_comma_separated_weapons_list(char *out, ushort outlen, ulong weapons)
 {
     WeaponType wtype;
-    ushort strid;
-    ushort pos;
 
     wtype = WEP_TYPES_COUNT;
     while (1)
     {
-        struct Campaign *p_campgn;
+        const char *text;
+        ushort pos;
 
         wtype = weapons_prev_weapon(weapons, wtype);
         if (wtype == WEP_NULL)
@@ -217,14 +215,13 @@ void snprint_concat_comma_separated_weapons_list(char *out, ushort outlen, ulong
         if (strlen(out) > outlen - 4u)
             break;
 
-        p_campgn = &campaigns[background_type];
-        strid = p_campgn->WeaponsTextIdShift + wtype - 1;
+        text = weapon_full_name(wtype);
 
         pos = strlen(out);
         if (pos == 0)
-            snprintf(out, outlen, "%s", gui_strings[strid]);
+            snprintf(out, outlen, "%s", text);
         else
-            snprintf(out + pos, outlen - pos, ", %s", gui_strings[strid]);
+            snprintf(out + pos, outlen - pos, ", %s", text);
     }
 }
 

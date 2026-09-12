@@ -24,6 +24,7 @@
 #include "bfjoyst.h"
 #include "ssampply.h"
 
+#include "campaign.h"
 #include "femain.h"
 #include "feshared.h"
 #include "guiboxes.h"

@@ -198,6 +198,8 @@ extern short mission_state[MISSION_STATE_SLOTS_COUNT];
  */
 extern char mission_name[50];
 
+extern ubyte background_type;
+
 extern char *netscan_text;
 #define netscan_text_len 16384
 

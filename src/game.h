@@ -197,7 +197,6 @@ extern ubyte byte_1C6DDC[5];
 extern ushort word_1C8446;
 extern ushort unkn3de_len;
 
-extern ubyte background_type;
 extern ubyte old_screentype;
 extern ubyte screentype;
 extern long data_155704;

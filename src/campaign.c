@@ -189,6 +189,7 @@ const struct TbNamedEnum missions_conf_any_bool[] = {
 };
 
 struct Campaign campaigns[CAMPAIGNS_MAX_COUNT];
+ubyte background_type = 0;
 
 struct Mission mission_list[MISSIONS_MAX_COUNT];
 ushort next_mission = 1;

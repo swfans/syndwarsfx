@@ -23,6 +23,7 @@
 #include "ssampply.h"
 
 #include "bigmap.h"
+#include "campaign.h"
 #include "display.h"
 #include "game.h"
 #include "game_options.h"
@@ -416,23 +417,24 @@ TbBool player_cryo_transfer_weapon_between_agents(ushort from_cryo_no,
 const char *get_cryo_agent_name(ushort cryo_no)
 {
     ushort rndname;
+    ushort strid;
 
-    if (selected_agent < 0)
+    if (cryo_no < 0)
         return gui_strings[536];
 
     rndname = cryo_agents.RandomName[cryo_no];
     if (background_type == 1)
     {
-        if (cryo_agents.Sex & (1 << selected_agent))
-            return gui_strings[227 + rndname];
+        if (cryo_agents.Sex & (1 << cryo_no))
+            strid = 227 + rndname;
         else
-            return gui_strings[177 + rndname];
+            strid = 177 + rndname;
     }
     else
     {
-        return gui_strings[77 + rndname];
+        strid = 77 + rndname;
     }
-
+    return gui_strings[strid];
 }
 
 void remove_agent(ubyte cryo_no)

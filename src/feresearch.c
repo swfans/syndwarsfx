@@ -298,10 +298,7 @@ ubyte show_unkn21_box(struct ScreenTextBox *p_box)
                   lbDisplay.DrawFlags = 0;
               }
               lbDisplay.DrawFlags |= 0x8000;
-              if (background_type == 1)
-                  text = gui_strings[30 + line];
-              else
-                  text = gui_strings[0 + line];
+              text = weapon_full_name(line + 1);
               draw_text_purple_list2(3, scr_y, text, 0);
               lbDisplay.DrawFlags = 0;
               scr_y += ln_height;
@@ -362,10 +359,7 @@ ubyte show_unkn21_box(struct ScreenTextBox *p_box)
     {
         if (research.CurrentWeapon != -1)
         {
-            if (background_type == 1)
-                text = gui_strings[30 + research.CurrentWeapon];
-            else
-                text = gui_strings[0 + research.CurrentWeapon];
+            text = weapon_full_name(research.CurrentWeapon + 1);
             draw_text_purple_list2(4, 25, text, 0);
         }
     }

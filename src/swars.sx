@@ -183,6 +183,7 @@
 .global EXPORT_SYMBOL(tree_route);
 .global EXPORT_SYMBOL(route_bak);		/* 0x1BF9C8 */
 
+.global EXPORT_SYMBOL(background_type);	/* 0x1C6DEC */
 .global EXPORT_SYMBOL(global_date);	/* 0x1C6DF0 */
 
 .global EXPORT_SYMBOL(phwoar_num_used);	/* 0x1DC4DC */
@@ -133144,8 +133145,6 @@ GLOBAL (dword_1C6DE4)	/* 0x1c6de4 */
 		.long	0x0
 GLOBAL (dword_1C6DE8)	/* 0x1c6de8 */
 		.long	0x0
-GLOBAL (background_type)	/* 0x1C6DEC */
-		.byte	0x0
 		.align  4
 
 GLOBAL (save_slot_base)	/* 0x1C82FC */

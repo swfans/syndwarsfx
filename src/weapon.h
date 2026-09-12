@@ -189,9 +189,13 @@ extern ushort weapon_text_index[WEP_TYPES_COUNT];
 void read_weapons_conf_file(void);
 void init_weapon_text(void);
 
-/** Gives a string which names the weapon.
+/** Gives a string which names the weapon for internal and debug purposes.
  */
 const char *weapon_codename(WeaponType wtype);
+
+/** Gives a string with national weapon name to be shown to the player.
+ */
+const char *weapon_full_name(WeaponType wtype);
 
 /** Returns if the weapon should be used by throwing.
  */

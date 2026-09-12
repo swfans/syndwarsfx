@@ -9,7 +9,7 @@
 #include "bflog.h"
 #include "bfjoyst.h"
 
-#include "swlog.h"
+#include "campaign.h"
 #include "display.h"
 #include "guitext.h"
 #include "game.h"
@@ -21,6 +21,7 @@
 #include "lvobjctv.h"
 #include "network.h"
 #include "packet.h"
+#include "swlog.h"
 #include "thing.h"
 #include "util.h"
 
