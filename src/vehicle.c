@@ -85,8 +85,9 @@ struct unkn_mech_struc3 { // sizeof=0x76
     s32 field_64;
     s32 field_68;
     s32 field_6C;
-    ubyte field_70[3];
-    ubyte field_73[2];
+    ubyte field_70[2];
+    ubyte field_72[2];
+    ubyte field_74;
     ubyte field_75;
 };
 
@@ -290,6 +291,9 @@ extern s32 mech_unkn_tile_y2;
 extern s32 mech_unkn_tile_x3;
 extern s32 mech_unkn_tile_y3;
 
+extern s32 unkn_mech_var10;
+extern s32 unkn_mech_var11;
+
 const char *vehicle_type_name(ushort vtype)
 {
 #if 0
@@ -339,6 +343,35 @@ void snprint_vehicle_state(char *buf, ulong buflen, struct Thing *p_thing)
     // TODO support parameters of states
 
     snprintf(s, buflen - (s-buf), " )");
+}
+
+void mech_clear_all_fld72(void)
+{
+    ushort i;
+    ushort owner;
+
+    for (owner = 0; owner < MECH_OWNER_LIMIT; owner++)
+    {
+        struct unkn_mech_struc3 *p_u3itm;
+
+        p_u3itm = &unkn_mech_arr3[owner];
+        for (i = 0; i < 2; i++) {
+            p_u3itm->field_72[i] = 0;
+        }
+    }
+}
+
+void mech_unkn_func_02(void)
+{
+#if 0
+    asm volatile ("call ASM_mech_unkn_func_02\n"
+        :  :  : "eax" );
+    return;
+#endif
+    unkn_mech_var10 = 0;
+    unkn_mech_var11 = 0;
+
+    mech_clear_all_fld72();
 }
 
 int load_mech_dat(const char *fname)
@@ -394,8 +427,6 @@ void init_mech(void)
         :  :  : "eax" );
 #endif
     u32 a1idx;
-    int i;
-    ushort owner;
 
     unkn_mech_arr4 = &unkn_mech_stct7->field_3B0[0];
     unkn_mech_arr5 = &unkn_mech_stct7->field_7DB0[0];
@@ -412,12 +443,7 @@ void init_mech(void)
 
     load_mech_dat("data/mech.dat");
 
-    for (owner = 0; owner < MECH_OWNER_LIMIT; owner++)
-    {
-        for (i = 0; i < 2; i++) {
-            unkn_mech_arr3[owner].field_73[i] = 0;
-        }
-    }
+    mech_clear_all_fld72();
     unkn_mech_arr3->field_6C = 0;
     a1idx = unkn_mech_arr2[unkn_mech_arr3->field_6C].field_0;
     unkn_mech_arr3->field_64 = a1idx;
@@ -447,12 +473,6 @@ TbBool vehicle_is_destroyed(ThingIdx thing)
 
     p_thing = &things[thing];
     return thing_is_destroyed(thing) || (p_thing->Type != TT_VEHICLE);
-}
-
-void mech_unkn_func_02(void)
-{
-    asm volatile ("call ASM_mech_unkn_func_02\n"
-        :  :  : "eax" );
 }
 
 void mech_unkn_func_09(ThingIdx thing)

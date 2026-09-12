@@ -109383,8 +109383,8 @@ GLOBAL_FUNC(ASM_init_mech)	/* 0x0BBC80 */
 		mov    %ecx,EXPORT_SYMBOL(unkn_mech_mat8)
 		xor    %edx,%edx
 		mov    %ecx,EXPORT_SYMBOL(unkn_mech_mat8)+0x10
-		mov    %edx,unkn_mech_var10
-		mov    %edx,unkn_mech_var11
+		mov    %edx,EXPORT_SYMBOL(unkn_mech_var10)
+		mov    %edx,EXPORT_SYMBOL(unkn_mech_var11)
 		mov    %edx,EXPORT_SYMBOL(unkn_mech_mat8)+0x0C
 		mov    %edx,EXPORT_SYMBOL(unkn_mech_mat8)+0x18
 		mov    %edx,EXPORT_SYMBOL(unkn_mech_mat8)+0x04
@@ -109449,8 +109449,8 @@ GLOBAL_FUNC(ASM_mech_unkn_func_02)	/* 0x0BBD98 */
 		mov    EXPORT_SYMBOL(unkn_mech_arr3),%esi
 		xor    %edx,%edx
 		xor    %edi,%edi
-		mov    %edx,unkn_mech_var10
-		mov    %edx,unkn_mech_var11
+		mov    %edx,EXPORT_SYMBOL(unkn_mech_var10)
+		mov    %edx,EXPORT_SYMBOL(unkn_mech_var11)
 		jmp    jump_bbdbf
 	jump_bbdb4:
 		add    $0x76,%edi
@@ -109819,7 +109819,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		add    %edx,%eax
 		mov    $EXPORT_SYMBOL(local_mats),%edx
 		shl    $0x2,%eax
-		mov    unkn_mech_var10,%ebp
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%ebp
 		add    %eax,%edx
 		mov    %ebp,0x90(%esp)
 		mov    %edx,0xac(%esp)
@@ -109836,7 +109836,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		mov    %eax,0x5c(%esp,%edx,1)
 		cmp    $0x30,%edx
 		jne    jump_bc230
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %edx,%eax
 		shl    $0x4,%eax
 		sub    %edx,%eax
@@ -109844,7 +109844,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		add    %edx,%eax
 		mov    EXPORT_SYMBOL(unkn_mech_arr4),%ecx
 		add    %eax,%eax
-		mov    unkn_mech_var11,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var11),%edx
 		add    %eax,%ecx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -109855,7 +109855,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		add    %eax,%eax
 		add    %edx,%eax
 		mov    $EXPORT_SYMBOL(unkn_mech_mat8),%esi
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		lea    0xc(%eax),%edi
 		mov    %ecx,(%eax)
 		mov    $0x9,%ecx
@@ -109889,7 +109889,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		mov    things,%eax
 		add    %edx,%eax
 		movl   $0x4000000,0xc(%eax)
-		mov    unkn_mech_var11,%dx
+		mov    EXPORT_SYMBOL(unkn_mech_var11),%dx
 		movw   $0x4,0x60(%eax)
 		mov    %dx,0x3c(%eax)
 		call   ac_VNAV_unkn_func_207
@@ -109905,7 +109905,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		mov    0xbc(%esp),%eax
 		xor    %edx,%edx
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ecx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -109965,15 +109965,15 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		add    %eax,%ebx
 		mov    0xb4(%esp),%eax
 		mov    %ebx,0xb(%edx)
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		push   %eax
 		xor    %ebx,%ebx
 		inc    %edx
 		mov    0xbc(%esp),%eax
-		mov    %edx,unkn_mech_var10
+		mov    %edx,EXPORT_SYMBOL(unkn_mech_var10)
 		xor    %edx,%edx
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110021,17 +110021,17 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		mov    %esi,%ecx
 		mov    %eax,0x7(%edx)
 		push   %ecx
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		xor    %edx,%edx
 		push   %edi
 		inc    %eax
 		mov    0xb4(%esp),%edi
 		xor    %ecx,%ecx
 		push   %edi
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110070,16 +110070,16 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		mov    %eax,0x3(%edx)
 		mov    0xa4(%esp),%esi
 		push   %ecx
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		xor    %edx,%edx
 		push   %esi
 		inc    %eax
 		xor    %ecx,%ecx
 		push   %edi
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110109,14 +110109,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		movb   $0x0,0x2(%eax)
 		push   %edi
 		mov    %edx,0x69(%eax)
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		xor    %ebx,%ebx
 		inc    %eax
 		xor    %edx,%edx
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110152,18 +110152,18 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		push   $0x27
 		mov    %ecx,0x3(%edx)
 		mov    0xa8(%esp),%ecx
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		push   %ecx
 		xor    %ebx,%ebx
 		inc    %eax
 		push   %esi
 		xor    %edx,%edx
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		push   %edi
 		mov    0xbc(%esp),%eax
 		xor    %ecx,%ecx
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110193,14 +110193,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		movb   $0x0,0x2(%eax)
 		push   %edi
 		mov    %edx,0x69(%eax)
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		xor    %ebx,%ebx
 		inc    %eax
 		xor    %edx,%edx
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ecx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110272,14 +110272,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		xor    %ebx,%ebx
 		mov    %eax,0xf(%edx)
 		mov    0xb4(%esp),%eax
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		push   %eax
 		inc    %edx
 		mov    0xbc(%esp),%eax
-		mov    %edx,unkn_mech_var10
+		mov    %edx,EXPORT_SYMBOL(unkn_mech_var10)
 		xor    %edx,%edx
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110310,14 +110310,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		movb   $0x0,0x2(%eax)
 		mov    0xb4(%esp),%edi
 		mov    %edx,0x69(%eax)
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		push   %edi
 		inc    %eax
 		xor    %edx,%edx
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110347,14 +110347,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		movb   $0x0,0x2(%eax)
 		push   %edi
 		mov    %edx,0x69(%eax)
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		xor    %ebx,%ebx
 		inc    %eax
 		xor    %edx,%edx
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110384,14 +110384,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		movb   $0x0,0x2(%eax)
 		push   %edi
 		mov    %edx,0x69(%eax)
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		xor    %ebx,%ebx
 		inc    %eax
 		xor    %edx,%edx
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110421,14 +110421,14 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		movb   $0x0,0x2(%eax)
 		push   %edi
 		mov    %edx,0x69(%eax)
-		mov    unkn_mech_var10,%eax
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%eax
 		xor    %ebx,%ebx
 		inc    %eax
 		xor    %edx,%edx
-		mov    %eax,unkn_mech_var10
+		mov    %eax,EXPORT_SYMBOL(unkn_mech_var10)
 		mov    0xbc(%esp),%eax
 		call   init_unkn1thing
-		mov    unkn_mech_var10,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%edx
 		mov    %eax,%ebx
 		mov    %edx,%eax
 		shl    $0x4,%eax
@@ -110452,23 +110452,23 @@ GLOBAL_FUNC(ASM_mech_unkn_func_09)	/* 0x0BC178 */
 		mov    0x60(%esp,%edx,4),%edx
 		mov    0x90(%esp),%esi
 		mov    %edx,0x69(%eax)
-		mov    unkn_mech_var11,%edx
+		mov    EXPORT_SYMBOL(unkn_mech_var11),%edx
 		movb   $0x0,0x2(%eax)
 		mov    %edx,%eax
-		mov    unkn_mech_var10,%ecx
+		mov    EXPORT_SYMBOL(unkn_mech_var10),%ecx
 		shl    $0x4,%eax
-		mov    unkn_mech_var11,%edi
+		mov    EXPORT_SYMBOL(unkn_mech_var11),%edi
 		sub    %edx,%eax
 		inc    %ecx
 		shl    $0x2,%eax
 		inc    %edi
 		sub    %edx,%eax
-		mov    %ecx,unkn_mech_var10
+		mov    %ecx,EXPORT_SYMBOL(unkn_mech_var10)
 		lea    (%eax,%eax,1),%edx
 		inc    %ebp
 		mov    EXPORT_SYMBOL(unkn_mech_arr3),%eax
 		sub    %esi,%ebp
-		mov    %edi,unkn_mech_var11
+		mov    %edi,EXPORT_SYMBOL(unkn_mech_var11)
 		mov    %ebp,0x8(%edx,%eax,1)
 		add    $0xb0,%esp
 		pop    %ebp
@@ -131959,9 +131959,9 @@ GLOBAL (dword_177750)	/* 0x177750 */
 		.long	0x0
 GLOBAL (cd_drive)	/* 0x177754 */
 		.fill   0x34
-unkn_mech_var10:	/* 0x177788 */
+GLOBAL (unkn_mech_var10)	/* 0x177788 */
 		.long	0x0
-unkn_mech_var11:	/* 0x17778C */
+GLOBAL (unkn_mech_var11)	/* 0x17778C */
 		.long	0x0
 GLOBAL (dword_177790)	/* 0x177790 */
 		.long	0x0
