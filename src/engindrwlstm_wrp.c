@@ -113,8 +113,6 @@ u32 dword_152E4C = 0x3F69A093;
 
 extern struct BulStart bul_starts[4000];
 
-extern struct unkn_mech_struc3 *unkn_mech_arr3;
-
 ubyte pers_shield_spr_vers[][5] = {
   {0, 1, 2, 0, 0,},
   {0, 2, 1, 0, 0,},

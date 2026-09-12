@@ -244,9 +244,6 @@ extern s32 dword_152E38[5]; // = {-1, -1, -1, -1, -1,};
 extern u32 dword_1C4B84;
 extern u32 dword_1C4B88;
 
-extern short word_1C6E08;
-extern short word_1C6E0A;
-
 extern long dword_1DDECC;
 
 u32 engine_mem_alloc_size = 5900000;
@@ -287,7 +284,9 @@ extern long dword_1AAB74;
 extern long dword_1AAB78;
 extern ushort word_1AABD0;
 
-extern struct OutroHotChar outro_hot_chars[OUTRO_HOT_CHARS_COUNT];
+ubyte edit_flag = 0;
+
+struct OutroHotChar outro_hot_chars[OUTRO_HOT_CHARS_COUNT];
 
 //TODO this is not an extern only because I was unable to locate it in asm
 ushort next_bezier_pt = 1;

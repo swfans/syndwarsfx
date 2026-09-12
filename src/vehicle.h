@@ -212,6 +212,7 @@ enum VehWorkPlaceFlags {
 
 struct Thing;
 struct unkn_mech_struc7;
+struct unkn_mech_struc3;
 
 /** Stores configuration for a state of a vehicle.
  */
@@ -233,6 +234,8 @@ extern s32 mech_rocket1_launch_cor_z;
 extern s32 mech_rocket2_launch_cor_x;
 extern s32 mech_rocket2_launch_cor_y;
 extern s32 mech_rocket2_launch_cor_z;
+
+extern struct unkn_mech_struc3 *unkn_mech_arr3;
 
 /******************************************************************************/
 

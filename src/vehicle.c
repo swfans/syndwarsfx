@@ -276,20 +276,30 @@ struct CarGlare car_glare[] = {
   {-96, -16, 304, 0},
 };
 
-extern struct unkn_mech_struc3 *unkn_mech_arr3; // = NULL;
-extern struct unkn_mech_struc4 *unkn_mech_arr4; // = NULL;
-extern struct unkn_mech_struc5 *unkn_mech_arr5; // = NULL;
-extern struct unkn_mech_struc1 *unkn_mech_arr1; // = NULL;
-extern ubyte *unkn_mech_arr6; // = NULL;
-extern struct unkn_mech_struc2 *unkn_mech_arr2; // = NULL;
-extern struct M33 unkn_mech_mat8;
+struct unkn_mech_struc3 *unkn_mech_arr3 = NULL;
+struct unkn_mech_struc4 *unkn_mech_arr4 = NULL;
+struct unkn_mech_struc5 *unkn_mech_arr5 = NULL;
+struct unkn_mech_struc1 *unkn_mech_arr1 = NULL;
+ubyte *unkn_mech_arr6 = NULL;
+struct unkn_mech_struc2 *unkn_mech_arr2 = NULL;
+struct M33 unkn_mech_mat8;
 
-extern s32 mech_last_cor_x;
-extern s32 mech_last_cor_y;
-extern s32 mech_last_cor_z;
-extern s32 mech_unkn_tile_y2;
-extern s32 mech_unkn_tile_x3;
-extern s32 mech_unkn_tile_y3;
+s32 mech_last_cor_x = TILE_TO_MAPCOORD(MAP_TILE_WIDTH/2, 127);
+s32 mech_last_cor_y = TILE_TO_MAPCOORD(1, 0);
+s32 mech_last_cor_z = TILE_TO_MAPCOORD(MAP_TILE_WIDTH/2, 127);
+
+// to be removed after ASM use is gone
+s32 mech_unkn_tile_y2;
+s32 mech_unkn_tile_x3;
+s32 mech_unkn_tile_y3;
+
+s32 mech_rocket1_launch_cor_x = TILE_TO_MAPCOORD(MAP_TILE_WIDTH/2, 127);
+s32 mech_rocket1_launch_cor_y = TILE_TO_MAPCOORD(1, 0);
+s32 mech_rocket1_launch_cor_z = TILE_TO_MAPCOORD(MAP_TILE_WIDTH/2, 127);
+
+s32 mech_rocket2_launch_cor_x = TILE_TO_MAPCOORD(MAP_TILE_WIDTH/2, 127);
+s32 mech_rocket2_launch_cor_y = TILE_TO_MAPCOORD(1, 0);
+s32 mech_rocket2_launch_cor_z = TILE_TO_MAPCOORD(MAP_TILE_WIDTH/2, 127);
 
 extern s32 unkn_mech_var10;
 extern s32 unkn_mech_var11;

@@ -76,8 +76,8 @@ extern short word_1C48A2[6];
 extern short word_1C48AE[6];
 extern short word_1C48CC;
 
-extern short word_1C6E08;
-extern short word_1C6E0A;
+short word_1C6E08 = -1;
+short word_1C6E0A = -1;
 
 /******************************************************************************/
 

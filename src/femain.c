@@ -86,6 +86,10 @@ struct ScreenTextBox heading_box = {0};
 struct ScreenTextBox loading_INITIATING_box = {0};
 struct ScreenTextBox unkn13_SYSTEM_button = {0};
 
+struct SynTime global_date;
+
+struct SynTime research_curr_wep_date;
+struct SynTime research_curr_mod_date;
 extern ubyte research_curr_wep_daily_done;
 extern ubyte research_curr_mod_daily_done;
 extern ubyte byte_1C497D;

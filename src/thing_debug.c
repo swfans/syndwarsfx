@@ -53,9 +53,9 @@ int dword_1DC7A4 = 0;
 short word_1DC7A0 = 0;
 short word_1DC7A2 = 0;
 
-extern ushort word_1DC898;
-extern ushort word_1DC8CE;
-extern ubyte byte_1DC89C[0x30];
+ushort word_1DC898 = 0;
+ushort word_1DC8CE = 0;
+ubyte byte_1DC89C[50];
 
 s32 mfilter_nearest_debug_selectable(ThingIdx thing, short X, short Z, ThingFilterParams *params)
 {
@@ -300,9 +300,9 @@ void count_fnavs(TbBool a1)
             scr_x = lbDisplay.GraphicsScreenWidth - 29 * (pop1_sprites_scale + 1) / 2;
             scr_y = lbDisplay.GraphicsScreenHeight - (29 + 6 * i) * (pop1_sprites_scale + 1) / 2;
             if (byte_1DC89C[i])
-                col = colour_lookup[3];
+                col = colour_lookup[ColLU_GREEN];
             else
-                col = colour_lookup[2];
+                col = colour_lookup[ColLU_RED];
             LbDrawBox(scr_x, scr_y, w, h, col);
         }
     }
