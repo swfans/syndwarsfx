@@ -330,8 +330,8 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
         }
 
         if (added) {
-            ingame.Expenditure += cost;
             ingame.Credits -= cost;
+            ingame.Expenditure += cost;
             nbought++;
         }
     }
@@ -364,7 +364,7 @@ ubyte do_equip_offer_buy_cybmod(ubyte click)
 
     if (nbought > 0)
     {
-        if ((login_control__State == LognCt_Unkn5) && ((net_game_play_flags & NGPF_Unkn08) != 0)) {
+        if ((login_control__State == LognCt_NetStarted) && ((net_game_play_flags & NGPF_Unkn08) != 0)) {
             net_schedule_player_cryo_equip_sync();
         }
         selected_mod = 0;
@@ -1242,7 +1242,7 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
           {
               lbDisplay.LeftButton = 0;
 
-              if (login_control__State != LognCt_Unkn5) {
+              if (login_control__State != LognCt_NetStarted) {
                   PlayerInfo *p_locplayer;
 
                   play_sample_using_heap(0, 111, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 2u);
@@ -1272,7 +1272,7 @@ ubyte show_cryo_agent_list(struct ScreenTextBox *p_box)
           {
               lbDisplay.LeftButton = 0;
 
-              if (login_control__State != LognCt_Unkn5 && selected_agent != -1) {
+              if (login_control__State != LognCt_NetStarted && selected_agent != -1) {
                   play_sample_using_heap(0, 111, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 2u);
 
                   switch_local_player_agents(plagent1, selected_agent);
@@ -1327,7 +1327,7 @@ TbBool cybmod_available_for_purchase(short mtype)
     p_locplayer = &players[local_player_no];
 
     if (!is_research_cymod_completed(mtype)
-      && ((login_control__State != LognCt_Unkn5) || mod_tech_level[mtype] > login_control__TechLevel))
+      && ((login_control__State != LognCt_NetStarted) || mod_tech_level[mtype] > login_control__TechLevel))
         return false;
 
     if (selected_agent < 0)

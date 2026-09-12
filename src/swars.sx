@@ -712,7 +712,7 @@ GLOBAL_FUNC(ASM_unkn_truce_groups)	/* 0x010CA0 */
 		test   %eax,%esi
 		je     jump_10d52
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(byte_1C5C28)(%ebx),%al
+		mov    EXPORT_SYMBOL(net_player_teams)(%ebx),%al
 		lea    0x0(,%eax,8),%ecx
 		movzbl 0xa8(%esp,%eax,1),%esi
 		add    %esi,%ecx
@@ -813,12 +813,12 @@ GLOBAL_FUNC(ASM_unkn_truce_groups)	/* 0x010CA0 */
 		shl    %cl,%edi
 		test   %edi,%esi
 		je     jump_10eb7
-		mov    EXPORT_SYMBOL(byte_1C5C28)(%eax),%cl
+		mov    EXPORT_SYMBOL(net_player_teams)(%eax),%cl
 		lea    0x1(%ebx),%esi
 		test   %cl,%cl
 		je     jump_10ea8
 		xor    %ecx,%ecx
-		mov    EXPORT_SYMBOL(byte_1C5C28)(%eax),%cl
+		mov    EXPORT_SYMBOL(net_player_teams)(%eax),%cl
 		shl    $0x2,%ecx
 		cmpl   $0xffffffff,0x8c(%esp,%ecx,1)
 		je     jump_10e88
@@ -105102,7 +105102,7 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		xor    %eax,%eax
 	jump_b099f:
 		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(byte_1C5C28)(%eax),%dl
+		mov    EXPORT_SYMBOL(net_player_teams)(%eax),%dl
 		xor    %ebx,%ebx
 		inc    %eax
 		mov    %bx,0x40(%esp,%edx,2)
@@ -105132,11 +105132,11 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 		jmp    jump_b09cc
 	jump_b09f0:
 		mov    0x50(%esp),%edx
-		cmpb   $0x0,EXPORT_SYMBOL(byte_1C5C28)(%edx)
+		cmpb   $0x0,EXPORT_SYMBOL(net_player_teams)(%edx)
 		je     jump_b0a13
 		mov    0x50(%esp),%ebx
 		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(byte_1C5C28)(%ebx),%dl
+		mov    EXPORT_SYMBOL(net_player_teams)(%ebx),%dl
 		mov    0x20(%esp,%eax,1),%ax
 		add    %ax,0x40(%esp,%edx,2)
 	jump_b0a13:
@@ -105270,13 +105270,13 @@ GLOBAL_FUNC(ASM_SCANNER_unkn_func_205)	/* 0x0B0908 */
 	jump_b0b6f:
 		mov    0x54(%esp),%eax
 		movb   $0x20,(%edx)
-		mov    EXPORT_SYMBOL(byte_1C5C28)(%eax),%cl
+		mov    EXPORT_SYMBOL(net_player_teams)(%eax),%cl
 		inc    %edx
 		test   %cl,%cl
 		je     jump_b0a95
 		mov    0x54(%esp),%ebx
 		xor    %eax,%eax
-		mov    EXPORT_SYMBOL(byte_1C5C28)(%ebx),%al
+		mov    EXPORT_SYMBOL(net_player_teams)(%ebx),%al
 		mov    0x3e(%esp,%eax,2),%eax
 		sar    $0x10,%eax
 		push   %eax
@@ -132074,15 +132074,13 @@ GLOBAL (login_control__State)	/* 0x181181 */
 		.byte	0x0
 GLOBAL (login_control__TechLevel)	/* 0x181182 */
 		.byte	0x0
-GLOBAL (byte_181183)
+GLOBAL (login_control__Faction)
 		.byte	0x0
 GLOBAL (login_control__Money)	/* 0x181184 */
-		.byte	0x0
-data_181185:
-		.ascii  "\x00\x00\x00"
+		.long	0x0
 GLOBAL (login_control__City)	/* 0x181188 */
 		.byte	0x0
-GLOBAL (byte_181189)
+GLOBAL (login_control__Team)
 		.byte	0x0
 		.fill   0x1e
 
@@ -133089,7 +133087,7 @@ data_1c5b6c:
 		.byte	0x0
 data_1c5b6d:
 		.fill   0xbb
-GLOBAL (byte_1C5C28)
+GLOBAL (net_player_teams)
 		.fill   0x8
 GLOBAL (net_player_colours)
 		.fill   0x8

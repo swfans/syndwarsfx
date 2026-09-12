@@ -1974,7 +1974,7 @@ void net_player_colors_reassign(void)
         if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
             continue;
 
-        v12 = byte_1C5C28[plyr];
+        v12 = net_player_teams[plyr];
         if (v12 == 0)
         {
             c = incolors[incol_idx];
@@ -3583,9 +3583,9 @@ void init_variables(void)
         ingame.CashAtStart = login_control__Money;
     }
     ingame.Expenditure = 0;
-    login_control__City = 19;
+    login_control__City = 19; // Tokyo
+    login_control__Team = 0;
     login_control__State = LognCt_Unkn6;
-    byte_181189 = 0;
     net_game_play_flags = NGPF_Unkn20 | NGPF_Unkn10 | NGPF_Unkn08 | NGPF_Unkn04;
     login_control__TechLevel = 4;
 }
@@ -4344,6 +4344,14 @@ TbBool player_try_spend_money(long cost)
     return true;
 }
 
+void init_net_players(void)
+{
+    int i;
+    for (i = 0; i < 5; i++) {
+        LbMemorySet(&net_players[i], '\0', sizeof(struct NetPlayer2));
+    }
+}
+
 void campaign_new_game_prepare(void)
 {
     struct Campaign *p_campgn;
@@ -4360,8 +4368,9 @@ void campaign_new_game_prepare(void)
     load_city_data(0);
     load_wep_mod_desc_text();
     load_city_prop_text();
-    player_mission_agents_toggle_reset(local_player_no);
     reset_frontend_player_state();
+
+    player_mission_agents_toggle_reset(local_player_no);
     init_variables();
     srm_reset_research();
     init_agents();
@@ -4387,8 +4396,9 @@ ubyte goto_savegame(ubyte click)
     load_city_data(0);
     load_wep_mod_desc_text();
     load_city_prop_text();
-    player_mission_agents_toggle_reset(local_player_no);
     reset_frontend_player_state();
+
+    player_mission_agents_toggle_reset(local_player_no);
     init_variables();
     srm_reset_research();
     init_agents();
@@ -4400,6 +4410,33 @@ ubyte goto_savegame(ubyte click)
     load_save_slot_names();
 
     return 1;
+}
+
+void net_new_game_prepare(void)
+{
+    switch_net_screen_boxes_to_initiate();
+
+    load_missions(background_type);
+    load_objectives_text();
+
+    byte_15516D = -1;
+    byte_15516C = -1;
+    reset_world_screen_player_state();
+
+    login_control__Money = starting_cash_amounts[4];
+    ingame.Credits = 50000;
+    ingame.CashAtStart = 50000;
+    ingame.Expenditure = 0;
+    login_control__City = -1;
+    login_control__State = LognCt_Unkn6;
+    net_game_play_flags = NGPF_Unkn20 | NGPF_Unkn10 | NGPF_Unkn08 | NGPF_Unkn04;
+    login_control__TechLevel = 4;
+
+    srm_reset_research();
+    init_agents();
+
+    init_net_players();
+    net_grpaint_clear_op();
 }
 
 ubyte do_storage_NEW_MORTAL(ubyte click)
@@ -5621,13 +5658,12 @@ void show_menu_screen_st0(void)
         purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + pos);
     }
 
-    ingame.Credits = 50000;
-
-    global_date_new_game_reset();
-
     load_city_data(0);
     load_city_prop_text();
+
     player_mission_agents_toggle_reset(local_player_no);
+    global_date_new_game_reset();
+    ingame.Credits = 50000;
 
     debug_trace_place(17);
     // Need to set screen type before gfx background is reloaded
@@ -5641,36 +5677,6 @@ void show_menu_screen_st0(void)
     save_game_buffer = vec_tmap[5];
 
     net_system_init0();
-}
-
-void init_net_players(void)
-{
-    int i;
-    for (i = 0; i < 5; i++) {
-        LbMemorySet(&net_players[i], '\0', sizeof(struct NetPlayer2));
-    }
-}
-
-void net_new_game_prepare(void)
-{
-    switch_net_screen_boxes_to_initiate();
-    login_control__State = LognCt_Unkn6;
-    byte_15516D = -1;
-    byte_15516C = -1;
-    ingame.Credits = 50000;
-    ingame.CashAtStart = 50000;
-    login_control__TechLevel = 4;
-    reset_world_screen_player_state();
-    login_control__City = -1;
-    ingame.Expenditure = 0;
-    net_game_play_flags = NGPF_Unkn20 | NGPF_Unkn10 | NGPF_Unkn08 | NGPF_Unkn04;
-    login_control__Money = starting_cash_amounts[4];
-    init_agents();
-    load_missions(background_type);
-    load_objectives_text();
-    srm_reset_research();
-    init_net_players();
-    net_grpaint_clear_op();
 }
 
 void update_mission_time(TbBool a1)
@@ -5798,7 +5804,9 @@ void show_load_and_prep_mission(void)
         {
             ushort missi;
             ingame.MissionNo = 1;
-            missi = find_first_mission_with_map(cities[login_control__City].MapID);
+            missi = 0;
+            if (login_control__City != -1)
+                missi = find_first_mission_with_map(cities[login_control__City].MapID);
             if (missi > 0) {
                 ingame.MissionNo = missi;
             }
@@ -6221,7 +6229,7 @@ void show_menu_screen(void)
 
     input_processing_end();
 
-    if (login_control__State == LognCt_Unkn5)
+    if (login_control__State == LognCt_NetStarted)
     {
         net_unkn_func_33();
     }

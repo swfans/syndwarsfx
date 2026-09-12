@@ -272,7 +272,7 @@ ubyte do_equip_offer_buy_weapon(ubyte click)
 
     if (nbought > 0)
     {
-        if ((login_control__State == LognCt_Unkn5 && (net_game_play_flags & NGPF_Unkn08) != 0)) {
+        if ((login_control__State == LognCt_NetStarted && (net_game_play_flags & NGPF_Unkn08) != 0)) {
             net_players_copy_equip_and_cryo();
         }
     }
@@ -287,7 +287,7 @@ ubyte do_equip_offer_buy(ubyte click)
         return 0;
     }
 
-    if ((login_control__State == LognCt_Unkn5) && ((net_game_play_flags & NGPF_Unkn08) != 0))
+    if ((login_control__State == LognCt_NetStarted) && ((net_game_play_flags & NGPF_Unkn08) != 0))
     {
         if (!net_local_player_hosts_the_game())
             return 0;
@@ -312,7 +312,7 @@ ubyte sell_equipment(ubyte click)
 {
     TbBool sold;
 
-    if ((login_control__State == LognCt_Unkn5) && ((net_game_play_flags & NGPF_Unkn08) != 0))
+    if ((login_control__State == LognCt_NetStarted) && ((net_game_play_flags & NGPF_Unkn08) != 0))
     {
         if (!net_local_player_hosts_the_game())
             return 0;
@@ -345,7 +345,7 @@ ubyte sell_equipment(ubyte click)
             }
 
         }
-        if ((login_control__State == LognCt_Unkn5) && ((net_game_play_flags & NGPF_Unkn08) != 0))
+        if ((login_control__State == LognCt_NetStarted) && ((net_game_play_flags & NGPF_Unkn08) != 0))
         {
             net_players_copy_equip_and_cryo();
         }
@@ -505,7 +505,7 @@ TbBool weapon_available_for_purchase(WeaponType wtype)
     wdef = &weapon_defs[wtype];
 
     return ((wdef->Flags & WEPDFLG_CanPurchease) && (research.WeaponsCompleted & (1 << (wtype-1))))
-            || (login_control__State == LognCt_Unkn5 && login_control__TechLevel >= weapon_tech_level[wtype]);
+            || (login_control__State == LognCt_NetStarted && login_control__TechLevel >= weapon_tech_level[wtype]);
 }
 
 ubyte flashy_draw_agent_panel_shape(struct ScreenShape *p_shape, ubyte gbstate)

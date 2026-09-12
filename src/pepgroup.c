@@ -883,7 +883,7 @@ void unkn_truce_groups_sub1(void)
         if (((1 << plyr) & ingame.InNetGame_UNSURE) == 0)
             continue;
 
-        j = byte_1C5C28[plyr];
+        j = net_player_teams[plyr];
         k = pla_grp_count[j];
         playable[8 * j + k] = level_def.PlayableGroups[plyr];
         pla_grp_count[j]++;

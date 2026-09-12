@@ -59,7 +59,7 @@ enum LoginControlStates {
     LognCt_Unkn2,
     LognCt_Unkn3,
     LognCt_Unkn4,
-    LognCt_Unkn5,
+    LognCt_NetStarted,
     LognCt_Unkn6,
     LognCt_Unkn7,
     LognCt_Unkn8,
@@ -145,8 +145,8 @@ extern ubyte login_control__State;
 extern ulong login_control__Money;
 extern sbyte login_control__City;
 extern ubyte login_control__TechLevel;
-extern ubyte byte_181183;
-extern ubyte byte_181189;
+extern ubyte login_control__Faction;
+extern ubyte login_control__Team;
 
 extern ubyte exit_game;
 extern ubyte input_char;
@@ -218,7 +218,7 @@ extern ubyte redraw_screen_flag;
 
 extern sbyte byte_15516C;
 extern sbyte byte_15516D;
-extern ubyte byte_1C5C28[8];
+extern ubyte net_player_teams[8];
 extern long dword_153194;
 extern ulong starting_cash_amounts[8];
 

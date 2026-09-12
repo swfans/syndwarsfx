@@ -534,7 +534,7 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
     used_num = 1;
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
     {
-        k = byte_1C5C28[plyr];
+        k = net_player_teams[plyr];
         word_1C4856[k] = 0;
     }
 
@@ -549,7 +549,7 @@ void draw_mission_mp_players_names_column(struct ScreenBox *box,
 
         word_1C4846[plyr] = stats_mp_count_net_players_agents_kills(plyr);
 
-        k = byte_1C5C28[plyr];
+        k = net_player_teams[plyr];
         if (k != 0)
             word_1C4856[k] += word_1C4846[plyr];
 
@@ -619,7 +619,7 @@ void draw_mission_mp_players_vals_column(struct ScreenBox *box,
         textw = my_string_width(text);
         draw_text_purple_list2(x - textw, y, text, 0);
 
-        k = byte_1C5C28[i];
+        k = net_player_teams[i];
         if (k != 0)
         {
             x += 1;

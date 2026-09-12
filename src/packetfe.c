@@ -350,8 +350,8 @@ void net_player_copy_to_progress_packet(struct NetworkPlayer *p_netplyr)
 
     p_netplyr->U.Progress.TechLevel = login_control__TechLevel;
     p_netplyr->U.Progress.val_flags_08 = net_game_play_flags;
-    p_netplyr->U.Progress.val_181189 = byte_181189;
-    p_netplyr->U.Progress.val_181183 = byte_181183;
+    p_netplyr->U.Progress.val_181189 = login_control__Team;
+    p_netplyr->U.Progress.val_181183 = login_control__Faction;
     p_netplyr->U.Progress.val_15516D = byte_15516D;
     p_netplyr->U.Progress.Expenditure = ingame.Expenditure;
 
@@ -370,7 +370,7 @@ void net_player_update_from_progress_packet(int plyr)
 
     p_netplyr = &network_players[plyr];
     group_types[plyr] = p_netplyr->U.Progress.val_181183;
-    byte_1C5C28[plyr] = p_netplyr->U.Progress.val_181189;
+    net_player_teams[plyr] = p_netplyr->U.Progress.val_181189;
     if (net_host_player_no == plyr)
     {
         if ((net_game_play_flags & NGPF_Unkn02) == 0)

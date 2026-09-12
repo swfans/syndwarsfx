@@ -217,7 +217,7 @@ ubyte show_controls_joystick_box(struct ScreenBox *p_box)
         if (lbDisplay.LeftButton)
         {
             lbDisplay.LeftButton = 0;
-            if (login_control__State != LognCt_Unkn5 || nsvc.I.Type == NetSvc_IPX)
+            if (login_control__State != LognCt_NetStarted || nsvc.I.Type == NetSvc_IPX)
             {
                 p_locplayer->DoubleMode++;
                 if (p_locplayer->DoubleMode >= LOCAL_USERS_MAX_COUNT)

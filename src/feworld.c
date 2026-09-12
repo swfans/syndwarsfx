@@ -171,7 +171,7 @@ ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
     }
     lbDisplay.DrawFlags = 0;
 
-    if (login_control__State != LognCt_Unkn5 && screentype == SCRT_WORLDMAP)
+    if (login_control__State != LognCt_NetStarted && screentype == SCRT_WORLDMAP)
     {
         world_info_ACCEPT_button.DrawFn(&world_info_ACCEPT_button);
         world_info_CANCEL_button.DrawFn(&world_info_CANCEL_button);
@@ -518,7 +518,7 @@ void draw_world_cities_names(struct ScreenBox *p_box)
 void select_world_city(sbyte city)
 {
     map_hl_city_id = city;
-    if (login_control__State == LognCt_Unkn5) {
+    if (login_control__State == LognCt_NetStarted) {
         login_control__City = city;
         net_schedule_player_city_choice_sync();
     }

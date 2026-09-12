@@ -569,7 +569,7 @@ void show_sysmenu_screen(void)
             reset_options_gfx_boxes_flags();
             break;
         case SySc_LOGOUT:
-            if (login_control__State == LognCt_Unkn5)
+            if (login_control__State == LognCt_NetStarted)
             {
                 net_schedule_local_player_logout();
                 byte_15516D = -1;
@@ -977,7 +977,7 @@ void show_purple_status_top_bar(void)
     global_date_box_draw();
     global_time_box_draw();
 
-    if (login_control__State == LognCt_Unkn5)
+    if (login_control__State == LognCt_NetStarted)
     {
         global_citydrop_box_draw();
         global_techlevel_box_draw();
