@@ -129432,9 +129432,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    $0x6,%ebp
 		mov    (%eax),%edi
 		xor    %ebx,%ebx
-		mov    %edx,data_1ddb6c
+		mov    %edx,EXPORT_SYMBOL(dword_1DDB6C)
 		mov    (%edi),%ah
-		mov    %ebx,EXPORT_SYMBOL(data_1ddb68)
+		mov    %ebx,EXPORT_SYMBOL(dword_1DDB68)
 		test   %ah,%ah
 		je     jump_cc1cc
 	jump_cc10b:
@@ -129450,7 +129450,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    $0x6,%eax
 		mov    outro_unkn02,%edx
 		mov    %eax,0xc(%esp)
-		mov    EXPORT_SYMBOL(data_1ddb68),%eax
+		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
 		mov    0x28(%esp),%ebx
 		cmp    %edx,%eax
 		jg     jump_cc1b0
@@ -129458,14 +129458,14 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    %edx,%eax
 		sub    %ecx,%eax
 		add    %eax,%eax
-		mov    %ecx,EXPORT_SYMBOL(data_1ddb68)
+		mov    %ecx,EXPORT_SYMBOL(dword_1DDB68)
 		cmp    $0x1f,%eax
 		jle    jump_cc161
 		mov    $0x1f,%eax
 	jump_cc161:
-		cmpl   $0x0,data_1ddb6c
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
 		je     jump_cc187
-		mov    EXPORT_SYMBOL(data_1ddb68),%edx
+		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
 		and    $0xf,%edx
 		shl    $0x9,%edx
@@ -129503,7 +129503,7 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    %eax,0x4(%esp)
 		jmp    jump_cc366
 	jump_cc1e5:
-		movl   $0x1,data_1ddb6c
+		movl   $0x1,EXPORT_SYMBOL(dword_1DDB6C)
 		mov    0x28(%esp),%edx
 		xor    %eax,%eax
 		mov    0x14(%esp),%ebx
@@ -129572,13 +129572,13 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    outro_unkn02,%ecx
 		mov    %edi,0x20(%esp)
 		mov    %eax,%ebx
-		mov    EXPORT_SYMBOL(data_1ddb68),%eax
+		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
 		mov    %esi,EXPORT_SYMBOL(med2_font)
 		cmp    %ecx,%eax
 		jg     jump_cc32d
 		inc    %eax
-		mov    %eax,EXPORT_SYMBOL(data_1ddb68)
-		mov    EXPORT_SYMBOL(data_1ddb68),%edx
+		mov    %eax,EXPORT_SYMBOL(dword_1DDB68)
+		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
 		mov    %ecx,%eax
 		sub    %edx,%eax
 		add    %eax,%eax
@@ -129586,9 +129586,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		jle    jump_cc2e0
 		mov    $0x1f,%eax
 	jump_cc2e0:
-		cmpl   $0x0,data_1ddb6c
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
 		je     jump_cc306
-		mov    EXPORT_SYMBOL(data_1ddb68),%edx
+		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
 		and    $0xf,%edx
 		shl    $0x9,%edx
@@ -129634,15 +129634,15 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    (%edx),%al
 		cmp    $0x64,%eax
 		je     jump_cc4d5
-		mov    $EXPORT_SYMBOL(people_credits_desc),%edx
+		mov    $EXPORT_SYMBOL(dev_credits_desc),%edx
 		mov    $0xc,%ebp
 		mov    $0x1,%ebx
 		mov    outro_unkn02,%ecx
 		shl    $0x3,%eax
 		mov    %esi,EXPORT_SYMBOL(med2_font)
-		mov    %ebx,data_1ddb6c
+		mov    %ebx,EXPORT_SYMBOL(dword_1DDB6C)
 		add    %eax,%edx
-		mov    EXPORT_SYMBOL(data_1ddb68),%eax
+		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
 		mov    %edx,(%esp)
 		mov    (%edx),%edi
 		cmp    %ecx,%eax
@@ -129690,13 +129690,13 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    0x14(%esp),%eax
 		mov    %esi,EXPORT_SYMBOL(med2_font)
 		mov    %eax,0x18(%esp)
-		mov    EXPORT_SYMBOL(data_1ddb68),%eax
+		mov    EXPORT_SYMBOL(dword_1DDB68),%eax
 		mov    0x28(%esp),%ebx
 		cmp    %ecx,%eax
 		jg     jump_cc4be
 		inc    %eax
-		mov    %eax,EXPORT_SYMBOL(data_1ddb68)
-		mov    EXPORT_SYMBOL(data_1ddb68),%edx
+		mov    %eax,EXPORT_SYMBOL(dword_1DDB68)
+		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
 		mov    %ecx,%eax
 		sub    %edx,%eax
 		add    %eax,%eax
@@ -129704,9 +129704,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		jle    jump_cc46c
 		mov    $0x1f,%eax
 	jump_cc46c:
-		cmpl   $0x0,data_1ddb6c
+		cmpl   $0x0,EXPORT_SYMBOL(dword_1DDB6C)
 		je     jump_cc492
-		mov    EXPORT_SYMBOL(data_1ddb68),%edx
+		mov    EXPORT_SYMBOL(dword_1DDB68),%edx
 		add    EXPORT_SYMBOL(gameturn),%edx
 		and    $0xf,%edx
 		shl    $0x9,%edx
@@ -133401,13 +133401,12 @@ GLOBAL (data_1dd91c)	/* 0x1dd91c */
 		.long	0x0
 GLOBAL (outro_credits_enabled)	/* 0x1DD920 */
 		.long	0x0
-GLOBAL (people_credits_desc)	/* 0x1DD924 */
+GLOBAL (dev_credits_desc)	/* 0x1DD924 */
 		.long	0x0
 data_1dd928:
 		.fill   0x18c
-GLOBAL (people_credits_groups)	/* 0x1DDAB4 */
+GLOBAL (dev_credits_groups)	/* 0x1DDAB4 */
 		.long	0x0
-people_credits_groups_p1:
 		.fill   0x9c
 GLOBAL (outro_text_s)	/* 0x1DDB54 */
 		.long	0x0
@@ -133417,10 +133416,10 @@ GLOBAL (outro_unkn02)	/* 0x1DDB5C */
 		.long	0x0
 GLOBAL (outro_unkn03)	/* 0x1DDB60 */
 		.long	0x0
-GLOBAL (people_groups_count)	/* 0x1DDB64 */
+GLOBAL (dev_credits_groups_count)	/* 0x1DDB64 */
 		.long	0x0
-GLOBAL (data_1ddb68)	/* 0x1ddb68 */
+GLOBAL (dword_1DDB68)	/* 0x1ddb68 */
 		.long	0x0
-data_1ddb6c:
+GLOBAL (dword_1DDB6C)	/* 0x1DDB6C */
 		.long	0x0
 		.align	4

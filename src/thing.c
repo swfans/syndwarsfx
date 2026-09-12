@@ -152,7 +152,7 @@ const char *state_change_result_names[] = {
     "goal unattainable",
 };
 
-ThingIdx same_type_head[256 + PEOPLE_GROUPS_COUNT + 96] = {0};
+ThingIdx same_type_head[256 + PEOPLE_GROUPS_LIMIT + 1] = {0};
 
 /******************************************************************************/
 
@@ -1170,7 +1170,7 @@ void process_things(void)
 
     if ((gameturn & 0x1F) == 0)
     {
-        for (i = 0; i < PEOPLE_GROUPS_COUNT+1; i++) {
+        for (i = 0; i < PEOPLE_GROUPS_LIMIT+1; i++) {
             group_actions[i].Storming &= ~0x4000;
         }
     }
@@ -1549,7 +1549,7 @@ void build_same_type_headers(void)
     // while under a flag which would normally exclude them
     link_all_people = (word_1552F8 == 36) || (word_1552F8 == 18);
 
-    for (i = 0; i < 256 + PEOPLE_GROUPS_COUNT + 1; i++)
+    for (i = 0; i < 256 + PEOPLE_GROUPS_LIMIT + 1; i++)
         same_type_head[i] = 0;
 
     for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)

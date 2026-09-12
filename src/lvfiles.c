@@ -260,7 +260,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
             p_thing->LinkParent = loc_thing.LinkParent;
             p_thing->LinkChild = loc_thing.LinkChild;
             // We have limited amount of group definitions
-            if (p_thing->U.UObject.Group >= PEOPLE_GROUPS_COUNT)
+            if (p_thing->U.UObject.Group >= PEOPLE_GROUPS_LIMIT)
                 p_thing->U.UObject.Group = 0;
             // All relevant thing types must have the values below at same position
             p_thing->U.UObject.EffectiveGroup = p_thing->U.UObject.Group;
@@ -389,7 +389,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
     }
     for (i = 0; i < 8; i++)
     {
-        if (level_def.PlayableGroups[i] >= PEOPLE_GROUPS_COUNT)
+        if (level_def.PlayableGroups[i] >= PEOPLE_GROUPS_LIMIT)
             level_def.PlayableGroups[i] = 0;
     }
     if (fmtver >= 3)
@@ -397,7 +397,7 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
         LbFileRead(lev_fh, engine_mem_alloc_ptr + engine_mem_alloc_size - 1320 - 33, 1320);
         LbFileRead(lev_fh, war_flags, 32 * sizeof(struct WarFlag));
     }
-    for (k = 0; k < PEOPLE_GROUPS_COUNT; k++)
+    for (k = 0; k < PEOPLE_GROUPS_LIMIT; k++)
     {
         for (i = 0; i < 8; i++)
         {
@@ -642,7 +642,7 @@ short find_group_which_looks_like_human_player(TbBool strict)
     short n_partial;
 
     n_partial = 0;
-    for (group = 0; group < PEOPLE_GROUPS_COUNT; group++)
+    for (group = 0; group < PEOPLE_GROUPS_LIMIT; group++)
     {
         int n_all, n_agents, n_zealots, n_punks;
 
@@ -902,7 +902,7 @@ TbResult level_misc_verify_mgun(struct LevelMisc *p_lvmsc)
     s32 bkp_engn_xc, bkp_engn_yc, bkp_engn_zc;
     ThingIdx mgun;
 
-    if ((p_lvmsc->Group < 0) || (p_lvmsc->Group >= PEOPLE_GROUPS_COUNT))
+    if ((p_lvmsc->Group < 0) || (p_lvmsc->Group >= PEOPLE_GROUPS_LIMIT))
         return Lb_FAIL;
     if ((p_lvmsc->Weapon < 1) || (p_lvmsc->Weapon >= WEP_TYPES_COUNT))
         return Lb_FAIL;

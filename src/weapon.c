@@ -1918,7 +1918,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     group = p_target->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
     init_laser(p_person, timer);
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n_targets = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)

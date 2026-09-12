@@ -28,7 +28,7 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-#define PEOPLE_GROUPS_COUNT 32
+#define PEOPLE_GROUPS_LIMIT 32
 #define PEOPLE_GROUPS_INDEX_MASK 0x1F
 
 struct Thing;
@@ -66,8 +66,8 @@ struct GroupAction {
 
 #pragma pack()
 /******************************************************************************/
-extern struct WarFlag war_flags[PEOPLE_GROUPS_COUNT];
-extern struct GroupAction group_actions[PEOPLE_GROUPS_COUNT+1];
+extern struct WarFlag war_flags[PEOPLE_GROUPS_LIMIT];
+extern struct GroupAction group_actions[PEOPLE_GROUPS_LIMIT+1];
 
 /** Checks if two things have equal effective groups.
  */

@@ -407,7 +407,7 @@ void draw_objective_group_whole_on_engine_scene(ushort group)
     short i;
     ubyte colk;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -428,7 +428,7 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
     short i;
     ubyte colk;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -451,7 +451,7 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
     short i;
     ubyte colk;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -475,7 +475,7 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
     short i;
     ubyte colk;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     colk = dword_1C8460 & 7;
     plyagent = players[plyr].DirectControl[0];
     plygroup = things[plyagent].U.UPerson.Group;
@@ -501,7 +501,7 @@ void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short ow
     short i;
     ubyte colk;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -644,7 +644,7 @@ void draw_objective(ushort objectv, ubyte flag)
         short group;
 
         group = p_objectv->Thing;
-        if (group >= PEOPLE_GROUPS_COUNT) group = 0;
+        if (group >= PEOPLE_GROUPS_LIMIT) group = 0;
         sprintf(locstr, "[%d] %20s t %d id %d", group_actions[group].Alive,
           p_odef->CmdName, p_objectv->Thing, p_objectv->UniqueID);
         if (gameturn & 4)
@@ -913,7 +913,7 @@ TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_object
     short i;
     ushort n;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -948,7 +948,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
     ret = 1;
     if ((p_odef->Flags & ObDF_ReqGroup) != 0)
     {
-        if ((p_objectv->Thing < 0) || (p_objectv->Thing >= PEOPLE_GROUPS_COUNT)) {
+        if ((p_objectv->Thing < 0) || (p_objectv->Thing >= PEOPLE_GROUPS_LIMIT)) {
             LOGERR("Objv%s%d = %s Group(%hd) out of range",
               srctext, objectv, p_odef->CmdName, p_objectv->Thing);
             p_objectv->Thing = 0;
@@ -1139,7 +1139,7 @@ ubyte fix_single_objective(struct Objective *p_objectv, ushort objectv, const ch
 
     if ((p_odef->Flags & ObDF_ReqSecGrp) != 0)
     {
-        if ((p_objectv->Arg2 <= 0) || (p_objectv->Arg2 >= PEOPLE_GROUPS_COUNT)) {
+        if ((p_objectv->Arg2 <= 0) || (p_objectv->Arg2 >= PEOPLE_GROUPS_LIMIT)) {
             LOGERR("Objv%s%d = %s SecGroup(%d) out of range",
               srctext, objectv, p_odef->CmdName, (int)p_objectv->Arg2);
             p_objectv->Arg2 = 0;

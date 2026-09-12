@@ -209,13 +209,13 @@ extern ubyte unkn_flags_01;
 extern long outro_credits_enabled;
 extern long outro_unkn02;
 extern long outro_unkn03;
-extern long people_groups_count;
-extern long data_1ddb68;
+extern long dev_credits_groups_count;
+extern s32 dword_1DDB68;
 
 extern ubyte debug_hud_collision;
 
-extern char *people_credits_desc[];
-extern char *people_credits_groups[];
+extern char *dev_credits_desc[];
+extern char *dev_credits_groups[];
 
 extern char *mission_briefing_text;
 #define mission_briefing_text_len 16384

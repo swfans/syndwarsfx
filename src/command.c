@@ -482,7 +482,7 @@ ubyte fix_thing_command_indexes(ushort cmd, TbBool deep)
     ret = 1;
     if ((p_cdef->Flags & CmDF_ReqGroup) != 0)
     {
-        if ((p_cmd->OtherThing < 0) || (p_cmd->OtherThing >= PEOPLE_GROUPS_COUNT)) {
+        if ((p_cmd->OtherThing < 0) || (p_cmd->OtherThing >= PEOPLE_GROUPS_LIMIT)) {
             LOGERR("Cmd%hu = %s Group(%hd) out of range",
               cmd, p_cdef->CmdName, p_cmd->OtherThing);
             p_cmd->OtherThing = 0;

@@ -164,14 +164,14 @@ short find_unused_group_id(TbBool largest)
     }
     if (largest)
     {
-        for (group = PEOPLE_GROUPS_COUNT-1; group > 0; group--) {
+        for (group = PEOPLE_GROUPS_LIMIT-1; group > 0; group--) {
             if ((used_groups & (1 << group)) == 0)
                 return group;
         }
     }
     else
     {
-        for (group = 1; group < PEOPLE_GROUPS_COUNT; group++) {
+        for (group = 1; group < PEOPLE_GROUPS_LIMIT; group++) {
             if ((used_groups & (1 << group)) == 0)
                 return group;
         }
@@ -207,14 +207,14 @@ ushort count_people_in_group(ushort group, short subtype)
 TbBool groups_equal(short grp1, short grp2)
 {
     // TODO why are we disallowing outranged groups to be treated as same?
-    return ((grp1 == grp2) && (grp1 < PEOPLE_GROUPS_COUNT) && (grp2 < PEOPLE_GROUPS_COUNT));
+    return ((grp1 == grp2) && (grp1 < PEOPLE_GROUPS_LIMIT) && (grp2 < PEOPLE_GROUPS_LIMIT));
 }
 
 void groups_copy(short pv_group, short nx_group, ubyte allow_kill)
 {
     int i;
 
-    for (i = 0; i < PEOPLE_GROUPS_COUNT; i++)
+    for (i = 0; i < PEOPLE_GROUPS_LIMIT; i++)
     {
         if (i == pv_group)
         {
@@ -373,7 +373,7 @@ void thing_groups_clear_all_actions(void)
 {
     short group;
 
-    for (group = 0; group < PEOPLE_GROUPS_COUNT; group++)
+    for (group = 0; group < PEOPLE_GROUPS_LIMIT; group++)
     {
         thing_group_clear_action(group);
     }
@@ -385,7 +385,7 @@ TbBool all_group_members_destroyed(ushort group)
     ThingIdx thing;
     short i;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
@@ -406,7 +406,7 @@ TbBool all_group_persuaded(ushort group)
     ThingIdx thing;
     short i;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
@@ -440,7 +440,7 @@ TbBool group_has_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
     ThingIdx thing;
     short i;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
@@ -464,7 +464,7 @@ TbBool group_has_all_survivors_in_vehicle(ushort group, ThingIdx vehicle)
     ThingIdx thing;
     short i;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
@@ -489,7 +489,7 @@ TbBool group_has_no_less_members_in_vehicle(ushort group, ThingIdx vehicle, usho
     short i;
     ushort n;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -517,7 +517,7 @@ TbBool group_has_no_less_members_persuaded_by_player(ushort group, ushort plyr, 
     short i;
     ushort n;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -542,7 +542,7 @@ TbBool group_has_no_less_members_killed_or_persuaded_by_player(ushort group, ush
     short i;
     ushort n;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -568,7 +568,7 @@ TbBool group_has_no_less_members_dead(ushort group, ushort amount)
     short i;
     ushort n;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -608,7 +608,7 @@ TbBool group_has_no_less_members_near_thing(ThingIdx neartng, ushort group, usho
         nearZ = p_neartng->Z;
     }
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
@@ -636,7 +636,7 @@ TbBool group_has_no_less_members_persuaded_by_person(ushort group, ThingIdx ownt
     short i;
     ushort n;
 
-    assert(group < PEOPLE_GROUPS_COUNT);
+    assert(group < PEOPLE_GROUPS_LIMIT);
     n = 0;
     thing = same_type_head[256 + group];
     for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)

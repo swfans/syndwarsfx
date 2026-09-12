@@ -987,7 +987,7 @@ int load_people_text(ubyte *buf)
               s += 4;
               break;
             }
-            people_credits_desc[2 * groupno + 0] = name;
+            dev_credits_desc[2 * groupno + 0] = name;
 
             while (*s != '[')
             {
@@ -999,7 +999,7 @@ int load_people_text(ubyte *buf)
             }
             s++;
             desc = s;
-            people_credits_desc[2 * groupno + 1] = desc;
+            dev_credits_desc[2 * groupno + 1] = desc;
             continue;
         }
         if (*s == '#') {
@@ -1021,7 +1021,7 @@ int load_people_text(ubyte *buf)
                 s += 4;
                 break;
             }
-            people_credits_groups[2 * groupno + 0] = s;
+            dev_credits_groups[2 * groupno + 0] = s;
 
             while (*s != '[')
             {
@@ -1033,7 +1033,7 @@ int load_people_text(ubyte *buf)
             }
             s++;
             g = &buf[totlen];
-            people_credits_groups[2 * groupno + 1] = (char *)g; // TODO we should really use a struct here
+            dev_credits_groups[2 * groupno + 1] = (char *)g; // TODO we should really use a struct here
 
             // Recognize the list of integers, store them in g
             while ( 1 )
@@ -1059,7 +1059,7 @@ int load_people_text(ubyte *buf)
         }
         s++;
     }
-    people_groups_count = groupno + 1;
+    dev_credits_groups_count = groupno + 1;
 
     return totlen;
 }
@@ -1620,12 +1620,12 @@ void init_outro(void)
         if (outro_credits_enabled)
         {
             outro_unkn02++;
-            func_cc0d4((char **)&people_credits_groups[2 * outro_unkn03]);
-            if (outro_unkn02 > data_1ddb68 + 50)
+            func_cc0d4((char **)&dev_credits_groups[2 * outro_unkn03]);
+            if (outro_unkn02 > dword_1DDB68 + 50)
             {
                 outro_unkn02 = 0;
                 outro_unkn03++;
-                if (outro_unkn03 == people_groups_count)
+                if (outro_unkn03 == dev_credits_groups_count)
                     outro_unkn03 = 0;
             }
           }
