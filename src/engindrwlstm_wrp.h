@@ -34,8 +34,6 @@ struct SingleFloorTexture;
 
 #pragma pack()
 /******************************************************************************/
-extern short word_1552F8;
-
 void draw_thing_e_graphic(struct Thing *p_thing, int x, int y, int z, ushort frame,
   int radius, int intensity);
 void draw_pers_e_graphic(struct Thing *p_thing, int x, int y, int z, int frame, int radius, int intensity);

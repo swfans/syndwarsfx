@@ -1535,8 +1535,71 @@ TbBool thing_intersects_cylinder(ThingIdx thing, short X, short Y, short Z, usho
 
 void build_same_type_headers(void)
 {
+#if 0
     asm volatile ("call ASM_build_same_type_headers\n"
         :  :  : "eax" );
+    return;
+#endif
+    struct Thing *p_thing;
+    short i;
+    ThingIdx thing;
+    TbBool link_all_people;
+
+    // On specific modes, people are linked into same-type lists even
+    // while under a flag which would normally exclude them
+    link_all_people = (word_1552F8 == 36) || (word_1552F8 == 18);
+
+    for (i = 0; i < 256 + PEOPLE_GROUPS_COUNT + 1; i++)
+        same_type_head[i] = 0;
+
+    for (thing = things_used_head; thing != 0; thing = p_thing->LinkChild)
+    {
+        p_thing = &things[thing];
+
+        switch (p_thing->Type)
+        {
+        case TT_VEHICLE:
+            if (p_thing->SubType == SubTT_VEH_SHIP) {
+                p_thing->LinkSame = same_type_head[5];
+                same_type_head[5] = thing;
+            } else {
+                p_thing->LinkSame = same_type_head[2];
+                same_type_head[2] = thing;
+            }
+            break;
+        case TT_PERSON:
+        case TT_UNKN4:
+            if ((p_thing->Flag2 & (TgF2_ExistsOffMap|TgF2_AlteredSubType)) == 0 || link_all_people)
+            {
+                ubyte group;
+
+                p_thing->LinkSame = same_type_head[1];
+                same_type_head[1] = thing;
+
+                group = p_thing->U.UPerson.Group & PEOPLE_GROUPS_INDEX_MASK;
+                p_thing->LinkSameGroup = same_type_head[256 + group];
+                same_type_head[256 + group] = thing;
+            }
+            break;
+        case TT_BUILDING:
+            if (p_thing->SubType == SubTT_BLD_MGUN) {
+                p_thing->LinkSame = same_type_head[7];
+                same_type_head[7] = thing;
+            } else {
+                p_thing->LinkSame = same_type_head[3];
+                same_type_head[3] = thing;
+            }
+            break;
+        case TT_MINE:
+            if (p_thing->SubType == 48) {
+                p_thing->LinkSame = same_type_head[6];
+                same_type_head[6] = thing;
+            }
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 short get_thing_same_type_head(short ttype, short subtype)

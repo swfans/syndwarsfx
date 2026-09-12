@@ -1433,7 +1433,7 @@ void set_person_persuaded(struct Thing *p_person, struct Thing *p_attacker, usho
     p_person->State = PerSt_BEING_PERSUADED;
     {
         ushort group;
-        group = p_person->U.UPerson.Group & 0x1F;
+        group = p_person->U.UPerson.Group & PEOPLE_GROUPS_INDEX_MASK;
         group_actions[group].Persuaded++;
     }
     if (!in_network_game && (p_attacker->Flag & TngF_PlayerAgent) &&

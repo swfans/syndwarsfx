@@ -976,6 +976,7 @@ extern ushort sthings_used;
 
 extern TbBool debug_hud_things;
 extern ubyte debug_log_things;
+extern short word_1552F8;
 
 struct Thing *get_thing_safe(ThingIdx thing, ubyte ttype);
 
