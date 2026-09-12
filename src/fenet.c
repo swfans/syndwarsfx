@@ -539,10 +539,13 @@ void netgame_state_enter_5(void)
     PlayerIdx plyr;
 
     switch_net_screen_boxes_to_execute();
+
     reset_frontend_player_state();
-    init_variables();
-    init_agents();
+    global_date_new_game_reset();
+    init_unkn6_adjustable_variables();
     srm_reset_research();
+    init_agents();
+
     login_control__State = LognCt_NetStarted;
     for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++) {
         player_mission_agents_toggle_reset(plyr);
@@ -1164,7 +1167,7 @@ ubyte show_net_comms_box(struct ScreenBox *p_box)
         }
     }
 
-    if (user_read_value(net_unkn1_text, 20, 0) && (login_control__State == 5)
+    if (user_read_value(net_unkn1_text, 20, 0) && (login_control__State == LognCt_NetStarted)
       && (net_unkn1_text[0] != '\0'))
     {
         net_schedule_player_chat_message_sync(net_unkn1_text);
@@ -1274,7 +1277,7 @@ ubyte show_net_protocol_box(struct ScreenBox *p_box)
 
     my_set_text_window(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
 
-    if (login_control__State == 5)
+    if (login_control__State == LognCt_NetStarted)
     {
         lbFontPtr = small_med_font;
         tx_height = my_char_height('A');
@@ -1741,7 +1744,7 @@ ubyte show_net_groups_box(struct ScreenBox *p_box)
 
     scr_y = 19;
     lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
-    if (login_control__State == 5)
+    if (login_control__State == LognCt_NetStarted)
     {
         text = net_group_name_to_gtext(nsvc.S.Name);
         draw_text_purple_list2(0, scr_y, text, 0);
@@ -1794,7 +1797,7 @@ ubyte show_net_groups_box(struct ScreenBox *p_box)
             unkn8_EJECT_button.DrawFn(&unkn8_EJECT_button);
         }
     }
-    if ((byte_15516C != -1) || (login_control__State == 5))
+    if ((byte_15516C != -1) || (login_control__State == LognCt_NetStarted))
     {
         net_groups_LOGON_button.DrawFn(&net_groups_LOGON_button);
     }
@@ -1839,6 +1842,12 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
     short scr_x, scr_y;
     short tx_width, tx_height;
 
+    // data refresh before draw
+    if (login_control__State == LognCt_NetStarted)
+    {
+        refresh_users_in_net_game();
+    }
+
     my_set_text_window(p_box->X + 4, p_box->Y + 4, p_box->Width - 8, p_box->Height - 8);
     if ((p_box->Flags & 0x1000) == 0)
     {
@@ -1869,10 +1878,8 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
     lbFontPtr = small_med_font;
     tx_height = my_char_height('A');
     scr_y = 18;
-    if (login_control__State == 5)
+    if (login_control__State == LognCt_NetStarted)
     {
-        refresh_users_in_net_game();
-
         for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
         {
             text = unkn2_names[plyr];
@@ -1908,23 +1915,9 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
                 draw_sprite_purple_list(p_box->X + (112 + p_spr->SWidth) + 4,
                   p_box->Y + 4 + scr_y + 2, p_dspr);
             }
-            if (net_local_player_hosts_the_game())
-            {
-                if (mouse_down_over_box_coords(text_window_x1, text_window_y1 + scr_y + 1,
-                  text_window_x2, text_window_y1 + tx_height + scr_y + 5))
-                {
-                    if (lbDisplay.LeftButton)
-                    {
-                        lbDisplay.LeftButton = 0;
-                        if (byte_15516D == plyr)
-                            byte_15516D = -1;
-                        else
-                            byte_15516D = plyr;
-                    }
-                }
-            }
             scr_y += tx_height + 9;
         }
+
     }
     else if (byte_15516C != -1)
     {
@@ -1944,6 +1937,32 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
             }
         }
     }
+
+    // input
+    scr_y = 18;
+    if (login_control__State == LognCt_NetStarted)
+    {
+        for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+        {
+            if (net_local_player_hosts_the_game())
+            {
+                if (mouse_down_over_box_coords(text_window_x1, text_window_y1 + scr_y + 1,
+                  text_window_x2, text_window_y1 + tx_height + scr_y + 5))
+                {
+                    if (lbDisplay.LeftButton)
+                    {
+                        lbDisplay.LeftButton = 0;
+                        if (byte_15516D == plyr)
+                            byte_15516D = -1;
+                        else
+                            byte_15516D = plyr;
+                    }
+                }
+            }
+            scr_y += tx_height + 9;
+        }
+    }
+
     return 0;
 }
 

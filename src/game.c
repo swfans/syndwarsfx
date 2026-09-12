@@ -3566,12 +3566,10 @@ ubyte save_game_slot(ubyte click)
     return ret;
 }
 
-void init_variables(void)
+void reinit_unkn6_always_reset_variables(void)
 {
-    global_date_new_game_reset();
-
-    ingame.MissionStatus = ObvStatu_COMPLETED;
-    login_control__Money = starting_cash_amounts[4];
+    login_control__TechLevel = 4;
+    login_control__Money = starting_cash_amounts[login_control__TechLevel];
     if (login_control__State == LognCt_Unkn6)
     {
         ingame.Credits = 50000;
@@ -3583,11 +3581,24 @@ void init_variables(void)
         ingame.CashAtStart = login_control__Money;
     }
     ingame.Expenditure = 0;
-    login_control__City = 19; // Tokyo
-    login_control__Team = 0;
     login_control__State = LognCt_Unkn6;
     net_game_play_flags = NGPF_Unkn20 | NGPF_Unkn10 | NGPF_Unkn08 | NGPF_Unkn04;
-    login_control__TechLevel = 4;
+}
+
+void reinit_unkn6_adjustable_variables(void)
+{
+    login_control__City = -1;
+
+    reinit_unkn6_always_reset_variables();
+}
+
+void init_unkn6_adjustable_variables(void)
+{
+    ingame.MissionStatus = ObvStatu_COMPLETED;
+    login_control__City = 19; // Tokyo
+    login_control__Team = 0;
+
+    reinit_unkn6_adjustable_variables();
 }
 
 void init_agents(void)
@@ -4371,7 +4382,8 @@ void campaign_new_game_prepare(void)
     reset_frontend_player_state();
 
     player_mission_agents_toggle_reset(local_player_no);
-    init_variables();
+    global_date_new_game_reset();
+    init_unkn6_adjustable_variables();
     srm_reset_research();
     init_agents();
 
@@ -4399,7 +4411,8 @@ ubyte goto_savegame(ubyte click)
     reset_frontend_player_state();
 
     player_mission_agents_toggle_reset(local_player_no);
-    init_variables();
+    global_date_new_game_reset();
+    init_unkn6_adjustable_variables();
     srm_reset_research();
     init_agents();
 
@@ -4423,15 +4436,7 @@ void net_new_game_prepare(void)
     byte_15516C = -1;
     reset_world_screen_player_state();
 
-    login_control__Money = starting_cash_amounts[4];
-    ingame.Credits = 50000;
-    ingame.CashAtStart = 50000;
-    ingame.Expenditure = 0;
-    login_control__City = -1;
-    login_control__State = LognCt_Unkn6;
-    net_game_play_flags = NGPF_Unkn20 | NGPF_Unkn10 | NGPF_Unkn08 | NGPF_Unkn04;
-    login_control__TechLevel = 4;
-
+    reinit_unkn6_adjustable_variables();
     srm_reset_research();
     init_agents();
 
@@ -5635,7 +5640,6 @@ void show_menu_screen_st0(void)
 
     players_init_default_control_mode();
 
-    login_control__State = LognCt_Unkn6;
     sprintf(net_unkn2_text, "01234567890");
 
     {
@@ -5664,6 +5668,7 @@ void show_menu_screen_st0(void)
     player_mission_agents_toggle_reset(local_player_no);
     global_date_new_game_reset();
     ingame.Credits = 50000;
+    login_control__State = LognCt_Unkn6;
 
     debug_trace_place(17);
     // Need to set screen type before gfx background is reloaded
