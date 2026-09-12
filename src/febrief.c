@@ -82,12 +82,26 @@ short word_1C47E8 = 0;
 
 /******************************************************************************/
 
-ubyte ac_brief_do_netscan_enhance(ubyte click);
-ubyte ac_show_brief_netscan_box(struct ScreenTextBox *box);
 ubyte accept_mission(ubyte click);
 ubyte do_unkn1_CANCEL(ubyte click);
 void ac_purple_unkn2_data_to_screen(void);
 void ac_SCANNER_data_to_screen(void);
+
+ubyte accept_mission(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_accept_mission\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
+
+ubyte do_unkn1_CANCEL(ubyte click)
+{
+    ubyte ret;
+    asm volatile ("call ASM_do_unkn1_CANCEL\n"
+        : "=r" (ret) : "a" (click));
+    return ret;
+}
 
 void update_netscan_cost_button(ubyte city_id)
 {
@@ -221,7 +235,7 @@ ubyte show_brief_netscan_box(struct ScreenTextBox *p_box)
                 }
                 if (selected_netscan_objective == nsobv)
                     lbDisplay.DrawFlags |= Lb_TEXT_ONE_COLOR;
-                draw_text_purple_list2(0, start_shift, netscan_text + p_nsobv->TextOffset, 0);
+                draw_text_purple_list2(0, start_shift, memload_netscan_text + p_nsobv->TextOffset, 0);
                 lbDisplay.DrawFlags = 0;
                 start_shift += ln_height * p_nsobv->TextLines;
                 if (start_shift + tx_height >= text_window_y2 - text_window_y1)
@@ -302,19 +316,19 @@ void show_citymap_city_selection(struct ScreenBox *box)
     short city_id;
     short text_h;
     short dy;
-    ulong bufpos;
 
     text_h = my_char_height('A');
     dy = text_h + 4;
     for (city_id = 0; city_id < num_cities; city_id++)
     {
+        const char *text;
         if ((cities[city_id].Flags & CitF_Unkn01) == 0)
             continue;
 
         dy += text_h + 4;
         lbDisplay.DrawFlags |= 0x8000;
-        bufpos = cities[city_id].TextIndex[0];
-        draw_text_purple_list2(0, dy, (char*) &memload[bufpos], 0);
+        text = city_full_name(city_id);
+        draw_text_purple_list2(0, dy, text, 0);
         lbDisplay.DrawFlags &= ~0x8000;
     }
 }

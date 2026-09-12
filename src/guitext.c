@@ -35,7 +35,7 @@
 char *gui_strings_data = NULL;
 char *gui_strings_data_end = NULL;
 
-char *weapon_text = NULL;
+char *memload_wep_mod_desc_text = NULL;
 ushort weapon_text_index[WEP_TYPES_COUNT] = {0};
 ushort cybmod_text_index[MOD_TYPES_COUNT] = {0};
 
@@ -137,17 +137,17 @@ const char *weapon_description_text(ushort wtype)
 {
     if (wtype >= WEP_TYPES_COUNT)
         return "";
-    return &weapon_text[weapon_text_index[wtype]];
+    return memload_wep_mod_desc_text + weapon_text_index[wtype];
 }
 
 const char *cybmod_description_text(ushort mtype)
 {
     if (mtype >= MOD_TYPES_COUNT)
         return "";
-    return &weapon_text[cybmod_text_index[mtype]];
+    return memload_wep_mod_desc_text + cybmod_text_index[mtype];
 }
 
-void init_weapon_text(void)
+void load_wep_mod_desc_text(void)
 {
     char locstr[512];
     int weptxt_pos;
@@ -155,17 +155,17 @@ void init_weapon_text(void)
     char *s;
     int i, n;
 
-    totlen = load_file_alltext("textdata/wms.txt", weapon_text);
+    totlen = load_file_alltext("textdata/wms.txt", memload_wep_mod_desc_text);
     if (totlen == Lb_FAIL)
         return;
-    if (totlen >= weapon_text_len) {
-        LOGERR("Insufficient memory for weapon_text - %d instead of %d", weapon_text_len, totlen);
-        totlen = weapon_text_len - 1;
+    if (totlen >= memload_wep_mod_desc_text_len) {
+        LOGERR("Insufficient memory for wep_mod_desc_text - %d instead of %d", memload_wep_mod_desc_text_len, totlen);
+        totlen = memload_wep_mod_desc_text_len - 1;
     }
 
     // TODO change the format to use our INI parser
-    s = weapon_text;
-    weapon_text[totlen] = '\0';
+    s = memload_wep_mod_desc_text;
+    memload_wep_mod_desc_text[totlen] = '\0';
 
     for (i = 0; i < WEP_TYPES_COUNT; i++) {
         weapon_text_index[i] = totlen;
@@ -212,15 +212,15 @@ void init_weapon_text(void)
             weapon_text_index[i] = weptxt_pos;
 
             while ((*s != '\r') && (*s != '\n')) {
-                weapon_text[weptxt_pos] = *s++;
+                memload_wep_mod_desc_text[weptxt_pos] = *s++;
                 weptxt_pos++;
             }
-            weapon_text[weptxt_pos] = '\0';
+            memload_wep_mod_desc_text[weptxt_pos] = '\0';
             weptxt_pos++;
             s += 2;
 
             n = weapon_text_index[i];
-            my_preprocess_text(&weapon_text[n]);
+            my_preprocess_text(&memload_wep_mod_desc_text[n]);
         } else {
             LOGERR("Weapon name not recognized: \"%s\"", locstr);
             if (s) s = strpbrk(s, "\r\n");
@@ -262,15 +262,15 @@ void init_weapon_text(void)
             cybmod_text_index[i] = weptxt_pos;
 
             while ((*s != '\r') && (*s != '\n') && (*s != '\0')) {
-                weapon_text[weptxt_pos] = *s++;
+                memload_wep_mod_desc_text[weptxt_pos] = *s++;
                 weptxt_pos++;
             }
-            weapon_text[weptxt_pos] = '\0';
+            memload_wep_mod_desc_text[weptxt_pos] = '\0';
             weptxt_pos++;
             s += 2;
 
             n = cybmod_text_index[i];
-            my_preprocess_text(&weapon_text[n]);
+            my_preprocess_text(&memload_wep_mod_desc_text[n]);
         } else {
             LOGERR("Cyb Mod name not recognized: \"%s\"", locstr);
             if (s) s = strpbrk(s, "\r\n");

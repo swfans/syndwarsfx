@@ -99,8 +99,8 @@ extern char *gui_strings_data;
 extern char *gui_strings_data_end;
 extern u32 text_buf_pos;
 
-extern char *weapon_text;
-#define weapon_text_len 32768
+extern char *memload_wep_mod_desc_text;
+#define memload_wep_mod_desc_text_len 32768
 
 void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours);
 
@@ -116,7 +116,7 @@ TbBool create_strings_list(char **strings, char *strings_data, char *strings_dat
 
 const char *weapon_description_text(ushort wtype);
 const char *cybmod_description_text(ushort mtype);
-void init_weapon_text(void);
+void load_wep_mod_desc_text(void);
 
 /******************************************************************************/
 #ifdef __cplusplus

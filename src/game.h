@@ -184,9 +184,6 @@ extern ulong nsta_size;
 extern short *dword_1C529C[6];
 extern short *landmap_2B4;
 
-extern ubyte *memload;
-#define memload_len 16384
-
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];

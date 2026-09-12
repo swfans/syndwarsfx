@@ -200,8 +200,8 @@ extern char mission_name[50];
 
 extern ubyte background_type;
 
-extern char *netscan_text;
-#define netscan_text_len 16384
+extern char *memload_netscan_text;
+#define memload_netscan_text_len 16384
 
 void load_campaigns(void);
 ushort selectable_campaigns_count(void);
@@ -239,7 +239,13 @@ void read_mission_netscan_objectives_bin(void);
 void apply_missions_fixups(void);
 
 TbResult load_netscan_text_data(ushort mapno, ushort level);
-TbResult load_mission_name_text(ubyte missi);
+
+/** Loads `mission_name` text for given mission.
+ *
+ * Reuses `memload_city_prop_text` as temporary buffer. City properties
+ * stored there are lost after this call, and have to be reloaded.
+ */
+TbResult load_mission_name_text(ushort missi);
 
 /******************************************************************************/
 #ifdef __cplusplus

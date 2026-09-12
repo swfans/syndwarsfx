@@ -920,7 +920,6 @@ static void global_credits_box_draw(void)
 static void global_citydrop_box_draw(void)
 {
     const char *text;
-    uint n;
     const char *subtext;
     char locstr[50];
     short cx, cy;
@@ -941,8 +940,7 @@ static void global_citydrop_box_draw(void)
         subtext = "";
     } else {
         map_hl_city_id = login_control__City;
-        n = cities[map_hl_city_id].TextIndex[0];
-        subtext = (char *)&memload[n];
+        subtext = city_full_name(map_hl_city_id);
     }
     sprintf(locstr, "%s: %s", gui_strings[446], subtext);
     text = loctext_to_gtext(locstr);

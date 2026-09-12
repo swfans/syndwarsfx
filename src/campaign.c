@@ -34,8 +34,9 @@
 #include "lvobjctv.h"
 #include "misstat.h"
 #include "mydraw.h"
-#include "wadfile.h"
 #include "swlog.h"
+#include "wadfile.h"
+#include "wrcities.h"
 /******************************************************************************/
 
 enum MissionListConfigCmd {
@@ -193,6 +194,10 @@ ubyte background_type = 0;
 
 struct Mission mission_list[MISSIONS_MAX_COUNT];
 ushort next_mission = 1;
+
+char mission_name[50] = "None";
+
+char *memload_netscan_text = NULL;
 
 /** Size of campaign strings within the engine buffer.
  */
@@ -1772,15 +1777,15 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
     int secnum_int;
 
     found = 0;
-    totlen = load_file_alltext("textdata/netscan.txt", netscan_text);
+    totlen = load_file_alltext("textdata/netscan.txt", memload_netscan_text);
     if (totlen == Lb_FAIL) {
         return Lb_FAIL;
     }
-    if (totlen >= netscan_text_len) {
-        LOGERR("Insufficient memory for netscan_text - %d instead of %d", netscan_text_len, totlen);
-        totlen = netscan_text_len - 1;
+    if (totlen >= memload_netscan_text_len) {
+        LOGERR("Insufficient memory for netscan_text - %d instead of %d", memload_netscan_text_len, totlen);
+        totlen = memload_netscan_text_len - 1;
     }
-    p = netscan_text;
+    p = memload_netscan_text;
     while ( !found )
     {
         // Find section
@@ -1816,9 +1821,9 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
                 while ((c != '\n') && (c != '\0'));
                 *(p - 1) = '\0';
 
-                netscan_objectives[i].TextOffset = text - netscan_text;
-                my_preprocess_text(netscan_text + netscan_objectives[i].TextOffset);
-                k = my_count_lines(netscan_text + netscan_objectives[i].TextOffset);
+                netscan_objectives[i].TextOffset = text - memload_netscan_text;
+                my_preprocess_text(memload_netscan_text + netscan_objectives[i].TextOffset);
+                k = my_count_lines(memload_netscan_text + netscan_objectives[i].TextOffset);
                 netscan_objectives[i].TextLines = k;
             }
         }
@@ -1826,7 +1831,7 @@ TbResult load_netscan_text_data(ushort mapno, ushort level)
     return found ? Lb_SUCCESS : Lb_OK;
 }
 
-TbResult load_mission_name_text(ubyte missi)
+TbResult load_mission_name_text(ushort missi)
 {
     int totlen;
     ushort len;
@@ -1834,18 +1839,18 @@ TbResult load_mission_name_text(ubyte missi)
     char *p;
     char c;
 
-    totlen = load_file_alltext("textdata/names.txt", memload);
+    totlen = load_file_alltext("textdata/names.txt", memload_city_prop_text);
     if (totlen == Lb_FAIL) {
         mission_name[0] = '\0';
         return Lb_FAIL;
     }
-    if (totlen >= memload_len) {
-        LOGERR("Insufficient memory for memload - %d instead of %d", memload_len, totlen);
-        totlen = memload_len - 1;
+    if (totlen >= memload_city_prop_text_len) {
+        LOGERR("Insufficient memory for city_prop_text - %d instead of %d", memload_city_prop_text_len, totlen);
+        totlen = memload_city_prop_text_len - 1;
     }
-    memload[totlen] = '\0';
+    memload_city_prop_text[totlen] = '\0';
 
-    p = (char *)memload;
+    p = memload_city_prop_text;
     cmissi = -1;
     while ( 1 )
     {

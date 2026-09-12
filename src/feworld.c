@@ -134,7 +134,7 @@ ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
         const char *text;
 
         for (i = 0; i < 6 ; i++) {
-            text = (const char *)&memload[cities[map_hl_city_id].TextIndex[i]];
+            text = city_property_text(map_hl_city_id, i);
             word_155744[i] = strlen(text);
         }
         world_info_CANCEL_button.Flags |= 0x0002;
@@ -164,7 +164,7 @@ ubyte show_world_city_info_box(struct ScreenTextBox *p_box)
         draw_text_purple_list2(0, scr_y, text, 0);
         n_lines = my_count_lines(text);
         scr_y += ln_height * n_lines;
-        text = (const char *)&memload[cities[map_hl_city_id].TextIndex[i]];
+        text = city_property_text(map_hl_city_id, i);
         flashy_draw_text(0, scr_y, text, p_box->TextSpeed, 0, &word_155744[i], 0);
         n_lines = my_count_lines(text);
         scr_y += tx_height + ln_height * n_lines;
@@ -429,10 +429,10 @@ void draw_world_cities_names(struct ScreenBox *p_box)
     for (city = 0; city < num_cities; city++)
     {
         char locstr[40];
+        const char *text;
         ScrCoord ct_x, ct_y;
         short ms_x, ms_y;
         short px, py;
-        int k;
 
         ms_x = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseX : lbDisplay.MMouseX;
         ms_y = lbDisplay.GraphicsScreenHeight < 400 ? 2 * lbDisplay.MMouseY : lbDisplay.MMouseY;
@@ -440,8 +440,8 @@ void draw_world_cities_names(struct ScreenBox *p_box)
         ct_x = cities[city].X;
         ct_y = cities[city].Y;
 
-        k = cities[city].TextIndex[0];
-        strncpy(locstr, (char *)&memload[k], sizeof(locstr) - 1);
+        text = city_full_name(city);
+        strncpy(locstr, text, sizeof(locstr) - 1);
         locstr[sizeof(locstr) - 1] = '\0';
         LbStringToUpper(locstr);
 

@@ -69,10 +69,16 @@ extern ubyte num_cities;
 extern struct City cities[];
 extern sbyte selected_city_id;
 
+extern char *memload_city_prop_text;
+#define memload_city_prop_text_len 16384
+
 void save_cities_conf_file(void);
 void read_cities_conf_file(void);
-void load_city_txt(void);
+void load_city_prop_text(void);
 void load_city_data(ubyte type);
+
+const char *city_full_name(sbyte city);
+const char *city_property_text(sbyte city, ubyte prop_id);
 
 void activate_cities(ubyte brief);
 void recount_city_credit_reward(ubyte city);

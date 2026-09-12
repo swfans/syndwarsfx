@@ -3503,22 +3503,6 @@ void gproc3_unknsub2(void)
     prepare_drawlist();
 }
 
-ubyte accept_mission(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_accept_mission\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
-ubyte do_unkn1_CANCEL(ubyte click)
-{
-    ubyte ret;
-    asm volatile ("call ASM_do_unkn1_CANCEL\n"
-        : "=r" (ret) : "a" (click));
-    return ret;
-}
-
 ubyte load_game_slot(ubyte click)
 {
     char *ldname;
@@ -3553,7 +3537,7 @@ ubyte load_game_slot(ubyte click)
 
     // Reading the save might have caused campaign switch
     load_objectives_text();
-    init_weapon_text();
+    load_wep_mod_desc_text();
 
     mark_system_menu_screen_boxes_redraw();
     mark_sys_scr_shared_header_box_redraw();
@@ -4364,8 +4348,8 @@ void campaign_new_game_prepare(void)
     load_objectives_text();
 
     load_city_data(0);
-    init_weapon_text();
-    load_city_txt();
+    load_wep_mod_desc_text();
+    load_city_prop_text();
     player_mission_agents_reset(local_player_no);
     init_variables();
     srm_reset_research();
@@ -4390,8 +4374,8 @@ ubyte goto_savegame(ubyte click)
     ingame.Flags &= ~GamF_MortalGame;
 
     load_city_data(0);
-    init_weapon_text();
-    load_city_txt();
+    load_wep_mod_desc_text();
+    load_city_prop_text();
     player_mission_agents_reset(local_player_no);
     init_variables();
     srm_reset_research();
@@ -5613,14 +5597,14 @@ void show_menu_screen_st0(void)
         mission_briefing_text = (char *)scratch_malloc_mem + pos;
         pos += mission_briefing_text_len;
 
-        netscan_text = (char *)scratch_malloc_mem + pos;
-        pos += netscan_text_len;
+        memload_netscan_text = (char *)scratch_malloc_mem + pos;
+        pos += memload_netscan_text_len;
 
-        weapon_text = (char *)scratch_malloc_mem + pos;
-        pos += weapon_text_len;
+        memload_wep_mod_desc_text = (char *)scratch_malloc_mem + pos;
+        pos += memload_wep_mod_desc_text_len;
 
-        memload = (ubyte *)scratch_malloc_mem + pos;
-        pos += memload_len;
+        memload_city_prop_text = (char *)scratch_malloc_mem + pos;
+        pos += memload_city_prop_text_len;
 
         purple_draw_list = (struct PurpleDrawItem *)((ubyte *)scratch_malloc_mem + pos);
     }
@@ -5632,7 +5616,7 @@ void show_menu_screen_st0(void)
     global_date.Year = 74;
 
     load_city_data(0);
-    load_city_txt();
+    load_city_prop_text();
     player_mission_agents_reset(local_player_no);
 
     debug_trace_place(17);
@@ -5756,8 +5740,8 @@ void show_menu_screen_st2(void)
       }
     }
 
-    init_weapon_text();
-    load_city_txt();
+    load_wep_mod_desc_text();
+    load_city_prop_text();
 
     update_options_screen_state();
 

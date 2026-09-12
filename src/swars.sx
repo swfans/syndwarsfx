@@ -132925,14 +132925,6 @@ GLOBAL (old_screentype)	/* 0x1C4AA4 */
 GLOBAL (screentype)	/* 0x1C4AA5 */
 		.ascii  "\x00\x00\x00"
 
-GLOBAL (netscan_text)	/* 0x1c4b10 */
-		.long	0x0
-GLOBAL (memload)	/* 0x1C4B14 */
-		.ascii  "\x00\x00\x00"
-data_1c4b17:
-		.byte	0x0
-GLOBAL (mission_name)	/* 0x1c4b18 */
-		.fill   0x34
 GLOBAL (options_title_text)	/* 0x1C4B4C */
 		.fill   0x14
 GLOBAL (map_editor)	/* 0x1C4B60 */
