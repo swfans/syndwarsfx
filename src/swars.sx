@@ -132924,11 +132924,6 @@ GLOBAL (old_screentype)	/* 0x1C4AA4 */
 		.byte	0x0
 GLOBAL (screentype)	/* 0x1C4AA5 */
 		.ascii  "\x00\x00\x00"
-GLOBAL (mission_briefing_text)	/* 0x1C4AA8 */
-		.long	0x0
-GLOBAL (weapon_text)	/* 0x1C4AAC */
-		.long	0x0
-		.align	4
 
 GLOBAL (netscan_text)	/* 0x1c4b10 */
 		.long	0x0

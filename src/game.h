@@ -212,13 +212,7 @@ extern ubyte debug_hud_collision;
 extern char *dev_credits_desc[];
 extern char *dev_credits_groups[];
 
-extern char *mission_briefing_text;
-#define mission_briefing_text_len 16384
-
 extern sbyte mission_result;
-
-extern char *weapon_text;
-#define weapon_text_len 32768
 
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
@@ -291,8 +285,6 @@ void init_variables(void);
 void init_agents(void);
 void srm_reset_research(void);
 void net_new_game_prepare(void);
-
-void my_preprocess_text(char *text);
 
 TbBool player_try_spend_money(long cost);
 void campaign_new_game_prepare(void);

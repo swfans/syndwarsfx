@@ -95,8 +95,6 @@ extern struct TbNamedEnum mod_names[33];
 extern ubyte mod_tech_level[17];
 extern ushort mod_group_type_strid[];
 
-extern ushort cybmod_text_index[MOD_TYPES_COUNT];
-
 void read_cybmods_conf_file(void);
 const char *cybmod_codename(ushort mtype);
 

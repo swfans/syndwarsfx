@@ -65,6 +65,7 @@ ushort my_draw_text(short x, short y, const char *text, ushort startline);
  */
 TbBool my_font_prefer_upper_case(const struct TbSprite *p_font);
 
+void my_preprocess_text(char *text);
 /******************************************************************************/
 #ifdef __cplusplus
 }

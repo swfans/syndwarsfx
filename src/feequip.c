@@ -191,7 +191,7 @@ void equip_display_box_redraw(struct ScreenTextBox *p_box)
         if (selected_weapon == 0) {
             text = NULL;
         } else if (is_research_weapon_completed(selected_weapon) || (login_control__State != LognCt_Unkn6)) {
-            text = &weapon_text[weapon_text_index[selected_weapon]];
+            text = weapon_description_text(selected_weapon);
         } else {
             text = gui_strings[536];
         }

@@ -3651,12 +3651,6 @@ void srm_reset_research(void)
     research.NumBases = 0;
 }
 
-void my_preprocess_text(char *text)
-{
-    asm volatile ("call ASM_my_preprocess_text\n"
-        :  : "a" (text));
-}
-
 void mission_over_give_extra_reward(ushort missi)
 {
     struct Mission *p_missi;

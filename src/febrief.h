@@ -40,6 +40,9 @@ extern short old_mission_brief;
 extern short open_brief;
 extern ubyte open_ref;
 
+extern char *mission_briefing_text;
+#define mission_briefing_text_len 16384
+
 void reveal_netscan_objective(short nsobv);
 void brief_load_mission_info(void);
 void load_netscan_data(ubyte city_id, ubyte level);

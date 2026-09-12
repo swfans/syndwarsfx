@@ -73,6 +73,8 @@ ubyte brief_citymap_content = BriCtM_AUTO_SCANNER;
  */
 long mail_num_active_cities = 0;
 
+char *mission_briefing_text = NULL;
+
 long dword_1C47E0 = 0;
 ubyte byte_1C47E4 = 0;
 short word_1C47E6 = 0;

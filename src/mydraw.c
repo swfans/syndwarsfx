@@ -565,4 +565,10 @@ ushort my_draw_text(short x, short y, const char *text, ushort startline)
     return cur_line;
 }
 
+void my_preprocess_text(char *text)
+{
+    asm volatile ("call ASM_my_preprocess_text\n"
+        :  : "a" (text));
+}
+
 /******************************************************************************/

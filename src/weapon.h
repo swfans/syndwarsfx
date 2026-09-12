@@ -184,10 +184,7 @@ extern ushort weapon_range[WEP_TYPES_COUNT];
 extern ushort weapon_damage[WEP_TYPES_COUNT];
 extern short persuaded_person_weapons_sell_cost_permil;
 
-extern ushort weapon_text_index[WEP_TYPES_COUNT];
-
 void read_weapons_conf_file(void);
-void init_weapon_text(void);
 
 /** Gives a string which names the weapon for internal and debug purposes.
  */

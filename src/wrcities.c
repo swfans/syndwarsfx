@@ -34,6 +34,7 @@
 #include "game_data.h"
 #include "guitext.h"
 #include "lvobjctv.h"
+#include "mydraw.h"
 #include "wadfile.h"
 #include "swlog.h"
 /******************************************************************************/

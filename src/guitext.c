@@ -24,12 +24,20 @@
 #include "bfmemory.h"
 #include "bfmemut.h"
 
+#include "cybmod.h"
 #include "display.h"
 #include "game_data.h"
+#include "mydraw.h"
 #include "swlog.h"
+#include "wadfile.h"
+#include "weapon.h"
 /******************************************************************************/
 char *gui_strings_data = NULL;
 char *gui_strings_data_end = NULL;
+
+char *weapon_text = NULL;
+ushort weapon_text_index[WEP_TYPES_COUNT] = {0};
+ushort cybmod_text_index[MOD_TYPES_COUNT] = {0};
 
 u32 text_buf_pos = 0;
 
@@ -123,5 +131,151 @@ TbBool create_strings_list(char **strings, char *strings_data, char *strings_dat
   }
   LOGSYNC("Listed text strings (%d entries)", STRINGS_MAX - text_idx);
   return true;
+}
+
+const char *weapon_description_text(ushort wtype)
+{
+    if (wtype >= WEP_TYPES_COUNT)
+        return "";
+    return &weapon_text[weapon_text_index[wtype]];
+}
+
+const char *cybmod_description_text(ushort mtype)
+{
+    if (mtype >= MOD_TYPES_COUNT)
+        return "";
+    return &weapon_text[cybmod_text_index[mtype]];
+}
+
+void init_weapon_text(void)
+{
+    char locstr[512];
+    int weptxt_pos;
+    int totlen;
+    char *s;
+    int i, n;
+
+    totlen = load_file_alltext("textdata/wms.txt", weapon_text);
+    if (totlen == Lb_FAIL)
+        return;
+    if (totlen >= weapon_text_len) {
+        LOGERR("Insufficient memory for weapon_text - %d instead of %d", weapon_text_len, totlen);
+        totlen = weapon_text_len - 1;
+    }
+
+    // TODO change the format to use our INI parser
+    s = weapon_text;
+    weapon_text[totlen] = '\0';
+
+    for (i = 0; i < WEP_TYPES_COUNT; i++) {
+        weapon_text_index[i] = totlen;
+    }
+    for (i = 0; i < MOD_TYPES_COUNT; i++) {
+        cybmod_text_index[i] = totlen;
+    }
+
+    // section_start = s;
+    weptxt_pos = 0;
+
+    s = strchr(s, '[');
+    s++;
+    s = strchr(s, ']'); // position at start of WEAPONS section
+    s++;
+
+    s += 2;
+    while (1)
+    {
+        if (*s == '[')
+            break;
+
+        // Read weapon name
+        n = 0;
+        while ((*s != '\r') && (*s != '\n'))
+        {
+            locstr[n] = *s++;
+            n++;
+        }
+        locstr[n] = '\0';
+        s += 2;
+
+        // Recognize the weapon name
+        for (i = 1; i < WEP_TYPES_COUNT; i++)
+        {
+            const char *codename;
+            codename = weapon_codename(i);
+            if (strcmp(codename, locstr) == 0) {
+                break;
+            }
+        }
+        if (i < WEP_TYPES_COUNT)
+        {
+            weapon_text_index[i] = weptxt_pos;
+
+            while ((*s != '\r') && (*s != '\n')) {
+                weapon_text[weptxt_pos] = *s++;
+                weptxt_pos++;
+            }
+            weapon_text[weptxt_pos] = '\0';
+            weptxt_pos++;
+            s += 2;
+
+            n = weapon_text_index[i];
+            my_preprocess_text(&weapon_text[n]);
+        } else {
+            LOGERR("Weapon name not recognized: \"%s\"", locstr);
+            if (s) s = strpbrk(s, "\r\n");
+            if (s) s += 2;
+        }
+    }
+
+    s = strchr(s, '[');
+    s++;
+    s = strchr(s, ']'); // position at start of MODS section
+    s++;
+
+    s += 2;
+    while (1)
+    {
+        if ((*s == '[') || (*s == '\0'))
+            break;
+
+        // Read mod name
+        n = 0;
+        while ((*s != '\r') && (*s != '\n') && (*s != '\0'))
+        {
+            locstr[n] = *s++;
+            n++;
+        }
+        locstr[n] = '\0';
+        s += 2;
+
+        for (i = 1; i < MOD_TYPES_COUNT; i++)
+        {
+            const char *codename;
+            codename = cybmod_codename(i);
+            if (strcmp(codename, locstr) == 0) {
+                break;
+            }
+        }
+        if (i < MOD_TYPES_COUNT)
+        {
+            cybmod_text_index[i] = weptxt_pos;
+
+            while ((*s != '\r') && (*s != '\n') && (*s != '\0')) {
+                weapon_text[weptxt_pos] = *s++;
+                weptxt_pos++;
+            }
+            weapon_text[weptxt_pos] = '\0';
+            weptxt_pos++;
+            s += 2;
+
+            n = cybmod_text_index[i];
+            my_preprocess_text(&weapon_text[n]);
+        } else {
+            LOGERR("Cyb Mod name not recognized: \"%s\"", locstr);
+            if (s) s = strpbrk(s, "\r\n");
+            if (s) s += 2;
+        }
+    }
 }
 /******************************************************************************/

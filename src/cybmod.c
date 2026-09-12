@@ -52,8 +52,6 @@ ubyte mod_tech_level[17] = {
 
 ushort mod_group_type_strid[] = {74, 71, 72, 70, 73, };
 
-ushort cybmod_text_index[MOD_TYPES_COUNT] = {0};
-
 struct ModDefAdd mod_defs_a[33] = {0};
 struct TbNamedEnum mod_names[33] = {0};
 
