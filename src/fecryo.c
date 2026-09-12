@@ -1848,6 +1848,7 @@ void reset_cryo_screen_player_state(void)
 {
     selected_mod = 0;
     selected_agent = 0;
+    cryo_agent_list_box.Lines = 0;
 }
 
 void switch_shared_equip_screen_buttons_to_cybmod(void)

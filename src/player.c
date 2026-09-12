@@ -57,6 +57,59 @@ void player_mission_agents_toggle_reset(PlayerIdx plyr)
     p_plyr->MissionAgents = 0x0F;
 }
 
+void cryo_agents_assign_random_names_and_sex(void)
+{
+    ushort name_rnd, name_rnd_limit;
+    ushort i;
+
+    if (background_type == 1) {
+        name_rnd_limit = 51 - CRYO_PODS_MAX_COUNT;
+    } else {
+        name_rnd_limit = 101 - CRYO_PODS_MAX_COUNT;
+    }
+    name_rnd = LbRandomAnyShort() % name_rnd_limit;
+    for (i = 0; i < CRYO_PODS_MAX_COUNT; i++)
+    {
+        cryo_agents.RandomName[i] = name_rnd + i;
+    }
+    for (i = 0; i < 32; i++)
+    {
+        ushort slot1, slot2;
+        ubyte tmpval;
+
+        slot1 = LbRandomAnyShort() % CRYO_PODS_MAX_COUNT;
+        slot2 = LbRandomAnyShort() % CRYO_PODS_MAX_COUNT;
+        if (slot1 == slot2)
+            continue;
+        tmpval = cryo_agents.RandomName[slot1];
+        cryo_agents.RandomName[slot1] = cryo_agents.RandomName[slot2];
+        cryo_agents.RandomName[slot2] = tmpval;
+    }
+
+    cryo_agents.Sex = (LbRandomAnyShort() << 16) | LbRandomAnyShort();
+}
+
+void cryo_agent_clear_wep_mod(ushort cryo_no)
+{
+    ushort wepfp;
+
+    cryo_agents.Weapons[cryo_no] = 0;
+    cryo_agents.Mods[cryo_no].Mods = 0;
+
+    for (wepfp = 0; wepfp < WFRPK_COUNT; wepfp++) {
+        cryo_agents.FourPacks[cryo_no].Amount[wepfp] = 0;
+    }
+}
+
+void cryo_agents_clear_wep_mod(void)
+{
+    ushort cryo_no;
+
+    for (cryo_no = 0; cryo_no < CRYO_PODS_MAX_COUNT; cryo_no++) {
+        cryo_agent_clear_wep_mod(cryo_no);
+    }
+}
+
 void player_update_from_cryo_agent(ushort cryo_no, PlayerInfo *p_player, ushort plagent)
 {
     ushort wepfp;

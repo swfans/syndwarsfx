@@ -3592,8 +3592,31 @@ void init_variables(void)
 
 void init_agents(void)
 {
+#if 0
     asm volatile ("call ASM_init_agents\n"
         :  :  : "eax" );
+#endif
+    PlayerIdx plyr;
+    ushort cryo_no;
+
+    cryo_agents.NumAgents = 8;
+    cryo_agents_assign_random_names_and_sex();
+    cryo_agents_clear_wep_mod();
+
+    // TODO starting equipment could be a part of campaign file
+    for (cryo_no = 0; cryo_no < cryo_agents.NumAgents; cryo_no++)
+    {
+        player_cryo_add_weapon_one(cryo_no, WEP_UZI);
+    }
+
+    // Initialize all players from the same starting cryo
+    for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
+    {
+        PlayerInfo *p_player;
+
+        p_player = &players[plyr];
+        player_update_agents_from_cryo(p_player);
+    }
 }
 
 /** Initializes the research data for a new game.

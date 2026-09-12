@@ -127,6 +127,8 @@ void place_single_player(void);
 void player_update_agents_from_cryo(PlayerInfo *p_player);
 void cryo_update_agents_from_player(PlayerInfo *p_player);
 void players_sync_from_cryo(void);
+void cryo_agents_assign_random_names_and_sex(void);
+void cryo_agents_clear_wep_mod(void);
 
 /** Returns if given agent of the local players team has a free slot for a weapon.
  */
