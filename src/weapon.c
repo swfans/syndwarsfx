@@ -1887,6 +1887,7 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     struct Thing *p_target;
     struct Thing *p_thing;
     ThingIdx thing;
+    short i;
     ushort group, n_targets;
     ushort range;
     WeaponType wtype;
@@ -1901,9 +1902,10 @@ void init_laser_6shot(struct Thing *p_person, ushort timer)
     group = p_target->U.UPerson.EffectiveGroup & PEOPLE_GROUPS_INDEX_MASK;
     init_laser(p_person, timer);
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n_targets = 0;
     thing = same_type_head[256 + group];
-    for (; thing != 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
         if (n_targets >= 5)
             break;

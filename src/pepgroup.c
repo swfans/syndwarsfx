@@ -381,12 +381,18 @@ void thing_groups_clear_all_actions(void)
 
 TbBool all_group_members_destroyed(ushort group)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (!thing_is_destroyed(thing))
             return false;
@@ -396,12 +402,18 @@ TbBool all_group_members_destroyed(ushort group)
 
 TbBool all_group_persuaded(ushort group)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (!person_is_persuaded(thing) || ((things[p_thing->Owner].Flag & TngF_PlayerAgent) == 0))
         {
@@ -424,12 +436,18 @@ ubyte all_group_arrived(ushort group, short x, short y, short z, int radius)
 
 TbBool group_has_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (!person_is_persuaded_by_player(thing, plyr))
         {
@@ -442,12 +460,18 @@ TbBool group_has_all_killed_or_persuaded_by_player(ushort group, ushort plyr)
 
 TbBool group_has_all_survivors_in_vehicle(ushort group, ThingIdx vehicle)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (!person_is_in_vehicle(p_thing, vehicle))
         {
@@ -460,14 +484,20 @@ TbBool group_has_all_survivors_in_vehicle(ushort group, ThingIdx vehicle)
 
 TbBool group_has_no_less_members_in_vehicle(ushort group, ThingIdx vehicle, ushort amount)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ushort n;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n = 0;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (!person_is_dead(thing) && !thing_is_destroyed(thing))
         {
@@ -482,14 +512,20 @@ TbBool group_has_no_less_members_in_vehicle(ushort group, ThingIdx vehicle, usho
 
 TbBool group_has_no_less_members_persuaded_by_player(ushort group, ushort plyr, ushort amount)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ushort n;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n = 0;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (person_is_persuaded_by_player(thing, plyr))
             n++;
@@ -501,14 +537,20 @@ TbBool group_has_no_less_members_persuaded_by_player(ushort group, ushort plyr, 
 
 TbBool group_has_no_less_members_killed_or_persuaded_by_player(ushort group, ushort plyr, ushort amount)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ushort n;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n = 0;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (person_is_persuaded_by_player(thing, plyr) ||
           person_is_dead(thing) || thing_is_destroyed(thing))
@@ -521,14 +563,20 @@ TbBool group_has_no_less_members_killed_or_persuaded_by_player(ushort group, ush
 
 TbBool group_has_no_less_members_dead(ushort group, ushort amount)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ushort n;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n = 0;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (person_is_dead(thing) || thing_is_destroyed(thing))
             n++;
@@ -540,8 +588,9 @@ TbBool group_has_no_less_members_dead(ushort group, ushort amount)
 
 TbBool group_has_no_less_members_near_thing(ThingIdx neartng, ushort group, ushort amount, ushort radius)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ushort n;
     short nearX, nearZ;
 
@@ -559,10 +608,15 @@ TbBool group_has_no_less_members_near_thing(ThingIdx neartng, ushort group, usho
         nearZ = p_neartng->Z;
     }
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n = 0;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (!person_is_dead(thing) && !thing_is_destroyed(thing))
         {
@@ -577,14 +631,20 @@ TbBool group_has_no_less_members_near_thing(ThingIdx neartng, ushort group, usho
 
 TbBool group_has_no_less_members_persuaded_by_person(ushort group, ThingIdx owntng, ushort amount)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ushort n;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n = 0;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (person_is_persuaded_by_person(thing, owntng))
             n++;

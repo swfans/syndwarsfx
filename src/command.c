@@ -825,25 +825,24 @@ void check_and_fix_commands(void)
 
 void check_and_fix_thing_commands(void)
 {
-    ThingIdx thing;
+    struct Thing *p_person;
+    ThingIdx person;
     short i;
     ushort cmd;
 
-    thing = same_type_head[1];
-    for (i = 0; thing != 0; i++)
+    person = get_thing_same_type_head(TT_PERSON, -1);
+    for (i = 0; person > 0; person = p_person->LinkSame, i++)
     {
-        struct Thing *p_thing;
-
-        if (i >= max(STHINGS_LIMIT,THINGS_LIMIT)) {
+        if (i >= THINGS_LIMIT) {
             LOGERR("Infinite loop in same type things list");
             break;
         }
-        p_thing = &things[thing];
+        p_person = &things[person];
 
-        cmd = p_thing->U.UPerson.ComHead;
+        cmd = p_person->U.UPerson.ComHead;
         if (cmd > next_command) {
             cmd = 0;
-            p_thing->U.UPerson.ComHead = cmd;
+            p_person->U.UPerson.ComHead = cmd;
         }
         while (cmd != 0)
         {
@@ -854,12 +853,11 @@ void check_and_fix_thing_commands(void)
             if (0) { // Commands debug code
                 char locbuf[256];
                 snprint_command(locbuf, sizeof(locbuf), cmd);
-                LOGSYNC("Person %hd Command %hu: %s", thing, cmd, locbuf);
+                LOGSYNC("Person %hd Command %hu: %s", person, cmd, locbuf);
             }
 
             cmd = p_cmd->Next;
         }
-        thing = p_thing->LinkSame;
     }
 }
 

@@ -1201,13 +1201,13 @@ void fill_netgame_agent_pos(int plyr, int group, int num_agents)
  */
 void unkn_f_pressed_func(void)
 {
-    ThingIdx thing;
+    struct Thing *p_person;
+    ThingIdx person;
     short i;
 
-    thing = get_thing_same_type_head(TT_PERSON, -1);
-    for (i = 0; thing != 0; i++)
+    person = get_thing_same_type_head(TT_PERSON, -1);
+    for (i = 0; person > 0; person = p_person->LinkSame, i++)
     {
-        struct Thing *p_thing;
         ushort cmd;
         struct Command *p_cmd_prev;
 
@@ -1215,8 +1215,8 @@ void unkn_f_pressed_func(void)
             LOGERR("Infinite loop in same type things list");
             break;
         }
-        p_thing = &things[thing];
-        cmd = p_thing->U.UPerson.ComHead;
+        p_person = &things[person];
+        cmd = p_person->U.UPerson.ComHead;
         p_cmd_prev = NULL;
         while (cmd != 0)
         {
@@ -1232,7 +1232,6 @@ void unkn_f_pressed_func(void)
             p_cmd_prev = p_cmd;
             cmd = p_cmd->Next;
         }
-        thing = p_thing->LinkSame;
     }
 }
 
@@ -3773,11 +3772,16 @@ ulong mission_over_calculate_cash_gain_from_persuaded_crowd(ushort tgroup)
     ulong credits;
     struct Thing *p_person;
     ThingIdx person;
+    short i;
 
     credits = 0;
     person = get_thing_same_type_head(TT_PERSON, -1);
-    for (; person > 0; person = p_person->LinkSame)
+    for (i = 0; person > 0; person = p_person->LinkSame, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same type things list");
+            break;
+        }
         p_person = &things[person];
         if ((p_person->Flag & TngF_Persuaded) == 0)
             continue;
@@ -3793,10 +3797,15 @@ void mission_over_gain_personnel_from_persuaded_crowd(void)
 {
     struct Thing *p_person;
     ThingIdx person;
+    short i;
 
     person = get_thing_same_type_head(TT_PERSON, -1);
-    for (; person > 0; person = p_person->LinkSame)
+    for (i = 0; person > 0; person = p_person->LinkSame, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same type things list");
+            break;
+        }
         p_person = &things[person];
         if ((p_person->Flag & TngF_Persuaded) == 0)
             continue;

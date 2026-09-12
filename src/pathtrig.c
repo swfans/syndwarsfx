@@ -1000,19 +1000,22 @@ void init_collision_vects(void)
 
 void reset_things_col_vect_range(void)
 {
+    struct Thing *p_thing;
+    ThingIdx thing;
     ushort vl;
-    short thing;
+    short i;
     ushort count;
 
     thing = get_thing_same_type_head(TT_BUILDING, -1);
-    while (thing > 0)
+    for (i = 0; thing > 0; thing = p_thing->LinkSame, i++)
     {
-        struct Thing *p_thing;
-
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same type things list");
+            break;
+        }
         p_thing = &things[thing];
         p_thing->U.UObject.BuildStartVect = 0;
         p_thing->U.UObject.BuildNumbVect = 0;
-        thing = p_thing->LinkSame;
     }
 
     thing = 0;

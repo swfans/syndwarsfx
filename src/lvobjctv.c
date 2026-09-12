@@ -402,14 +402,20 @@ TbBool objective_target_is_any_thing(struct Objective *p_objectv)
 
 void draw_objective_group_whole_on_engine_scene(ushort group)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ubyte colk;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
     }
@@ -417,14 +423,20 @@ void draw_objective_group_whole_on_engine_scene(ushort group)
 
 void draw_objective_group_non_flag2_on_engine_scene(ushort group)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ubyte colk;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if ((p_thing->Flag & TngF_Destroyed) == 0) {
             draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
@@ -434,14 +446,20 @@ void draw_objective_group_non_flag2_on_engine_scene(ushort group)
 
 void draw_objective_group_non_pers_on_engine_scene(ushort group)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ubyte colk;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if ((p_thing->Flag & TngF_Persuaded) == 0) {
             draw_objective_point(draw_objectv_x - 10, draw_objectv_y, thing, 0, colour_lookup[colk]);
@@ -451,17 +469,23 @@ void draw_objective_group_non_pers_on_engine_scene(ushort group)
 
 void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort plyr)
 {
+    struct Thing *p_thing;
     short plyagent, plygroup;
     ThingIdx thing;
-    struct Thing *p_thing;
+    short i;
     ubyte colk;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     colk = dword_1C8460 & 7;
     plyagent = players[plyr].DirectControl[0];
     plygroup = things[plyagent].U.UPerson.Group;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) || things[p_thing->Owner].U.UPerson.Group != plygroup) {
             if ((p_thing->Flag & TngF_Destroyed) == 0)
@@ -472,14 +496,20 @@ void draw_objective_group_not_own_by_plyr_on_engine_scene(ushort group, ushort p
 
 void draw_objective_group_not_own_by_pers_on_engine_scene(ushort group, short owntng)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ubyte colk;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     colk = dword_1C8460 & 7;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (((p_thing->Flag & TngF_Persuaded) == 0) && (p_thing->Owner != owntng)) {
             if ((p_thing->Flag & TngF_Destroyed) == 0)
@@ -878,14 +908,20 @@ TbBool person_is_near_thing(ThingIdx neartng, ThingIdx thing, ushort radius)
 
 TbBool group_members_arrived_at_objectv(ushort group, struct Objective *p_objectv, ushort amount)
 {
-    ThingIdx thing;
     struct Thing *p_thing;
+    ThingIdx thing;
+    short i;
     ushort n;
 
+    assert(group < PEOPLE_GROUPS_COUNT);
     n = 0;
     thing = same_type_head[256 + group];
-    for (; thing > 0; thing = p_thing->LinkSameGroup)
+    for (i = 0; thing > 0; thing = p_thing->LinkSameGroup, i++)
     {
+        if (i >= THINGS_LIMIT) {
+            LOGERR("Infinite loop in same group things list");
+            break;
+        }
         p_thing = &things[thing];
         if (thing_arrived_at_obj(thing, p_objectv))
             n++;
