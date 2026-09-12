@@ -148,7 +148,6 @@ extern ubyte login_control__TechLevel;
 extern ubyte byte_181183;
 extern ubyte byte_181189;
 
-extern ubyte cmdln_param_n;
 extern ubyte exit_game;
 extern ubyte input_char;
 
@@ -175,8 +174,6 @@ extern ubyte game_level_unkn2[40];
 
 extern ushort word_1531E0;
 
-extern struct UnknBezEdit *bezier_pts;
-extern ushort next_bezier_pt;
 extern ubyte *spare_map_buffer;
 extern ushort word_176E38;
 
@@ -190,12 +187,10 @@ extern short *landmap_2B4;
 extern ubyte *memload;
 #define memload_len 16384
 
-extern ubyte byte_1C83D1;
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
 extern ubyte byte_1C6DDC[5];
 extern ushort word_1C8446;
-extern ushort unkn3de_len;
 
 extern ubyte old_screentype;
 extern ubyte screentype;
@@ -260,8 +255,6 @@ extern long dword_1AA5C8;
 
 extern ushort next_mission;
 extern ushort replay_intro_timer;
-
-extern sbyte selected_agent;
 
 extern int mouse_map_x;
 extern int mouse_map_y;

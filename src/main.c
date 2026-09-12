@@ -193,7 +193,7 @@ static TbBool process_options(int *argc, char ***argv)
     argv0 = (*argv)[0];
     index = 0;
 
-    while ((val = getopt_long (*argc, *argv, "ABCDd:E:FgHhI:Ll:m:Np:qrSs:Ttu:Ww", options, &index)) >= 0)
+    while ((val = getopt_long (*argc, *argv, "ABCDd:E:FgHhI:Ll:m:p:qrSs:Ttu:Ww", options, &index)) >= 0)
     {
         LOGDBG("Command line option: '%c'", val);
         switch (val)
@@ -305,10 +305,6 @@ static TbBool process_options(int *argc, char ***argv)
             ingame.CurrentMission = tmpint;
             ingame.UserFlags |= UsrF_Cheats;
             LOGDBG("Campaign %d mission index %d", (int)background_type, (int)ingame.CurrentMission);
-            break;
-
-        case 'N':
-            cmdln_param_n = 1;
             break;
 
         case 'p':

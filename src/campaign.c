@@ -200,7 +200,7 @@ ushort campaign_strings_len = 0;
 
 /** Size of mission strings after campaign strings.
  */
-extern ushort mission_strings_len; // = 0;
+ushort mission_strings_len = 0;
 extern ushort display_mode;
 
 void load_campaigns(void)

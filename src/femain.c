@@ -96,7 +96,7 @@ extern ubyte byte_1C497D;
 
 extern ubyte enter_game;
 
-extern char alert_text[200];
+char alert_text[200];
 short alert_textpos = 0;
 
 struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};

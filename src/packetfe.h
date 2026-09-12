@@ -76,7 +76,7 @@ struct NetworkPlayerUProgress {
 };
 
 struct NetworkPlayerUWepMod {
-  ulong Weapons[4];
+  u32 Weapons[4];
   union Mod Mods[4];
 };
 

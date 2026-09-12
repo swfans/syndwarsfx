@@ -31,6 +31,8 @@
 char *gui_strings_data = NULL;
 char *gui_strings_data_end = NULL;
 
+u32 text_buf_pos = 0;
+
 void snprint_dh_time_duration(char *out, ulong outlen, long ndays, short nhours)
 {
     ulong days_strid;

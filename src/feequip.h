@@ -40,6 +40,7 @@ struct ScreenBoxBase;
 /** Weapon selected in the equipment screen, 0 for none.
  */
 extern ubyte selected_weapon;
+extern sbyte selected_agent;
 extern ubyte display_box_content;
 extern ubyte mo_weapon;
 

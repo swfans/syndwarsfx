@@ -762,13 +762,13 @@ ubyte weapon_simultaneous_fire_in_group(WeaponType lead_wtype, WeaponType follwr
     return 1;
 }
 
-TbBool weapons_has_weapon(ulong weapons, WeaponType wtype)
+TbBool weapons_has_weapon(u32 weapons, WeaponType wtype)
 {
-    ulong wepflg = 1 << (wtype-1);
+    u32 wepflg = 1 << (wtype-1);
     return (weapons & wepflg) != 0;
 }
 
-ushort weapons_prev_weapon(ulong weapons, WeaponType last_wtype)
+ushort weapons_prev_weapon(u32 weapons, WeaponType last_wtype)
 {
     WeaponType wtype;
 
@@ -777,14 +777,14 @@ ushort weapons_prev_weapon(ulong weapons, WeaponType last_wtype)
 
     for (wtype = last_wtype - 1; wtype > WEP_NULL; wtype--)
     {
-        ulong wepflg = 1 << (wtype-1);
+        u32 wepflg = 1 << (wtype-1);
         if ((weapons & wepflg) != 0)
             return wtype;
     }
     return 0;
 }
 
-ushort weapons_count_used_slots(ulong weapons)
+ushort weapons_count_used_slots(u32 weapons)
 {
     ushort used_slots;
     WeaponType wtype;
@@ -798,7 +798,7 @@ ushort weapons_count_used_slots(ulong weapons)
     return used_slots;
 }
 
-void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, WeaponType wtype)
+void weapons_remove_weapon(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks, WeaponType wtype)
 {
     ushort fp;
 
@@ -809,7 +809,7 @@ void weapons_remove_weapon(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks
         p_fourpacks->Amount[fp] = 0;
 }
 
-TbBool weapons_remove_one_from_npc(ulong *p_weapons, WeaponType wtype)
+TbBool weapons_remove_one_from_npc(u32 *p_weapons, WeaponType wtype)
 {
     ushort fp;
     TbBool was_last;
@@ -827,7 +827,7 @@ TbBool weapons_remove_one_from_npc(ulong *p_weapons, WeaponType wtype)
     return true;
 }
 
-TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, WeaponType wtype)
+TbBool weapons_remove_one(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks, WeaponType wtype)
 {
     ushort fp;
     TbBool was_last;
@@ -850,7 +850,7 @@ TbBool weapons_remove_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks,
  * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
  * this special function. To be removed when possible.
  */
-TbBool weapons_remove_one_for_player(ulong *p_weapons,
+TbBool weapons_remove_one_for_player(u32 *p_weapons,
   ubyte p_plfourpacks[][4], ushort plagent, WeaponType wtype)
 {
     ushort fp;
@@ -870,7 +870,7 @@ TbBool weapons_remove_one_for_player(ulong *p_weapons,
     return true;
 }
 
-TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, WeaponType wtype)
+TbBool weapons_add_one(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks, WeaponType wtype)
 {
     ushort fp;
     TbBool is_first;
@@ -904,7 +904,7 @@ TbBool weapons_add_one(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks, We
  * Player struct contains dumb own array rather than uniform WeaponsFourPack, so it requires
  * this special function. To be removed when possible.
  */
-TbBool weapons_add_one_for_player(ulong *p_weapons,
+TbBool weapons_add_one_for_player(u32 *p_weapons,
   ubyte p_plfourpacks[][4], ushort plagent, WeaponType wtype)
 {
     ushort fp;
@@ -935,7 +935,7 @@ TbBool weapons_add_one_for_player(ulong *p_weapons,
     return true;
 }
 
-void sanitize_weapon_quantities(ulong *p_weapons, struct WeaponsFourPack *p_fourpacks)
+void sanitize_weapon_quantities(u32 *p_weapons, struct WeaponsFourPack *p_fourpacks)
 {
     WeaponType wtype;
     ushort n_weapons;
@@ -1991,7 +1991,7 @@ void persons_taser_affecting_things(struct Thing *p_person)
     {
         for (dt_z = -1; dt_z < 1; dt_z++)
         {
-            ulong k;
+            uint k;
             ThingIdx thing;
             short tile_x, tile_z;
 
@@ -4505,7 +4505,7 @@ static void process_energy_recovery(struct Thing *p_person)
 
 static void process_health_recovery(struct Thing *p_person)
 {
-    ulong mask;
+    u32 mask;
 
     if ((p_person->Flag & TngF_PlayerAgent) != 0)
         mask = 1;

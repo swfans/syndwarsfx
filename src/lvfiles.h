@@ -65,6 +65,8 @@ extern TbBool level_deep_fix;
 extern struct Objective *game_used_lvl_objectives;
 extern ushort next_used_lvl_objective;
 
+extern struct UnknBezEdit *bezier_pts;
+extern ushort next_bezier_pt;
 
 TbResult load_mad_pc(ushort mapno);
 

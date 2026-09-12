@@ -110,6 +110,11 @@ struct QuickLoad quick_load_pc[] = {
 
 ushort next_used_lvl_objective = 1;
 
+struct UnknBezEdit *bezier_pts = NULL;
+ushort next_bezier_pt = 1;
+
+ushort unkn3de_len = 0;
+
 extern uint dword_177790;
 extern struct BillboardNBreakout map_bnb;
 
@@ -318,7 +323,6 @@ ulong load_level_pc_handle(TbFileHandle lev_fh)
                     LbFileRead(lev_fh, &local_mats[matx], sizeof(struct M33));
                     p_thing->U.UVehicle.MatrixIndex = matx;
                 }
-                byte_1C83D1 = 0;
 
                 n = next_normal;
                 snobj = copy_prim_obj_to_game_object(PRCCOORD_TO_MAPCOORD(p_thing->X), PRCCOORD_TO_MAPCOORD(p_thing->Z),

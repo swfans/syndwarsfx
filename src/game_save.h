@@ -35,7 +35,7 @@ extern char login_name[16];
 
 extern short save_slot; // = -1;
 extern char save_slot_names[SAVE_SLOTS_VISIBLE_COUNT][25];
-extern long save_slot_base;
+extern s32 save_slot_base;
 
 /******************************************************************************/
 

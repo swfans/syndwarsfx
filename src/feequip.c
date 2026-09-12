@@ -98,6 +98,7 @@ short agent_name_shape_points_y[] = {
 };
 
 ubyte selected_weapon = 0;
+sbyte selected_agent = -1;
 ubyte mo_weapon = 0;
 
 /******************************************************************************/

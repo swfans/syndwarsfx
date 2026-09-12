@@ -456,7 +456,7 @@ struct TngUPerson
   short TempWeapon;
   short Stamina;
   short MaxStamina;
-  ulong WeaponsCarried;
+  u32 WeaponsCarried;
 };
 
 /** Structure for storing State of any Thing.
@@ -786,7 +786,7 @@ struct ThingOldV9 { // sizeof=216
             ubyte TngUnkn87;
         };
     };
-    ulong PersonWeaponsCarried; // pos=88
+    u32 PersonWeaponsCarried; // pos=88
     /** Next command assigned to the Person.
      * Confirmed since fmtver=4 (from Pre-Alpha Demo code analysis).
      */

@@ -184,7 +184,10 @@
 .global EXPORT_SYMBOL(route_bak);		/* 0x1BF9C8 */
 
 .global EXPORT_SYMBOL(background_type);	/* 0x1C6DEC */
-.global EXPORT_SYMBOL(global_date);	/* 0x1C6DF0 */
+.global EXPORT_SYMBOL(global_date);		/* 0x1C6DF0 */
+.global EXPORT_SYMBOL(save_slot_base);	/* 0x1C82FC */
+.global EXPORT_SYMBOL(alert_text);		/* 0x1C8300 */
+.global EXPORT_SYMBOL(text_buf_pos);	/* 0x1C83C8 */
 
 .global EXPORT_SYMBOL(phwoar_num_used);	/* 0x1DC4DC */
 .global EXPORT_SYMBOL(phwoar_num_free);	/* 0x1DC4E0 */
@@ -9235,7 +9238,7 @@ GLOBAL_FUNC (ASM_veh_add)	/* 0x041A80 */
 		mov    $0xffffffed,%eax
 		mov    %bx,EXPORT_SYMBOL(next_local_mat)
 		sub    %esi,%eax
-		mov    %dh,EXPORT_SYMBOL(byte_1C83D1)
+		/* mov    %dh,EXPORT_SYMBOL(byte_1C83D1) # lacks purpose */
 		movswl %ax,%ebx
 		mov    0x20(%ebp),%eax
 		xor    %edx,%edx
@@ -9321,7 +9324,7 @@ GLOBAL_FUNC (ASM_veh_add)	/* 0x041A80 */
 		mov    $0xffffffe5,%eax
 		xor    %dl,%dl
 		sub    %ebx,%eax
-		mov    %dl,EXPORT_SYMBOL(byte_1C83D1)
+		/* mov    %dl,EXPORT_SYMBOL(byte_1C83D1) # lacks purpose */
 		movswl %ax,%ebx
 		mov    0x20(%ebp),%eax
 		xor    %edx,%edx
@@ -9397,7 +9400,7 @@ GLOBAL_FUNC (ASM_veh_add)	/* 0x041A80 */
 		mov    %bx,0x54(%eax)
 		mov    %dx,0x26(%eax)
 		xor    %ah,%ah
-		mov    %ah,EXPORT_SYMBOL(byte_1C83D1)
+		/* mov    %ah,EXPORT_SYMBOL(byte_1C83D1) # lacks purpose */
 		mov    0x1c(%ebp),%eax
 		sar    $0x8,%eax
 		xor    %ecx,%ecx
@@ -94826,7 +94829,7 @@ GLOBAL_FUNC(ASM_flashy_draw_text)	/* 0x0A4EF0 */
 		cmp    %edx,%eax
 		jge    jump_a5068
 		mov    back_buffer,%ebx
-		add    text_buf_pos,%ebx
+		add    EXPORT_SYMBOL(text_buf_pos),%ebx
 		test   %eax,%eax
 		jle    jump_a4f5a
 		mov    0x8(%esp),%esi
@@ -94923,11 +94926,11 @@ GLOBAL_FUNC(ASM_flashy_draw_text)	/* 0x0A4EF0 */
 		mov    %eax,%edx
 		inc    %eax
 		movb   $0x0,(%edx,%ebx,1)
-		mov    text_buf_pos,%edx
+		mov    EXPORT_SYMBOL(text_buf_pos),%edx
 		xor    %ecx,%ecx
 		add    %eax,%edx
 		xor    %eax,%eax
-		mov    %edx,text_buf_pos
+		mov    %edx,EXPORT_SYMBOL(text_buf_pos)
 		mov    0x10(%esp),%al
 		mov    0x0(%ebp),%dx
 		mov    0x24(%esp),%cx
@@ -109765,7 +109768,7 @@ init_unkn1thing:	/* 0x0BBFC0 */
 		mov    %ebp,%eax
 		xor    %ecx,%ecx
 		sar    $0x8,%eax
-		mov    %dl,EXPORT_SYMBOL(byte_1C83D1)
+		/* mov    %dl,EXPORT_SYMBOL(byte_1C83D1) # lacks purpose */
 		mov    %ax,%cx
 		mov    EXPORT_SYMBOL(prim_unknprop01),%ax
 		mov    0x24(%esp),%edx
@@ -130140,7 +130143,7 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		push   %esi
 		push   %edi
 		sub    $0x4,%esp
-		movb   $0x8,data_1c4d24
+		movb   $0x8,EXPORT_SYMBOL(cryo_agents)+0x184 # cryo_agents.NumAgents
 		xor    %eax,%eax
 		xor    %edx,%edx
 		mov    EXPORT_SYMBOL(background_type),%al
@@ -130230,18 +130233,18 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		mov    %bx,data_1c4c1e(%ecx)
 	jump_cf9c6:
 		xor    %ebx,%ebx
-		mov    data_1c4d24,%bl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%bl # cryo_agents.NumAgents
 		cmp    %ebx,%edx
 		jl     jump_cf9ab
 		xor    %eax,%eax
 		xor    %dl,%dl
 	jump_cf9d6:
 		add    $0x5,%eax
-		mov    %dl,data_1c4c81(%eax)
+		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E1(%eax) # cryo_agents.FourPacks - 3
 		mov    %dl,data_1c4c7f(%eax)
-		mov    %dl,data_1c4c80(%eax)
-		mov    %dl,data_1c4c83(%eax)
-		mov    %dl,data_1c4c82(%eax)
+		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E0(%eax) # cryo_agents.FourPacks - 4
+		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E3(%eax) # cryo_agents.FourPacks - 1
+		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E2(%eax) # cryo_agents.FourPacks - 2
 		cmp    $0xa0,%eax
 		jne    jump_cf9d6
 		xor    %ecx,%ecx
@@ -130255,15 +130258,15 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		xor    %eax,%eax
 	jump_cfa14:
 		inc    %edx
-		mov    data_1c4c86(%eax),%bl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0E6(%eax),%bl # cryo_agents.FourPacks + 2
 		mov    %bl,EXPORT_SYMBOL(players)+0x10D(%edx) # players[].FourPacks[7]
-		mov    data_1c4c84(%eax),%bl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0E4(%eax),%bl # cryo_agents.FourPacks + 0
 		mov    %bl,EXPORT_SYMBOL(players)+0x105(%edx) # players[].TargetType+1
-		mov    data_1c4c85(%eax),%bl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0E5(%eax),%bl # cryo_agents.FourPacks + 1
 		mov    %bl,EXPORT_SYMBOL(players)+0x109(%edx) # players[].FourPacks[3]
-		mov    data_1c4c88(%eax),%bl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0E8(%eax),%bl # cryo_agents.FourPacks + 4
 		mov    %bl,data_1a63f5(%edx)
-		mov    data_1c4c87(%eax),%bl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0E7(%eax),%bl # cryo_agents.FourPacks + 3
 		add    $0x5,%eax
 		mov    %bl,EXPORT_SYMBOL(players)+0x111(%edx) # players[].FourPacks[0xb]
 		cmp    $0x14,%eax
@@ -130319,7 +130322,7 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 	jump_cfab8:
 		xor    %eax,%eax
 		mov    (%esp),%ebx
-		mov    data_1c4d24,%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		cmp    %ebx,%eax
 		jbe    jump_cfb39
 		mov    cryo_agents(%esi),%eax
@@ -130348,9 +130351,9 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 		mov    0x4(%esp),%eax
 	jump_cfb21:
 		inc    %eax
-		mov    data_1c4c84(%ecx),%dl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0E4(%ecx),%dl # cryo_agents.FourPacks + 0
 		inc    %ecx
-		mov    %dl,data_1c4c83(%eax)
+		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E3(%eax) # cryo_agents.FourPacks - 1
 		cmp    %ebx,%ecx
 		je     jump_cfa9d
 		jmp    jump_cfb21
@@ -130372,13 +130375,13 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 		cmp    $0x20,%ebx
 		jb     jump_cfb4e
 	jump_cfb69:
-		mov    data_1c4d24,%ah
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%ah # cryo_agents.NumAgents
 		dec    %ah
-		mov    %dl,data_1c4c83
-		mov    %ah,data_1c4d24
+		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E3 # cryo_agents.FourPacks - 1
+		mov    %ah,EXPORT_SYMBOL(cryo_agents)+0x184 # cryo_agents.NumAgents
 		xor    %ah,%ah
 		xor    %esi,%esi
-		mov    data_1c4d24,%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		mov    %esi,(%esp)
 		mov    %ax,EXPORT_SYMBOL(cryo_agent_list_box)+0x16
 		jmp    jump_cfb9d
@@ -130391,7 +130394,7 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 	jump_cfb9d:
 		xor    %eax,%eax
 		mov    (%esp),%ebx
-		mov    data_1c4d24,%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		cmp    %ebx,%eax
 		ja     jump_cfb91
 		xor    %eax,%eax
@@ -130426,7 +130429,7 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		mov    %eax,%esi
 		mov    %edx,%edi
 		xor    %eax,%eax
-		mov    data_1c4d24,%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		xor    %edx,%edx
 		cmp    $0x1f,%eax
 		jg     jump_cfd80
@@ -130440,7 +130443,7 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		test   %ebx,%esi
 		je     jump_cfc46
 		xor    %ecx,%ecx
-		mov    data_1c4d24,%cl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%cl # cryo_agents.NumAgents
 		mov    cryo_agents(,%ecx,4),%ebp
 		or     %ebx,%ebp
 		mov    %al,%bl
@@ -130463,50 +130466,50 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		xor    %eax,%eax
 	jump_cfc51:
 		xor    %edx,%edx
-		mov    data_1c4d24,%dl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%dl # cryo_agents.NumAgents
 		inc    %eax
 		lea    (%edx,%edx,4),%edx
 		xor    %bl,%bl
-		mov    %bl,data_1c4c83(%edx,%eax,1)
+		mov    %bl,EXPORT_SYMBOL(cryo_agents)+0x0E3(%edx,%eax,1) # cryo_agents.FourPacks - 1
 		cmp    $0x5,%eax
 		jb     jump_cfc51
 		xor    %eax,%eax
-		mov    data_1c4d24,%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		testb  $0x20,cryo_agents(,%eax,4)
 		je     jump_cfc86
 		mov    %eax,%edx
-		movb   $0x1,data_1c4c86(%edx,%eax,4)
+		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E6(%edx,%eax,4) # cryo_agents.FourPacks + 2
 	jump_cfc86:
 		xor    %edx,%edx
-		mov    data_1c4d24,%dl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%dl # cryo_agents.NumAgents
 		testb  $0x8,data_1c4ba1(,%edx,4)
 		je     jump_cfca2
 		mov    %edx,%eax
-		movb   $0x1,data_1c4c84(%edx,%eax,4)
+		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E4(%edx,%eax,4) # cryo_agents.FourPacks + 0
 	jump_cfca2:
 		xor    %edx,%edx
-		mov    data_1c4d24,%dl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%dl # cryo_agents.NumAgents
 		testb  $0x10,data_1c4ba1(,%edx,4)
 		je     jump_cfcbe
 		mov    %edx,%eax
-		movb   $0x1,data_1c4c85(%edx,%eax,4)
+		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E5(%edx,%eax,4) # cryo_agents.FourPacks + 1
 	jump_cfcbe:
 		xor    %edx,%edx
-		mov    data_1c4d24,%dl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%dl # cryo_agents.NumAgents
 		testb  $0x4,data_1c4ba1(,%edx,4)
 		je     jump_cfcda
 		mov    %edx,%eax
-		movb   $0x1,data_1c4c88(%edx,%eax,4)
+		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E8(%edx,%eax,4) # cryo_agents.FourPacks + 4
 	jump_cfcda:
 		xor    %eax,%eax
-		mov    data_1c4d24,%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		testb  $0x2,data_1c4ba1(,%eax,4)
 		je     jump_cfcf5
 		mov    %eax,%edx
-		movb   $0x1,data_1c4c87(%edx,%eax,4)
+		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E7(%edx,%eax,4) # cryo_agents.FourPacks + 3
 	jump_cfcf5:
 		xor    %eax,%eax
-		mov    data_1c4d24,%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		xor    %edx,%edx
 		mov    %di,data_1c4c20(,%eax,2)
 		call   ac_LbRandomAnyShort
@@ -130518,7 +130521,7 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		cmp    $0x8,%edx
 		jle    jump_cfd4d
 		mov    $0x1,%eax
-		mov    data_1c4d24,%cl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%cl # cryo_agents.NumAgents
 		shl    %cl,%eax
 		mov    data_1c4c60,%ebx
 		not    %eax
@@ -130532,17 +130535,17 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		jmp    jump_cfc4f
 	jump_cfd4d:
 		mov    $0x1,%eax
-		mov    data_1c4d24,%cl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%cl # cryo_agents.NumAgents
 		mov    data_1c4c60,%edx
 		shl    %cl,%eax
 		or     %eax,%edx
 		mov    %edx,data_1c4c60
 	jump_cfd68:
-		mov    data_1c4d24,%ch
+		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%ch # cryo_agents.NumAgents
 		xor    %ah,%ah
 		inc    %ch
 		mov    %ch,%al
-		mov    %ch,data_1c4d24
+		mov    %ch,EXPORT_SYMBOL(cryo_agents)+0x184 # cryo_agents.NumAgents
 		mov    %ax,EXPORT_SYMBOL(cryo_agent_list_box)+0x16
 	jump_cfd80:
 		pop    %ebp
@@ -133007,30 +133010,17 @@ data_1c4c64:
 		.fill   0x1b
 data_1c4c7f:
 		.byte	0x0
-data_1c4c80:
 		.byte	0x0
-data_1c4c81:
 		.byte	0x0
-data_1c4c82:
 		.byte	0x0
-data_1c4c83:
 		.byte	0x0
-data_1c4c84:
 		.byte	0x0
-data_1c4c85:
 		.byte	0x0
-data_1c4c86:
 		.byte	0x0
-data_1c4c87:
 		.byte	0x0
-data_1c4c88:
 		.fill   0x9a
-data_1c4d22:
 		.short  0x0
-data_1c4d24:
 		.byte	0x0
-GLOBAL (selected_agent)	/* 0x1C4D25 */
-		.ascii  "\x00\x00\x00"
 		.align  4
 
 GLOBAL (refresh_equip_list)	/* 0x1C5298 */
@@ -133147,26 +133137,6 @@ GLOBAL (dword_1C6DE8)	/* 0x1c6de8 */
 		.long	0x0
 		.align  4
 
-GLOBAL (save_slot_base)	/* 0x1C82FC */
-		.long	0x0
-GLOBAL (alert_text)	/* 0x1C8300 */
-		.fill   0xc8
-GLOBAL (text_buf_pos)	/* 0x1C83C8 */
-		.fill   0x8
-GLOBAL (cmdln_param_n)	/* 0x1C83D0 */
-		.byte	0x0
-GLOBAL (byte_1C83D1)	/* 0x1C83D1 */
-		.byte	0x0
-		.align	4
-GLOBAL (bezier_pts)	/* 0x1C83D4 */
-		.fill   0x6
-GLOBAL (mission_strings_len)	/* 0x1C83DA */
-		.short  0x0
-		.short  0x0
-GLOBAL (unkn3de_len)	/* 0x1C83DE */
-		.short  0x0
-data_1c83e0:
-		.short  0x0
 data_1c83e2:
 		.short  0x0
 GLOBAL (byte_1C83E4)	/* 0x1C83E4 */

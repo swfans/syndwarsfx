@@ -288,9 +288,6 @@ ubyte edit_flag = 0;
 
 struct OutroHotChar outro_hot_chars[OUTRO_HOT_CHARS_COUNT];
 
-//TODO this is not an extern only because I was unable to locate it in asm
-ushort next_bezier_pt = 1;
-
 const char *miss_end_sta_names[] = {
   "undecided state",
   "ending success",

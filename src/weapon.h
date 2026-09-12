@@ -259,30 +259,30 @@ ushort weapon_sprite_index(WeaponType wtype, TbBool enabled);
  */
 ushort weapon_sound_name_speech_index(WeaponType wtype);
 
-TbBool weapons_has_weapon(ulong weapons, WeaponType wtype);
+TbBool weapons_has_weapon(u32 weapons, WeaponType wtype);
 
 /** Returns weapon set in given flags with index below last.
  */
-ushort weapons_prev_weapon(ulong weapons, WeaponType last_wtype);
+ushort weapons_prev_weapon(u32 weapons, WeaponType last_wtype);
 
 /** Returns how many weapon slots are occupied in given weapons flags.
  */
-ushort weapons_count_used_slots(ulong weapons);
+ushort weapons_count_used_slots(u32 weapons);
 
 ushort weapon_fourpack_index(WeaponType wtype);
-void weapons_remove_weapon(ulong *p_weapons,
+void weapons_remove_weapon(u32 *p_weapons,
   struct WeaponsFourPack *p_fourpacks, WeaponType wtype);
 
 /** Remove one weapon from an npc person in-game.
  * NPCs have no FourPacks, meaning removing one consumable weapon does nothing.
  * For non-consumable weapons, this removes the related weapon normally.
  */
-TbBool weapons_remove_one_from_npc(ulong *p_weapons, WeaponType wtype);
+TbBool weapons_remove_one_from_npc(u32 *p_weapons, WeaponType wtype);
 
 /** Remove one weapon from a player character, in Cryo Chamber.
  * Currently this is only for cryo chamber, as in-game fourpacks have different format.
  */
-TbBool weapons_remove_one(ulong *p_weapons,
+TbBool weapons_remove_one(u32 *p_weapons,
   struct WeaponsFourPack *p_fourpacks, WeaponType wtype);
 
 /** Remove one weapon from player-controlled person in-game.
@@ -290,18 +290,18 @@ TbBool weapons_remove_one(ulong *p_weapons,
  * this special function.
  * DEPRECATED: To be removed when possible.
  */
-TbBool weapons_remove_one_for_player(ulong *p_weapons,
+TbBool weapons_remove_one_for_player(u32 *p_weapons,
   ubyte p_plfourpacks[][4], ushort plagent, WeaponType wtype);
 
 void give_take_me_weapon(struct Thing *p_person, int item, int giveortake, short id);
 
-TbBool weapons_add_one(ulong *p_weapons,
+TbBool weapons_add_one(u32 *p_weapons,
   struct WeaponsFourPack *p_fourpacks, WeaponType wtype);
 
-TbBool weapons_add_one_for_player(ulong *p_weapons,
+TbBool weapons_add_one_for_player(u32 *p_weapons,
   ubyte p_plfourpacks[][4], ushort plagent, WeaponType wtype);
 
-void sanitize_weapon_quantities(ulong *p_weapons,
+void sanitize_weapon_quantities(u32 *p_weapons,
   struct WeaponsFourPack *p_fourpacks);
 
 ubyte find_nth_weapon_held(ushort index, ubyte n);
