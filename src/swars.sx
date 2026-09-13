@@ -28278,6 +28278,7 @@ GLOBAL_FUNC(ASM_person_kill_target2)	/* 0x050E78 */
 		push   %edi
 		push   %ebp
 		sub    $0x18,%esp
+		movl   $0x0,(%esp) # read on some paths before being set
 		mov    %eax,%esi
 		xor    %ah,%ah
 		xor    %edx,%edx
