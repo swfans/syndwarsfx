@@ -350,9 +350,9 @@ void net_player_copy_to_progress_packet(struct NetworkPlayer *p_netplyr)
 
     p_netplyr->U.Progress.TechLevel = login_control__TechLevel;
     p_netplyr->U.Progress.val_flags_08 = net_game_play_flags;
-    p_netplyr->U.Progress.val_181189 = login_control__Team;
-    p_netplyr->U.Progress.val_181183 = login_control__Faction;
-    p_netplyr->U.Progress.val_15516D = byte_15516D;
+    p_netplyr->U.Progress.Team = login_control__Team;
+    p_netplyr->U.Progress.Faction = login_control__Faction;
+    p_netplyr->U.Progress.SelectedUser = selected_net_user;
     p_netplyr->U.Progress.Expenditure = ingame.Expenditure;
 
     for (i = 0; i < 4; i++)
@@ -369,8 +369,8 @@ void net_player_update_from_progress_packet(int plyr)
     int i;
 
     p_netplyr = &network_players[plyr];
-    group_types[plyr] = p_netplyr->U.Progress.val_181183;
-    net_player_teams[plyr] = p_netplyr->U.Progress.val_181189;
+    group_factions[plyr] = p_netplyr->U.Progress.Faction;
+    net_player_teams[plyr] = p_netplyr->U.Progress.Team;
     if (net_host_player_no == plyr)
     {
         if ((net_game_play_flags & NGPF_Unkn02) == 0)
@@ -545,12 +545,12 @@ void net_player_action_execute(int plyr, int netplyr)
             1, plyr);
         break;
     case NPAct_PlyrEject:
-        byte_15516D = -1;
+        selected_net_user = -1;
         reset_net_screen_EJECT_flags();
         LbNetworkSessionStop();
         if (nsvc.I.Type == NetSvc_IPX)
         {
-            if (p_netplyr->U.Progress.val_15516D == netplyr)
+            if (p_netplyr->U.Progress.SelectedUser == netplyr)
             {
                 net_new_game_prepare();
                 if (screentype == SCRT_CRYO)
@@ -560,7 +560,7 @@ void net_player_action_execute(int plyr, int netplyr)
                 }
             }
         } else {
-            if (p_netplyr->U.Progress.val_15516D != netplyr)
+            if (p_netplyr->U.Progress.SelectedUser != netplyr)
                 LbNetworkSessionStop();
             net_new_game_prepare();
             if (byte_1C4A6F)

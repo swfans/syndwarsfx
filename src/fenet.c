@@ -422,8 +422,8 @@ skip_modem_init:
     login_control__State = LognCt_NetStarted;
     net_host_player_no = LbNetworkHostPlayerNumber();
     net_players_num = LbNetworkSessionNumberPlayers();
-    byte_15516C = -1;
-    byte_15516D = -1;
+    selected_net_session = -1;
+    selected_net_user = -1;
 
     if (nsvc.I.Type != NetSvc_IPX) {
         players[local_player_no].DoubleMode = 0;
@@ -577,8 +577,8 @@ ubyte do_net_INITIATE(ubyte click)
                 return 0;
             }
             net_schedule_local_player_reset();
-            byte_15516D = -1;
-            byte_15516C = -1;
+            selected_net_user = -1;
+            selected_net_session = -1;
         }
     }
     return 1;
@@ -594,8 +594,8 @@ ubyte do_net_groups_LOGON(ubyte click)
     if (login_control__State == LognCt_NetStarted)
     {
         net_schedule_local_player_logout();
-        byte_15516D = -1;
-        byte_15516C = -1;
+        selected_net_user = -1;
+        selected_net_session = -1;
         switch_net_screen_boxes_to_initiate();
         net_unkn_func_33();
     }
@@ -606,8 +606,8 @@ ubyte do_net_groups_LOGON(ubyte click)
         p_nsession = NULL;
         if (nsvc.I.Type == NetSvc_IPX)
         {
-            if (byte_15516C != -1) {
-                p_nsession = &unkstruct04_arr[byte_15516C].Session;
+            if (selected_net_session != -1) {
+                p_nsession = &unkstruct04_arr[selected_net_session].Session;
             }
         }
         else
@@ -1256,13 +1256,13 @@ ubyte do_net_protocol_select(ubyte click)
             net_service_switch(NetSvc_COM1);
             break;
         }
-        byte_15516C = -1;
+        selected_net_session = -1;
         break;
     case NetSvc_COM1:
     case NetSvc_COM2:
     case NetSvc_COM3:
     case NetSvc_COM4:
-        byte_15516C = 0;
+        selected_net_session = 0;
         break;
     }
     return 1;
@@ -1759,7 +1759,7 @@ ubyte show_net_groups_box(struct ScreenBox *p_box)
             {
                 p_nsession = &unkstruct04_arr[i].Session;
 
-                if (byte_15516C == i)
+                if (selected_net_session == i)
                 {
                     lbDisplay.DrawFlags = (Lb_TEXT_HALIGN_CENTER | Lb_TEXT_ONE_COLOR);
                     lbDisplay.DrawColour = 87;
@@ -1779,10 +1779,10 @@ ubyte show_net_groups_box(struct ScreenBox *p_box)
                     if (lbDisplay.LeftButton)
                     {
                         lbDisplay.LeftButton = 0;
-                        if (byte_15516C == i)
-                            byte_15516C = -1;
+                        if (selected_net_session == i)
+                            selected_net_session = -1;
                         else
-                            byte_15516C = i;
+                            selected_net_session = i;
                     }
                 }
                 scr_y += tx_height + 4;
@@ -1793,11 +1793,11 @@ ubyte show_net_groups_box(struct ScreenBox *p_box)
     if (net_local_player_hosts_the_game())
     {
         net_INITIATE_button.DrawFn(&net_INITIATE_button);
-        if (byte_15516D != -1) {
+        if (selected_net_user != -1) {
             unkn8_EJECT_button.DrawFn(&unkn8_EJECT_button);
         }
     }
-    if ((byte_15516C != -1) || (login_control__State == LognCt_NetStarted))
+    if ((selected_net_session != -1) || (login_control__State == LognCt_NetStarted))
     {
         net_groups_LOGON_button.DrawFn(&net_groups_LOGON_button);
     }
@@ -1887,7 +1887,7 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
             {
                 continue;
             }
-            if (byte_15516D == plyr)
+            if (selected_net_user == plyr)
             {
                 lbDisplay.DrawFlags = Lb_TEXT_ONE_COLOR;
                 lbDisplay.DrawColour = 87;
@@ -1904,7 +1904,7 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
             draw_text_purple_list2(scr_x, scr_y + 3, text, 0);
             lbDisplay.DrawFlags &= ~0x8000;
 
-            text = gui_strings[394 + group_types[plyr]];
+            text = gui_strings[394 + group_factions[plyr]];
             scr_x = 139 + ((64 - my_string_width(text)) >> 1);
             draw_text_purple_list2(scr_x, scr_y + 3, text, 0);
             if (net_player_teams[plyr])
@@ -1919,10 +1919,10 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
         }
 
     }
-    else if (byte_15516C != -1)
+    else if (selected_net_session != -1)
     {
         struct TbNetworkPlayer *p_netplyr_lst;
-        p_netplyr_lst = unkstruct04_arr[byte_15516C].Player;
+        p_netplyr_lst = unkstruct04_arr[selected_net_session].Player;
         for (plyr = 0; plyr < PLAYERS_LIMIT; plyr++)
         {
             const char *name;
@@ -1952,10 +1952,10 @@ ubyte show_net_users_box(struct ScreenBox *p_box)
                     if (lbDisplay.LeftButton)
                     {
                         lbDisplay.LeftButton = 0;
-                        if (byte_15516D == plyr)
-                            byte_15516D = -1;
+                        if (selected_net_user == plyr)
+                            selected_net_user = -1;
                         else
-                            byte_15516D = plyr;
+                            selected_net_user = plyr;
                     }
                 }
             }
@@ -1990,11 +1990,11 @@ int net_unkn_func_30(void)
         net_sessionlist_update_latest_one();
         net_sessionlist_remove_old();
     }
-    preval = byte_15516C;
-    if (byte_15516C == -1 && byte_1C6D48)
-        byte_15516C = 0;
+    preval = selected_net_session;
+    if (selected_net_session == -1 && byte_1C6D48)
+        selected_net_session = 0;
     if (byte_1C6D48 == 0)
-        byte_15516C = -1;
+        selected_net_session = -1;
     return preval;
 }
 
@@ -2003,7 +2003,7 @@ ubyte do_unkn8_EJECT(ubyte click)
     int plyr;
 
     plyr = LbNetworkPlayerNumber();
-    if (byte_15516D == plyr)
+    if (selected_net_user == plyr)
         return 0;
     net_schedule_player_eject_sync();
     return 1;

@@ -4432,8 +4432,8 @@ void net_new_game_prepare(void)
     load_missions(background_type);
     load_objectives_text();
 
-    byte_15516D = -1;
-    byte_15516C = -1;
+    selected_net_user = -1;
+    selected_net_session = -1;
     reset_world_screen_player_state();
 
     reinit_unkn6_adjustable_variables();

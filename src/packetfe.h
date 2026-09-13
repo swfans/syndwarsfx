@@ -60,9 +60,9 @@ struct NetworkPlayerUFourPacks {
 };
 
 struct NetworkPlayerUProgress {
-  long Credits;
-  ubyte val_181189;
-  ubyte val_181183;
+  s32 Credits;
+  ubyte Team;
+  ubyte Faction;
   ubyte TechLevel;
   ubyte SelectedCity;
   ushort GrPaintX;
@@ -71,7 +71,7 @@ struct NetworkPlayerUProgress {
   ubyte DoubleMode;
   ubyte val_flags_08;
   ubyte GrPaintColour;
-  ubyte val_15516D;
+  ubyte SelectedUser;
   long Expenditure;
 };
 

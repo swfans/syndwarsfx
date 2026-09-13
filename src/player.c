@@ -776,7 +776,7 @@ int place_default_player(PlayerIdx plyr, TbBool replace)
 
     p_player = &players[plyr];
     if (in_network_game)
-        new_type = group_types[plyr];
+        new_type = group_factions[plyr];
     else
         new_type = -1;
 

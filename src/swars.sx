@@ -481,7 +481,7 @@ GLOBAL_FUNC(ASM_place_default_player)	/* 0x0101F0 */
 		je     jump_1056a
 		xor    %eax,%eax
 		mov    %si,%ax
-		mov    EXPORT_SYMBOL(group_types)(%eax),%al
+		mov    EXPORT_SYMBOL(group_factions)(%eax),%al
 		and    $0xff,%eax
 		mov    %eax,0x4(%esp)
 		mov    %ebx,%eax
@@ -939,7 +939,7 @@ GLOBAL_FUNC(ASM_unkn1_handle_agent_groups)	/* 0x010F94 */
 		mov    (%esp),%eax
 		xor    %ecx,%ecx
 		xor    %edx,%edx
-		mov    EXPORT_SYMBOL(group_types)(%eax),%cl
+		mov    EXPORT_SYMBOL(group_factions)(%eax),%cl
 		xor    %eax,%eax
 		mov    (%esp),%dx
 		mov    level_def__PlayableGroups(%ebx),%al
@@ -131604,9 +131604,9 @@ GLOBAL (selected_city_id)	/* 0x15516A */
 		.byte	0xff
 GLOBAL (selected_netscan_objective)	/* 0x15516B */
 		.byte	0xff
-GLOBAL (byte_15516C)
+GLOBAL (selected_net_session)
 		.byte	0xff
-GLOBAL (byte_15516D)
+GLOBAL (selected_net_user)
 		.byte	0xff
 		.ascii  "\xff\x00"
 GLOBAL (byte_155170)	/* 0x155170 */
@@ -133091,7 +133091,7 @@ GLOBAL (net_player_teams)
 		.fill   0x8
 GLOBAL (net_player_colours)
 		.fill   0x8
-GLOBAL (group_types)	/* 0x1C5C38 */
+GLOBAL (group_factions)	/* 0x1C5C38 */
 		.fill   0x8
 GLOBAL (unkstruct04_arr)	/* 0x1C5C40 */
 		.fill   0x1108
