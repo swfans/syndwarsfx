@@ -532,6 +532,14 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
         return Lb_FAIL;
     }
 
+    // Confine the pointer to the window while in a fullscreen mode. SDL does
+    // not do this on its own for every windowing backend, and without it, on a
+    // multi-monitor desktop the cursor leaves the game area and a click on
+    // another screen defocuses the window. Grab is dropped on focus loss by
+    // SDL itself, so Alt-Tab still works.
+    SDL_SetWindowGrab(lbWindow,
+      (sdlFlags & SDL_WINDOW_FULLSCREEN) ? SDL_TRUE : SDL_FALSE);
+
     LbScreenUpdateIcon();
 
     // The graphics screen size is required for DrawSurface creation
