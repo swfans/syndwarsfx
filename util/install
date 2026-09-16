@@ -434,6 +434,7 @@ Levels="Max"
 Data="Max"
 Maps="Max"
 DOS="Max"
+MouseCapture="FullScreen"
 EOF
   [ $? -eq 0 ] || return 1
   return 0
