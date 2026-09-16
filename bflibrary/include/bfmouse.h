@@ -67,6 +67,12 @@ extern volatile TbBool lbInteruptMouse;
 extern volatile TbBool lbMouseAutoReset;
 extern volatile TbMouseToScreen lbMouseToScreen;
 
+/** Confines the OS mouse pointer to the graphics window.
+ * Stores the requested capture state; use LbMouseChangeCapture()
+ * to change it, so that the state gets applied to existing window.
+ */
+extern volatile TbBool lbMouseCapture;
+
 TbResult LbMousePlace(void);
 TbResult LbMouseRemove(void);
 
@@ -110,6 +116,19 @@ TbResult LbMouseChangeSprite(const struct TbSprite *pointer_spr);
  * @return Lb_SUCCESS if the ratio values were of correct range and have been set.
  */
 TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y);
+
+/**
+ * Enables or disables confining the mouse pointer to the graphics window.
+ * Note that this function can be run even before screen setup. The state
+ * is stored, and applied to the window when it gets created.
+ *
+ * Without capture, on a multi-monitor desktop the pointer may leave
+ * the game area, and a click on another screen defocuses the window.
+ *
+ * @param enable True to capture the pointer, false to release it.
+ * @return Lb_SUCCESS if the state was stored and applied, if applicable.
+ */
+TbResult LbMouseChangeCapture(TbBool enable);
 
 /**
  * Returns whether mouse setup was successfully executed or not.

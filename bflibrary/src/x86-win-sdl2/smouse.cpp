@@ -137,6 +137,21 @@ TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
     return Lb_SUCCESS;
 }
 
+TbResult LbMouseChangeCapture(TbBool enable)
+{
+    LOGSYNC("mouse capture %s", enable ? "on" : "off");
+
+    lbMouseCapture = enable;
+
+    if (!lbScreenInitialised)
+        return Lb_SUCCESS;
+
+    // SDL releases the grab on focus loss by itself, so Alt-Tab still works
+    SDL_SetWindowGrab(lbWindow, enable ? SDL_TRUE : SDL_FALSE);
+
+    return Lb_SUCCESS;
+}
+
 TbBool LbMouseIsInstalled(void)
 {
     if (!lbMouseInstalled)

@@ -466,6 +466,8 @@ TbResult LbScreenSetupAnyMode(TbScreenMode mode, TbScreenCoord width,
 #endif
 
     lbScreenInitialised = true;
+    // Apply stored capture state to the window
+    LbMouseChangeCapture(lbMouseCapture);
     LOGSYNC("mode %dx%dx%d setup succeeded", (int)to_SDLSurf(lbScreenSurface)->w,
       (int)to_SDLSurf(lbScreenSurface)->h,
       (int)to_SDLSurf(lbScreenSurface)->format->BitsPerPixel);

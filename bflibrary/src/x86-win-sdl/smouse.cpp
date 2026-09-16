@@ -136,6 +136,20 @@ TbResult LbMouseChangeMoveRatio(long ratio_x, long ratio_y)
     return Lb_SUCCESS;
 }
 
+TbResult LbMouseChangeCapture(TbBool enable)
+{
+    LOGSYNC("mouse capture %s", enable ? "on" : "off");
+
+    lbMouseCapture = enable;
+
+    if (!lbScreenInitialised)
+        return Lb_SUCCESS;
+
+    SDL_WM_GrabInput(enable ? SDL_GRAB_ON : SDL_GRAB_OFF);
+
+    return Lb_SUCCESS;
+}
+
 TbBool LbMouseIsInstalled(void)
 {
     if (!lbMouseInstalled)
