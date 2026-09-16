@@ -51,11 +51,6 @@ Some fanmade translations can be actually only enabled this way. However,
 several media files which are not packaged with **SyndWarsFX** will stay
 at the language version chosen during installation, so it still matters.
 
-The `MouseCapture` option in `config.ini` decides whether the mouse pointer
-is confined to the game window. Valid values are `Never`, `Always` and
-`FullScreen`; the last one captures the pointer only when the game is not
-running in windowed mode.
-
 The steps you need to take for installation vary depending on your operating system.
 
 ### Installing on GNU or UNIX
