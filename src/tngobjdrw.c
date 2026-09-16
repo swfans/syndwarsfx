@@ -48,6 +48,7 @@
 #include "player.h"
 #include "swlog.h"
 #include "thing.h"
+#include "tngcolisn.h"
 #include "vehicle.h"
 /******************************************************************************/
 const ushort pers_anims_wth_shadows[] = {

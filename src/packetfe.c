@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "fecryo.h"
+#include "feequip.h"
 #include "fenet.h"
 #include "game.h"
 #include "game_options.h"

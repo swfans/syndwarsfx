@@ -51,8 +51,13 @@
 
 #define PURPLE_APPS_EMAIL_ICONS_LIMIT 10
 
-extern ubyte byte_155124[];
-extern ubyte byte_15512C[];
+ubyte byte_155124[] = {
+  1, 17, 33, 39, 63, 148, 0, 0,
+};
+
+ubyte byte_15512C[] = {
+  8, 8, 3, 12, 8, 4, 0, 0, -1, 121,
+};
 
 extern ubyte byte_1C497E;
 extern ubyte byte_1C497F;

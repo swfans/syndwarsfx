@@ -82,8 +82,12 @@
 .global EXPORT_SYMBOL(engn_cam_yaw);		/* 0x176D58 */
 .global EXPORT_SYMBOL(byte_176D49);			/* 0x176D49 */
 .global EXPORT_SYMBOL(engn_yc);
+.global EXPORT_SYMBOL(navi2_unkn_counter);	/* 0x177740 */
 .global EXPORT_SYMBOL(shield_frm);			/* 0x1777B8 */
 .global EXPORT_SYMBOL(gamep_scene_effect_type);	/* 0x1777C8 */
+.global EXPORT_SYMBOL(word_17FA58);			/* 0x17FA58 */
+.global EXPORT_SYMBOL(ingame);				/* 0x1807D4 */
+.global EXPORT_SYMBOL(player_message_text);	/* 0x180CC9 */
 .global EXPORT_SYMBOL(tmaps_extra_buf);		/* 0x1810D1 */
 .global EXPORT_SYMBOL(tmaps_extra_len);		/* 0x1810D5 */
 .global EXPORT_SYMBOL(colour_mix_lookup);	/* 0x181136 */
@@ -96,14 +100,20 @@
 
 .global EXPORT_SYMBOL(shrapnel_free);		/* 0x19714C */
 .global EXPORT_SYMBOL(phwoar_free);			/* 0x19714E */
+.global EXPORT_SYMBOL(bul_starts);			/* 0x19AB14 */
 
-.global EXPORT_SYMBOL(scratch_buf1)			/* 0x19CB54 */
+.global EXPORT_SYMBOL(scratch_buf1);		/* 0x19CB54 */
+.global EXPORT_SYMBOL(pop1_sprites);		/* 0x19CBDC */
 .global EXPORT_SYMBOL(colour_grey1);		/* 0x19CC5C */
 .global EXPORT_SYMBOL(colour_grey2);		/* 0x19CC5D */
 .global EXPORT_SYMBOL(colour_brown2);		/* 0x19CC5E */
-.global EXPORT_SYMBOL(pop1_sprites);		/* 0x19CBDC */
+.global EXPORT_SYMBOL(word_19CC64);			/* 0x19CC64 */
+.global EXPORT_SYMBOL(word_19CC66);			/* 0x19CC66 */
 .global EXPORT_SYMBOL(engine_render_lights);/* 0x19ec6f */
 .global EXPORT_SYMBOL(game_perspective);	/* 0x19EC71 */
+.global EXPORT_SYMBOL(unkn_flags_01);		/* 0x19EC72 */
+.global EXPORT_SYMBOL(mission_open);		/* 0x19F430 */
+.global EXPORT_SYMBOL(mission_state);		/* 0x19F494 */
 .global EXPORT_SYMBOL(nuclear_overexposure);	/* 0x19F4F8 */
 .global EXPORT_SYMBOL(engn_nuclear_shade_timer);	/* 0x19F4FC */
 .global EXPORT_SYMBOL(engn_nuclear_shade_x); /* 0x19F500 */
@@ -111,8 +121,15 @@
 .global EXPORT_SYMBOL(engn_nuclear_shade_z); /* 0x19F508 */
 .global EXPORT_SYMBOL(game_anim_tmaps);		/* 0x19f510 */
 .global EXPORT_SYMBOL(game_commands);		/* 0x19f514 */
-.global EXPORT_SYMBOL(game_walk_headers)	/* 0x19f52c */
-.global EXPORT_SYMBOL(game_walk_items)		/* 0x19f534 */
+.global EXPORT_SYMBOL(game_level_miscs);	/* 0x19f520 */
+.global EXPORT_SYMBOL(game_walk_headers);	/* 0x19f52c */
+.global EXPORT_SYMBOL(game_walk_items);		/* 0x19f534 */
+.global EXPORT_SYMBOL(game_col_vects);		/* 0x19f528 */
+.global EXPORT_SYMBOL(game_user_heap);		/* 0x19f538 */
+.global EXPORT_SYMBOL(game_col_columns);	/* 0x19f550 */
+.global EXPORT_SYMBOL(execute_commands);	/* 0x19F554 */
+.global EXPORT_SYMBOL(game_col_vects_list);	/* 0x19f530 */
+.global EXPORT_SYMBOL(game_my_big_map);		/* 0x19f53c */
 
 .global EXPORT_SYMBOL(next_col_column);		/* 0x19f73a */
 .global EXPORT_SYMBOL(textwalk_data);		/* 0x19F73C */
@@ -136,6 +153,8 @@
 .global EXPORT_SYMBOL(pointer_sprites);		/* 0x1A5840 */
 .global EXPORT_SYMBOL(small_font);			/* 0x1A5848 */
 .global EXPORT_SYMBOL(display_palette);		/* 0x1A5878 */
+.global EXPORT_SYMBOL(gui_strings);			/* 0x1A5888 */
+.global EXPORT_SYMBOL(gameturn);			/* 0x1A62DC */
 .global EXPORT_SYMBOL(colour_lookup);		/* 0x1A71B8 */
 .global EXPORT_SYMBOL(pointer_hotspot);		/* 0x154874+1 */
 
@@ -183,6 +202,9 @@
 .global EXPORT_SYMBOL(tree_route);
 .global EXPORT_SYMBOL(route_bak);		/* 0x1BF9C8 */
 
+.global EXPORT_SYMBOL(map_from_mission);	/* 0x1C4B79 */
+.global EXPORT_SYMBOL(reload_background_flag);	/* 0x1C4B80 */
+.global EXPORT_SYMBOL(cryo_agents);		/* 0x1C4BA0 */
 .global EXPORT_SYMBOL(background_type);	/* 0x1C6DEC */
 .global EXPORT_SYMBOL(global_date);		/* 0x1C6DF0 */
 .global EXPORT_SYMBOL(save_slot_base);	/* 0x1C82FC */
@@ -1042,7 +1064,7 @@ GLOBAL_FUNC(ASM_simulated_level)	/* 0x0116A4 */
 		xor    %edx,%edx
 	jump_116b3:
 		add    $0x28,%eax
-		mov    %edx,data_19ec70(%eax)
+		mov    %edx,EXPORT_SYMBOL(war_flags)-0x28(%eax)
 		mov    %bl,EXPORT_SYMBOL(war_flags)-0x18(%eax)
 		mov    %dl,EXPORT_SYMBOL(war_flags)-0x17(%eax)
 		cmp    $0x4d8,%eax
@@ -2540,7 +2562,7 @@ GLOBAL_FUNC(ASM_draw_hud)	/* 0x020C80 */
 		jmp    jump_20dde
 	jump_20e46:
 		xor    %eax,%eax
-		mov    pktrec_mode,%al
+		mov    EXPORT_SYMBOL(pktrec_mode),%al
 		cmp    $0x2,%eax
 		je     func_20e96
 		xor    %edx,%edx
@@ -3059,7 +3081,7 @@ GLOBAL_FUNC(ASM_check_mouse_over_face)	/* 0x24A2C */
 		mov    %ebx,%ebp
 		mov    %ecx,%esi
 		xor    %eax,%eax
-		mov    pktrec_mode,%al
+		mov    EXPORT_SYMBOL(pktrec_mode),%al
 		cmp    $0x2,%eax
 		je     jump_25095
 		xor    %eax,%eax
@@ -4832,7 +4854,7 @@ GLOBAL_FUNC(ASM_level_misc_update)	/* 0x030A9C */
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    game_level_miscs,%ecx
+		mov    EXPORT_SYMBOL(game_level_miscs),%ecx
 		xor    %ebx,%ebx
 		jmp    jump_30b64
 	jump_30aae:
@@ -4849,7 +4871,7 @@ GLOBAL_FUNC(ASM_level_misc_update)	/* 0x030A9C */
 		je     jump_30b0a
 		cwtl
 		imul   $0xa8,%eax,%edi
-		mov    game_level_miscs,%ecx
+		mov    EXPORT_SYMBOL(game_level_miscs),%ecx
 		add    %ecx,%esi
 		mov    things,%eax
 		mov    0x6(%esi),%dl
@@ -4860,7 +4882,7 @@ GLOBAL_FUNC(ASM_level_misc_update)	/* 0x030A9C */
 		jmp    jump_30b5d
 	jump_30b0a:
 		mov    %ebx,%edx
-		mov    game_level_miscs,%ecx
+		mov    EXPORT_SYMBOL(game_level_miscs),%ecx
 		inc    %edx
 		jmp    jump_30b2a
 	jump_30b15:
@@ -4882,25 +4904,25 @@ GLOBAL_FUNC(ASM_level_misc_update)	/* 0x030A9C */
 		mov    %dx,%ax
 		cmp    $0xc8,%eax
 		jl     jump_30b15
-		mov    %ecx,game_level_miscs
+		mov    %ecx,EXPORT_SYMBOL(game_level_miscs)
 		movb   $0x0,0x1125(%ecx)
 		jmp    jump_30b5d
 	jump_30b45:
 		imul   $0x16,%eax,%esi
 		lea    (%ecx,%esi,1),%eax
 		mov    0xb(%eax),%dl
-		mov    %ecx,game_level_miscs
+		mov    %ecx,EXPORT_SYMBOL(game_level_miscs)
 		cmp    $0x1,%dl
 		je     jump_30aae
 	jump_30b5d:
-		mov    game_level_miscs,%ecx
+		mov    EXPORT_SYMBOL(game_level_miscs),%ecx
 		inc    %ebx
 	jump_30b64:
 		xor    %eax,%eax
 		mov    %bx,%ax
 		cmp    $0xc8,%eax
 		jl     jump_30b45
-		mov    %ecx,game_level_miscs
+		mov    %ecx,EXPORT_SYMBOL(game_level_miscs)
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -6301,7 +6323,7 @@ GLOBAL_FUNC (ASM_do_rotate_map)	/* 0x036480 */
 		cmp    $0x78,%edx
 		jge    jump_3655d
 		xor    %edx,%edx
-		mov    pktrec_mode,%dl
+		mov    EXPORT_SYMBOL(pktrec_mode),%dl
 		cmp    $0x2,%edx
 		je     jump_3655d
 		movw   $0x78,EXPORT_SYMBOL(ingame)+0x961 # ingame.UserZoom
@@ -8843,7 +8865,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		xor    %edx,%edx
 		call   ac_memset
 		xor    %eax,%eax
-		mov    pktrec_mode,%al
+		mov    EXPORT_SYMBOL(pktrec_mode),%al
 		cmp    $0x2,%eax
 		jne    jump_3ff6e
 		cmpb   $0x0,in_network_game
@@ -8885,15 +8907,15 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    packets(%edx),%bx
 		mov    %bx,EXPORT_SYMBOL(shpackets)(%eax)
 		mov    EXPORT_SYMBOL(packets)+0x02(%edx),%bx # packets[].Data
-		mov    %bx,data_1aa216(%eax)
+		mov    %bx,EXPORT_SYMBOL(shpackets)+0x02(%eax)
 		mov    EXPORT_SYMBOL(packets)+0x04(%edx),%bx # packets[].X
-		mov    %bx,data_1aa218(%eax)
+		mov    %bx,EXPORT_SYMBOL(shpackets)+0x04(%eax)
 		mov    EXPORT_SYMBOL(packets)+0x06(%edx),%bx # packets[].Y
 		mov    EXPORT_SYMBOL(packets)+0x08(%edx),%dx # packets[].Z
-		mov    %bx,data_1aa21a(%eax)
-		mov    %dx,data_1aa21c(%eax)
+		mov    %bx,EXPORT_SYMBOL(shpackets)+0x06(%eax)
+		mov    %dx,EXPORT_SYMBOL(shpackets)+0x08(%eax)
 		mov    EXPORT_SYMBOL(ingame)+0x927,%dl # ingame.fld_unkC4B
-		mov    %dl,data_1aa21e(%eax)
+		mov    %dl,EXPORT_SYMBOL(shpackets)+0x0A(%eax)
 		mov    $0xb,%edx
 		mov    $EXPORT_SYMBOL(shpackets),%eax
 		xor    %esi,%esi
@@ -8912,16 +8934,16 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		mov    %si,EXPORT_SYMBOL(packets)+0x0A(%edx) # packets[].Action2
 		mov    %si,EXPORT_SYMBOL(packets)+0x14(%edx) # packets[].Action3
 		mov    %si,EXPORT_SYMBOL(packets)+0x1E(%edx) # packets[].Action4
-		mov    data_1aa216(%ebx),%cx
+		mov    EXPORT_SYMBOL(shpackets)+0x02(%ebx),%cx
 		mov    %cx,EXPORT_SYMBOL(packets)+0x02(%edx) # packets[].Data
-		mov    data_1aa218(%ebx),%cx
+		mov    EXPORT_SYMBOL(shpackets)+0x04(%ebx),%cx
 		mov    %cx,EXPORT_SYMBOL(packets)+0x04(%edx) # packets[].X
-		mov    data_1aa21a(%ebx),%cx
+		mov    EXPORT_SYMBOL(shpackets)+0x06(%ebx),%cx
 		mov    %cx,EXPORT_SYMBOL(packets)+0x06(%edx) # packets[].Y
-		mov    data_1aa21c(%ebx),%cx
+		mov    EXPORT_SYMBOL(shpackets)+0x08(%ebx),%cx
 		mov    %cx,EXPORT_SYMBOL(packets)+0x08(%edx) # packets[].Z
 		mov    EXPORT_SYMBOL(lbSeed),%ecx
-		mov    data_1aa21e(%ebx),%bl
+		mov    EXPORT_SYMBOL(shpackets)+0x0A(%ebx),%bl
 		mov    %ecx,EXPORT_SYMBOL(packets)+0x28(%edx) # packets[].D1Seed
 		and    $0xff,%ebx
 		inc    %eax
@@ -9092,7 +9114,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		test   %ebp,%eax
 		je     jump_40293
 		xor    %eax,%eax
-		mov    pktrec_mode,%al
+		mov    EXPORT_SYMBOL(pktrec_mode),%al
 		cmp    $0x1,%eax
 		jne    jump_402e2
 		cmpb   $0x0,in_network_game
@@ -9154,7 +9176,7 @@ GLOBAL_FUNC (ASM_net_unkn_check_1)	/* 0x03FF04 */
 		cmp    $0x2,%eax
 		jne    jump_403a0
 		xor    %dl,%dl
-		mov    %dl,execute_commands
+		mov    %dl,EXPORT_SYMBOL(execute_commands)
 	jump_403a0:
 		mov    $0x1,%eax
 		mov    $0xd15c1234,%esi
@@ -17882,7 +17904,7 @@ GLOBAL_FUNC(ASM_bul_hit_vector)	/* 0x0498DC */
 		mov    %ax,%dx
 		lea    0x0(,%edx,8),%eax
 		sub    %edx,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		mov    0xc(%edx,%eax,2),%ax
 		cwtl
 		test   %eax,%eax
@@ -18066,7 +18088,7 @@ GLOBAL_FUNC(ASM_do_move_colide)	/* 0x04999C */
 		mov    (%eax),%dx
 		imul   $0xe,%edx,%edx
 		mov    0xc8(%esp),%ebx
-		mov    game_col_vects,%esi
+		mov    EXPORT_SYMBOL(game_col_vects),%esi
 		inc    %ebx
 		add    %edx,%esi
 		mov    0x3(%eax),%dl
@@ -18144,7 +18166,7 @@ GLOBAL_FUNC(ASM_do_move_colide)	/* 0x04999C */
 		xor    %eax,%eax
 		mov    %dx,%ax
 		imul   $0xe,%eax,%edx
-		mov    game_col_vects,%eax
+		mov    EXPORT_SYMBOL(game_col_vects),%eax
 		mov    0xa(%edx,%eax,1),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
@@ -19234,7 +19256,7 @@ GLOBAL_FUNC(ASM_create_intelligent_door)	/* 0x04A974 */
 		movswl %bx,%edx
 		lea    0x0(,%edx,8),%esi
 		sub    %edx,%esi
-		mov    game_col_vects,%ecx
+		mov    EXPORT_SYMBOL(game_col_vects),%ecx
 		add    %esi,%esi
 		add    %esi,%ecx
 		mov    0xa(%ecx),%edx
@@ -19286,7 +19308,7 @@ GLOBAL_FUNC(ASM_create_intelligent_door)	/* 0x04A974 */
 		jg     jump_4ab24
 		cmp    $0xfffffa24,%ecx
 		jl     jump_4ab24
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		add    %esi,%edx
 		mov    0xa(%edx),%esi
 		sar    $0x10,%esi
@@ -19674,7 +19696,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		sar    $0x10,%eax
 		imul   $0xe,%eax,%eax
 		mov    0x34(%esp),%edx
-		mov    game_col_vects,%ecx
+		mov    EXPORT_SYMBOL(game_col_vects),%ecx
 		dec    %edx
 		add    %eax,%ecx
 		mov    %edx,0x34(%esp)
@@ -19978,7 +20000,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		jl     jump_4b21f
 		cwtl
 		imul   $0xe,%eax,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		mov    0xa(%edx,%eax,1),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
@@ -20051,7 +20073,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		jl     jump_4b303
 		cwtl
 		imul   $0xe,%eax,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		mov    0xa(%edx,%eax,1),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
@@ -20130,7 +20152,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		jl     jump_4b3f7
 		cwtl
 		imul   $0xe,%eax,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		mov    0xa(%edx,%eax,1),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
@@ -20196,7 +20218,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		jl     jump_4b4d2
 		cwtl
 		imul   $0xe,%eax,%edx
-		mov    game_col_vects,%eax
+		mov    EXPORT_SYMBOL(game_col_vects),%eax
 		mov    0xa(%edx,%eax,1),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
@@ -20375,7 +20397,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		lea    0x0(,%edx,8),%eax
 		sub    %edx,%eax
 		lea    (%eax,%eax,1),%edx
-		mov    game_col_vects,%eax
+		mov    EXPORT_SYMBOL(game_col_vects),%eax
 		mov    0x6e(%esi),%bx
 		cmp    0xc(%edx,%eax,1),%bx
 		je     jump_4b6ca
@@ -20467,7 +20489,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		sar    $0x10,%edx
 		lea    0x0(,%edx,8),%eax
 		sub    %edx,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		mov    0x6e(%esi),%cx
 		cmp    0xc(%edx,%eax,2),%cx
 		je     jump_4b7bd
@@ -20522,7 +20544,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		sar    $0x10,%edx
 		lea    0x0(,%edx,8),%edi
 		sub    %edx,%edi
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		add    %edi,%edi
 		add    %edi,%edx
 		mov    0xa(%edx),%eax
@@ -20541,7 +20563,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		call   ac_set_thing_height_on_face_tri
 		test   %ax,%ax
 		je     jump_4b8ba
-		mov    game_col_vects,%eax
+		mov    EXPORT_SYMBOL(game_col_vects),%eax
 		mov    0x45(%esi),%ch
 		mov    0xc(%edi,%eax,1),%ax
 		movb   $0x0,0x5c(%esi)
@@ -20576,7 +20598,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		sar    $0x10,%edx
 		lea    0x0(,%edx,8),%edi
 		sub    %edx,%edi
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		add    %edi,%edi
 		add    %edi,%edx
 		mov    0xa(%edx),%eax
@@ -20601,7 +20623,7 @@ GLOBAL_FUNC(ASM_person_move)	/* 0x04AC18 */
 		call   ac_set_thing_height_on_face_quad
 		test   %ax,%ax
 		je     jump_4b8ba
-		mov    game_col_vects,%eax
+		mov    EXPORT_SYMBOL(game_col_vects),%eax
 		mov    0x45(%esi),%ch
 		mov    0xc(%edi,%eax,1),%ax
 		movb   $0x0,0x5c(%esi)
@@ -28278,6 +28300,7 @@ GLOBAL_FUNC(ASM_person_kill_target2)	/* 0x050E78 */
 		push   %edi
 		push   %ebp
 		sub    $0x18,%esp
+		movl   $0x0,(%esp) # read on some paths before being set
 		mov    %eax,%esi
 		xor    %ah,%ah
 		xor    %edx,%edx
@@ -36787,7 +36810,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 	jump_5758d:
 		movw   $0x1,EXPORT_SYMBOL(next_unkn_full_light)
 	jump_57596:
-		mov    execute_commands,%bh
+		mov    EXPORT_SYMBOL(execute_commands),%bh
 		xor    %edi,%edi
 		xor    %edx,%edx
 		mov    EXPORT_SYMBOL(things_used_head),%di
@@ -36799,7 +36822,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		call   ac_monitor_all_samples
 		cmpb   $0x0,in_network_game
 		jne    jump_575f0
-		cmpb   $0x0,pktrec_mode
+		cmpb   $0x0,EXPORT_SYMBOL(pktrec_mode)
 		jne    jump_575f0
 		testb  $0x4,EXPORT_SYMBOL(ingame)+0x92F # ingame.Flags+0
 		je     jump_575f0
@@ -36991,7 +37014,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 	jump_57828:
 		mov    EXPORT_SYMBOL(sthings_empty_head),%edi
 		movzwl EXPORT_SYMBOL(sthings_used),%ebp
-		mov    execute_commands,%bh
+		mov    EXPORT_SYMBOL(execute_commands),%bh
 		sar    $0x10,%edi
 		test   %bh,%bh
 		je     jump_57858
@@ -37002,7 +37025,7 @@ GLOBAL_FUNC (ASM_process_things)	/* 0x572F8 */
 		cmp    $0xffffffff,%ebp
 		jne    jump_57bfa
 	jump_57858:
-		cmpb   $0x0,execute_commands
+		cmpb   $0x0,EXPORT_SYMBOL(execute_commands)
 		je     jump_57868
 		xor    %eax,%eax
 		call   ac_people_intel
@@ -43228,7 +43251,7 @@ do_fvect_colide:	/* 0x05C054 */
 		mov    (%eax),%ax
 		and    $0xffff,%eax
 		imul   $0xe,%eax,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		add    %edx,%eax
 		mov    0xa(%eax),%edx
 		sar    $0x10,%edx
@@ -44788,7 +44811,7 @@ dynamic_insert_vect:	/* 0x05D440 */
 		mov    %eax,0xc(%esp)
 		lea    0x0(,%esi,8),%eax
 		sub    %esi,%eax
-		mov    game_col_vects,%esi
+		mov    EXPORT_SYMBOL(game_col_vects),%esi
 		add    %eax,%eax
 		add    %esi,%eax
 		mov    0xc(%eax),%si
@@ -45118,7 +45141,7 @@ delete_vect:	/* 0x05D694 */
 		sar    $0x10,%edx
 		lea    0x0(,%edx,8),%eax
 		sub    %edx,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		add    %eax,%eax
 		add    %eax,%edx
 		mov    EXPORT_SYMBOL(link__MapColVectEmptyHead),%ax
@@ -47578,7 +47601,7 @@ func_5fcf4:
 		mov    (%ebx,%eax,1),%ax
 		and    $0xffff,%eax
 		imul   $0xe,%eax,%eax
-		mov    game_col_vects,%ebx
+		mov    EXPORT_SYMBOL(game_col_vects),%ebx
 		add    %eax,%ebx
 		movswl (%ebx),%eax
 		sub    %edi,%eax
@@ -48206,7 +48229,7 @@ GLOBAL_FUNC(ASM_track_player)	/* 0x060BC4 */
 		push   %ecx
 		push   %edx
 		xor    %edx,%edx
-		mov    pktrec_mode,%dl
+		mov    EXPORT_SYMBOL(pktrec_mode),%dl
 		cmp    $0x2,%edx
 		jne    jump_60bf9
 		mov    EXPORT_SYMBOL(engn_xc),%dx
@@ -48431,20 +48454,20 @@ calc_bul_offsets:	/* 0x060FD4 */
 		mov    %al,EXPORT_SYMBOL(bul_starts)(,%ebp,2)
 		mov    0x4(%edx),%al
 		add    0x5(%ebx),%al
-		mov    %al,data_19ab15(,%ebp,2)
+		mov    %al,EXPORT_SYMBOL(bul_starts)+0x01(,%ebp,2)
 	jump_61060:
 		xor    %eax,%eax
 		mov    %di,%ax
 		add    %eax,%eax
-		mov    data_19ab11(%eax),%edx
+		mov    EXPORT_SYMBOL(bul_starts)-0x03(%eax),%edx
 		sar    $0x18,%edx
 		test   %edx,%edx
 		jne    jump_61088
-		mov    data_19ab12(%eax),%edx
+		mov    EXPORT_SYMBOL(bul_starts)-0x02(%eax),%edx
 		sar    $0x18,%edx
 		test   %edx,%edx
 		jne    jump_61088
-		movb   $0xe2,data_19ab15(%eax)
+		movb   $0xe2,EXPORT_SYMBOL(bul_starts)+0x01(%eax)
 	jump_61088:
 		inc    %edi
 	jump_61089:
@@ -48462,7 +48485,7 @@ calc_bul_offsets:	/* 0x060FD4 */
 		mov    EXPORT_SYMBOL(frame),%ebx
 		movb   $0x0,EXPORT_SYMBOL(bul_starts)(,%eax,2)
 		and    $0xffff,%edx
-		movb   $0x0,data_19ab15(,%eax,2)
+		movb   $0x0,EXPORT_SYMBOL(bul_starts)+0x01(,%eax,2)
 		xor    %eax,%eax
 		mov    (%ebx,%edx,8),%ax
 		imul   $0xa,%eax,%eax
@@ -48484,14 +48507,17 @@ calc_bul_offsets:	/* 0x060FD4 */
 
 
 /*----------------------------------------------------------------*/
-func_61628:
+GLOBAL_FUNC(ASM_create_train_carriage)	/* 0x61628 */
 /*----------------------------------------------------------------*/
+		push   %ebx
+		push   %ecx
+		push   %edx
 		push   %esi
 		push   %edi
 		push   %ebp
 		sub    $0x10,%esp
 		mov    %ax,0xc(%esp)
-		call   func_617f0
+		call   ac_find_unused_train_track
 		mov    %eax,%esi
 		test   %eax,%eax
 		je     jump_617e7
@@ -48602,11 +48628,14 @@ func_61628:
 		pop    %ebp
 		pop    %edi
 		pop    %esi
+		pop    %edx
+		pop    %ecx
+		pop    %ebx
 		ret
 
 
 /*----------------------------------------------------------------*/
-func_617f0:
+GLOBAL_FUNC(ASM_find_unused_train_track)	/* 0x617f0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -56396,7 +56425,7 @@ GLOBAL_FUNC(ASM_build_electricity)	/* 0x068D1C */
 		and    $0x7,%eax
 		mov    0x26(%edi),%dx
 		add    %eax,%edx
-		mov    data_19ab13(,%edx,2),%esi
+		mov    EXPORT_SYMBOL(bul_starts)-0x01(,%edx,2),%esi
 		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x18,%esi
 		sar    $0x10,%eax
@@ -56943,7 +56972,7 @@ GLOBAL_FUNC(ASM_build_laser_beam)	/* 0x069A34 */
 		mov    0x26(%ebx),%ax
 		add    %edx,%eax
 		lea    0x0(,%eax,2),%edx
-		mov    data_19ab13(%edx),%ebx
+		mov    EXPORT_SYMBOL(bul_starts)-0x01(%edx),%ebx
 		mov    EXPORT_SYMBOL(overall_scale)-2,%eax
 		sar    $0x18,%ebx
 		sar    $0x10,%eax
@@ -57591,7 +57620,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		and    $0x7,%eax
 		mov    0x26(%ebx),%dx
 		add    %edx,%eax
-		mov    data_19ab13(,%eax,2),%ebx
+		mov    EXPORT_SYMBOL(bul_starts)-0x01(,%eax,2),%ebx
 		mov    EXPORT_SYMBOL(overall_scale)-2,%edx
 		sar    $0x18,%ebx
 		sar    $0x10,%edx
@@ -59354,7 +59383,7 @@ do_vect_colide:	/* 0x06C178 */
 		mov    (%eax),%ax
 		and    $0xffff,%eax
 		imul   $0xe,%eax,%eax
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		add    %edx,%eax
 		mov    0xa(%eax),%edx
 		sar    $0x10,%edx
@@ -62504,7 +62533,7 @@ GLOBAL_FUNC(ASM_draw_unkn1_bar)	/* 0x070E90 */
 		mov    %ax,%si
 		lea    0x0(,%esi,8),%ecx
 		sub    %esi,%ecx
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		add    %ecx,%ecx
 		mov    EXPORT_SYMBOL(engn_xc),%ebx
 		movswl (%ecx,%edx,1),%eax
@@ -62522,7 +62551,7 @@ GLOBAL_FUNC(ASM_draw_unkn1_bar)	/* 0x070E90 */
 		mov    %ah,0x26(%esp)
 		mov    %esp,%eax
 		call   ac_transform_point
-		mov    game_col_vects,%edx
+		mov    EXPORT_SYMBOL(game_col_vects),%edx
 		mov    0x4(%ecx,%edx,1),%eax
 		mov    EXPORT_SYMBOL(engn_xc),%ebp
 		sar    $0x10,%eax
@@ -62964,7 +62993,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    %eax,0x4(%esp)
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(render_area_a),%si
-		mov    unkn_flags_01,%al
+		mov    EXPORT_SYMBOL(unkn_flags_01),%al
 		mov    %dx,EXPORT_SYMBOL(render_area_a)
 		mov    %eax,0xc(%esp)
 		xor    %eax,%eax
@@ -63140,7 +63169,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    $0x1,%bl
 		mov    EXPORT_SYMBOL(vec_tmap)+20,%eax
 		xor    %edx,%edx
-		mov    %bl,unkn_flags_01
+		mov    %bl,EXPORT_SYMBOL(unkn_flags_01)
 		mov    $0x4000,%ebx
 		mov    %cx,EXPORT_SYMBOL(overall_scale)
 		call   ac_memset
@@ -63182,7 +63211,7 @@ GLOBAL_FUNC (ASM_gproc3_unknsub2)	/* 0x73798 */
 		mov    %eax,EXPORT_SYMBOL(engn_yc)
 		mov    0xc(%esp),%al
 		mov    %edi,EXPORT_SYMBOL(engn_cam_yaw)
-		mov    %al,unkn_flags_01
+		mov    %al,EXPORT_SYMBOL(unkn_flags_01)
 		call   ac_prepare_drawlist
 		add    $0x1c,%esp
 		pop    %ebp
@@ -63616,7 +63645,7 @@ GLOBAL_FUNC(ASM_func_74934)	/* 0x74934 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_func_749fc)	/* 0x749fc */
+GLOBAL_FUNC(ASM_create_train_for_each_track)	/* 0x749fc */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -63629,7 +63658,7 @@ GLOBAL_FUNC(ASM_func_749fc)	/* 0x749fc */
 		mov    %edx,0x4(%esp)
 		mov    $0x5,%ebp
 	jump_74a10:
-		call   func_617f0
+		call   ac_find_unused_train_track
 		test   %eax,%eax
 		je     jump_74aee
 		xor    %eax,%eax
@@ -63643,25 +63672,25 @@ GLOBAL_FUNC(ASM_func_749fc)	/* 0x749fc */
 		xor    %eax,%eax
 		mov    %ebx,0x4(%esp)
 		xor    %ebx,%ebx
-		call   func_61628
+		call   ac_create_train_carriage
 		mov    $0x226,%ebx
 		mov    %ax,(%esp)
 		mov    %ebp,%ecx
 		xor    %edx,%edx
 		xor    %eax,%eax
-		call   func_61628
+		call   ac_create_train_carriage
 		mov    $0x44c,%ebx
 		mov    %eax,%edi
 		mov    %ebp,%ecx
 		xor    %edx,%edx
 		xor    %eax,%eax
-		call   func_61628
+		call   ac_create_train_carriage
 		mov    $0x672,%ebx
 		mov    %eax,%esi
 		mov    %ebp,%ecx
 		xor    %edx,%edx
 		xor    %eax,%eax
-		call   func_61628
+		call   ac_create_train_carriage
 		mov    %eax,%edx
 		mov    -0x2(%esp),%eax
 		sar    $0x10,%eax
@@ -63875,7 +63904,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		call   ac_init_crater_textures
 		call   ASM_bang_init
 		call   ac_FIRE_init
-		call   ac_func_749fc
+		call   ac_create_train_for_each_track
 	jump_74ee8:
 		dec    %esi
 		cmp    $0xffffffff,%esi
@@ -63943,7 +63972,7 @@ GLOBAL_FUNC(ASM_init_level)	/* 0x074CDC */
 		mov    EXPORT_SYMBOL(next_col_vect),%bx
 		add    %ebx,%eax
 		imul   $0xe,%eax,%eax
-		mov    game_col_vects,%ebx
+		mov    EXPORT_SYMBOL(game_col_vects),%ebx
 		add    %eax,%ebx
 		mov    EXPORT_SYMBOL(link__MapColVectEmptyHead),%ax
 		mov    %ax,0xc(%ebx)
@@ -65035,7 +65064,7 @@ GLOBAL_FUNC (ASM_init_things)	/* 0x75DDC */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %edx
-		mov    game_user_heap,%eax
+		mov    EXPORT_SYMBOL(game_user_heap),%eax
 		mov    EXPORT_SYMBOL(things_init_times),%ebx
 		xor    %edx,%edx
 		inc    %ebx
@@ -65044,7 +65073,7 @@ GLOBAL_FUNC (ASM_init_things)	/* 0x75DDC */
 		mov    $0x3efd0,%ebx
 		mov    %edx,EXPORT_SYMBOL(gameturn)
 		call   ac_memset
-		mov    game_user_heap,%eax
+		mov    EXPORT_SYMBOL(game_user_heap),%eax
 		add    $0x1e460,%eax
 		mov    $0x1,%edx
 		mov    %eax,things
@@ -82860,14 +82889,14 @@ triangle_route_do_given:	/* 0x082B5C */
 		mov    %eax,0x10(%esp)
 		mov    %edx,0x14(%esp)
 		mov    %ebx,0xc(%esp)
-		mov    tag_current,%ah
+		mov    EXPORT_SYMBOL(tag_current),%ah
 		mov    $0xffffffff,%edx
 		inc    %ah
 		xor    %ebx,%ebx
-		mov    %ah,tag_current
+		mov    %ah,EXPORT_SYMBOL(tag_current)
 		xor    %eax,%eax
 		mov    %edx,data_1c30c0
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    %ebx,heap_end
 		test   %eax,%eax
 		jne    jump_82bb2
@@ -82875,14 +82904,14 @@ triangle_route_do_given:	/* 0x082B5C */
 		mov    $EXPORT_SYMBOL(routeTags),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		movb   $0x1,tag_current
+		movb   $0x1,EXPORT_SYMBOL(tag_current)
 	jump_82bb2:
 		mov    0x14(%esp),%eax
 		mov    $0x1,%ecx
 		mov    %eax,%edx
 		mov    %ecx,EXPORT_SYMBOL(tree_val)(,%eax,4)
 		mov    %eax,EXPORT_SYMBOL(tree_dad)(,%eax,4)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    heap_end,%esi
 		mov    %al,EXPORT_SYMBOL(routeTags)(%edx)
 		cmp    $0x100,%esi
@@ -83040,7 +83069,7 @@ triangle_route_do_given:	/* 0x082B5C */
 		cmp    $0xffffffff,%ebx
 		je     jump_82e1f
 		mov    EXPORT_SYMBOL(routeTags)(%ebx),%cl
-		cmp    tag_current,%cl
+		cmp    EXPORT_SYMBOL(tag_current),%cl
 		je     jump_82e1f
 		testb  $0x8,0xe(%eax)
 		jne    jump_82e1f
@@ -83172,7 +83201,7 @@ triangle_route_do_given:	/* 0x082B5C */
 		jge    jump_82fb5
 		mov    %eax,%ecx
 	jump_82fb5:
-		mov    tag_current,%dl
+		mov    EXPORT_SYMBOL(tag_current),%dl
 		mov    heap_end,%eax
 		mov    %dl,EXPORT_SYMBOL(routeTags)(%ebx)
 		mov    0x1c(%esp),%edx
@@ -83285,14 +83314,14 @@ triangle_route_do_bak:
 		mov    %eax,0x10(%esp)
 		mov    %edx,0x14(%esp)
 		mov    %ebx,0xc(%esp)
-		mov    tag_current,%ah
+		mov    EXPORT_SYMBOL(tag_current),%ah
 		mov    $0xffffffff,%edx
 		inc    %ah
 		xor    %ebx,%ebx
-		mov    %ah,tag_current
+		mov    %ah,EXPORT_SYMBOL(tag_current)
 		xor    %eax,%eax
 		mov    %edx,data_1c30c0
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    %ebx,heap_end
 		test   %eax,%eax
 		jne    jump_8317e
@@ -83300,14 +83329,14 @@ triangle_route_do_bak:
 		mov    $EXPORT_SYMBOL(routeTags),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		movb   $0x1,tag_current
+		movb   $0x1,EXPORT_SYMBOL(tag_current)
 	jump_8317e:
 		mov    0x14(%esp),%eax
 		mov    $0x1,%ecx
 		mov    %eax,%edx
 		mov    %ecx,EXPORT_SYMBOL(tree_val)(,%eax,4)
 		mov    %eax,EXPORT_SYMBOL(tree_dad)(,%eax,4)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    heap_end,%esi
 		mov    %al,EXPORT_SYMBOL(routeTags)(%edx)
 		mov    %edx,%eax
@@ -83465,7 +83494,7 @@ triangle_route_do_bak:
 		cmp    $0xffffffff,%ebx
 		je     jump_833f3
 		mov    EXPORT_SYMBOL(routeTags)(%ebx),%dl
-		cmp    tag_current,%dl
+		cmp    EXPORT_SYMBOL(tag_current),%dl
 		je     jump_833f3
 		mov    %ebx,%esi
 		shl    $0x4,%esi
@@ -83598,7 +83627,7 @@ triangle_route_do_bak:
 		jge    jump_8358d
 		mov    %eax,%ecx
 	jump_8358d:
-		mov    tag_current,%dl
+		mov    EXPORT_SYMBOL(tag_current),%dl
 		mov    heap_end,%eax
 		mov    %dl,EXPORT_SYMBOL(routeTags)(%ebx)
 		mov    0x1c(%esp),%edx
@@ -83801,14 +83830,14 @@ triangle_route_do_unkn3:	/* 0x083834 */
 		mov    %eax,0x14(%esp)
 		mov    %edx,0x10(%esp)
 		mov    %ebx,0xc(%esp)
-		mov    tag_current,%ah
+		mov    EXPORT_SYMBOL(tag_current),%ah
 		mov    $0xffffffff,%edx
 		inc    %ah
 		xor    %ebx,%ebx
-		mov    %ah,tag_current
+		mov    %ah,EXPORT_SYMBOL(tag_current)
 		xor    %eax,%eax
 		mov    %edx,data_1c30c0
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    %ebx,heap_end
 		test   %eax,%eax
 		jne    jump_8388a
@@ -83816,14 +83845,14 @@ triangle_route_do_unkn3:	/* 0x083834 */
 		mov    $EXPORT_SYMBOL(routeTags),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		movb   $0x1,tag_current
+		movb   $0x1,EXPORT_SYMBOL(tag_current)
 	jump_8388a:
 		mov    0x10(%esp),%eax
 		mov    $0x1,%ecx
 		mov    %eax,%edx
 		mov    %ecx,EXPORT_SYMBOL(tree_val)(,%eax,4)
 		mov    %eax,EXPORT_SYMBOL(tree_dad)(,%eax,4)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    heap_end,%esi
 		mov    %al,EXPORT_SYMBOL(routeTags)(%edx)
 		cmp    $0x100,%esi
@@ -84068,7 +84097,7 @@ triangle_route_do_unkn3:	/* 0x083834 */
 		test   %edi,%esi
 		je     jump_83c3a
 		mov    EXPORT_SYMBOL(routeTags)(%ebx),%cl
-		cmp    tag_current,%cl
+		cmp    EXPORT_SYMBOL(tag_current),%cl
 		je     jump_83c3a
 		mov    0xb(%eax),%eax
 		sar    $0x18,%eax
@@ -84210,7 +84239,7 @@ triangle_route_do_unkn3:	/* 0x083834 */
 		add    %ecx,%edx
 	jump_83e14:
 		mov    %edx,EXPORT_SYMBOL(tree_val)(,%ebx,4)
-		mov    tag_current,%dl
+		mov    EXPORT_SYMBOL(tag_current),%dl
 		mov    %dl,EXPORT_SYMBOL(routeTags)(%ebx)
 		mov    0x20(%esp),%edx
 		mov    heap_end,%eax
@@ -84329,14 +84358,14 @@ triangle_route_do_unkn4:	/* 0x083FA4 */
 		mov    %eax,0x14(%esp)
 		mov    %edx,0x10(%esp)
 		mov    %ebx,0xc(%esp)
-		mov    tag_current,%ah
+		mov    EXPORT_SYMBOL(tag_current),%ah
 		mov    $0xffffffff,%edx
 		inc    %ah
 		xor    %ebx,%ebx
-		mov    %ah,tag_current
+		mov    %ah,EXPORT_SYMBOL(tag_current)
 		xor    %eax,%eax
 		mov    %edx,data_1c30c0
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    %ebx,heap_end
 		test   %eax,%eax
 		jne    jump_83ffa
@@ -84344,14 +84373,14 @@ triangle_route_do_unkn4:	/* 0x083FA4 */
 		mov    $EXPORT_SYMBOL(routeTags),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		movb   $0x1,tag_current
+		movb   $0x1,EXPORT_SYMBOL(tag_current)
 	jump_83ffa:
 		mov    0x10(%esp),%eax
 		mov    $0x1,%ecx
 		mov    %eax,%edx
 		mov    %ecx,EXPORT_SYMBOL(tree_val)(,%eax,4)
 		mov    %eax,EXPORT_SYMBOL(tree_dad)(,%eax,4)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    heap_end,%esi
 		mov    %al,EXPORT_SYMBOL(routeTags)(%edx)
 		cmp    $0x100,%esi
@@ -84593,7 +84622,7 @@ triangle_route_do_unkn4:	/* 0x083FA4 */
 		shl    %cl,%eax
 		test   %eax,%ebx
 		je     jump_843a0
-		mov    tag_current,%bl
+		mov    EXPORT_SYMBOL(tag_current),%bl
 		cmp    EXPORT_SYMBOL(routeTags)(%esi),%bl
 		je     jump_843a0
 		mov    %esi,%ecx
@@ -84737,7 +84766,7 @@ triangle_route_do_unkn4:	/* 0x083FA4 */
 		add    %ebx,%edx
 	jump_84571:
 		mov    %edx,EXPORT_SYMBOL(tree_val)(,%esi,4)
-		mov    tag_current,%dl
+		mov    EXPORT_SYMBOL(tag_current),%dl
 		mov    %dl,EXPORT_SYMBOL(routeTags)(%esi)
 		mov    0x20(%esp),%edx
 		mov    %edx,EXPORT_SYMBOL(tree_dad)(,%esi,4)
@@ -84946,14 +84975,14 @@ triangle_route_do_unkn5:	/* 0x084924 */
 		mov    %eax,0x14(%esp)
 		mov    %edx,0x10(%esp)
 		mov    %ebx,0xc(%esp)
-		mov    tag_current,%ah
+		mov    EXPORT_SYMBOL(tag_current),%ah
 		mov    $0xffffffff,%edx
 		inc    %ah
 		xor    %ebx,%ebx
-		mov    %ah,tag_current
+		mov    %ah,EXPORT_SYMBOL(tag_current)
 		xor    %eax,%eax
 		mov    %edx,data_1c30c0
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    %ebx,heap_end
 		test   %eax,%eax
 		jne    jump_8497a
@@ -84961,14 +84990,14 @@ triangle_route_do_unkn5:	/* 0x084924 */
 		mov    $EXPORT_SYMBOL(routeTags),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		movb   $0x1,tag_current
+		movb   $0x1,EXPORT_SYMBOL(tag_current)
 	jump_8497a:
 		mov    0x10(%esp),%eax
 		mov    $0x1,%ecx
 		mov    %eax,%edx
 		mov    %ecx,EXPORT_SYMBOL(tree_val)(,%eax,4)
 		mov    %eax,EXPORT_SYMBOL(tree_dad)(,%eax,4)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    heap_end,%esi
 		mov    %al,EXPORT_SYMBOL(routeTags)(%edx)
 		cmp    $0x100,%esi
@@ -85212,7 +85241,7 @@ triangle_route_do_unkn5:	/* 0x084924 */
 		sar    $0x10,%ebx
 		cmp    $0xffffffff,%ebx
 		je     jump_84d29
-		mov    tag_current,%cl
+		mov    EXPORT_SYMBOL(tag_current),%cl
 		cmp    EXPORT_SYMBOL(routeTags)(%ebx),%cl
 		je     jump_84d29
 		mov    %ebx,%esi
@@ -85340,7 +85369,7 @@ triangle_route_do_unkn5:	/* 0x084924 */
 		jge    jump_84ed7
 		mov    %eax,%ecx
 	jump_84ed7:
-		mov    tag_current,%dl
+		mov    EXPORT_SYMBOL(tag_current),%dl
 		mov    heap_end,%ebp
 		mov    %dl,EXPORT_SYMBOL(routeTags)(%ebx)
 		mov    0x20(%esp),%edx
@@ -85460,14 +85489,14 @@ triangle_route_do_unkn6:	/* 0x085068 */
 		mov    %eax,0x14(%esp)
 		mov    %edx,0x10(%esp)
 		mov    %ebx,0xc(%esp)
-		mov    tag_current,%ah
+		mov    EXPORT_SYMBOL(tag_current),%ah
 		mov    $0xffffffff,%edx
 		inc    %ah
 		xor    %ebx,%ebx
-		mov    %ah,tag_current
+		mov    %ah,EXPORT_SYMBOL(tag_current)
 		xor    %eax,%eax
 		mov    %edx,data_1c30c0
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    %ebx,heap_end
 		test   %eax,%eax
 		jne    jump_850be
@@ -85475,14 +85504,14 @@ triangle_route_do_unkn6:	/* 0x085068 */
 		mov    $EXPORT_SYMBOL(routeTags),%eax
 		xor    %edx,%edx
 		call   ac_memset
-		movb   $0x1,tag_current
+		movb   $0x1,EXPORT_SYMBOL(tag_current)
 	jump_850be:
 		mov    0x10(%esp),%eax
 		mov    $0x1,%ecx
 		mov    %eax,%edx
 		mov    %ecx,EXPORT_SYMBOL(tree_val)(,%eax,4)
 		mov    %eax,EXPORT_SYMBOL(tree_dad)(,%eax,4)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    heap_end,%esi
 		mov    %al,EXPORT_SYMBOL(routeTags)(%edx)
 		cmp    $0x100,%esi
@@ -85726,7 +85755,7 @@ triangle_route_do_unkn6:	/* 0x085068 */
 		sar    $0x10,%ebx
 		cmp    $0xffffffff,%ebx
 		je     jump_8546d
-		mov    tag_current,%cl
+		mov    EXPORT_SYMBOL(tag_current),%cl
 		cmp    EXPORT_SYMBOL(routeTags)(%ebx),%cl
 		je     jump_8546d
 		mov    %ebx,%esi
@@ -85854,7 +85883,7 @@ triangle_route_do_unkn6:	/* 0x085068 */
 		jge    jump_8561b
 		mov    %eax,%ecx
 	jump_8561b:
-		mov    tag_current,%dl
+		mov    EXPORT_SYMBOL(tag_current),%dl
 		mov    heap_end,%ebp
 		mov    %dl,EXPORT_SYMBOL(routeTags)(%ebx)
 		mov    0x20(%esp),%edx
@@ -85975,28 +86004,28 @@ triangle_route_do_unkn7:	/* 0x0857AC */
 		mov    %edx,0x10(%esp)
 		mov    %ebx,0xc(%esp)
 		mov    $0xffffffff,%ebx
-		mov    tag_current,%ah
+		mov    EXPORT_SYMBOL(tag_current),%ah
 		xor    %edx,%edx
 		inc    %ah
 		mov    %edx,0x30(%esp)
-		mov    %ah,tag_current
+		mov    %ah,EXPORT_SYMBOL(tag_current)
 		xor    %eax,%eax
 		mov    %ebx,data_1c30c0
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    %edx,heap_end
 		test   %eax,%eax
 		jne    jump_85804
 		mov    $0x1f40,%ebx
 		mov    $EXPORT_SYMBOL(routeTags),%eax
 		call   ac_memset
-		movb   $0x1,tag_current
+		movb   $0x1,EXPORT_SYMBOL(tag_current)
 	jump_85804:
 		mov    0x10(%esp),%eax
 		mov    $0x1,%esi
 		mov    %eax,%edx
 		mov    %esi,EXPORT_SYMBOL(tree_val)(,%eax,4)
 		mov    %eax,EXPORT_SYMBOL(tree_dad)(,%eax,4)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    heap_end,%edi
 		mov    %al,EXPORT_SYMBOL(routeTags)(%edx)
 		cmp    $0x100,%edi
@@ -86082,7 +86111,7 @@ triangle_route_do_unkn7:	/* 0x0857AC */
 		mov    0x2c(%esp),%eax
 		mov    EXPORT_SYMBOL(tree_dad)(%eax),%eax
 		mov    %eax,0x28(%esp)
-		mov    tag_current,%al
+		mov    EXPORT_SYMBOL(tag_current),%al
 		mov    $0x1e,%esi
 		inc    %al
 		mov    $0xffffffff,%edi
@@ -86255,7 +86284,7 @@ triangle_route_do_unkn7:	/* 0x0857AC */
 		cmp    $0xffffffff,%ebx
 		je     jump_85bff
 		mov    EXPORT_SYMBOL(routeTags)(%ebx),%dl
-		cmp    tag_current,%dl
+		cmp    EXPORT_SYMBOL(tag_current),%dl
 		je     jump_85bff
 		mov    EXPORT_SYMBOL(tree_Ax8),%ebp
 		mov    EXPORT_SYMBOL(tree_Ay8),%edi
@@ -86380,7 +86409,7 @@ triangle_route_do_unkn7:	/* 0x0857AC */
 		jge    jump_85daa
 		mov    %eax,%ecx
 	jump_85daa:
-		mov    tag_current,%dl
+		mov    EXPORT_SYMBOL(tag_current),%dl
 		mov    heap_end,%eax
 		mov    %dl,EXPORT_SYMBOL(routeTags)(%ebx)
 		mov    0x18(%esp),%edx
@@ -90857,7 +90886,7 @@ unused_func_024:	/* 0x89cec */
 		jmp    jump_89d38
 	jump_89d0d:
 		imul   $0x12,%eax,%eax
-		mov    game_my_big_map,%ecx
+		mov    EXPORT_SYMBOL(game_my_big_map),%ecx
 		xor    %edx,%edx
 		add    %eax,%ecx
 		call   ac_LbRandomAnyShort
@@ -90884,7 +90913,7 @@ unused_func_024:	/* 0x89cec */
 		jmp    jump_89d7c
 	jump_89d51:
 		imul   $0x12,%eax,%eax
-		mov    game_my_big_map,%ecx
+		mov    EXPORT_SYMBOL(game_my_big_map),%ecx
 		xor    %edx,%edx
 		add    %eax,%ecx
 		call   ac_LbRandomAnyShort
@@ -95014,7 +95043,7 @@ open_new_mission:	/* 0x0A523C */
 	jump_a525a:
 		xor    %edx,%edx
 		mov    %ax,%dx
-		cmpw   $0x0,mission_open(,%edx,2)
+		cmpw   $0x0,EXPORT_SYMBOL(mission_open)(,%edx,2)
 		je     jump_a5272
 		cmp    $0x32,%edx
 		jge    jump_a5272
@@ -95025,8 +95054,8 @@ open_new_mission:	/* 0x0A523C */
 		cmp    $0x32,%eax
 		jge    jump_a528e
 		xor    %esi,%esi
-		mov    %cx,mission_open(,%eax,2)
-		mov    %si,mission_state(,%eax,2)
+		mov    %cx,EXPORT_SYMBOL(mission_open)(,%eax,2)
+		mov    %si,EXPORT_SYMBOL(mission_state)(,%eax,2)
 	jump_a528e:
 		xor    %eax,%eax
 		mov    %cx,%ax
@@ -96406,7 +96435,7 @@ GLOBAL_FUNC(ASM_test_single_mission)	/* 0x0A8C48 */
 		xor    %edi,%edi
 		mov    %si,%di
 		mov    %edi,%edx
-		mov    game_used_objectives,%eax
+		mov    EXPORT_SYMBOL(game_used_objectives),%eax
 		shl    $0x5,%edx
 		add    %edx,%eax
 		xor    %edx,%edx
@@ -96453,7 +96482,7 @@ GLOBAL_FUNC(ASM_test_single_mission)	/* 0x0A8C48 */
 	jump_a8d41:
 		xor    %eax,%eax
 		mov    %si,%ax
-		mov    game_used_objectives,%edx
+		mov    EXPORT_SYMBOL(game_used_objectives),%edx
 		shl    $0x5,%eax
 		mov    (%edx,%eax,1),%si
 		test   %si,%si
@@ -96502,7 +96531,7 @@ GLOBAL_FUNC(ASM_test_single_mission)	/* 0x0A8C48 */
 		xor    %eax,%eax
 		mov    %bx,%ax
 		mov    %eax,%edi
-		mov    game_used_objectives,%edx
+		mov    EXPORT_SYMBOL(game_used_objectives),%edx
 		shl    $0x5,%edi
 		add    %edx,%edi
 		xor    %edx,%edx
@@ -96530,7 +96559,7 @@ GLOBAL_FUNC(ASM_test_single_mission)	/* 0x0A8C48 */
 		call   ac_test_objective
 		xor    %edi,%edi
 		mov    %bx,%di
-		mov    game_used_objectives,%edx
+		mov    EXPORT_SYMBOL(game_used_objectives),%edx
 		shl    $0x5,%edi
 		add    %edx,%edi
 		movzbl 0x14(%edi),%ebp
@@ -96561,7 +96590,7 @@ GLOBAL_FUNC(ASM_test_single_mission)	/* 0x0A8C48 */
 	jump_a8e88:
 		xor    %eax,%eax
 		mov    %bx,%ax
-		mov    game_used_objectives,%edx
+		mov    EXPORT_SYMBOL(game_used_objectives),%edx
 		shl    $0x5,%eax
 		mov    (%edx,%eax,1),%bx
 		test   %bx,%bx
@@ -96613,14 +96642,14 @@ GLOBAL_FUNC (ASM_init_mission_states)	/* 0x0A8EE8 */
 		push   %edx
 		push   %esi
 		push   %edi
-		mov    game_used_objectives,%esi
+		mov    EXPORT_SYMBOL(game_used_objectives),%esi
 		mov    $0x1,%eax
 		mov    EXPORT_SYMBOL(ingame)+0x95D,%di # ingame.CurrentMission
 		xor    %ebx,%ebx
 	jump_a8f01:
 		xor    %edx,%edx
 		mov    %ax,%dx
-		cmp    mission_open(,%edx,2),%di
+		cmp    EXPORT_SYMBOL(mission_open)(,%edx,2),%di
 		je     jump_a8f18
 		cmp    $0x32,%edx
 		jge    jump_a8f18
@@ -96633,13 +96662,13 @@ GLOBAL_FUNC (ASM_init_mission_states)	/* 0x0A8EE8 */
 		jge    jump_a8feb
 		add    %edx,%edx
 		xor    %edi,%edi
-		mov    data_19f42e(%edx),%ecx
+		mov    EXPORT_SYMBOL(mission_open)-2(%edx),%ecx
 		mov    EXPORT_SYMBOL(next_mission),%di
 		sar    $0x10,%ecx
 		cmp    %edi,%ecx
 		jg     jump_a8feb
 		xor    %edi,%edi
-		mov    %di,mission_state(%edx)
+		mov    %di,EXPORT_SYMBOL(mission_state)(%edx)
 		lea    0x0(,%ecx,4),%edx
 		add    %ecx,%edx
 		shl    $0x2,%edx
@@ -96665,7 +96694,7 @@ GLOBAL_FUNC (ASM_init_mission_states)	/* 0x0A8EE8 */
 		jne    jump_a8f6f
 	jump_a8f97:
 		and    $0xffff,%eax
-		mov    data_19f42e(,%eax,2),%edx
+		mov    EXPORT_SYMBOL(mission_open)-2(,%eax,2),%edx
 		sar    $0x10,%edx
 		lea    0x0(,%edx,4),%eax
 		add    %edx,%eax
@@ -96690,7 +96719,7 @@ GLOBAL_FUNC (ASM_init_mission_states)	/* 0x0A8EE8 */
 		test   %ax,%ax
 		jne    jump_a8fc3
 	jump_a8feb:
-		mov    %esi,game_used_objectives
+		mov    %esi,EXPORT_SYMBOL(game_used_objectives)
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -96716,12 +96745,12 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		cmpw   $0x0,EXPORT_SYMBOL(ingame)+0x975 # ingame.TrackThing
 		jne    jump_a921a
 	jump_a901a:
-		mov    mission_open,%eax
+		mov    EXPORT_SYMBOL(mission_open),%eax
 		sar    $0x10,%eax
 		test   %eax,%eax
 		jne    jump_a9032
 		mov    EXPORT_SYMBOL(ingame)+0x95D,%ax # ingame.CurrentMission
-		mov    %ax,data_19f432
+		mov    %ax,EXPORT_SYMBOL(mission_open)+2
 	jump_a9032:
 		xor    %eax,%eax
 		mov    %cl,%al
@@ -96737,7 +96766,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 	jump_a9057:
 		xor    %edx,%edx
 		mov    %bx,%dx
-		cmp    mission_open(,%edx,2),%si
+		cmp    EXPORT_SYMBOL(mission_open)(,%edx,2),%si
 		je     jump_a906e
 		cmp    $0x32,%edx
 		jge    jump_a906e
@@ -96749,7 +96778,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		xor    %eax,%eax
 		mov    %bx,%ax
 		xor    %edi,%edi
-		mov    %di,mission_state(,%eax,2)
+		mov    %di,EXPORT_SYMBOL(mission_state)(,%eax,2)
 		xor    %ebx,%eax
 		jmp    jump_a921c
 	jump_a9088:
@@ -96757,7 +96786,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		je     jump_a90a4
 		mov    EXPORT_SYMBOL(ingame)+0x95D,%ax # ingame.CurrentMission
 		mov    $0x1,%ebx
-		mov    %ax,data_19f432
+		mov    %ax,EXPORT_SYMBOL(mission_open)+2
 		jmp    jump_a90c6
 	jump_a90a4:
 		xor    %eax,%eax
@@ -96768,7 +96797,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 	jump_a90b3:
 		xor    %edx,%edx
 		mov    %bx,%dx
-		cmpw   $0x0,mission_open(,%edx,2)
+		cmpw   $0x0,EXPORT_SYMBOL(mission_open)(,%edx,2)
 		je     jump_a90c6
 		inc    %ebx
 		jmp    jump_a90b3
@@ -96777,17 +96806,17 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		mov    %bx,%ax
 		add    %eax,%eax
 		xor    %edx,%edx
-		mov    data_19f42e(%eax),%ecx
+		mov    EXPORT_SYMBOL(mission_open)-2(%eax),%ecx
 		mov    EXPORT_SYMBOL(next_mission),%dx
 		sar    $0x10,%ecx
 		cmp    %edx,%ecx
 		jle    jump_a90ec
-		movw   $0x1,mission_open(%eax)
+		movw   $0x1,EXPORT_SYMBOL(mission_open)(%eax)
 	jump_a90ec:
 		xor    %edx,%edx
 		mov    %bx,%dx
 		add    %edx,%edx
-		mov    data_19f492(%edx),%eax
+		mov    EXPORT_SYMBOL(mission_state)-2(%edx),%eax
 		sar    $0x10,%eax
 		cmp    $0xffffffff,%eax
 		jne    jump_a912a
@@ -96806,14 +96835,14 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		pop    %ebx
 		ret
 	jump_a912a:
-		mov    data_19f42e(%edx),%eax
+		mov    EXPORT_SYMBOL(mission_open)-2(%edx),%eax
 		xor    %ecx,%ecx
 		sar    $0x10,%eax
-		mov    %cx,mission_state(%edx)
+		mov    %cx,EXPORT_SYMBOL(mission_state)(%edx)
 		call   ac_test_single_mission
 		mov    EXPORT_SYMBOL(ingame)+0x95D,%di # ingame.CurrentMission
 		mov    %eax,%esi
-		cmp    mission_open(%edx),%di
+		cmp    EXPORT_SYMBOL(mission_open)(%edx),%di
 		jne    jump_a9175
 		xor    %eax,%eax
 		mov    mission_result,%al
@@ -96857,7 +96886,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		xor    %eax,%eax
 		mov    %bx,%ax
 		mov    $0x1,%ecx
-		mov    %cx,mission_state(,%eax,2)
+		mov    %cx,EXPORT_SYMBOL(mission_state)(,%eax,2)
 		mov    %ecx,%eax
 		pop    %edi
 		pop    %esi
@@ -96878,7 +96907,7 @@ GLOBAL_FUNC (ASM_test_missions)	/* 0x0A8FF8 */
 		xor    %eax,%eax
 		mov    %bx,%ax
 		mov    $0xffffffff,%ebx
-		mov    %bx,mission_state(,%eax,2)
+		mov    %bx,EXPORT_SYMBOL(mission_state)(,%eax,2)
 		mov    %ebx,%eax
 		pop    %edi
 		pop    %esi
@@ -100195,7 +100224,7 @@ GLOBAL_FUNC (ASM_SCANNER_init)	/* 0x0ABA1C */
 		idiv   %ecx
 		inc    %ebx
 		add    %ecx,%esi
-		mov    %al,data_1cab63(%ebx)
+		mov    %al,EXPORT_SYMBOL(low_trans_grey_pal_bright)-1(%ebx)
 		cmp    $0x100,%ebx
 		jge    jump_aba95
 	jump_aba73:
@@ -100244,7 +100273,7 @@ GLOBAL_FUNC (ASM_SCANNER_init)	/* 0x0ABA1C */
 		jmp    jump_abadb
 	jump_abae9:
 		inc    %ebx
-		mov    %dh,data_1db087(%ebx)
+		mov    %dh,EXPORT_SYMBOL(low_trans_grey_bright_limit)-0x01(%ebx)
 		jmp    jump_abaf4
 	jump_abaf2:
 		mov    $0x3f,%dh
@@ -100461,7 +100490,7 @@ SCANNER_scanconvert:	/* 0x0ABBBC */
 	jump_abdb6:
 		add    $0x100,%eax
 		inc    %edx
-		mov    %bl,SCANNER_map(%eax)
+		mov    %bl,EXPORT_SYMBOL(SCANNER_map)(%eax)
 		cmp    %ecx,%edx
 		jl     jump_abdb6
 	jump_abdc6:
@@ -100509,7 +100538,7 @@ SCANNER_scanconvert:	/* 0x0ABBBC */
 	jump_abe39:
 		add    $0x100,%eax
 		inc    %edx
-		mov    %bl,SCANNER_map(%eax)
+		mov    %bl,EXPORT_SYMBOL(SCANNER_map)(%eax)
 		cmp    %ecx,%edx
 		jl     jump_abe39
 	jump_abe49:
@@ -100540,7 +100569,7 @@ SCANNER_scanconvert:	/* 0x0ABBBC */
 	jump_abe83:
 		add    $0x100,%eax
 		inc    %edx
-		mov    %bl,SCANNER_map(%eax)
+		mov    %bl,EXPORT_SYMBOL(SCANNER_map)(%eax)
 		cmp    %ecx,%edx
 		jl     jump_abe83
 	jump_abe93:
@@ -100587,7 +100616,7 @@ SCANNER_scanconvert:	/* 0x0ABBBC */
 	jump_abf06:
 		add    $0x100,%eax
 		inc    %edx
-		mov    %bl,SCANNER_map(%eax)
+		mov    %bl,EXPORT_SYMBOL(SCANNER_map)(%eax)
 		cmp    %ecx,%edx
 		jl     jump_abf06
 	jump_abf16:
@@ -101150,20 +101179,20 @@ SCANNER_outline:	/* 0x0AC57C */
 		jne    jump_ac650
 		cmp    EXPORT_SYMBOL(SCANNER_data)+257(%eax),%bh
 		jne    jump_ac650
-		cmp    SCANNER_map(%eax),%bh
+		cmp    EXPORT_SYMBOL(SCANNER_map)(%eax),%bh
 		jne    jump_ac650
 		cmp    EXPORT_SYMBOL(SCANNER_data)+1(%eax),%bh
 		jne    jump_ac650
 		cmp    EXPORT_SYMBOL(SCANNER_cont)(%eax),%bh
 		jne    jump_ac650
 		mov    (%esp,%edx,1),%bl
-		mov    %bl,SCANNER_map(%eax)
+		mov    %bl,EXPORT_SYMBOL(SCANNER_map)(%eax)
 		mov    EXPORT_SYMBOL(SCANNER_colour),%bl
 		mov    %bl,(%esp,%edx,1)
 		jmp    jump_ac60a
 	jump_ac650:
 		mov    (%esp,%edx,1),%bl
-		mov    %bl,SCANNER_map(%eax)
+		mov    %bl,EXPORT_SYMBOL(SCANNER_map)(%eax)
 		mov    EXPORT_SYMBOL(SCANNER_data)(%eax),%bl
 		mov    %bl,(%esp,%edx,1)
 		jmp    jump_ac60a
@@ -101176,7 +101205,7 @@ SCANNER_outline:	/* 0x0AC57C */
 		inc    %edx
 		mov    (%esp,%eax,1),%bl
 		inc    %eax
-		mov    %bl,data_1caf87(%edx)
+		mov    %bl,EXPORT_SYMBOL(SCANNER_map)-0x01(%edx)
 		cmp    $0xff,%eax
 		jl     jump_ac670
 		add    $0x100,%esp
@@ -115106,7 +115135,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_person)	/* 0x0BFD00 */
 		mov    0x80(%esi),%bh
 		mov    $g_nav_data,%eax
 		or     $0x10,%bh
-		mov    navi2_unkn_counter,%edi
+		mov    EXPORT_SYMBOL(navi2_unkn_counter),%edi
 		mov    %bh,0x80(%esi)
 		inc    %edi
 		mov    0x10(%esp),%ecx
@@ -115114,7 +115143,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_person)	/* 0x0BFD00 */
 		mov    0x4(%esp),%edx
 		push   %ecx
 		mov    0x10(%esp),%ecx
-		mov    %edi,navi2_unkn_counter
+		mov    %edi,EXPORT_SYMBOL(navi2_unkn_counter)
 		call   ac_path_init8_unkn3
 		mov    %esi,%eax
 		call   ac_set_person_animmode_run
@@ -115122,11 +115151,11 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_person)	/* 0x0BFD00 */
 	jump_c01ba:
 		push   $0xfffffffe
 		mov    0x80(%esi),%cl
-		mov    navi2_unkn_counter,%ebx
+		mov    EXPORT_SYMBOL(navi2_unkn_counter),%ebx
 		and    $0xef,%cl
 		inc    %ebx
 		mov    %cl,0x80(%esi)
-		mov    %ebx,navi2_unkn_counter
+		mov    %ebx,EXPORT_SYMBOL(navi2_unkn_counter)
 		mov    0x10(%esp),%ebp
 		mov    0xc(%esp),%eax
 		push   %ebp
@@ -119149,7 +119178,7 @@ GLOBAL_FUNC(ASM_elec_hit_building)	/* 0x0C3B98 */
 		lea    0x0(,%ecx,8),%eax
 		sub    %ecx,%eax
 		lea    (%eax,%eax,1),%ecx
-		mov    game_col_vects,%eax
+		mov    EXPORT_SYMBOL(game_col_vects),%eax
 		add    %ecx,%eax
 		mov    %eax,0x14(%esp)
 		mov    0xa(%eax),%eax
@@ -124740,7 +124769,7 @@ GLOBAL_FUNC(ASM_init_spark)	/* 0x0C867C */
 		cmpb   $0x0,in_network_game
 		jne    jump_c86f8
 		xor    %eax,%eax
-		mov    pktrec_mode,%al
+		mov    EXPORT_SYMBOL(pktrec_mode),%al
 		test   %eax,%eax
 		jne    jump_c86f8
 		mov    EXPORT_SYMBOL(engn_xc),%edx
@@ -129650,9 +129679,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    (%edx),%edi
 		cmp    %ecx,%eax
 		jne    jump_cc403
-		cmpl   $0xffffffff,data_155704
+		cmpl   $0xffffffff,EXPORT_SYMBOL(data_155704)
 		je     jump_cc3c4
-		mov    data_155702,%edx
+		mov    EXPORT_SYMBOL(data_155704)-2,%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
 		call   ac_stop_sample_using_heap
@@ -129669,9 +129698,9 @@ GLOBAL_FUNC(ASM_func_cc0d4)	/* 0xcc0d4 */
 		mov    $0x40,%ecx
 		add    $0x2,%edx
 		push   $0x64
-		mov    %edx,data_155704
+		mov    %edx,EXPORT_SYMBOL(data_155704)
 		mov    $0x7f,%ebx
-		mov    data_155702,%edx
+		mov    EXPORT_SYMBOL(data_155704)-2,%edx
 		xor    %eax,%eax
 		sar    $0x10,%edx
 		call   ac_play_sample_using_heap
@@ -130170,7 +130199,7 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		mov    %dl,%al
 		inc    %edx
 		add    %bl,%al
-		mov    %al,data_1c4c63(%edx)
+		mov    %al,EXPORT_SYMBOL(cryo_agents)+0x0C3(%edx) # cryo_agents.RandomName[-1]
 		cmp    $0x20,%edx
 		jl     jump_cf8ef
 		mov    $0x1f,%esi
@@ -130191,19 +130220,19 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		cmp    %eax,%ecx
 		je     jump_cf908
 		xor    %ebx,%ebx
-		mov    data_1c4c64(%ecx),%bl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C4(%ecx),%bl # cryo_agents.RandomName[]
 		mov    %ebx,(%esp)
-		mov    data_1c4c64(%eax),%bl
-		mov    %bl,data_1c4c64(%ecx)
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C4(%eax),%bl # cryo_agents.RandomName[]
+		mov    %bl,EXPORT_SYMBOL(cryo_agents)+0x0C4(%ecx) # cryo_agents.RandomName[]
 		mov    (%esp),%bl
-		mov    %bl,data_1c4c64(%eax)
+		mov    %bl,EXPORT_SYMBOL(cryo_agents)+0x0C4(%eax) # cryo_agents.RandomName[]
 		jmp    jump_cf908
 	jump_cf94c:
 		call   ac_LbRandomAnyShort
 		xor    %ah,%ah
 		and    $0xffff,%eax
 		xor    %edx,%edx
-		mov    %eax,data_1c4c60
+		mov    %eax,EXPORT_SYMBOL(cryo_agents)+0x0C0 # cryo_agents.Sex
 		xor    %eax,%eax
 		mov    $0x1,%edi
 		xor    %esi,%esi
@@ -130213,9 +130242,9 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		imul   $0x1aa,%ecx,%ecx
 		add    $0x4,%edx
 		add    $0x2,%eax
-		mov    %edi,data_1c4b9c(%edx)
+		mov    %edi,EXPORT_SYMBOL(cryo_agents)-0x04(%edx)
 		mov    %edi,EXPORT_SYMBOL(players)+0x0CC(%ecx,%edx,1) # players[].DoubleMode-2
-		mov    %si,data_1c4c1e(%eax)
+		mov    %si,EXPORT_SYMBOL(cryo_agents)+0x07E(%eax) # cryo_agents.Mods - 2
 		mov    %si,EXPORT_SYMBOL(players)+0x0DE(%ecx,%eax,1) # players[].Mods-2
 		cmp    $0x8,%eax
 		jne    jump_cf968
@@ -130227,10 +130256,10 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 		add    $0x4,%eax
 		mov    $0x1,%ebx
 		add    $0x2,%ecx
-		mov    %ebx,data_1c4b9c(%eax)
+		mov    %ebx,EXPORT_SYMBOL(cryo_agents)-0x04(%eax)
 		xor    %ebx,%ebx
 		inc    %edx
-		mov    %bx,data_1c4c1e(%ecx)
+		mov    %bx,EXPORT_SYMBOL(cryo_agents)+0x07E(%ecx) # cryo_agents.Mods - 2
 	jump_cf9c6:
 		xor    %ebx,%ebx
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%bl # cryo_agents.NumAgents
@@ -130241,7 +130270,7 @@ GLOBAL_FUNC(ASM_init_agents)	/* 0x0CF8A0 */
 	jump_cf9d6:
 		add    $0x5,%eax
 		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E1(%eax) # cryo_agents.FourPacks - 3
-		mov    %dl,data_1c4c7f(%eax)
+		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0DF(%eax) # cryo_agents.FourPacks - 5
 		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E0(%eax) # cryo_agents.FourPacks - 4
 		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E3(%eax) # cryo_agents.FourPacks - 1
 		mov    %dl,EXPORT_SYMBOL(cryo_agents)+0x0E2(%eax) # cryo_agents.FourPacks - 2
@@ -130325,27 +130354,27 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		cmp    %ebx,%eax
 		jbe    jump_cfb39
-		mov    cryo_agents(%esi),%eax
+		mov    EXPORT_SYMBOL(cryo_agents)(%esi),%eax
 		mov    (%esp),%cl
-		mov    %eax,data_1c4b9c(%esi)
+		mov    %eax,EXPORT_SYMBOL(cryo_agents)-0x04(%esi)
 		mov    $0x1,%ebx
-		mov    data_1c4c20(%edi),%ax
+		mov    EXPORT_SYMBOL(cryo_agents)+0x080(%edi),%ax # cryo_agents.Mods[]
 		shl    %cl,%ebx
-		mov    %ax,data_1c4c1e(%edi)
+		mov    %ax,EXPORT_SYMBOL(cryo_agents)+0x07E(%edi) # cryo_agents.Mods - 2
 		mov    (%esp),%ecx
-		mov    data_1c4c60,%eax
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C0,%eax # cryo_agents.Sex
 		dec    %ecx
 		and    %eax,%ebx
 		mov    $0x1,%eax
 		shl    %cl,%eax
-		mov    data_1c4c60,%ecx
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C0,%ecx # cryo_agents.Sex
 		not    %eax
 		and    %eax,%ecx
 		mov    %ecx,%eax
-		mov    %ecx,data_1c4c60
+		mov    %ecx,EXPORT_SYMBOL(cryo_agents)+0x0C0 # cryo_agents.Sex
 		or     %ebx,%eax
 		mov    (%esp),%ecx
-		mov    %eax,data_1c4c60
+		mov    %eax,EXPORT_SYMBOL(cryo_agents)+0x0C0 # cryo_agents.Sex
 		lea    (%ecx,%ecx,4),%ecx
 		mov    %ebp,%ebx
 		mov    0x4(%esp),%eax
@@ -130361,7 +130390,7 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 		xor    %eax,%eax
 		mov    0x8(%esp),%al
 		inc    %eax
-		mov    data_1c4c63(%eax),%dl
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C3(%eax),%dl # cryo_agents.RandomName[-1]
 		mov    %eax,(%esp)
 		cmp    $0x20,%eax
 		jae    jump_cfb69
@@ -130369,9 +130398,9 @@ GLOBAL_FUNC(ASM_remove_agent)	/* 0x0CFA64 */
 		mov    (%esp),%ebx
 		mov    (%esp),%eax
 		inc    %ebx
-		mov    data_1c4c64(%eax),%al
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C4(%eax),%al # cryo_agents.RandomName[]
 		mov    %ebx,(%esp)
-		mov    %al,data_1c4c62(%ebx)
+		mov    %al,EXPORT_SYMBOL(cryo_agents)+0x0C2(%ebx) # cryo_agents.RandomName[-2]
 		cmp    $0x20,%ebx
 		jb     jump_cfb4e
 	jump_cfb69:
@@ -130434,7 +130463,7 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		cmp    $0x1f,%eax
 		jg     jump_cfd80
 		and    $0xffa75fff,%esi
-		mov    %edx,cryo_agents(,%eax,4)
+		mov    %edx,EXPORT_SYMBOL(cryo_agents)(,%eax,4)
 		xor    %eax,%eax
 	jump_cfc02:
 		mov    $0x1,%ebx
@@ -130444,10 +130473,10 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		je     jump_cfc46
 		xor    %ecx,%ecx
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%cl # cryo_agents.NumAgents
-		mov    cryo_agents(,%ecx,4),%ebp
+		mov    EXPORT_SYMBOL(cryo_agents)(,%ecx,4),%ebp
 		or     %ebx,%ebp
 		mov    %al,%bl
-		mov    %ebp,cryo_agents(,%ecx,4)
+		mov    %ebp,EXPORT_SYMBOL(cryo_agents)(,%ecx,4)
 		inc    %bl
 		xor    %ecx,%ecx
 		mov    %bl,%cl
@@ -130475,35 +130504,35 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		jb     jump_cfc51
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
-		testb  $0x20,cryo_agents(,%eax,4)
+		testb  $0x20,EXPORT_SYMBOL(cryo_agents)(,%eax,4)
 		je     jump_cfc86
 		mov    %eax,%edx
 		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E6(%edx,%eax,4) # cryo_agents.FourPacks + 2
 	jump_cfc86:
 		xor    %edx,%edx
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%dl # cryo_agents.NumAgents
-		testb  $0x8,data_1c4ba1(,%edx,4)
+		testb  $0x8,EXPORT_SYMBOL(cryo_agents)+0x001(,%edx,4) # cryo_agents.Weapons + 1
 		je     jump_cfca2
 		mov    %edx,%eax
 		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E4(%edx,%eax,4) # cryo_agents.FourPacks + 0
 	jump_cfca2:
 		xor    %edx,%edx
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%dl # cryo_agents.NumAgents
-		testb  $0x10,data_1c4ba1(,%edx,4)
+		testb  $0x10,EXPORT_SYMBOL(cryo_agents)+0x001(,%edx,4) # cryo_agents.Weapons + 1
 		je     jump_cfcbe
 		mov    %edx,%eax
 		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E5(%edx,%eax,4) # cryo_agents.FourPacks + 1
 	jump_cfcbe:
 		xor    %edx,%edx
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%dl # cryo_agents.NumAgents
-		testb  $0x4,data_1c4ba1(,%edx,4)
+		testb  $0x4,EXPORT_SYMBOL(cryo_agents)+0x001(,%edx,4) # cryo_agents.Weapons + 1
 		je     jump_cfcda
 		mov    %edx,%eax
 		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E8(%edx,%eax,4) # cryo_agents.FourPacks + 4
 	jump_cfcda:
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
-		testb  $0x2,data_1c4ba1(,%eax,4)
+		testb  $0x2,EXPORT_SYMBOL(cryo_agents)+0x001(,%eax,4) # cryo_agents.Weapons + 1
 		je     jump_cfcf5
 		mov    %eax,%edx
 		movb   $0x1,EXPORT_SYMBOL(cryo_agents)+0x0E7(%edx,%eax,4) # cryo_agents.FourPacks + 3
@@ -130511,7 +130540,7 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		xor    %eax,%eax
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%al # cryo_agents.NumAgents
 		xor    %edx,%edx
-		mov    %di,data_1c4c20(,%eax,2)
+		mov    %di,EXPORT_SYMBOL(cryo_agents)+0x080(,%eax,2) # cryo_agents.Mods[]
 		call   ac_LbRandomAnyShort
 		mov    %ax,%dx
 		mov    $0x11,%ebx
@@ -130523,10 +130552,10 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 		mov    $0x1,%eax
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%cl # cryo_agents.NumAgents
 		shl    %cl,%eax
-		mov    data_1c4c60,%ebx
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C0,%ebx # cryo_agents.Sex
 		not    %eax
 		and    %eax,%ebx
-		mov    %ebx,data_1c4c60
+		mov    %ebx,EXPORT_SYMBOL(cryo_agents)+0x0C0 # cryo_agents.Sex
 		jmp    jump_cfd68
 	jump_cfd3e:
 		inc    %eax
@@ -130536,10 +130565,10 @@ GLOBAL_FUNC(ASM_add_agent)	/* 0x0CFBD8 */
 	jump_cfd4d:
 		mov    $0x1,%eax
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%cl # cryo_agents.NumAgents
-		mov    data_1c4c60,%edx
+		mov    EXPORT_SYMBOL(cryo_agents)+0x0C0,%edx # cryo_agents.Sex
 		shl    %cl,%eax
 		or     %eax,%edx
-		mov    %edx,data_1c4c60
+		mov    %edx,EXPORT_SYMBOL(cryo_agents)+0x0C0 # cryo_agents.Sex
 	jump_cfd68:
 		mov    EXPORT_SYMBOL(cryo_agents)+0x184,%ch # cryo_agents.NumAgents
 		xor    %ah,%ah
@@ -131125,7 +131154,7 @@ GLOBAL_FUNC(ASM_do_unkn1_CANCEL)	/* 0x0D33E8 */
 		push   %edx
 		mov    $0x1,%ah
 		mov    $0x63,%dl
-		mov    %ah,reload_background_flag
+		mov    %ah,EXPORT_SYMBOL(reload_background_flag)
 		mov    %dl,screentype
 		xor    %al,%al
 		pop    %edx
@@ -131556,54 +131585,12 @@ nav_rulesA2B:	/* 0x1550D0 */
 
 GLOBAL (selected_triangulation_no)	/* 0x1550EC */
 		.ascii  "\xff\xff\xff\xff"
-/* uint8_t tag_current
+/* sbyte tag_current = -1;
  */
 GLOBAL (tag_current)	/* 0x1550F0 */
 		.byte	0xff
 		.align	4
 
-		.ascii  "\xff\xff\xff\xff"
-		.ascii  "\xff\xff\xff\xff\xff\xff\xff\xff"
-		.ascii  "\x01\x00\x00\x00\x01\x00\x01\x00"
-		.ascii  "\xf6\xff\xf6\xff\xff\xff\x00\x00"
-GLOBAL (word_155110)	/* 0x155110 */
-		.ascii  "\x04\x01\x6e\x00\x24\x01\xa0\x00"
-		.ascii  "\x46\x01\xc0\x00"
-GLOBAL (byte_15511C)	/* 0x15511C */
-		.byte	0x1
-data_15511d:
-		.byte	0x0
-GLOBAL (word_15511E)	/* 0x15511E */
-		.ascii  "\xff\xff"
-GLOBAL (controls_hlight_gkey)	/* 0x155120 */
-		.ascii  "\x01\x01\x01\x00"
-GLOBAL (byte_155124)	/* 0x155124 */
-		.ascii  "\x01\x11\x21\x27\x3f\x94\x00\x00"
-GLOBAL (byte_15512C)	/* 0x15512C */
-		.ascii  "\x08\x08\x03\x0c\x08\x04\x00\x00"
-		.ascii  "\xff\x79\x03\x00"
-GLOBAL (net_baudrate_text)	/* 0x155138 */
-		.ascii  "19200"
-		.short  0x0
-		.byte	0x0
-GLOBAL (net_proto_param_text)	/* 0x155140 */
-		.string "0000"
-		.ascii  "\x00\x00\x00"
-		.string "100%"
-		.ascii  "\x00\x00\x00"
-GLOBAL (unkn_rate)	/* 0x155150 */
-		.byte	0x0
-		.ascii  "\x4b\x00\x00"
-		.align  4
-
-GLOBAL (research_on_weapons)	/* 0x155168 */
-		.byte	0x1
-GLOBAL (map_hl_city_id)	/* 0x155169 */
-		.byte	0xff
-GLOBAL (selected_city_id)	/* 0x15516A */
-		.byte	0xff
-GLOBAL (selected_netscan_objective)	/* 0x15516B */
-		.byte	0xff
 GLOBAL (selected_net_session)
 		.byte	0xff
 GLOBAL (selected_net_user)
@@ -131697,33 +131684,8 @@ data_1556f8:
 data_1556fc:
 		.ascii  "\x00\x40\x00\x00"
 data_155700:
-		.ascii  "\x00\x04"
-data_155702:
-		.short  0x0
-GLOBAL (data_155704)
-		.ascii  "\xff\xff"
-		.ascii  "\xff\xff"
+		.ascii  "\x00\x04\x00\x00"
 		.align  4
-
-GLOBAL (word_155744)	/* 0x155744 */
-		.ascii  "\xfb\xff"
-		.ascii  "\xfb\xff"
-		.ascii  "\xfb\xff"
-		.ascii  "\xfb\xff"
-		.ascii  "\xfb\xff"
-		.ascii  "\xfb\xff"
-GLOBAL (starting_cash_amounts)	/* 0x155750 */
-		.ascii  "\x20\x4e\x00\x00\x50\xc3\x00\x00"
-		.ascii  "\x40\x0d\x03\x00\x20\xa1\x07\x00"
-		.ascii  "\x80\x84\x1e\x00\x40\x4b\x4c\x00"
-		.ascii  "\x00\x2d\x31\x01\x00\xe1\xf5\x05"
-GLOBAL (serial_speeds)	/* 0x155770 */
-		.ascii  "\x80\x25\x00\x00\x40\x38\x00\x00"
-		.ascii  "\x00\x4b\x00\x00\x80\x70\x00\x00"
-		.ascii  "\x00\x96\x00\x00\x00\xe1\x00\x00"
-		.ascii  "\x00\x2c\x01\x00\x00\xc2\x01\x00"
-		.ascii  "\x01\x00\x00\x00"
-
 
 aGroupDTrucedWi:	/* 0x15BEB0 */
 		.string " group %d truced with group %d"
@@ -131975,12 +131937,9 @@ data_177148:
 data_177150:
 		.fill   0x334
 
-GLOBAL (unknmsg_str)	/* 0x177484 */
-		.fill   0x64
-GLOBAL (word_1774E8)	/* 0x1774E8 */
+GLOBAL (word_1774E8)	/* 0x1774E8 no function - remove pending */
 		.fill   0x258
-GLOBAL (navi2_unkn_counter)	/* 0x177740 */
-		.long	0x0
+
 GLOBAL (engine_mem_alloc_ptr)	/* 0x177744 */
 		.long	0x0
 GLOBAL (scratch_malloc_mem)	/* 0x177748 */
@@ -132032,35 +131991,10 @@ data_17ee8a:
 GLOBAL (path_count)	/* 0x17EE8C */
 		.long	0x0
 
-GLOBAL (input_char)	/* 0x17FA50 */
+data_17fa52:	/* 0x17fa52 remove pending */
 		.short  0x0
-data_17fa52:
-		.short  0x0
-
-GLOBAL (word_17FA58)	/* 0x17FA58 */
-		.fill   0x320
-
-GLOBAL (ingame)	/* 0x1807D4 */
-		.fill   0x9A5
-
-
-GLOBAL (player_message_text)	/* 0x180CC9 */
-		.fill   0x80
-		.fill   0x80
-		.fill   0x80
-		.fill   0x80
-		.fill   0x80
-		.fill   0x80
-		.fill   0x80
-		.fill   0x80
-
-GLOBAL (player_message_timer)	/* 0x1810C9 */
-		.fill   0x8
 		.align	4
 
-GLOBAL (user_sel_brightness)	/* 0x1810DA */
-		.short  0x0
-		.fill   0x8
 GLOBAL (game_level_unique_id)	/* 0x1810E4 */
 		.short  0x0
 GLOBAL (game_level_unkn1)	/* 0x1810E6 */
@@ -132136,46 +132070,7 @@ data_19aae7:
 		.byte	0x0
 GLOBAL (level_def)	/* 0x19AAE8 */
 level_def__PlayableGroups:
-		.fill   0x29
-data_19ab11:
-		.byte	0x0
-data_19ab12:
-		.byte	0x0
-data_19ab13:
-		.byte	0x0
-GLOBAL (bul_starts)	/* 0x19AB14 */
-		.byte	0x0
-data_19ab15:
-		.fill   0x1f3f
-GLOBAL (linear_vec_pal)	/* 0x19CA54 */
-		.fill   0x100
-
-GLOBAL (word_19CB58)	/* 0x19CB58 */
-		.fill   0x84
-
-		.long	0x0
-
-GLOBAL (nsta_size)	/* 0x19CC60 */
-		.short  0x0
-data_19cc62:
-		.short  0x0
-GLOBAL (word_19CC64)	/* 0x19CC64 */
-		.short  0x0
-GLOBAL (word_19CC66)	/* 0x19CC66 */
-		.short  0x0
-GLOBAL (super_quick_light)	/* 0x19CC68 */
-		.fill   0x4000 /* 2 * (RENDER_AREA_MAX + 1) * (RENDER_AREA_MAX + 1) */
-
-GLOBAL (keyboard_mode_direct)	/* 0x19EC6E */
-		.byte	0x0
-
-data_19ec70:
-		.byte	0x0
-
-GLOBAL (unkn_flags_01)	/* 0x19EC72 */
-		.long	0x0
-GLOBAL (display_mode)	/* 0x19EC76 */
-		.long	0x0
+		.fill   0x2c
 
 GLOBAL (things_used)	/* 0x19EC7E */
 		.short  0x0
@@ -132221,54 +132116,8 @@ data_19f1a4:
 data_19f1a6:
 		.byte	0x0
 data_19f1a7:
-		.fill   0x287
-data_19f42e:
-		.short  0x0
-GLOBAL (mission_open)	/* 0x19F430 */
-		.short  0x0
-data_19f432:
-		.short  0x0
-data_19f434:
-		.fill   0x5e
-data_19f492:
-		.short  0x0
-GLOBAL (mission_state)	/* 0x19F494 */
-		.short  0x0
-data_19f496:
-		.short  0x0
-data_19f498:
-		.fill   0x60
-
-GLOBAL (pktrec_mode)	/* 0x19F50C */
-		.byte	0x0
+		.fill   0x289
 		.align  4
-
-GLOBAL (game_used_objectives)		/* 0x19f518 */
-		.long	0x0
-GLOBAL (game_used_lvl_objectives)	/* 0x19f51c */
-		.long	0x0
-GLOBAL (game_level_miscs)			/* 0x19f520 */
-		.long	0x0
-GLOBAL (game_objectives)			/* 0x19f524 */
-		.long	0x0
-GLOBAL (game_col_vects)				/* 0x19f528 */
-		.long	0x0
-
-GLOBAL (game_col_vects_list)		/* 0x19f530 */
-		.long	0x0
-
-GLOBAL (game_user_heap)				/* 0x19f538 */
-		.long	0x0
-GLOBAL (game_my_big_map)			/* 0x19f53c */
-		.long	0x0
-
-GLOBAL (game_col_columns)			/* 0x19f550 */
-		.long	0x0
-GLOBAL (execute_commands)			/* 0x19F554 */
-		.fill   0x1e4
-GLOBAL (debug_hud_collision)	/* 0x19F738 */
-		.byte	0x0
-		.align  2
 
 GLOBAL (unkn_full_lights)	/* 0x19F9BC */
 		.short  0x0
@@ -132295,13 +132144,6 @@ GLOBAL (sthings)	/* 0x1A09E0 */
 		.long	0x0
 		.align  4
 
-GLOBAL (gui_strings)	/* 0x1A5888 */
-		.fill   8000
-
-GLOBAL (turns_delta)	/* 0x1A62D8 */
-		.long	0x0
-GLOBAL (gameturn)	/* 0x1A62DC */
-		.long	0x0
 /* PlayerInfo players[8];
  */
 GLOBAL (players)	/* 0x1a62e0 players+0x000  */
@@ -132382,33 +132224,7 @@ data_1a7308:
 		.long	0x0
 bangdetailmask:	/* 0x1A730C */
 		.short  0x0
-data_1a730e:
 		.short  0x0
-
-GLOBAL (prev_tick_time)	/* 0x1A7318 */
-		.long	0x0
-GLOBAL (prev_gameturn)	/* 0x1A731C */
-		.long	0x0
-GLOBAL (curr_tick_time)	/* 0x1A7320 */
-		.long	0x0
-GLOBAL (active_flags_general_unkn01)	/* 0x1A7324 */
-		.long	0x0
-
-GLOBAL (navi2_unkn_counter_max)	/* 0x1A732C */
-		.long	0x0
-
-GLOBAL (shpackets)	/* 0x1aa214 */
-		.short  0x0
-data_1aa216:
-		.short  0x0
-data_1aa218:
-		.short  0x0
-data_1aa21a:
-		.short  0x0
-data_1aa21c:
-		.short  0x0
-data_1aa21e:
-		.fill   0x4e
 
 GLOBAL (data_1aa330)	/* 0x1aa330 */
 		.short  0x0
@@ -132922,102 +132738,13 @@ GLOBAL (old_screentype)	/* 0x1C4AA4 */
 		.byte	0x0
 GLOBAL (screentype)	/* 0x1C4AA5 */
 		.ascii  "\x00\x00\x00"
-
-GLOBAL (options_title_text)	/* 0x1C4B4C */
-		.fill   0x14
-GLOBAL (map_editor)	/* 0x1C4B60 */
-		.long	0x0
-GLOBAL (brief_netscan_cost_text)	/* 0x1C4B64 */
-		.fill   0x14
-GLOBAL (start_into_mission)	/* 0x1c4b78 */
-		.byte	0x0
-GLOBAL (map_from_mission)	/* 0x1C4B79 */
-		.byte	0x0
-/* 0 - slow, 1 - fast */
-GLOBAL (game_projector_speed)	/* 1c4b7a */
-		.byte	0x0
-GLOBAL (enter_game)	/* 0x1C4B7B */
-		.byte	0x0
-/*
- * 0 - none
- * 1 - multinet access
- * 2 - file storage
- * 3 - interface
- * 4 - audio
- * 5 - visual depth
- * 6 - logout (temporary)
- */
-GLOBAL (game_system_screen)	/* 0x1c4b7c */
-		.byte	0x0
-GLOBAL (redraw_screen_flag)	/* 0x1C4B7D */
-		.byte	0x0
-GLOBAL (net_unkn_pos_02)	/* 0x1C4B7E */
-		.byte	0x0
-GLOBAL (byte_1C4B7F)
-		.byte	0x0
-GLOBAL (reload_background_flag)	/* 0x1C4B80 */
-		.byte	0x0
-/* bool */
-GLOBAL (game_high_resolution)	/* 0x1c4b81 */
-		.byte   0x0
-		.ascii  "\x00\x00"
-GLOBAL (dword_1C4B84)	/* 0x1C4B84 */
-		.long	0x0
-GLOBAL (dword_1C4B88)	/* 0x1C4B88 */
-		.long	0x0
-GLOBAL (equip_cost_text)	/* 0x1C4B8C */
-		.fill   0x10
-data_1c4b9c:
-		.long	0x0
-GLOBAL (cryo_agents)	/* 0x1C4BA0 */
-		.byte	0x0
-data_1c4ba1:
-		.fill   0x7d
-data_1c4c1e:
-		.short  0x0
-data_1c4c20:
-		.byte	0x0
-data_1c4c21:
-		.byte	0x0
-data_1c4c22:
-		.short  0x0
-data_1c4c24:
-		.short  0x0
-data_1c4c26:
-		.fill   0x3a
-data_1c4c60:
-		.short  0x0
-data_1c4c62:
-		.byte	0x0
-data_1c4c63:
-		.byte	0x0
-data_1c4c64:
-		.fill   0x1b
-data_1c4c7f:
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.byte	0x0
-		.fill   0x9a
-		.short  0x0
-		.byte	0x0
 		.align  4
 
-GLOBAL (refresh_equip_list)	/* 0x1C5298 */
-		.short  0x0
-data_1c529a:
-		.byte	0x0
-data_1c529b:
-		.byte	0x0
-GLOBAL (dword_1C529C)	/* 0x1C529C */
-		.fill   0x18
-GLOBAL (landmap_2B4)	/* 0x1C52B4 */
+GLOBAL (dword_1C4B84)	/* 0x1C4B84 no function - remove pending */
 		.long	0x0
+GLOBAL (dword_1C4B88)	/* 0x1C4B88 no function - remove pending  */
+		.long	0x0
+
 GLOBAL (num_cities)	/* 0x1C52B8 */
 		.short  0x0
 word_1C52BA:	/* 0x1C52BA */
@@ -133198,15 +132925,11 @@ data_1c865c:
 		.fill   0x400
 data_1c8a5c:
 		.fill   0x2104
-GLOBAL (scanner_next_key_no)	/* 0x1CAB60 */
-		.ascii  "\x00\x00\x00"
-data_1cab63:
-		.byte	0x0
+		.align  4
+
 GLOBAL (low_trans_grey_pal_bright)	/* 0x1CAB64 */
-		.fill   0x423
-data_1caf87:
-		.byte	0x0
-SCANNER_map:	/* 0x1CAF88 */
+		.fill   0x424
+GLOBAL (SCANNER_map)	/* 0x1CAF88 */
 		.fill   0xdc
 GLOBAL (SCANNER_dw064)
 		.long	0x0
@@ -133234,7 +132957,6 @@ GLOBAL (SCANNER_cont)
 		.byte	0x0
 GLOBAL (SCANNER_data)	/* 0x1CB088 */
 		.fill   0xffff
-data_1db087:
 		.byte	0x0
 GLOBAL (low_trans_grey_bright_limit)	/* 0x1DB088 */
 		.fill   0x100

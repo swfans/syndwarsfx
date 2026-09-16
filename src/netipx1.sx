@@ -623,7 +623,7 @@ ipx_get_players_packets_:	/* 0x0F5E2C */
 		mov    %eax,0xcc(%esp)
 		xor    %eax,%eax
 		mov    0x2b(%esi),%al
-		call   ipx_send_last_packet_
+		call   ac_ipx_send_last_packet
 		jmp    jump_f6184
 	jump_f60e4:
 		cmpb   $0x0,EXPORT_SYMBOL(player_loggon)
@@ -868,7 +868,7 @@ ipx_send_packet_to_all_:	/* 0x0F624C */
 
 
 /*----------------------------------------------------------------*/
-ipx_send_last_packet_:	/* 0x0F65EC */
+GLOBAL_FUNC(ASM_ipx_send_last_packet)	/* 0x0F65EC */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -1415,7 +1415,7 @@ GLOBAL_FUNC(ASM_ipx_stop_network)	/* 0x0F6CA4 */
 		xor    %edx,%edx
 		jmp    jump_f6cf1
 	jump_f6ceb:
-		call   ipx_send_last_packet_
+		call   ac_ipx_send_last_packet
 		inc    %edx
 	jump_f6cf1:
 		movswl %dx,%eax

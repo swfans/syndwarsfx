@@ -134,6 +134,7 @@ void (*my_build_packet)(struct Packet *packet, ushort action, u32 param1, s32 x,
 extern TbFileHandle packet_rec_fh;
 ushort packet_rec_no = 0;
 ubyte packet_rec_use_levelno = 0;
+ubyte pktrec_mode = 0;
 
 const char * get_packet_action_name(ushort atype)
 {

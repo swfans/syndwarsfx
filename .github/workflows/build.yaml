@@ -73,9 +73,9 @@ jobs:
 
       - name: Configure
         env:
-          CFLAGS: "-m32"
-          CXXFLAGS: "-m32"
-          LDFLAGS: "-m32"
+          CFLAGS: "-m32 -fno-PIC -fno-PIE"
+          CXXFLAGS: "-m32 -fno-PIC -fno-PIE"
+          LDFLAGS: "-m32 -fno-PIC -fno-PIE"
           PKG_CONFIG_PATH: "/usr/lib/i386-linux-gnu/pkgconfig"
         run: |
           mkdir -p release; cd release
@@ -181,9 +181,9 @@ jobs:
 
       - name: Configure
         env:
-          CFLAGS: "-m32"
-          CXXFLAGS: "-m32"
-          LDFLAGS: "-m32"
+          CFLAGS: "-m32 -fno-PIC -fno-PIE"
+          CXXFLAGS: "-m32 -fno-PIC -fno-PIE"
+          LDFLAGS: "-m32 -fno-PIC -fno-PIE"
         run: |
           mkdir -p release; cd release
           ../configure --prefix="/" --disable-lb-wscreen-control

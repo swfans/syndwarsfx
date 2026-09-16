@@ -45,7 +45,7 @@
 #include "thing.h"
 #include "swlog.h"
 /******************************************************************************/
-extern struct ShortPacket shpackets[8];
+struct ShortPacket shpackets[8];
 
 /******************************************************************************/
 

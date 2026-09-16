@@ -46,6 +46,8 @@ ubyte default_agent_tiles_z[8] = {
 ushort netgame_agent_pos_x[PLAYERS_LIMIT][4];
 ushort netgame_agent_pos_z[PLAYERS_LIMIT][4];
 
+struct AgentInfo cryo_agents;
+
 ubyte playable_agents;
 /******************************************************************************/
 

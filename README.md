@@ -293,7 +293,7 @@ Next, proceed with the build steps; we will do that in a separate folder.
 
 ```
 mkdir -p release; cd release
-PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --disable-lb-wscreen-control
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CFLAGS="-m32 -fno-PIC -fno-PIE" CXXFLAGS="-m32 -fno-PIC -fno-PIE" LDFLAGS="-m32 -fno-PIC -fno-PIE" ../configure --disable-lb-wscreen-control
 make V=1
 ```
 
@@ -306,12 +306,16 @@ In case you also want a debug build:
 
 ```
 mkdir -p debug; cd debug
-PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -g -O0 -Wall" CXXFLAGS="-m32 -g -O0 -Wall" LDFLAGS="-m32 -g -O0 -Wall" ../configure --disable-lb-wscreen-control
+PKG_CONFIG_PATH="/usr/lib/i386-linux-gnu/pkgconfig" CPPFLAGS="-DDEBUG -D__DEBUG" CFLAGS="-m32 -fno-PIC -fno-PIE -g -O0 -Wall" CXXFLAGS="-m32 -fno-PIC -fno-PIE -g -O0 -Wall" LDFLAGS="-m32 -fno-PIC -fno-PIE -g -O0 -Wall" ../configure --disable-lb-wscreen-control
 make V=1
 ```
 
 Explanation of the parameters:
 
+* The `-fno-PIC -fno-PIE` are disabling compiling Position Independent Code
+  and generating Position Independent Executable. These features are not
+  compatible with the assembly code within this project, especially with
+  the way assembly code calls back to remade C functions.
 * The `-g -O0` flags make it easier to use a debugger like _GDB_ with the
   binary, by storing symbols and disabling code optimizations.
 * The `-Wall` flags enable displaying more warnings during compilation.
@@ -391,7 +395,7 @@ the default mingw64 ones:
 
 ```
 mkdir -p release; cd release
-PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32" CXXFLAGS="-m32" LDFLAGS="-m32" ../configure --prefix=/mingw32 --disable-lb-wscreen-control
+PATH="/mingw32/bin:$PATH" PKG_CONFIG_PATH="/mingw32/lib/pkgconfig" CFLAGS="-m32 -fno-PIC -fno-PIE" CXXFLAGS="-m32 -fno-PIC -fno-PIE" LDFLAGS="-m32 -fno-PIC -fno-PIE" ../configure --prefix=/mingw32 --disable-lb-wscreen-control
 PATH="/mingw32/bin:$PATH" make V=1
 ```
 

@@ -50,7 +50,7 @@ struct ScreenButton controls_save_button = {0};
 struct ScreenButton controls_calibrate_button = {0};
 
 extern ubyte byte_1C4970;
-extern ubyte controls_hlight_gkey;
+ubyte controls_hlight_gkey = 1;
 
 short sheet_columns_x[] = {4, 200, 300};
 
@@ -59,6 +59,8 @@ short sheet_columns_x[] = {4, 200, 300};
  * between entering keyboard key and joystick key.
  */
 ubyte controls_edited_gkey = 0;
+
+ubyte net_unkn_pos_02 = 0;
 
 /******************************************************************************/
 

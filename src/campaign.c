@@ -195,6 +195,9 @@ ubyte background_type = 0;
 struct Mission mission_list[MISSIONS_MAX_COUNT];
 ushort next_mission = 1;
 
+short mission_open[MISSION_STATE_SLOTS_COUNT];
+short mission_state[MISSION_STATE_SLOTS_COUNT];
+
 char mission_name[50] = "None";
 
 char *memload_netscan_text = NULL;
@@ -206,7 +209,8 @@ ushort campaign_strings_len = 0;
 /** Size of mission strings after campaign strings.
  */
 ushort mission_strings_len = 0;
-extern ushort display_mode;
+
+ushort display_mode = 0;
 
 void load_campaigns(void)
 {

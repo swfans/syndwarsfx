@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "febrief.h"
 
+#include <assert.h>
 #include "bfkeybd.h"
 #include "bftext.h"
 #include "bfmath.h"
@@ -31,6 +32,7 @@
 #include "embedanim.h"
 #include "femail.h"
 #include "femain.h"
+#include "feworld.h"
 #include "game_data.h"
 #include "game_options.h"
 #include "guiboxes.h"
@@ -64,7 +66,7 @@ struct ScreenTextBox brief_netscan_box = {0};
 
 struct ScreenBox brief_graphical_box = {0};
 
-extern sbyte selected_netscan_objective;// = -1;
+sbyte selected_netscan_objective = -1;
 
 ubyte brief_state_city_selected = 0;
 ubyte brief_citymap_content = BriCtM_AUTO_SCANNER;
@@ -75,6 +77,8 @@ long mail_num_active_cities = 0;
 
 char *mission_briefing_text = NULL;
 
+char brief_netscan_cost_text[20];
+
 long dword_1C47E0 = 0;
 ubyte byte_1C47E4 = 0;
 short word_1C47E6 = 0;
@@ -84,18 +88,32 @@ short word_1C47E8 = 0;
 
 ubyte accept_mission(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_accept_mission\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    if (open_brief > 0)
+    {
+        change_screen = ChSCRT_WORLDMAP;
+        map_from_mission = 1;
+        old_mission_brief = open_brief;
+    }
+    return 1;
 }
 
 ubyte do_unkn1_CANCEL(ubyte click)
 {
+#if 0
     ubyte ret;
     asm volatile ("call ASM_do_unkn1_CANCEL\n"
         : "=r" (ret) : "a" (click));
     return ret;
+#endif
+    reload_background_flag = 1;
+    screentype = SCRT_99;
+    return 0;
 }
 
 void update_netscan_cost_button(ubyte city_id)
@@ -145,6 +163,8 @@ void reveal_netscan_objective(short nsobv)
 void brief_citymap_readd_scanner_signals(void)
 {
     struct NetscanObjective *p_nsobv;
+
+    assert(selected_netscan_objective >= 0);
 
     p_nsobv = &netscan_objectives[selected_netscan_objective];
     add_netscan_signal_to_scanner(p_nsobv, 1);

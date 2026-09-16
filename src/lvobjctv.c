@@ -249,8 +249,11 @@ const struct TbNamedEnum missions_conf_netscan_objctv_params[] = {
 struct NetscanObjective mission_netscan_objectives[MISSION_NETSCAN_OBV_COUNT];
 ushort next_mission_netscan_objective;
 
-ushort next_objective = 1;
+struct Objective *game_used_objectives = NULL;
 ushort next_used_objective = 1;
+
+struct Objective *game_objectives = NULL;
+ushort next_objective = 1;
 
 extern ulong dword_1C8460;
 extern ulong dword_1C8464;

@@ -30,6 +30,7 @@ extern "C" {
 
 #pragma pack()
 /******************************************************************************/
+extern const uint starting_cash_amounts[];
 
 void init_net_screen_boxes(void);
 void net_sessionlist_clear(void);

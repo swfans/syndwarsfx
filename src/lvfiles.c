@@ -108,6 +108,9 @@ struct QuickLoad quick_load_pc[] = {
   {NULL,				NULL,				 0, 0},
 };
 
+struct LevelMisc *game_level_miscs = NULL;
+
+struct Objective *game_used_lvl_objectives = NULL;
 ushort next_used_lvl_objective = 1;
 
 struct UnknBezEdit *bezier_pts = NULL;

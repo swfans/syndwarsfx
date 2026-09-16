@@ -138,8 +138,6 @@ extern ubyte in_network_game;
 extern ubyte is_single_game;
 extern ubyte cmdln_colour_tables;
 extern ubyte cmdln_param_bcg;
-extern ubyte keyboard_mode_direct;
-extern long map_editor;
 
 extern ubyte login_control__State;
 extern ulong login_control__Money;
@@ -149,9 +147,6 @@ extern ubyte login_control__Faction;
 extern ubyte login_control__Team;
 
 extern ubyte exit_game;
-extern ubyte input_char;
-
-extern ulong active_flags_general_unkn01;
 
 extern long unkn01_downcount;
 extern long unkn01_pos_x;
@@ -162,9 +157,6 @@ extern short current_level;
 
 extern void *engine_mem_alloc_ptr;
 extern u32 engine_mem_alloc_size;
-
-extern long navi2_unkn_counter;
-extern long navi2_unkn_counter_max;
 
 extern ubyte *scratch_buf1;
 
@@ -178,11 +170,6 @@ extern ubyte *spare_map_buffer;
 extern ushort word_176E38;
 
 extern ubyte net_service_started;
-extern ubyte linear_vec_pal[256];
-extern ulong nsta_size;
-
-extern short *dword_1C529C[6];
-extern short *landmap_2B4;
 
 extern ubyte net_host_player_no;
 extern ubyte byte_1C6D4A;
@@ -191,20 +178,16 @@ extern ushort word_1C8446;
 
 extern ubyte old_screentype;
 extern ubyte screentype;
-extern long data_155704;
 extern ubyte data_1c498d;
 extern ubyte mouse_sprite_anim_frame;
 extern char *outro_text_s;
 extern char *outro_text_z;
 extern long data_1dd91c;
-extern ubyte unkn_flags_01;
 extern long outro_credits_enabled;
 extern long outro_unkn02;
 extern long outro_unkn03;
 extern long dev_credits_groups_count;
 extern s32 dword_1DDB68;
-
-extern ubyte debug_hud_collision;
 
 extern char *dev_credits_desc[];
 extern char *dev_credits_groups[];
@@ -214,16 +197,13 @@ extern sbyte mission_result;
 extern ubyte scientists_lost;
 extern ulong new_mods_researched;
 extern ulong new_weapons_researched;
-extern ubyte redraw_screen_flag;
 
 extern sbyte selected_net_session;
 extern sbyte selected_net_user;
 extern ubyte net_player_teams[8];
 extern long dword_153194;
-extern ulong starting_cash_amounts[8];
 
 extern ubyte group_factions[8];
-extern ubyte net_unkn_pos_02;
 extern ubyte data_1c4aa2;
 extern ubyte start_into_mission;
 extern ubyte edit_flag;
@@ -232,10 +212,8 @@ extern ubyte restore_savegame;
 extern ubyte current_drawing_mod;
 extern ubyte mod_draw_states[4];
 extern ubyte new_current_drawing_mod;
-extern ubyte refresh_equip_list;
 extern ubyte flic_mods[5];
 extern ubyte old_flic_mods[5];
-extern ubyte reload_background_flag;
 
 extern struct LevelDef level_def;
 
@@ -257,12 +235,7 @@ extern ubyte game_gfx_deep_radar;
 extern ubyte byte_1C4A6F;
 
 extern char net_unkn2_text[];
-extern char brief_netscan_cost_text[];
 extern char *misc_text[5];
-
-extern ubyte game_system_screen;
-
-extern ubyte execute_commands;
 
 // To be replaced by LbArcTanAngle()
 short arctan(int dx, int dz);

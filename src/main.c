@@ -23,6 +23,7 @@
 #include "packet.h"
 #include "swlog.h"
 #include "thing.h"
+#include "tngcolisn.h"
 #include "util.h"
 
 #if defined WIN32 && defined main

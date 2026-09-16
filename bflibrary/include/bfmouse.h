@@ -50,6 +50,12 @@ typedef void (*TbMouseToScreen)(struct TbPoint *);
 
 extern volatile TbBool lbMouseInstalled;
 extern volatile TbBool lbMouseOffline;
+
+/** Move the mouse on screen outside of standard screen swaps.
+ * If the OS uses interrupts or async events to control mouse position, this
+ * option allows to update the cursor on screen every time mouse position is
+ * updated, rather than wait for the next swap.
+ */
 extern volatile TbBool lbInteruptMouse;
 
 /** Auto-resets mouse position to the center of the screen.

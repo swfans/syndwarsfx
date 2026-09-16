@@ -66,7 +66,8 @@ ubyte byte_1DDC40 = 0;
  */
 ubyte current_frame = 0;
 
-extern short word_15511E; // = -1;
+short word_15511E = -1;
+
 extern ubyte byte_155174; // = 166;
 extern ubyte byte_155175[];
 extern ubyte byte_155180; // = 109;

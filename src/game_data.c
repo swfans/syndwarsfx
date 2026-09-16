@@ -57,7 +57,7 @@ static char game_dir_language[64] = "language/eng";
 
 u32 scratch_malloc_size = 0;
 
-extern ubyte *game_user_heap;
+ubyte *game_user_heap = NULL;
 
 /******************************************************************************/
 

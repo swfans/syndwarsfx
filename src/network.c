@@ -78,6 +78,7 @@ extern struct TbUnknCommSt netunkst_1E81E0;
 
 extern struct TbSerialDev *dword_1E85E3;
 
+extern int last_pkt_size;
 extern ulong ipx_send_packet_count[8][8];
 extern ulong ipx_got_player_send_packet_count[8];
 extern struct TbIPXPlayerHeader loggon_header;
@@ -541,7 +542,7 @@ int ipx_join_session(struct IPXSessionList *p_ipxsess, char *a2)
         {
             int ret2;
             ret2 = 0;
-            if (NetworkServicePtr.F.SessionJoin)
+            if (NetworkServicePtr.F.SessionJoin != NULL)
                 ret2 = NetworkServicePtr.F.SessionJoin();
             if (ret2 == -7)
                 return ret2;
@@ -613,6 +614,12 @@ int ipx_exchange_packets(void *a1, int a2)
     return ret;
 }
 
+void ipx_send_last_packet(int a1)
+{
+    asm volatile ("call ASM_ipx_send_last_packet\n"
+        : : "a" (a1) );
+}
+
 void ipx_shutdown(ushort a1)
 {
     struct TbIPXHandler *p_ipxhndl;
@@ -664,10 +671,77 @@ void ipx_openup_listeners(void)
 
 void ipx_stop_network(int plyr)
 {
+#if 0
     LOGDBG("Starting");
     asm volatile ("call ASM_ipx_stop_network\n"
         : : "a" (plyr) );
     return;
+#endif
+    TbClockMSec start_time, curr_time;
+    int my_plyr;
+    int i;
+
+    my_plyr = IPXPlayer.Header.field_2B;
+    LOGDBG("Starting, my_plyr=%d plyr=%d", (int)my_plyr, (int)plyr);
+    if (my_plyr == plyr)
+    {
+        if ((IPXHandler->field_D == plyr) && (IPXPlayer.Data.num_players > 1))
+        {
+            start_time = LbTimerClock();
+            while (1)
+            {
+                curr_time = LbTimerClock();
+                for (i = 0; i < 8; i++) {
+                    ipx_send_last_packet(i);
+                }
+                if (NetworkServicePtr.F.netsvcfunc_unkn20 != NULL)
+                    NetworkServicePtr.F.netsvcfunc_unkn20();
+
+                if (curr_time - start_time > TIMEOUT_MSEC(50000))
+                    break;
+                LbDoMultitasking();
+            }
+        }
+        IPXHandler->SessionActive = 0;
+        IPXPlayer.Header.field_2A = 0;
+        IPXPlayer.Header.field_26 = 0;
+        IPXPlayer.Header.field_2C = 0;
+        IPXPlayer.Data.field_10E = 0;
+        IPXPlayer.Header.field_2B = 0;
+        IPXPlayer.Data.num_players = 0;
+        LbMemorySet(&IPXPlayer.Data, 0, 0xE0u);
+        LbMemorySet(IPXPlayer.Header.field_4, 0, sizeof(IPXPlayer.Header.field_4));
+    }
+    else
+    {
+        ipx_got_player_send_packet_count[plyr] = 0;
+        ipx_send_packet_count[plyr][plyr] = 0;
+        ipx_send_packet_count[my_plyr][plyr] = 0;
+
+        if (IPXPlayer.Data.num_players > 0)
+        {
+          IPXPlayer.Data.num_players--;
+          LbMemorySet(&IPXPlayer.Data.Data3.players[plyr], 0, sizeof(struct TbIPXOnePlayer));
+
+          if (plyr == IPXHandler->field_D)
+          {
+            for (i = 0; i < 8; i++)
+            {
+                if (IPXPlayer.Data.Data3.players[i].field_1A)
+                {
+                    IPXHandler->field_D = i;
+                    break;
+                }
+            }
+            last_pkt_size = 0;
+            if (IPXHandler->field_D == IPXPlayer.Header.field_2B)
+                if (IPXPlayer.Header.field_26 > 0)
+                    IPXPlayer.Header.field_26--;
+          }
+        }
+        if (NetworkServicePtr.F.netsvcfunc_unkn20 != NULL)
+            NetworkServicePtr.F.netsvcfunc_unkn20();
+    }
 }
 
 TbResult ipx_get_player_name(char *name, int plyr)

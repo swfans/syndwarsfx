@@ -265,7 +265,6 @@ extern struct PeepStat peep_type_stats[];
 extern ushort people_frames[SubTT_PERS_COUNT][22];
 
 extern ushort word_1531DA;
-extern ushort word_17FA58[400];
 
 extern ushort head_my_path;
 extern ushort path_count;

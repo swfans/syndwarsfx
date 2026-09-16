@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "scandraw.h"
 
+#include <stdlib.h>
 #include "bfanywnd.h"
 #include "bfendian.h"
 #include "bfgentab.h"
@@ -40,6 +41,9 @@
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
+
+#define ARC_POINTS 5
+#define ARC_ANGLE 150
 
 enum ScannerArrowModes {
     SCANNER_ARROW_NEAREST_TARGET = 0,
@@ -397,7 +401,7 @@ const struct TbPoint circle_line_sz5[] = {
 };
 #define circle_line_sz5_count (sizeof(circle_line_sz5)/sizeof(circle_line_sz5[0]))
 
-extern long scanner_next_key_no;
+s32 scanner_next_key_no;
 
 extern long SCANNER_dw064;
 extern long SCANNER_dw068;
@@ -1260,9 +1264,94 @@ void SCANNER_draw_circle_point7_flowing(int x, int y, TbPixel col)
 
 void SCANNER_process_arcpoints(void)
 {
+#if 0
     asm volatile (
       "call ASM_SCANNER_process_arcpoints\n"
         :  :  : "eax" );
+    return;
+#endif
+    int arc_idx;
+
+    dword_1DB1A0 = 0;
+    for (arc_idx = 0; arc_idx < SCANNER_ARC_COUNT; arc_idx++)
+    {
+        struct Arc *p_arc;
+        int base_i;
+        int k;
+
+        p_arc = &ingame.Scanner.Arc[arc_idx];
+        if (p_arc->Counter == 0)
+            continue;
+
+        dword_1DB1A0++;
+
+        // Advance every arc point by its previously computed per-turn velocity
+        base_i = arc_idx * ARC_POINTS;
+        for (k = 0; k < ARC_POINTS; k++)
+        {
+            struct scanstr3 *p_pt;
+
+            p_pt = &SCANNER_arcpoint[base_i + k];
+            p_pt->u1 += p_pt->u2;
+            p_pt->v1 += p_pt->v2;
+        }
+
+        p_arc->Counter--;
+        if (p_arc->Counter != 0)
+            continue;
+
+        // Counter depleted - re-generate the arc points and restart the timer.
+        // Spread the ARC_POINTS points across a small angle range.
+        {
+            int dx, dz, abs_dx, abs_dz;
+            int mag;
+            short angle;
+
+            dx = p_arc->X2 - p_arc->X1;
+            dz = p_arc->Z2 - p_arc->Z1;
+            abs_dx = abs(dx);
+            abs_dz = abs(dz);
+
+            // Fast alpha-max-plus-beta-min approximation of hypot(dx, dz):
+            // mag ~= max*(1 - 1/32 - 1/128) + min*(1/4 + 1/8 + 1/64 + 1/128)
+            if (abs_dx >= abs_dz) {
+                mag = (abs_dx - (abs_dx >> 5) - (abs_dx >> 7))
+                    + (abs_dz >> 2) + (abs_dz >> 3) + (abs_dz >> 6) + (abs_dz >> 7);
+            } else {
+                mag = (abs_dz - (abs_dz >> 5) - (abs_dz >> 7))
+                    + (abs_dx >> 2) + (abs_dx >> 3) + (abs_dx >> 6) + (abs_dx >> 7);
+            }
+
+            angle = arctan(dx, dz);
+
+            mag <<= 7;
+            mag >>= 8;
+
+            angle -= 2 * (ARC_ANGLE / ARC_POINTS);
+            for (k = 0; k < ARC_POINTS; k++)
+            {
+                struct scanstr3 *p_pt;
+                ushort widx;
+                long sin_v, cos_v;
+
+                p_pt = &SCANNER_arcpoint[base_i + k];
+                widx = angle & (2 * LbFPMath_PI - 1);
+                sin_v = lbSinTable[widx];
+                cos_v = -lbSinTable[widx + LbFPMath_PI / 2];
+
+                p_pt->u1 = p_arc->X1;
+                p_pt->v1 = p_arc->Z1;
+                p_pt->u2 = (sin_v * 0x200) >> 8;
+                p_pt->v2 = (cos_v * 0x200) >> 8;
+
+                angle += ARC_ANGLE / ARC_POINTS;
+            }
+
+            p_arc->Period = mag >> 16;
+            p_arc->Counter = p_arc->Period;
+            p_arc->ColourIsUnused = colour_lookup[1];
+        }
+    }
 }
 
 void SCANNER_draw_orientation_arrow(int pos_x1, int pos_y1, int range, int angle)
@@ -1500,9 +1589,9 @@ void SCANNER_draw_arcs(int pos_mx, int pos_mz, int sh_x, int sh_y)
             map_coords_to_scanner(&base_x, &base_y, sh_x, sh_y, bsh_x, bsh_y);
         }
 
-        base_i = bn * 5;
+        base_i = bn * ARC_POINTS;
 
-        for (i = 1; i < 5; i++)
+        for (i = 1; i < ARC_POINTS; i++)
         {
             int bsh_x, bsh_y;
             int ri;

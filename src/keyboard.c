@@ -47,6 +47,8 @@ ulong buffered_keys[KEYBOARD_BUFFER_SIZE];
 ulong buffered_keys_read_index;
 ulong buffered_keys_write_index;
 
+ubyte keyboard_mode_direct = 0;
+
 ubyte joy_types_available[] = {
   0, 0, 0, 0, 0, 5, 6, 0,
   0, 9, 0, 0,12,13, 0, 0,

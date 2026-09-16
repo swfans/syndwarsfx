@@ -54,8 +54,13 @@ struct ColVectList { // sizeof=6
 /******************************************************************************/
 extern struct ColVectList *game_col_vects_list;
 extern ushort next_vects_list;
+
 extern struct ColVect *game_col_vects;
 extern ushort next_col_vect;
+
+extern ubyte debug_hud_collision;
+
+/******************************************************************************/
 
 void set_dome_col(struct Thing *p_building, ubyte flag);
 

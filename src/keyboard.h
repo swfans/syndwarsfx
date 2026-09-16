@@ -136,6 +136,8 @@ extern ushort kbkeys[GKey_KEYS_COUNT];
  */
 extern JoyButtonSet jskeys[GKey_KEYS_COUNT];
 
+extern ubyte keyboard_mode_direct;
+
 /** Type of joystick selected with controls.
  */
 extern ubyte ctl_joystick_type;

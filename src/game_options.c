@@ -30,6 +30,9 @@
 #include "swlog.h"
 
 /******************************************************************************/
+struct InGame ingame;
+
+short user_sel_brightness = 0;
 
 TbPixel deep_radar_surface_col = 0xd8;
 TbPixel deep_radar_line_col = 0x64;

@@ -178,6 +178,10 @@
  */
 #define INTRO_REPLAY_TURNS 1100
 
+/** Length of train railcar for carrying passengers, the 3D object.
+ */
+#define TRAIN_CARRY_LENGTH 550
+
 /** details on how much and how fast to rotate/tilt/zoom the camera.
  */
 #define CAMERA_TILT_MIN -192
@@ -226,6 +230,8 @@ long dword_153194 = 0x100;
 
 ushort word_1531E0 = 1;
 
+s32 data_155704 = -1;
+
 ulong stored_l3d_next_object;
 ulong stored_l3d_next_object_face3;
 ulong stored_l3d_next_object_face4;
@@ -236,13 +242,14 @@ ulong stored_l3d_next_floor_texture;
 ulong stored_l3d_next_local_mat;
 ulong stored_level3d_inuse;
 
+TbPixel linear_vec_pal[PALETTE_8b_COLORS];
+
 extern int data_1c8428;
 const char *primvehobj_fname = "qdata/primveh.obj";
 
 extern s32 dword_152E38[5]; // = {-1, -1, -1, -1, -1,};
 
-extern u32 dword_1C4B84;
-extern u32 dword_1C4B88;
+u32 active_flags_general_unkn01 = 0;
 
 extern long dword_1DDECC;
 
@@ -275,18 +282,25 @@ int mouse_map_z = 0x3200;
 
 extern short last_map_for_lights_func_11;
 
-extern char unknmsg_str[100];
-extern short word_1774E8[2 * 150];
+char mission_status_text[100];
 
-char *data_15319c = unknmsg_str;
+char *data_15319c = mission_status_text;
+
+s32 navi2_unkn_counter = 0;
+s32 navi2_unkn_counter_max = 0;
 
 extern long dword_1AAB74;
 extern long dword_1AAB78;
 extern ushort word_1AABD0;
 
+ubyte unkn_flags_01 = 0;
+
+ubyte start_into_mission = false;
 ubyte edit_flag = 0;
 
 struct OutroHotChar outro_hot_chars[OUTRO_HOT_CHARS_COUNT];
+
+ubyte input_char;
 
 const char *miss_end_sta_names[] = {
   "undecided state",
@@ -500,7 +514,6 @@ void colour_tables_ghost_fixup(void)
 
 TbBool game_setup_stuff(void)
 {
-    TbFileHandle fh;
     ushort i;
     TbBool ret;
 
@@ -508,14 +521,6 @@ TbBool game_setup_stuff(void)
     for (i = 0; i < PALETTE_8b_COLORS; i++)
         linear_vec_pal[i] = i;
     vec_pal = linear_vec_pal;
-
-    fh = LbFileOpen("data/nsta-0.ani", Lb_FILE_MODE_READ_ONLY);
-    if (fh != INVALID_FILE) {
-        nsta_size = LbFileSeek(fh, 0, Lb_FILE_SEEK_END);
-        LbFileClose(fh);
-    } else {
-        ret = false;
-    }
 
     if (display_palette != NULL) {
         colour_brown2 = LbPaletteFindColour(display_palette, 42, 37, 30);
@@ -2044,13 +2049,64 @@ void find_the_tall_buildings(void)
     return;
 }
 
-void func_749fc(void)
+//TODO change ret type to ThingIdx, when no longer used in ASM
+int create_train_carriage(short cor_dx, short cor_dy, short cor_dz, short otype)
 {
-    asm volatile ("call ASM_func_749fc\n"
-        :  :  : "eax" );
-    return;
+    int ret;
+    asm volatile ("call ASM_create_train_carriage\n"
+        : "=r" (ret) : "a" (cor_dx), "d" (cor_dy), "b" (cor_dz), "c" (otype));
+    return ret;
 }
 
+struct Thing *find_unused_train_track(void)
+{
+    struct Thing *ret;
+    asm volatile ("call ASM_find_unused_train_track\n"
+        : "=r" (ret) : );
+    return ret;
+}
+void create_train_for_each_track(void)
+{
+#if 0
+    asm volatile ("call ASM_create_train_for_each_track\n"
+        :  :  : "eax" );
+    return;
+#endif
+    ushort k;
+
+    k = 0;
+    while (find_unused_train_track() && k < 10)
+    {
+        ThingIdx veh[4];
+        struct Thing *p_thing;
+
+        veh[0] = create_train_carriage(0, 0, 0 * TRAIN_CARRY_LENGTH, 4);
+        veh[1] = create_train_carriage(0, 0, 1 * TRAIN_CARRY_LENGTH, 5);
+        veh[2] = create_train_carriage(0, 0, 2 * TRAIN_CARRY_LENGTH, 5);
+        veh[3] = create_train_carriage(0, 0, 3 * TRAIN_CARRY_LENGTH, 5);
+
+        p_thing = &things[veh[0]];
+        p_thing->Owner = 0;
+        p_thing->U.UVehicle.GotoX = veh[1];
+
+        p_thing = &things[veh[1]];
+        p_thing->Owner = veh[0];
+        p_thing->U.UVehicle.GotoX = veh[2];
+
+        p_thing = &things[veh[2]];
+        p_thing->Owner = veh[1];
+        p_thing->U.UVehicle.GotoX = veh[3];
+
+        p_thing = &things[veh[3]];
+        p_thing->U.UVehicle.GotoX = 0;
+        p_thing->Owner = veh[2];
+
+        ingame.fld_unkC59++;
+        k++;
+    }
+}
+
+/* no function - delete pending
 void clear_word_1774E8(void)
 {
     short i;
@@ -2060,6 +2116,7 @@ void clear_word_1774E8(void)
         word_1774E8[2 * i + 0] = 0;
     }
 }
+*/
 
 void init_my_paths(void)
 {
@@ -2306,7 +2363,7 @@ void init_level(void)
     init_crater_textures();
     bang_init();
     FIRE_init();
-    func_749fc();
+    create_train_for_each_track();
     preprogress_trains_turns(50);
     tnext_floor_texture = next_floor_texture + 1;
     init_col_vects_linked_list();
@@ -2319,7 +2376,7 @@ void init_level(void)
     gamep_unknval_16 = 0;
     ingame.fld_unkCB1 = 1;
     ingame.fld_unkCB2 = 1;
-    clear_word_1774E8();
+    // clear_word_1774E8(); // no function - delete pending
     missions_clear_bank_tests();
     thing_groups_clear_all_actions();
     init_my_paths();
@@ -3598,7 +3655,7 @@ void init_unkn6_adjustable_variables(void)
     login_control__City = 19; // Tokyo
     login_control__Team = 0;
 
-    reinit_unkn6_adjustable_variables();
+    reinit_unkn6_always_reset_variables();
 }
 
 void init_agents(void)
@@ -5692,10 +5749,10 @@ void update_mission_time(TbBool a1)
 #endif
     if (a1)
     {
-        dword_1C4B84 = gameturn;
+        // dword_1C4B84 = gameturn; //TODO no function - remove
         return;
     }
-    dword_1C4B88 = gameturn;
+    //dword_1C4B88 = gameturn; //TODO no function - remove
 
     mission_status_time_rand_progress(open_brief);
     global_date_update_after_mission();
@@ -6285,7 +6342,7 @@ void show_menu_screen(void)
 
     mouse_sprite_animate();
 
-    if ( start_into_mission || map_editor )
+    if (start_into_mission || map_editor)
     {
         show_load_and_prep_mission();
         data_1c498d = 2;
@@ -6507,9 +6564,9 @@ void draw_mission_concluded(void)
     tm = (dos_clock() - ingame.fld_unkC91) / 100;
     if (ingame.fld_unkCB5)
     {
-        sprintf(unknmsg_str, "%s %s: %s ", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+        sprintf(mission_status_text, "%s %s: %s ", gui_strings[GSTR_CHK_MISSION_STA_PRE],
           gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus], scroll_text);
-        data_15319c = unknmsg_str;
+        data_15319c = mission_status_text;
     }
     else
     {
@@ -6519,13 +6576,13 @@ void draw_mission_concluded(void)
         tm_m = tm / 60;
         tm_s = tm % 60;
 
-        sprintf(unknmsg_str, "%s %s %s %s %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
+        sprintf(mission_status_text, "%s %s %s %s %02d:%02d:%02d", gui_strings[GSTR_CHK_MISSION_STA_PRE],
           gui_strings[GSTR_ENM_MISSION_STATUS + 1 + ingame.MissionStatus],
           gui_strings[GSTR_CHK_MISSION_STA_SUF_KEYS], gui_strings[GSTR_CHK_MISSION_STA_TIME],
           tm_h, tm_m % 60, tm_s);
-        data_15319c = unknmsg_str;
-        scroll_text = unknmsg_str;
-        LbStringToUpper(unknmsg_str);
+        LbStringToUpper(mission_status_text);
+        data_15319c = mission_status_text;
+        scroll_text = mission_status_text;
     }
     {
         int scr_x, scr_y;

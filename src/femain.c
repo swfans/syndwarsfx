@@ -70,8 +70,18 @@
 /******************************************************************************/
 #define SYSMNU_BUTTONS_COUNT 6
 
+struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
+struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
+struct SynTime global_date;
+
 struct ScreenButton sysmnu_buttons[SYSMNU_BUTTONS_COUNT] = {0};
-extern char options_title_text[];
+
+/** Option title text buffer.
+ *
+ * To be used only if the title being set is not a global localized string.
+ * Global strings can be set directly as ScreenBox Text.
+ */
+char options_title_text[20];
 
 struct ScreenButton main_quit_button = {0};
 struct ScreenButton main_login_button = {0};
@@ -80,13 +90,13 @@ struct ScreenButton main_load_button = {0};
 
 struct ScreenBox alert_box;
 struct ScreenButton alert_OK_button;
+char alert_text[200];
+short alert_textpos = 0;
 ubyte show_alert = 0;
 
 struct ScreenTextBox heading_box = {0};
 struct ScreenTextBox loading_INITIATING_box = {0};
 struct ScreenTextBox unkn13_SYSTEM_button = {0};
-
-struct SynTime global_date;
 
 struct SynTime research_curr_wep_date;
 struct SynTime research_curr_mod_date;
@@ -94,13 +104,12 @@ extern ubyte research_curr_wep_daily_done;
 extern ubyte research_curr_mod_daily_done;
 extern ubyte byte_1C497D;
 
-extern ubyte enter_game;
-
-char alert_text[200];
-short alert_textpos = 0;
-
-struct ScreenBoxBase global_top_bar_box = {4, 4, 632, 15};
-struct ScreenBoxBase global_apps_bar_box = {3, 432, 634, 48};
+ubyte game_projector_speed = 0;
+ubyte enter_game = false;
+ubyte game_system_screen = SySc_NONE;
+ubyte redraw_screen_flag = 0;
+ubyte reload_background_flag = 1;
+TbBool map_editor = false;
 
 /******************************************************************************/
 
@@ -1063,45 +1072,6 @@ void show_mission_loading_screen(void)
 
     loading_INITIATING_box.Flags = GBxFlg_Unkn0001;
     wait_for_sound_sample_finish(118);
-}
-
-TbResult load_mapout(ubyte **pp_buf, const char *dir)
-{
-    char locstr[52];
-    ubyte *p_buf;
-    long len;
-    int i;
-    TbResult ret;
-
-    p_buf = *pp_buf;
-    ret = Lb_OK;
-
-    for (i = 0; i < 6; i++)
-    {
-        dword_1C529C[i] = (short *)p_buf;
-        sprintf(locstr, "%s/mapout%02d.dat", dir, i);
-        len = LbFileLoadAt(locstr, dword_1C529C[i]);
-        if (len == -1) {
-            LOGERR("Could not read file '%s'", locstr);
-            ret = Lb_FAIL;
-            len = 64;
-            LbMemorySet(p_buf, '\0', len);
-        }
-        p_buf += len;
-    }
-
-    landmap_2B4 = (short *)p_buf;
-    sprintf(locstr, "%s/mapinsid.dat", dir);
-    len = LbFileLoadAt(locstr, p_buf);
-    if (len == -1) {
-        ret = Lb_FAIL;
-        len = 64;
-        LbMemorySet(p_buf, '\0', len);
-    }
-    p_buf += len;
-
-    *pp_buf = p_buf;
-    return ret;
 }
 
 TbResult load_all_sprites_purple_mode(void)

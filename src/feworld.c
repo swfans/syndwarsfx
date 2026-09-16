@@ -19,6 +19,7 @@
 #include "feworld.h"
 
 #include "bfkeybd.h"
+#include "bfmemut.h"
 #include "bfsprite.h"
 #include "bftext.h"
 #include "bfstrut.h"
@@ -46,14 +47,27 @@
 #include "wrcities.h"
 #include "swlog.h"
 /******************************************************************************/
+short word_155110[] = {
+  260, 110, 292, 160, 326, 192,
+};
+
+short word_155744[] = {
+  -5, -5, -5, -5, -5, -5,
+};
+
+short *dword_1C529C[6] = { NULL, };
+short *landmap_2B4 = NULL;
+
 struct ScreenTextBox world_city_info_box = {0};
 struct ScreenButton world_info_ACCEPT_button = {0};
 struct ScreenButton world_info_CANCEL_button = {0};
 struct ScreenBox world_landmap_box = {0};
 
-extern short word_155110[6];
-extern ubyte byte_15511C;// = 1;
-extern short word_155744[6];
+ubyte byte_15511C = 1;
+
+sbyte map_hl_city_id = -1;
+TbBool map_from_mission = false;
+
 extern long landmap_8BC;
 extern long landmap_8C0;
 extern long landmap_8C4;
@@ -67,8 +81,7 @@ extern ulong dword_1C4908[6];
 extern ulong dword_1C4920;
 extern ulong dword_1C4924;
 extern ulong dword_1C4930[6];
-/** whether the map screen was entered from mission brief */
-extern ubyte map_from_mission;
+
 extern ubyte byte_1C4888;
 extern short word_1C488A[6];
 extern short word_1C4896[6];
@@ -725,6 +738,45 @@ ubyte show_world_landmap_box(struct ScreenBox *p_box)
     input_world_cities(p_box);
 
     return 4;
+}
+
+TbResult load_mapout(ubyte **pp_buf, const char *dir)
+{
+    char locstr[52];
+    ubyte *p_buf;
+    long len;
+    int i;
+    TbResult ret;
+
+    p_buf = *pp_buf;
+    ret = Lb_OK;
+
+    for (i = 0; i < 6; i++)
+    {
+        dword_1C529C[i] = (short *)p_buf;
+        sprintf(locstr, "%s/mapout%02d.dat", dir, i);
+        len = LbFileLoadAt(locstr, dword_1C529C[i]);
+        if (len == -1) {
+            LOGERR("Could not read file '%s'", locstr);
+            ret = Lb_FAIL;
+            len = 64;
+            LbMemorySet(p_buf, '\0', len);
+        }
+        p_buf += len;
+    }
+
+    landmap_2B4 = (short *)p_buf;
+    sprintf(locstr, "%s/mapinsid.dat", dir);
+    len = LbFileLoadAt(locstr, p_buf);
+    if (len == -1) {
+        ret = Lb_FAIL;
+        len = 64;
+        LbMemorySet(p_buf, '\0', len);
+    }
+    p_buf += len;
+
+    *pp_buf = p_buf;
+    return ret;
 }
 
 void skip_flashy_draw_world_screen_boxes(void)

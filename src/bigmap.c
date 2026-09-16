@@ -44,6 +44,9 @@ struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
 ushort spiral_dist_tiles_limit = 0;
 
+struct MyMapElement *game_my_big_map = NULL;
+
+struct ColColumn *game_col_columns = NULL;
 ushort next_col_column = 1;
 /******************************************************************************/
 

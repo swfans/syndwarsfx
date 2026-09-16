@@ -359,6 +359,7 @@ struct Command
 extern struct CommandDef command_defs[];
 extern struct Command *game_commands;
 extern ushort next_command;
+extern ubyte execute_commands;
 
 const char *command_codename(ushort cmd);
 void snprint_command(char *buf, ulong buflen, ushort cmd);

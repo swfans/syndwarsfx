@@ -29,6 +29,7 @@ extern "C" {
 
 #pragma pack()
 /******************************************************************************/
+extern ubyte net_unkn_pos_02;
 
 void init_controls_screen_boxes(void);
 void reset_controls_screen_boxes_flags(void);

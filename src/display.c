@@ -58,6 +58,8 @@ ushort text_window_x2, text_window_y2;
 extern ushort data_1aa330;
 extern ushort data_1aa332;
 
+ubyte game_high_resolution = 0;
+
 #if defined(WIN32)
 
 const char * SWResourceMapping(short index)

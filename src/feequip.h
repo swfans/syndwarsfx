@@ -43,6 +43,7 @@ extern ubyte selected_weapon;
 extern sbyte selected_agent;
 extern ubyte display_box_content;
 extern ubyte mo_weapon;
+extern ubyte refresh_equip_list;
 
 ubyte show_equipment_screen(void);
 

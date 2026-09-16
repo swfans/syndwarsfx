@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "enginpriobjs.h"
 
+#include <assert.h>
 #include "bffile.h"
 #include "bfmath.h"
 #include "bfmemut.h"
@@ -43,7 +44,7 @@ ushort next_prim_object = 1;
 
 ushort prim_unknprop01 = 0;
 
-extern ushort word_19CB58[66];
+ushort word_19CB58[66];
 
 ushort old_next_object, old_next_object_face3, old_next_object_point,
   old_next_normal, old_next_face_texture;
@@ -538,6 +539,7 @@ ushort copy_prim_obj_to_game_object(short tx, short tz, short prim_obj, short ty
         {
             ushort new_txtr;
 
+            assert(sizeof(word_19CB58)/sizeof(word_19CB58[0]) > p_pface->Texture);
             new_txtr = word_19CB58[p_pface->Texture];
             if (new_txtr == 0)
             {

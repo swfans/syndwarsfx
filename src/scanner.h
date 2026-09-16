@@ -88,6 +88,7 @@ extern ubyte SCANNER_data[SCANNER_MAPDATA_HEIGHT][SCANNER_MAPDATA_WIDTH];
 extern ushort SCANNER_base_zoom_factor;
 extern ushort SCANNER_user_zoom_factor;
 extern ubyte SCANNER_scale_dots;
+extern u32 dword_1DB1A0;
 
 void SCANNER_clear(void);
 void SCANNER_init(void);

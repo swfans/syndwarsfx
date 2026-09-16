@@ -64,8 +64,8 @@
 /******************************************************************************/
 extern long dword_1DC36C;
 
-extern char player_message_text[PLAYERS_LIMIT][128];
-extern ubyte player_message_timer[PLAYERS_LIMIT];
+char player_message_text[PLAYERS_LIMIT][128];
+ubyte player_message_timer[PLAYERS_LIMIT];
 
 /** Over which agent weapon the cursor is currently placed.
  *

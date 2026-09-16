@@ -111,7 +111,7 @@ extern long dword_176CAC;
 extern long dword_176CB0;
 u32 dword_152E4C = 0x3F69A093;
 
-extern struct BulStart bul_starts[4000];
+struct BulStart bul_starts[4000];
 
 ubyte pers_shield_spr_vers[][5] = {
   {0, 1, 2, 0, 0,},

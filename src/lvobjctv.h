@@ -125,6 +125,7 @@ struct NetscanObjective { // sizeof = 20
 /******************************************************************************/
 extern struct Objective *game_used_objectives;
 extern ushort next_used_objective;
+
 extern struct Objective *game_objectives;
 extern ushort next_objective;
 

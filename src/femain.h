@@ -59,6 +59,11 @@ extern struct SynTime research_curr_mod_date;
 extern ubyte game_projector_speed;
 
 extern ubyte show_alert;
+extern ubyte redraw_screen_flag;
+extern ubyte reload_background_flag;
+
+extern ubyte game_system_screen;
+extern TbBool map_editor;
 
 /******************************************************************************/
 
