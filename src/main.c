@@ -6,6 +6,7 @@
 #include "bffile.h"
 #include "bfini.h"
 #include "bfscreen.h"
+#include "bfmouse.h"
 #include "bflog.h"
 #include "bfjoyst.h"
 
@@ -47,6 +48,7 @@ enum ConfigCmd {
     ConfCmd_ResMenu,
     ConfCmd_ResFMVVidHi,
     ConfCmd_ResFMVidLo,
+    ConfCmd_MouseCapture,
 };
 
 const struct TbNamedEnum conf_file_cmnds[] = {
@@ -65,6 +67,7 @@ const struct TbNamedEnum conf_file_cmnds[] = {
   {"ResMenu",	ConfCmd_ResMenu},
   {"ResFMVVidHi",ConfCmd_ResFMVVidHi},
   {"ResFMVidLo",ConfCmd_ResFMVidLo},
+  {"MouseCapture",ConfCmd_MouseCapture},
   {NULL,		0},
 };
 
@@ -72,7 +75,24 @@ const struct TbNamedEnum conf_file_disk_inst_lev[] = {
   {"Min", 1},
   {"Max", 2},
   {NULL,  0},
-  };
+};
+
+enum MouseCaptureMode {
+    MCapt_Never = 1,
+    MCapt_Always,
+    MCapt_FullScreen,
+};
+
+const struct TbNamedEnum conf_file_mouse_capture[] = {
+  {"Never",      MCapt_Never},
+  {"Always",     MCapt_Always},
+  {"FullScreen", MCapt_FullScreen},
+  {NULL,         0},
+};
+
+/** Mouse pointer capture mode, set in config file.
+ */
+ubyte conf_mouse_capture = MCapt_FullScreen;
 
 TbBool cmdln_fullscreen = true;
 TbBool cmdln_lores_stretch = true;
@@ -524,6 +544,15 @@ void read_conf_file(void)
                 break;
             }
             break;
+        case ConfCmd_MouseCapture:
+            i = LbIniValueGetNamedEnum(&parser, conf_file_mouse_capture);
+            if (i <= 0) {
+                CONFWRNLOG("Couldn't recognize \"%s\" command parameter.", COMMAND_TEXT(cmd_num));
+                break;
+            }
+            conf_mouse_capture = i;
+            CONFDBGLOG("Mouse capture '%s'", LbNamedEnumGetName(conf_file_mouse_capture, i));
+            break;
         case 0: // comment
             break;
         case -1: // end of buffer
@@ -565,6 +594,8 @@ main (int argc, char **argv)
     setup_language_file_names();
 
     display_set_full_screen(cmdln_fullscreen);
+    LbMouseChangeCapture((conf_mouse_capture == MCapt_Always) ||
+      (conf_mouse_capture == MCapt_FullScreen && cmdln_fullscreen));
     display_set_lowres_stretch(cmdln_lores_stretch);
 
     set_default_user_settings();
