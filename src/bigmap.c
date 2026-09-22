@@ -537,6 +537,21 @@ TbBool map_floor_is_sludge(MapCoord cor_x, MapCoord cor_z)
     return false;
 }
 
+/** Checks whether given floor texture is a fluid surface.
+ *
+ * Both sea and sludge are recognized. Craters must not damage such tiles;
+ * the original game only tested for sea here, which left sludge pools
+ * being replaced with scorched ground.
+ */
+TbBool floor_texture_is_fluid(ushort textr)
+{
+    if ((get_my_texture_bits(textr) & 0x02) != 0)
+        return true;
+    if (my_texture_is_only_using_index(textr, 29))
+        return true;
+    return false;
+}
+
 void quick_crater(int x, int z, int size)
 {
     asm volatile ("call ASM_quick_crater\n"

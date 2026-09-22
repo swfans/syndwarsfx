@@ -88198,69 +88198,18 @@ unused_func_191:	/* 0x88f14 */
 
 
 /*----------------------------------------------------------------*/
-is_that_a_sea_texture:	/* 0x088FF0 */
+is_that_a_fluid_texture:	/* was 0x088FF0 */
 /*----------------------------------------------------------------*/
+		/* Reimplemented in C as floor_texture_is_fluid(), which recognizes
+		 * sludge as well as sea. The original only tested for sea, so craters
+		 * replaced sludge pools with scorched ground. Registers are preserved
+		 * as the call sites within the crater code expect, and the ubyte
+		 * result is widened for their `test %eax,%eax`. */
 		push   %ebx
 		push   %ecx
 		push   %edx
-		mov    %eax,%edx
-		shl    $0x3,%eax
-		add    %edx,%eax
-		mov    EXPORT_SYMBOL(game_textures),%edx
-		add    %eax,%eax
-		add    %edx,%eax
-		xor    %ebx,%ebx
-		xor    %edx,%edx
-		mov    (%eax),%bl
-		mov    0x2(%eax),%dl
-		cmp    %edx,%ebx
-		jge    jump_89013
-		mov    %ebx,%edx
-	jump_89013:
-		xor    %ebx,%ebx
-		mov    0x4(%eax),%bl
-		cmp    %ebx,%edx
-		jl     jump_8901e
-		mov    %ebx,%edx
-	jump_8901e:
-		xor    %ebx,%ebx
-		mov    0x6(%eax),%bl
-		cmp    %ebx,%edx
-		jl     jump_89029
-		mov    %ebx,%edx
-	jump_89029:
-		mov    %edx,%ecx
-		xor    %ebx,%ebx
-		xor    %edx,%edx
-		mov    0x1(%eax),%bl
-		mov    0x3(%eax),%dl
-		cmp    %edx,%ebx
-		jge    jump_8903b
-		mov    %ebx,%edx
-	jump_8903b:
-		xor    %ebx,%ebx
-		mov    0x5(%eax),%bl
-		cmp    %ebx,%edx
-		jl     jump_89046
-		mov    %ebx,%edx
-	jump_89046:
-		xor    %ebx,%ebx
-		mov    0x7(%eax),%bl
-		cmp    %ebx,%edx
-		jl     jump_89051
-		mov    %ebx,%edx
-	jump_89051:
-		sar    $0x5,%edx
-		mov    %ecx,%ebx
-		shl    $0x3,%edx
-		sar    $0x5,%ebx
-		mov    0x8(%eax),%al
-		add    %ebx,%edx
-		and    $0xff,%eax
-		shl    $0x6,%eax
-		mov    EXPORT_SYMBOL(textwalk_data)(%edx,%eax,1),%al
-		and    $0x2,%al
-		and    $0xff,%eax
+		call   ac_floor_texture_is_fluid
+		movzbl %al,%eax
 		pop    %edx
 		pop    %ecx
 		pop    %ebx
@@ -88433,7 +88382,7 @@ process_map_crater:	/* 0x08907C */
 		mov    (%edx,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_897c0
 		movswl (%ebx),%eax
@@ -89825,7 +89774,7 @@ func_8a2f7:
 		mov    (%esi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8be74
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -89881,7 +89830,7 @@ func_8a3a6:
 		mov    (%edi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8a44c
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -89939,7 +89888,7 @@ func_8a3a6:
 		mov    (%edi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8a512
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90002,7 +89951,7 @@ func_8a3a6:
 		mov    (%edi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8a5db
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90067,7 +90016,7 @@ func_8a3a6:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8a6a4
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90126,7 +90075,7 @@ func_8a3a6:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8be74
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90181,7 +90130,7 @@ func_8a766:
 		mov    (%esi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8a80a
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90236,7 +90185,7 @@ func_8a766:
 		mov    (%esi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8a8c3
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90296,7 +90245,7 @@ func_8a766:
 		mov    (%esi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8a97d
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90358,7 +90307,7 @@ func_8a766:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8aa3a
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90414,7 +90363,7 @@ func_8a766:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8aaec
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90473,7 +90422,7 @@ func_8a766:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8abbc
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90537,7 +90486,7 @@ func_8a766:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8ac91
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90600,7 +90549,7 @@ func_8a766:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8ad5d
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90664,7 +90613,7 @@ func_8a766:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8be74
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90724,7 +90673,7 @@ func_8ae35:
 		mov    (%edi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8aedb
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90779,7 +90728,7 @@ func_8ae35:
 		mov    (%esi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8af9f
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90842,7 +90791,7 @@ func_8ae35:
 		mov    (%edi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b059
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -90900,7 +90849,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b113
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -90957,7 +90906,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b1cd
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91016,7 +90965,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b298
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91078,7 +91027,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b35f
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91140,7 +91089,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b426
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91200,7 +91149,7 @@ func_8ae35:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b4e8
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -91265,7 +91214,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b5c0
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91326,7 +91275,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b67a
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91385,7 +91334,7 @@ func_8ae35:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b746
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -91447,7 +91396,7 @@ func_8ae35:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b812
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -91507,7 +91456,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b8cc
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91566,7 +91515,7 @@ func_8ae35:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8b99b
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -91630,7 +91579,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8ba73
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91689,7 +91638,7 @@ func_8ae35:
 		mov    (%esi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8bb3e
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91757,7 +91706,7 @@ func_8ae35:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8bc0d
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -91821,7 +91770,7 @@ func_8ae35:
 		mov    %ax,0x58(%esp)
 		mov    0x56(%esp),%eax
 		sar    $0x10,%eax
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8bce4
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
@@ -91880,7 +91829,7 @@ func_8ae35:
 		mov    (%edi,%eax,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8bdaf
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
@@ -91948,7 +91897,7 @@ func_8ae35:
 		mov    (%eax,%ebp,1),%ax
 		and    $0x3f,%ah
 		cwtl
-		call   is_that_a_sea_texture
+		call   is_that_a_fluid_texture
 		test   %eax,%eax
 		jne    jump_8be74
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi

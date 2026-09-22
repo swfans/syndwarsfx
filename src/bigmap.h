@@ -203,6 +203,13 @@ void update_map_flags(void);
 TbBool map_floor_is_water(MapCoord cor_x, MapCoord cor_z);
 TbBool map_floor_is_sludge(MapCoord cor_x, MapCoord cor_z);
 
+/** Checks whether given floor texture is a fluid surface, sea or sludge.
+ *
+ * Unlike the functions above, this one takes a texture rather than map
+ * coords, as that is what the crater code within the assembly has at hand.
+ */
+TbBool floor_texture_is_fluid(ushort textr);
+
 /** Checks if a tile should not be allowed to walk on due to terrain.
  *
  * To do such check during gameplay, MapElement flags should be used - this one
