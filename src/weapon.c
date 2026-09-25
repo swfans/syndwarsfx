@@ -33,12 +33,14 @@
 #include "bmbang.h"
 #include "building.h"
 #include "campaign.h"
+#include "engincam.h"
 #include "engincolour.h"
 #include "enginsngtxtr.h"
 #include "engintrns.h"
 #include "enginzoom.h"
 #include "frame_sprani.h"
 #include "game.h"
+#include "packet.h"
 #include "game_data.h"
 #include "game_speed.h"
 #include "guitext.h"
@@ -1185,10 +1187,60 @@ void weapon_sweep(struct Thing *p_owner, int *vx, int *vy, int *vz)
 
 struct SimpleThing *init_spark(int x, int y, int z)
 {
+#if 0
     struct SimpleThing *ret;
     asm volatile ("call ASM_init_spark\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z));
     return ret;
+#endif
+    struct SimpleThing *p_sthing;
+    ThingIdx thing;
+    int angle1, angle2;
+    int vec_X, vec_Y, vec_Z;
+
+    if ((x < 0) || (x >= MAP_COORD_WIDTH))
+        return NULL;
+    if ((z < 0) || (z >= MAP_COORD_HEIGHT))
+        return NULL;
+
+    // limit sparks to player view area - verify if this won't cause packet desync
+    if (!in_network_game && (pktrec_mode == PktR_NONE)) {
+        int dist;
+
+        dist = map_distance_coords_fast(x, 0, z, engn_xc, 0, engn_zc);
+        if (dist > TILE_TO_MAPCOORD(max(render_area_a,render_area_b), 0))
+            return NULL;
+    }
+
+    angle1 = LbRandomAnyShort() & LbFPMath_AngleMask;
+    vec_X = lbSinTable[angle1] >> 8;
+    vec_Y = lbSinTable[angle1 + LbFPMath_PI/2] >> 8;
+
+    angle2 = LbRandomAnyShort() & LbFPMath_AngleMask;
+    vec_Z = lbSinTable[angle2] >> 8;
+
+    if (sthings_used > STHINGS_LIMIT - 5)
+        return NULL;
+
+    thing = get_new_sthing();
+    if (thing == 0)
+        return NULL;
+
+    p_sthing = &sthings[thing];
+    p_sthing->X = MAPCOORD_TO_PRCCOORD(x,0);
+    p_sthing->Z = MAPCOORD_TO_PRCCOORD(z,0);
+    p_sthing->Y = MAPCOORD_TO_PRCCOORD(y,0);
+    p_sthing->U.UEffect.VX = vec_X * 8;
+    p_sthing->U.UEffect.VY = vec_Y * 2;
+    p_sthing->U.UEffect.VZ = vec_Z * 8;
+    add_node_sthing(thing);
+    p_sthing->Type = SmTT_SPARK;
+    p_sthing->Radius = 5;
+    p_sthing->Timer1 = 20;
+    p_sthing->Flag = TngF_Unkn0004;
+    p_sthing->Object = colour_lookup[ColLU_RED];
+
+    return p_sthing;
 }
 
 void elec_hit_building(int x, int y, int z, short col)
