@@ -155,4 +155,28 @@ void draw_engine_unk3_last(short x, short z)
     }
 }
 
+ushort dynamic_insert_vect(s32 x1, s32 y1, s32 z1, s32 x2,
+  s32 y2, s32 z2, int owner, ubyte vtype)
+{
+    // Pushed through a register holding them: a "g" operand may be placed
+    // relative to the stack pointer, which each push moves.
+    int stkargs[4];
+    short ret;
+
+    stkargs[0] = (int)(intptr_t)y2;
+    stkargs[1] = (int)(intptr_t)z2;
+    stkargs[2] = (int)(intptr_t)owner;
+    stkargs[3] = (int)(intptr_t)vtype;
+
+    asm volatile (
+      "push 12(%5)\n"
+      "push 8(%5)\n"
+      "push 4(%5)\n"
+      "push 0(%5)\n"
+      "call ASM_dynamic_insert_vect\n"
+        : "=a" (ret) : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "S" (stkargs)
+        : "cc", "memory");
+    return ret;
+}
+
 /******************************************************************************/

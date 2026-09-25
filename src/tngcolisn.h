@@ -66,6 +66,16 @@ void set_dome_col(struct Thing *p_building, ubyte flag);
 
 void draw_engine_unk3_last(short x, short z);
 
+/** Creates a new collision vector between given points.
+ *
+ * Alloccates `ColVect`, and inserts collision markers for it
+ * into the `mapwho`.
+ *
+ * @return Returns the new `ColVect` index, or 0 on failure.
+ */
+ushort dynamic_insert_vect(s32 x1, s32 y1, s32 z1, s32 x2,
+  s32 y2, s32 z2, int owner, ubyte vtype);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

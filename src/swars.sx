@@ -43798,7 +43798,7 @@ dynamic_add_collision_to_single_mapwho:	/* 0x05D3B4 */
 
 
 /*----------------------------------------------------------------*/
-dynamic_insert_vect:	/* 0x05D440 */
+GLOBAL_FUNC(ASM_dynamic_insert_vect)	/* 0x05D440 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -117980,7 +117980,7 @@ GLOBAL_FUNC(ASM_finalise_razor_wire)	/* 0x0C5B30 */
 		mov    0x18(%esi),%eax
 		add    $0x3c,%edx
 		sar    $0x8,%eax
-		call   dynamic_insert_vect
+		call   ac_dynamic_insert_vect
 		xor    %edx,%edx
 		mov    %ax,%dx
 		test   %edx,%edx
