@@ -1199,10 +1199,30 @@ void elec_hit_building(int x, int y, int z, short col)
 
 void init_shoot_recoil(struct Thing *p_person, short vx, short vy, short vz)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_init_shoot_recoil\n"
         : : "a" (p_person), "d" (vx), "b" (vy), "c" (vz));
+    return;
 #endif
+    int angle, octant;
+
+    angle = arctan(vx, -vz);
+    octant = ((angle >> 8) + 4) & 7;
+
+    if ((p_person->Flag2 & TgF2_ExistsOffMap) != 0)
+        return;
+    if ((p_person->Flag & TngF_WepRecoil) != 0)
+        return;
+
+    p_person->U.UPerson.RecoilTimer = 3;
+    p_person->U.UPerson.RecoilDir = angle >> 3;
+
+    if (p_person->U.UPerson.AnimMode != ANIM_PERS_PUSH_BACK)
+        p_person->U.UPerson.OldAnimMode = p_person->U.UPerson.AnimMode;
+    p_person->U.UPerson.Angle = octant;
+    set_person_anim_mode(p_person, ANIM_PERS_PUSH_BACK);
+
+    p_person->Flag |= TngF_WepRecoil;
 }
 
 TbBool thing_fire_shot_start_position(struct M31 *prc_beg_pt, struct Thing *p_owner, WeaponType wtype, ushort barrel)
