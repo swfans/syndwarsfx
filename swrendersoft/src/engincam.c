@@ -112,6 +112,26 @@ void camera_setup_view(int *p_pos_beg_x, int *p_pos_beg_z,
     *p_tlcount_z = tlcount_z;
 }
 
+TbBool coords_within_render_area(int cor_x, int cor_z)
+{
+    int rend_beg_x, rend_beg_z;
+    int rend_end_x, rend_end_z;
+
+    rend_beg_x = (engn_xc & 0xFF00) + (render_area_a << 7);
+    rend_beg_z = (engn_zc & 0xFF00) - (render_area_b << 7);
+
+    if ((cor_x > rend_beg_x) || (cor_z < rend_beg_z))
+        return false;
+
+    rend_end_x = rend_beg_x - (render_area_a << 8);
+    rend_end_z = rend_beg_z + (render_area_b << 8);
+
+    if ((cor_x < rend_end_x) || (cor_z > rend_end_z))
+        return false;
+
+    return true;
+}
+
 void camera_save_backup_state(struct CameraState *p_bkp)
 {
     p_bkp->xc = engn_xc;

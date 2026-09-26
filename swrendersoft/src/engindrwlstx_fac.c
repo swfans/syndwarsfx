@@ -263,7 +263,18 @@ void set_floor_texture_uv_damaged_ground(struct PolyPoint *p_pt1,
     }
 }
 
-int calculate_enginepoint_shade3(struct PolyPoint *p_pt1,
+static uint calculate_enginepoint_shade(short ambient, ushort first_light)
+{
+    uint shade;
+
+    shade = ambient << 7;
+    shade += cummulate_shade_from_quick_lights(first_light);
+    if (shade > 0x7E00)
+        shade = 0x7F00;
+    return shade << 7;
+}
+
+static uint recalculate_enginepoint_shade_nuclear3(struct PolyPoint *p_pt1,
   struct SingleObjectFace3 *p_face, ushort pt2)
 {
     struct SinglePoint *p_pt2;
@@ -290,7 +301,7 @@ int calculate_enginepoint_shade3(struct PolyPoint *p_pt1,
     return p_pt1->S;
 }
 
-int calculate_enginepoint_shade4(struct PolyPoint *p_pt1,
+static uint recalculate_enginepoint_shade_nuclear4(struct PolyPoint *p_pt1,
   struct SingleObjectFace4 *p_face4, ushort pt2)
 {
     struct SinglePoint *p_pt2;
@@ -966,15 +977,9 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        uint shade;
-
-        shade = p_face4->Shade0 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face4->Light0);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point1.S = shade << 7;
+        point1.S = calculate_enginepoint_shade(p_face4->Shade0, p_face4->Light0);
     }
-    point1.S = calculate_enginepoint_shade4(&point1, p_face4, 0);
+    point1.S = recalculate_enginepoint_shade_nuclear4(&point1, p_face4, 0);
 
     {
         struct SinglePoint *p_point;
@@ -991,15 +996,9 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        uint shade;
-
-        shade = p_face4->Shade2 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face4->Light2);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point2.S = shade << 7;
+        point2.S = calculate_enginepoint_shade(p_face4->Shade2, p_face4->Light2);
     }
-    point2.S = calculate_enginepoint_shade4(&point2, p_face4, 2);
+    point2.S = recalculate_enginepoint_shade_nuclear4(&point2, p_face4, 2);
 
     {
         struct SinglePoint *p_point;
@@ -1016,15 +1015,9 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        uint shade;
-
-        shade = p_face4->Shade1 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face4->Light1);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point3.S = shade << 7;
+        point3.S = calculate_enginepoint_shade(p_face4->Shade1, p_face4->Light1);
     }
-    point3.S = calculate_enginepoint_shade4(&point2, p_face4, 1); //TODO why point2? is that a coding mistake?
+    point3.S = recalculate_enginepoint_shade_nuclear4(&point2, p_face4, 1); //TODO why point2? is that a coding mistake?
 
     {
         struct SinglePoint *p_point;
@@ -1041,15 +1034,9 @@ void draw_object_face4d_textrd_dk(ushort face4)
     }
     else
     {
-        uint shade;
-
-        shade = p_face4->Shade3 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face4->Light3);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point4.S = shade << 7;
+        point4.S = calculate_enginepoint_shade(p_face4->Shade3, p_face4->Light3);
     }
-    point4.S = calculate_enginepoint_shade4(&point4, p_face4, 3);
+    point4.S = recalculate_enginepoint_shade_nuclear4(&point4, p_face4, 3);
 
     if (!engine_render_lights)
     {
@@ -1461,13 +1448,7 @@ void draw_object_face3d_textrd(ushort face3)
     }
     else
     {
-        uint shade;
-
-        shade = p_face->Shade0 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face->Light0);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point1.S = shade << 7;
+        point1.S = calculate_enginepoint_shade(p_face->Shade0, p_face->Light0);
     }
 
     {
@@ -1492,13 +1473,7 @@ void draw_object_face3d_textrd(ushort face3)
         }
         else
         {
-            uint shade;
-
-            shade = p_face->Shade2 << 7;
-            shade += cummulate_shade_from_quick_lights(p_face->Light2);
-            if (shade > 0x7E00)
-                shade = 0x7F00;
-            point2.S = shade << 7;
+            point2.S = calculate_enginepoint_shade(p_face->Shade2, p_face->Light2);
         }
 
         {
@@ -1516,13 +1491,7 @@ void draw_object_face3d_textrd(ushort face3)
         }
         else
         {
-            uint shade;
-
-            shade = p_face->Shade1 << 7;
-            shade += cummulate_shade_from_quick_lights(p_face->Light1);
-            if (shade > 0x7E00)
-                shade = 0x7F00;
-            point3.S = shade << 7;
+            point3.S = calculate_enginepoint_shade(p_face->Shade1, p_face->Light1);
         }
     }
 
@@ -1626,13 +1595,7 @@ void draw_object_face4d_textrd(ushort face4)
     }
     else
     {
-        ushort shade;
-
-        shade = p_face4->Shade0 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face4->Light0);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point1.S = shade << 7;
+        point1.S = calculate_enginepoint_shade(p_face4->Shade0, p_face4->Light0);
     }
 
     {
@@ -1657,13 +1620,7 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort shade;
-
-            shade = p_face4->Shade2 << 7;
-            shade += cummulate_shade_from_quick_lights(p_face4->Light2);
-            if (shade > 0x7E00)
-                shade = 0x7F00;
-            point2.S = shade << 7;
+            point2.S = calculate_enginepoint_shade(p_face4->Shade2, p_face4->Light2);
         }
 
         if (vec_mode == 2)
@@ -1672,13 +1629,7 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort shade;
-
-            shade = p_face4->Shade1 << 7;
-            shade += cummulate_shade_from_quick_lights(p_face4->Light1);
-            if (shade > 0x7E00)
-                shade = 0x7F00;
-            point3.S = shade << 7;
+            point3.S = calculate_enginepoint_shade(p_face4->Shade1, p_face4->Light1);
         }
 
         if (vec_mode == 2)
@@ -1687,13 +1638,7 @@ void draw_object_face4d_textrd(ushort face4)
         }
         else
         {
-            ushort shade;
-
-            shade = p_face4->Shade3 << 7;
-            shade += cummulate_shade_from_quick_lights(p_face4->Light3);
-            if (shade > 0x7E00)
-                shade = 0x7F00;
-            point4.S = shade << 7;
+            point4.S = calculate_enginepoint_shade(p_face4->Shade3, p_face4->Light3);
         }
     }
 
@@ -1810,15 +1755,9 @@ void draw_object_face3d_textrd_dk(ushort face3)
     }
     else
     {
-        uint shade;
-
-        shade = p_face->Shade0 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face->Light0);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point1.S = shade << 7;
+        point1.S = calculate_enginepoint_shade(p_face->Shade0, p_face->Light0);
     }
-    point1.S = calculate_enginepoint_shade3(&point1, p_face, 0);
+    point1.S = recalculate_enginepoint_shade_nuclear3(&point1, p_face, 0);
 
     {
         struct SinglePoint *p_point;
@@ -1835,15 +1774,9 @@ void draw_object_face3d_textrd_dk(ushort face3)
     }
     else
     {
-        uint shade;
-
-        shade = p_face->Shade2 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face->Light2);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point2.S = shade << 7;
+        point2.S = calculate_enginepoint_shade(p_face->Shade2, p_face->Light2);
     }
-    point2.S = calculate_enginepoint_shade3(&point2, p_face, 2);
+    point2.S = recalculate_enginepoint_shade_nuclear3(&point2, p_face, 2);
 
     {
         struct SinglePoint *p_point;
@@ -1860,15 +1793,9 @@ void draw_object_face3d_textrd_dk(ushort face3)
     }
     else
     {
-        uint shade;
-
-        shade = p_face->Shade1 << 7;
-        shade += cummulate_shade_from_quick_lights(p_face->Light1);
-        if (shade > 0x7E00)
-            shade = 0x7F00;
-        point3.S = shade << 7;
+        point3.S = calculate_enginepoint_shade(p_face->Shade1, p_face->Light1);
     }
-    point3.S = calculate_enginepoint_shade3(&point3, p_face, 1);
+    point3.S = recalculate_enginepoint_shade_nuclear3(&point3, p_face, 1);
 
     if (!engine_render_lights)
     {

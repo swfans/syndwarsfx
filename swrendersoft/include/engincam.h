@@ -105,6 +105,13 @@ void camera_load_backup_state(const struct CameraState *p_bkp);
 
 void camera_apply_velocity(void);
 
+/** Checks if given coordinates are within the map area which will be rendered.
+ *
+ * Being rendered does not neccesarily mean that the point will be visible on
+ * screen. But related area will be added to drawlist.
+ */
+TbBool coords_within_render_area(int cor_x, int cor_z);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

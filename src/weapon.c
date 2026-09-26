@@ -29,16 +29,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bigmap.h"
-#include "bmbang.h"
-#include "building.h"
-#include "campaign.h"
 #include "engincam.h"
 #include "engincolour.h"
 #include "enginsngtxtr.h"
 #include "engintrns.h"
 #include "enginzoom.h"
 #include "frame_sprani.h"
+
+#include "bigmap.h"
+#include "bmbang.h"
+#include "building.h"
+#include "campaign.h"
 #include "game.h"
 #include "packet.h"
 #include "game_data.h"
@@ -1205,10 +1206,7 @@ struct SimpleThing *init_spark(int x, int y, int z)
 
     // limit sparks to player view area - verify if this won't cause packet desync
     if (!in_network_game && (pktrec_mode == PktR_NONE)) {
-        int dist;
-
-        dist = map_distance_coords_fast(x, 0, z, engn_xc, 0, engn_zc);
-        if (dist > TILE_TO_MAPCOORD(max(render_area_a,render_area_b), 0))
+        if (!coords_within_render_area(x, z))
             return NULL;
     }
 
