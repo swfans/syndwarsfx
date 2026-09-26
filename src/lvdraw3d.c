@@ -99,10 +99,10 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
         elcr_y = 0;
         p_sp->ReflShade = 0;
     }
-    else if ((p_mapel->Flags & 0x10) == 0)
+    else if ((p_mapel->Flags & MEF1_Unkn10) == 0)
     {
         elcr_y = 8 * p_mapel->Alt;
-        if ((p_mapel->Flags & 0x40) != 0)
+        if ((p_mapel->Flags & MEF1_Unkn40) != 0)
             elcr_y += waft_between_turns(render_anim_turn);
         p_sp->ReflShade = 0;
     }
@@ -124,19 +124,18 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
             wobble += ((wobble_next - wobble) * (int)within_turn) / RENDER_ANIM_TURN_UNIT;
         }
         elcr_y += mag * wobble;
-        p_sp->ReflShade = (wobble + 32) << 9;
+        p_sp->ReflShade = (wobble + 32) << 2;
     }
     return elcr_y;
 }
 
 /** Compute shade value for drawing given shaded engine point.
  */
-static short calculate_shpoint_shade(struct ShEnginePoint *p_sp, short ambient,
-  ushort first_light, short *p_sqlight)
+static short calculate_shpoint_shade(short ambient, ushort first_light, short *p_sqlight)
 {
     int shade;
 
-    shade = (ambient << 7) + p_sp->ReflShade + 256 + (*p_sqlight << 8);
+    shade = (ambient << 7) + (*p_sqlight << 8);
     shade += cummulate_shade_from_quick_lights(first_light);
     if (shade > 0x7E00)
         shade = 0x7F00;
@@ -145,12 +144,11 @@ static short calculate_shpoint_shade(struct ShEnginePoint *p_sp, short ambient,
 
 /** Compute shade value for shaded engine point, fading to black beyond some range.
  */
-static short calculate_shpoint_shade_fading(struct ShEnginePoint *p_sp, short ambient,
-  ushort first_light, int dist)
+static short calculate_shpoint_shade_fading(short ambient, ushort first_light, int dist)
 {
     int shade;
 
-    shade = (ambient << 7) + p_sp->ReflShade + 256;
+    shade = (ambient << 7);
     shade += cummulate_shade_from_quick_lights(first_light);
     if (dist > 3000) {
         if (3512 - dist > 0)
@@ -556,10 +554,23 @@ void fill_floor_tile_pos_and_shade(struct FloorTile *p_floortl, struct MyMapElem
     p_floortl->X[pt] = p_sp->X;
     p_floortl->Y[pt] = p_sp->Y;
     if (p_sp->Shade < 0) {
-        p_sp->Shade = calculate_shpoint_shade(p_sp, p_mapel->Ambient, p_mapel->Shade, p_sqlight);
+        short ambient;
+        ambient = p_mapel->Ambient + p_sp->ReflShade + 2;
+        p_sp->Shade = calculate_shpoint_shade(ambient, p_mapel->Shade, p_sqlight);
     }
     p_floortl->Shade[pt] = p_sp->Shade;
     p_mapel->ShadeR = p_sp->Shade >> 9;
+}
+
+void fill_floor_tile_pos_and_shade_at_border(struct FloorTile *p_floortl,
+  ubyte pt, short *p_sqlight, struct ShEnginePoint *p_sp)
+{
+    p_floortl->X[pt] = p_sp->X;
+    p_floortl->Y[pt] = p_sp->Y;
+    if (p_sp->Shade < 0) {
+        p_sp->Shade = calculate_shpoint_shade(0, 0, p_sqlight);
+    }
+    p_floortl->Shade[pt] = p_sp->Shade;
 }
 
 void fill_floor_tile_pos_and_shade_fading(struct FloorTile *p_floortl, struct MyMapElement *p_mapel,
@@ -568,9 +579,11 @@ void fill_floor_tile_pos_and_shade_fading(struct FloorTile *p_floortl, struct My
     p_floortl->X[pt] = p_dsp->X;
     p_floortl->Y[pt] = p_dsp->Y;
     if (p_dsp->Shade < 0) {
+        short ambient;
         //TODO why do we use p_ssp->ReflShade instead of using only one ShEnginePoint (the p_dsp)?
         // is ReflShade unset in the other ShEnginePoint?
-        p_dsp->Shade = calculate_shpoint_shade_fading(p_ssp, p_mapel->Ambient, p_mapel->Shade, p_dsp->Depth);
+        ambient = p_mapel->Ambient + p_ssp->ReflShade + 2;
+        p_dsp->Shade = calculate_shpoint_shade_fading(ambient, p_mapel->Shade, p_dsp->Depth);
     }
     p_floortl->Shade[pt] = p_dsp->Shade;
     p_mapel->ShadeR = p_dsp->Shade >> 9;
@@ -607,6 +620,7 @@ void lvdraw_do_floor(void)
         while (shift_a < render_area_a + 1)
         {
             int clip_elcr_x, elcr_y;
+            short ambient;
 
             if (elcr_x < 0)
                 clip_elcr_x = 0;
@@ -617,7 +631,8 @@ void lvdraw_do_floor(void)
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (clip_elcr_x >> 8)];
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 4);
             transform_shpoint(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
-            p_spcr->Shade = calculate_shpoint_shade(p_spcr, p_mapel->Ambient, p_mapel->Shade, p_sqlight);
+            ambient = p_mapel->Ambient + p_spcr->ReflShade + 2;
+            p_spcr->Shade = calculate_shpoint_shade(ambient, p_mapel->Shade, p_sqlight);
 
             p_spcr += 2;
             shift_a++;
@@ -813,10 +828,12 @@ void lvdraw_do_floor_flyby(int cor_z_beg, int ranges_x_len, struct Range *smrang
         while (elcr_x <= smrang_x[rn].fin)
         {
             int elcr_y;
+            short ambient;
 
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 8);
             transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
-            p_spcr->Shade = calculate_shpoint_shade_fading(p_spcr, p_mapel->Ambient, p_mapel->Shade, p_spcr->Depth);
+            ambient = p_mapel->Ambient + p_spcr->ReflShade + 2;
+            p_spcr->Shade = calculate_shpoint_shade_fading(ambient, p_mapel->Shade, p_spcr->Depth);
 
             p_spcr += 2;
             p_mapel++;
