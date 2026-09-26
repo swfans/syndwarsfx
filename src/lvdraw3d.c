@@ -602,18 +602,22 @@ void lvdraw_do_floor(void)
         p_spcr = &loc_unknarrD[shift_b & 1];
         shift_a = 0;
         elcr_x = word_19CC64;
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
-
         while (shift_a < render_area_a + 1)
         {
-            int elcr_y;
+            int clip_elcr_x, elcr_y;
 
+            if (elcr_x < 0)
+                clip_elcr_x = 0;
+            else if (elcr_x >= MAP_COORD_WIDTH)
+                clip_elcr_x = MAP_COORD_WIDTH - 1;
+            else
+                clip_elcr_x = elcr_x;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (clip_elcr_x >> 8)];
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 4);
             transform_shpoint(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
             p_spcr->Shade = shpoint_compute_shade(p_spcr, p_mapel, p_sqlight);
 
             p_spcr += 2;
-            p_mapel++;
             shift_a++;
             elcr_x += TILE_TO_MAPCOORD(1, 0);
         }
@@ -622,7 +626,7 @@ void lvdraw_do_floor(void)
     elpv_z = elcr_z;
     elcr_z += TILE_TO_MAPCOORD(1, 0);
     shift_b++;
-    while (shift_b < render_area_b && elcr_z < 0x8000)
+    while (shift_b < render_area_b && elcr_z < MAP_COORD_HEIGHT)
     {
         struct MyMapElement *p_mapel;
         struct ShEnginePoint *p_spcr;
@@ -632,18 +636,22 @@ void lvdraw_do_floor(void)
         p_spcr = &loc_unknarrD[(shift_b) & 1];
         shift_a = 0;
         elcr_x = word_19CC64;
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (elcr_x >> 8)];
-
         while (shift_a < render_area_a + 1)
         {
-            int elcr_y;
+            int clip_elcr_x, elcr_y;
 
+            if (elcr_x < 0)
+                clip_elcr_x = 0;
+            else if (elcr_x >= MAP_COORD_WIDTH)
+                clip_elcr_x = MAP_COORD_WIDTH - 1;
+            else
+                clip_elcr_x = elcr_x;
+            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (clip_elcr_x >> 8)];
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 4);
             transform_shpoint(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
             p_spcr->Shade = -1;
 
             p_spcr += 2;
-            p_mapel++;
             shift_a++;
             elcr_x += TILE_TO_MAPCOORD(1, 0);
         }
@@ -719,19 +727,23 @@ void lvdraw_do_floor(void)
                 break;
             }
 
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
+            {
+                fill_floor_tile_pos_and_shade(p_floortl, p_mapel, 0, p_sqlight, p_spnx);
 
-            p_spnx += 2;
-            p_sqlight += 1;
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
+                {
+                    p_spnx += 2;
+                    p_sqlight += 1;
+                    fill_floor_tile_pos_and_shade(p_floortl, p_mapel + 1, 1, p_sqlight, p_spnx);
 
-            p_spcr += 2;
-            p_sqlight += render_area_a;
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
+                    p_spcr += 2;
+                    p_sqlight += render_area_a;
+                    fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH + 1, 2, p_sqlight, p_spcr);
+                }
 
-            p_spcr -= 2;
-            p_sqlight -= 1;
-            fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
+                p_spcr -= 2;
+                p_sqlight -= 1;
+                fill_floor_tile_pos_and_shade(p_floortl, p_mapel + MAP_TILE_WIDTH, 3, p_sqlight, p_spcr);
+            }
 
             if (p_mapel->Texture != 0)
             {
@@ -770,7 +782,7 @@ void lvdraw_do_floor(void)
             elcr_x += TILE_TO_MAPCOORD(1, 0);
         }
         shift_b++;
-        elpv_z += TILE_TO_MAPCOORD(1, 0);
+        elpv_z = elcr_z;
         elcr_z += TILE_TO_MAPCOORD(1, 0);
     }
 }
