@@ -129,36 +129,38 @@ int shpoint_compute_coord_y(struct ShEnginePoint *p_sp, struct MyMapElement *p_m
     return elcr_y;
 }
 
-/** Compute shade value for drawing given map element.
+/** Compute shade value for drawing given shaded engine point.
  */
-short shpoint_compute_shade(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, short *p_sqlight)
+static short calculate_shpoint_shade(struct ShEnginePoint *p_sp, short ambient,
+  ushort first_light, short *p_sqlight)
 {
-    int shd;
+    int shade;
 
-    shd = (p_mapel->Ambient << 7) + p_sp->ReflShade + 256 + (*p_sqlight << 8);
-    shd += cummulate_shade_from_quick_lights(p_mapel->Shade);
-    if (shd > 0x7E00)
-        shd = 0x7F00;
-    return shd;
+    shade = (ambient << 7) + p_sp->ReflShade + 256 + (*p_sqlight << 8);
+    shade += cummulate_shade_from_quick_lights(first_light);
+    if (shade > 0x7E00)
+        shade = 0x7F00;
+    return shade;
 }
 
-/** Compute shade value for map element, fading to black beyond some range.
+/** Compute shade value for shaded engine point, fading to black beyond some range.
  */
-short shpoint_compute_shade_fading(struct ShEnginePoint *p_sp, struct MyMapElement *p_mapel, int dist)
+static short calculate_shpoint_shade_fading(struct ShEnginePoint *p_sp, short ambient,
+  ushort first_light, int dist)
 {
-    int shd;
+    int shade;
 
-    shd = (p_mapel->Ambient << 7) + p_sp->ReflShade + 256;
-    shd += cummulate_shade_from_quick_lights(p_mapel->Shade);
+    shade = (ambient << 7) + p_sp->ReflShade + 256;
+    shade += cummulate_shade_from_quick_lights(first_light);
     if (dist > 3000) {
         if (3512 - dist > 0)
-            shd = ((3512 - dist) * shd) >> 9;
+            shade = ((3512 - dist) * shade) >> 9;
         else
-            shd = 0;
+            shade = 0;
     }
-    if (shd > 0x7E00)
-        shd = 0x7F00;
-    return shd;
+    if (shade > 0x7E00)
+        shade = 0x7F00;
+    return shade;
 }
 
 void screen_position_face_render_null_callback(
@@ -554,7 +556,7 @@ void fill_floor_tile_pos_and_shade(struct FloorTile *p_floortl, struct MyMapElem
     p_floortl->X[pt] = p_sp->X;
     p_floortl->Y[pt] = p_sp->Y;
     if (p_sp->Shade < 0) {
-        p_sp->Shade = shpoint_compute_shade(p_sp, p_mapel, p_sqlight);
+        p_sp->Shade = calculate_shpoint_shade(p_sp, p_mapel->Ambient, p_mapel->Shade, p_sqlight);
     }
     p_floortl->Shade[pt] = p_sp->Shade;
     p_mapel->ShadeR = p_sp->Shade >> 9;
@@ -568,7 +570,7 @@ void fill_floor_tile_pos_and_shade_fading(struct FloorTile *p_floortl, struct My
     if (p_dsp->Shade < 0) {
         //TODO why do we use p_ssp->ReflShade instead of using only one ShEnginePoint (the p_dsp)?
         // is ReflShade unset in the other ShEnginePoint?
-        p_dsp->Shade = shpoint_compute_shade_fading(p_ssp, p_mapel, p_dsp->Depth);
+        p_dsp->Shade = calculate_shpoint_shade_fading(p_ssp, p_mapel->Ambient, p_mapel->Shade, p_dsp->Depth);
     }
     p_floortl->Shade[pt] = p_dsp->Shade;
     p_mapel->ShadeR = p_dsp->Shade >> 9;
@@ -615,7 +617,7 @@ void lvdraw_do_floor(void)
             p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (elcr_z >> 8) + (clip_elcr_x >> 8)];
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 4);
             transform_shpoint(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
-            p_spcr->Shade = shpoint_compute_shade(p_spcr, p_mapel, p_sqlight);
+            p_spcr->Shade = calculate_shpoint_shade(p_spcr, p_mapel->Ambient, p_mapel->Shade, p_sqlight);
 
             p_spcr += 2;
             shift_a++;
@@ -814,7 +816,7 @@ void lvdraw_do_floor_flyby(int cor_z_beg, int ranges_x_len, struct Range *smrang
 
             elcr_y = shpoint_compute_coord_y(p_spcr, p_mapel, elcr_x, elcr_z, 8);
             transform_shpoint_fpv(p_spcr, elcr_x - engn_xc, elcr_y - 8 * engn_yc, elcr_z - engn_zc);
-            p_spcr->Shade = shpoint_compute_shade_fading(p_spcr, p_mapel, p_spcr->Depth);
+            p_spcr->Shade = calculate_shpoint_shade_fading(p_spcr, p_mapel->Ambient, p_mapel->Shade, p_spcr->Depth);
 
             p_spcr += 2;
             p_mapel++;
