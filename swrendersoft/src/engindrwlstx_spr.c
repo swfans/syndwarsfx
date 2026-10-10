@@ -214,6 +214,36 @@ void draw_hud_frame_on_screen_unscaled_but_scale_pos(short scr_x, short scr_y, u
     }
 }
 
+void draw_frame_unscaled(int scr_x, int scr_y, ushort frm)
+{
+    struct Frame *p_frm;
+    struct Element *p_elem;
+    ushort el;
+
+    p_frm = &frame[frm];
+    assert(p_frm < frame_end);
+
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
+    {
+        struct TbSprite *p_spr;
+        int el_X, el_Y;
+
+        p_elem = &melement_ani[el];
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+        if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
+            continue;
+
+        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+
+        if ((p_elem->Flags & 0xFE00) == 0) {
+            el_X = scr_x + (p_elem->X >> 1);
+            el_Y = scr_y + (p_elem->Y >> 1);
+            LbSpriteDraw(el_X, el_Y, p_spr);
+        }
+    }
+    lbDisplay.DrawFlags = 0;
+}
+
 void draw_frame_on_screen(short scr_x, short scr_y, ushort frm)
 {
     struct Frame *p_frm;

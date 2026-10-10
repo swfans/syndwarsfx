@@ -53,35 +53,6 @@ short goto_point_frame_count = 0;
 
 /******************************************************************************/
 
-void draw_unkn1_standard_sprite(ushort frm, int scr_x, int scr_y)
-{
-    struct Frame *p_frm;
-    struct Element *p_elem;
-    int el;
-
-    p_frm = &frame[frm];
-    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
-    {
-        struct TbSprite *p_spr;
-        int el_X, el_Y;
-
-        p_elem = &melement_ani[el];
-
-        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-        if (p_spr <= m_sprites)
-            continue;
-
-        if ((p_elem->Flags & 0xFE00) != 0)
-            continue;
-
-        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
-        el_X = scr_x + (p_elem->X >> 1);
-        el_Y = scr_y + (p_elem->Y >> 1);
-        LbSpriteDraw(el_X, el_Y, p_spr);
-    }
-    lbDisplay.DrawFlags = 0;
-}
-
 void func_70a88(int *p_cor_x, int *p_cor_y, int cor_z, ushort frm, TbPixel colour)
 {
 #if 0
@@ -118,7 +89,7 @@ void func_70a88(int *p_cor_x, int *p_cor_y, int cor_z, ushort frm, TbPixel colou
         p_elem = &melement_ani[el];
 
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-        if (p_spr <= m_sprites)
+        if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
 
         if ((p_elem->Flags & 0xFE00) != 0)
@@ -138,11 +109,6 @@ void func_70a88(int *p_cor_x, int *p_cor_y, int cor_z, ushort frm, TbPixel colou
 
 void show_goto_point(u32 flag)
 {
-#if 0
-    asm volatile ("call ASM_show_goto_point\n"
-        : : "a" (flag));
-    return;
-#endif
     ushort frame_count;
     short frm;
     struct Thing *p_thing;
@@ -476,8 +442,8 @@ void draw_hud_target_old_frame(struct Thing *p_target, int frm)
     {
         int sh_x;
         sh_x = (12 * overall_scale) >> 9;
-        draw_unkn1_standard_sprite(frm +  0, ep.pp.X - sh_x, ep.pp.Y);
-        draw_unkn1_standard_sprite(frm + 10, ep.pp.X + sh_x, ep.pp.Y);
+        draw_frame_unscaled(ep.pp.X - sh_x, ep.pp.Y, frm +  0);
+        draw_frame_unscaled(ep.pp.X + sh_x, ep.pp.Y, frm + 10);
     }
     else
     {

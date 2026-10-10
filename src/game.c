@@ -3656,7 +3656,7 @@ ubyte save_game_slot(ubyte click)
     char *slot_str;
     int ret;
 
-    if (login_control[0].State != 6) {
+    if (login_control[0].State != LognCt_Unkn6) {
         return 0;
     }
     if (save_slot == -1) {
