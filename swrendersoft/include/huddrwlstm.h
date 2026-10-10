@@ -97,6 +97,10 @@ TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y,
 TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,
   short cor_z, ushort frm, ushort drwflags, TbPixel colour);
 
+TbBool enlist_hud_draw_mapcoord_sprites_in_quarters_unscaled(short cor_x,
+  short cor_y_m8, short cor_z, struct TbSprite * const p_sprlst[],
+  ushort drwflags, short radius);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

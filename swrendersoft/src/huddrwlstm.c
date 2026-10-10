@@ -428,7 +428,7 @@ TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,
     p_di = &dih;
 
     p_di->U.MapCorFrame.Pt.X = cor_x;
-    p_di->U.MapCorFrame.Pt.Y = cor_y;
+    p_di->U.MapCorFrame.Pt.Y = 8 * cor_y;
     p_di->U.MapCorFrame.Pt.Z = cor_z;
     p_di->U.MapCorFrame.DrwFlags = drwflags;
     p_di->U.MapCorFrame.Frame = frm;
@@ -438,6 +438,30 @@ TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,
 
     //TODO enlist instead of drawing directly
     hud_draw_mapcoord_frame(&p_di->U.MapCorFrame);
+    return true;
+}
+
+TbBool enlist_hud_draw_mapcoord_sprites_in_quarters_unscaled(short cor_x,
+  short cor_y_m8, short cor_z, struct TbSprite * const p_sprlst[],
+  ushort drwflags, short radius)
+{
+    struct DrawItemHud dih;
+    struct DrawItemHud *p_di;
+
+    p_di = &dih;
+
+    p_di->U.MapCorSprLst.Pt.X = cor_x;
+    p_di->U.MapCorSprLst.Pt.Y = cor_y_m8;
+    p_di->U.MapCorSprLst.Pt.Z = cor_z;
+    p_di->U.MapCorSprLst.DrwFlags = drwflags;
+    p_di->U.MapCorSprLst.pSprLst = p_sprlst;
+    p_di->U.MapCorSprLst.Radius = radius;
+    p_di->U.MapCorSprLst.Scale = 16;
+    p_di->U.MapCorSprLst.Bright = 32;
+    p_di->U.MapCorSprLst.Col = 0;
+
+    //TODO enlist instead of drawing directly
+    hud_draw_mapcoord_sprites_in_quarters(&p_di->U.MapCorSprLst);
     return true;
 }
 

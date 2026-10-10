@@ -240,7 +240,7 @@ void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame)
     int pp_X, pp_Y;
 
     ep.X3d = p_diMapCorFrame->Pt.X - engn_xc;
-    ep.Y3d = 8 * p_diMapCorFrame->Pt.Y - engn_yc;
+    ep.Y3d = p_diMapCorFrame->Pt.Y - engn_yc;
     ep.Z3d = p_diMapCorFrame->Pt.Z - engn_zc;
     ep.Flags = 0;
     transform_point(&ep);
@@ -256,6 +256,26 @@ void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame)
     } else {
         draw_frame_unscaled(pp_X, pp_Y, p_diMapCorFrame->Frame);
     }
+}
+
+void hud_draw_mapcoord_sprites_in_quarters(struct DIHudMapCoordSprList *p_diMapCorSprLst)
+{
+    struct EnginePoint ep;
+    int pp_X, pp_Y;
+
+    ep.X3d = p_diMapCorSprLst->Pt.X - engn_xc;
+    ep.Y3d = p_diMapCorSprLst->Pt.Y - engn_yc;
+    ep.Z3d = p_diMapCorSprLst->Pt.Z - engn_zc;
+    ep.Flags = 0;
+    transform_point(&ep);
+
+    pp_X = ep.pp.X;
+    pp_Y = ep.pp.Y;
+
+    lbDisplay.DrawFlags = p_diMapCorSprLst->DrwFlags;
+
+    draw_sprites_in_quarters_unscaled(pp_X, pp_Y,
+      p_diMapCorSprLst->pSprLst, p_diMapCorSprLst->Radius);
 }
 
 /******************************************************************************/

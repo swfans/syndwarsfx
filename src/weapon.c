@@ -34,7 +34,6 @@
 #include "enginsngtxtr.h"
 #include "engintrns.h"
 #include "enginzoom.h"
-#include "frame_sprani.h"
 
 #include "bigmap.h"
 #include "bmbang.h"

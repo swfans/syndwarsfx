@@ -150,6 +150,11 @@ void draw_sorted_sprite1a(ushort frm, short x, short y, ubyte bright);
 
 void draw_sort_sprite1a(ushort sspr);
 
+/** Draw sprites in given NULL-term list in quarters around radius.
+ */
+void draw_sprites_in_quarters_unscaled(int scr_x, int scr_y,
+  struct TbSprite * const p_sprlst[], int radius);
+
 void draw_floor_tile1a(ushort tl);
 void draw_floor_tile1b(ushort tl);
 

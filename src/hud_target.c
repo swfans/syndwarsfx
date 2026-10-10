@@ -44,7 +44,12 @@
 #include "weapon.h"
 #include "swlog.h"
 /******************************************************************************/
-
+static const ushort target_person_frame_elements_sprno[] = { 78, 79, 81, 80 };
+struct TbSprite *target_person_frame_elements_spr[5];
+#if 0
+static const ushort target_vehicle_frame_elements_sprno[] = { 84, 85, 87, 86 };
+struct TbSprite *target_vehicle_frame_elements_spr[5];
+#endif
 TbBool hud_show_target_health = false;
 
 s32 target_old_frameno = 0;
@@ -201,37 +206,33 @@ void draw_hud_lock_target(void)
         :  :  : "eax" );
 }
 
-void draw_target_person(struct Thing *p_person, uint radius)
+void draw_target_person(struct Thing *p_person, int radius)
 {
 #if 0
     asm volatile ("call ASM_draw_target_person\n"
         : : "a" (p_person), "d" (radius));
     return;
 #endif
-    struct EnginePoint ep;
-    struct TbSprite *p_bspr;
-    struct TbSprite *p_aspr;
+    int cor_x, cor_y_m8, cor_z;
+    int i, n;
 
     if ((p_person->Flag & TngF_Destroyed) != 0)
         return;
 
-    ep.X3d = PRCCOORD_TO_MAPCOORD(p_person->X) - engn_xc;
-    ep.Z3d = PRCCOORD_TO_MAPCOORD(p_person->Z) - engn_zc;
-    // TODO Why constant height of 120? Maybe differnt main body position for different thing types?
-    ep.Y3d = PRCCOORD_TO_YCOORD(p_person->Y) - engn_yc + 120;
-    ep.Flags = 0;
-    transform_point(&ep);
+    //TODO maybe initialize this during sprite loading?
+    n = sizeof(target_person_frame_elements_sprno)/sizeof(target_person_frame_elements_sprno[0]);
+    for (i = 0; i < n; i++) {
+        target_person_frame_elements_spr[i] = &pop1_sprites[target_person_frame_elements_sprno[i]];
+    }
+    target_person_frame_elements_spr[n] = NULL;
 
-    p_aspr = &pop1_sprites[84];
-    p_bspr = &pop1_sprites[78];
-    LbSpriteDraw(ep.pp.X - radius - p_aspr->SWidth, ep.pp.Y - radius - p_aspr->SHeight, p_bspr);
-    p_bspr = &pop1_sprites[79];
-    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y - radius - p_aspr->SHeight, p_bspr);
-    p_bspr = &pop1_sprites[81];
-    LbSpriteDraw(ep.pp.X + radius, ep.pp.Y + radius, p_bspr);
-    p_aspr = &pop1_sprites[87];
-    p_bspr = &pop1_sprites[80];
-    LbSpriteDraw(ep.pp.X - radius - p_aspr->SWidth, ep.pp.Y + radius, p_bspr);
+    cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+    // TODO Why constant height? Maybe differnt main body position for different thing types?
+    cor_y_m8 = PRCCOORD_TO_YCOORD(p_person->Y) + 8 * 15;
+    cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+
+    enlist_hud_draw_mapcoord_sprites_in_quarters_unscaled(cor_x,
+      cor_y_m8, cor_z, target_person_frame_elements_spr, 0, radius);
 }
 
 void draw_target_vehicle(struct Thing *p_vehicle)

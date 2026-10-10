@@ -826,4 +826,58 @@ void draw_sort_sprite_short_text(ushort sspr)
     draw_text(p_sspr->X, p_sspr->Y, locstr, colour);
 }
 
+void draw_sprites_in_quarters_unscaled(int scr_x, int scr_y,
+  struct TbSprite * const p_sprlst[], int radius)
+{
+    const struct TbSprite *p_spr;
+    int top, bottom, left, right;
+    int i;
+
+    // Compute shifts in all directions, so that sprites have outer borders aligned
+    top = radius;
+    bottom = radius;
+    left = radius;
+    right = radius;
+    for (i = 0; i < 256; i++) {
+        p_spr = p_sprlst[i];
+        if (p_spr == NULL)
+            break;
+
+        // Get top pos from first 2 quarters
+        if (((i & 3) < 2) && (top < radius + p_spr->SHeight))
+            top = radius + p_spr->SHeight;
+        // Get left pos from quarters 0 and 2
+        if (((i & 1) == 0) && (left < radius + p_spr->SWidth))
+           left = radius + p_spr->SWidth;
+        // Get right pos from quarters 1 and 3
+        if (((i & 1) != 0) && (right < radius + p_spr->SWidth))
+           right = radius + p_spr->SWidth;
+        // Get bottom pos from last 2 quarters
+        if (((i & 3) >= 2) && (bottom < radius + p_spr->SHeight))
+            bottom = radius + p_spr->SHeight;
+    }
+
+    for (i = 0; i < 256; i++) {
+        p_spr = p_sprlst[i];
+        if (p_spr == NULL)
+            break;
+
+        switch (i & 3)
+        {
+        case 0:
+            LbSpriteDraw(scr_x - left, scr_y - top, p_spr);
+            break;
+        case 1:
+            LbSpriteDraw(scr_x + right - p_spr->SWidth, scr_y - top, p_spr);
+            break;
+        case 2:
+            LbSpriteDraw(scr_x + right - p_spr->SWidth, scr_y + bottom - p_spr->SHeight, p_spr);
+            break;
+        case 3:
+            LbSpriteDraw(scr_x - left, scr_y + bottom - p_spr->SHeight, p_spr);
+            break;
+        }
+    }
+}
+
 /******************************************************************************/
