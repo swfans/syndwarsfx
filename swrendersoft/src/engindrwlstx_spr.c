@@ -157,22 +157,22 @@ void draw_hud_frame_on_screen(short scr_x, short scr_y, ushort frm, int sscale)
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    el = p_frm->FirstElement;
-    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
-        int el_x, el_y;
+        int el_X, el_Y;
 
-        el = p_elem->Next;
+        p_elem = &melement_ani[el];
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
 
-        lbDisplay.DrawFlags = p_elem->Flags & 7;
+        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+
         if ((p_elem->Flags & 0xFE00) == 0) {
-            el_x = scr_x + ((sscale * p_elem->X) >> 9);
-            el_y = scr_y + ((sscale * p_elem->Y) >> 9);
-            LbSpriteDrawScaled(el_x, el_y, p_spr,
+            el_X = scr_x + ((sscale * p_elem->X) >> 9);
+            el_Y = scr_y + ((sscale * p_elem->Y) >> 9);
+            LbSpriteDrawScaled(el_X, el_Y, p_spr,
               (sscale * p_spr->SWidth + 127) >> 9,
               (sscale * p_spr->SHeight + 127) >> 9);
         }
@@ -194,22 +194,22 @@ void draw_hud_frame_on_screen_unscaled_but_scale_pos(short scr_x, short scr_y, u
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    el = p_frm->FirstElement;
-    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
-        int el_x, el_y;
+        int el_X, el_Y;
 
-        el = p_elem->Next;
+        p_elem = &melement_ani[el];
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
 
-        lbDisplay.DrawFlags = p_elem->Flags & 7;
+        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+
         if ((p_elem->Flags & 0xFE00) == 0) {
-            el_x = scr_x + ((sscale * p_elem->X) >> 9);
-            el_y = scr_y + ((sscale * p_elem->Y) >> 9);
-            LbSpriteDraw(el_x, el_y, p_spr);
+            el_X = scr_x + ((sscale * p_elem->X) >> 9);
+            el_Y = scr_y + ((sscale * p_elem->Y) >> 9);
+            LbSpriteDraw(el_X, el_Y, p_spr);
         }
     }
 }
@@ -218,27 +218,30 @@ void draw_frame_on_screen(short scr_x, short scr_y, ushort frm)
 {
     struct Frame *p_frm;
     struct Element *p_elem;
+    int sscale;
     ushort el;
+
+    sscale = overall_scale;
 
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    el = p_frm->FirstElement;
-    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
-        int el_x, el_y;
+        int el_X, el_Y;
 
-        el = p_elem->Next;
+        p_elem = &melement_ani[el];
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
 
         lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+
         if ((p_elem->Flags & 0xFE00) == 0) {
-            el_x = scr_x + ((p_elem->X * overall_scale) >> 9);
-            el_y = scr_y + ((p_elem->Y * overall_scale) >> 9);
-            LbSpriteDrawResized(el_x, el_y, (16 * overall_scale) >> 8, p_spr);
+            el_X = scr_x + ((sscale * p_elem->X) >> 9);
+            el_Y = scr_y + ((sscale * p_elem->Y) >> 9);
+            LbSpriteDrawResized(el_X, el_Y, (16 * sscale) >> 8, p_spr);
         }
 
         anim_elem_pos_mark(p_elem);
@@ -255,22 +258,22 @@ void draw_frame_unscaled_alpha_force(short scr_x, short scr_y, ushort frm, ubyte
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    el = p_frm->FirstElement;
-    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
-        int el_x, el_y;
+        int el_X, el_Y;
 
-        el = p_elem->Next;
+        p_elem = &melement_ani[el];
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
 
         lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+
         if ((p_elem->Flags & 0xFE00) == 0) {
-            el_x = scr_x + (p_elem->X >> 1);
-            el_y = scr_y + (p_elem->Y >> 1);
-            LbSpriteDrawRemap(el_x, el_y, p_spr, &pixmap.fade_table[bri * PALETTE_8b_COLORS]);
+            el_X = scr_x + (p_elem->X >> 1);
+            el_Y = scr_y + (p_elem->Y >> 1);
+            LbSpriteDrawRemap(el_X, el_Y, p_spr, &pixmap.fade_table[bri * PALETTE_8b_COLORS]);
         }
 
         anim_elem_pos_mark(p_elem);
@@ -288,27 +291,27 @@ void draw_frame_unscaled_alpha(short scr_x, short scr_y, ubyte *frv, ushort frm,
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    el = p_frm->FirstElement;
-    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
-        int el_x, el_y;
+        int el_X, el_Y;
 
-        el = p_elem->Next;
+        p_elem = &melement_ani[el];
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
 
+        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
+
         if (frv[(p_elem->Flags >> 4) & 0x1F] != ((p_elem->Flags >> 9) & 0x07))
             continue;
 
-        lbDisplay.DrawFlags = p_elem->Flags & 7;
-        el_x = scr_x + (p_elem->X >> 1);
-        el_y = scr_y + (p_elem->Y >> 1);
+        el_X = scr_x + (p_elem->X >> 1);
+        el_Y = scr_y + (p_elem->Y >> 1);
         if (((p_elem->Flags >> 4) & 0x1F) == 4) {
-            LbSpriteDraw(el_x, el_y, p_spr);
+            LbSpriteDraw(el_X, el_Y, p_spr);
         } else {
-            LbSpriteDrawRemap(el_x, el_y, p_spr, &pixmap.fade_table[bri * PALETTE_8b_COLORS]);
+            LbSpriteDrawRemap(el_X, el_Y, p_spr, &pixmap.fade_table[bri * PALETTE_8b_COLORS]);
         }
 
         anim_elem_pos_mark(p_elem);
@@ -328,13 +331,12 @@ void draw_frame_glb_scale_alpha(int scr_x, int scr_y, ushort frm)
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    el = p_frm->FirstElement;
-    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
-        int el_x, el_y;
+        int el_X, el_Y;
 
-        el = p_elem->Next;
+        p_elem = &melement_ani[el];
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
@@ -342,11 +344,12 @@ void draw_frame_glb_scale_alpha(int scr_x, int scr_y, ushort frm)
         lbDisplay.DrawFlags = p_elem->Flags & 0x0F;
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) == 0)
             lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
+
         if ((p_elem->Flags & 0xFE00) == 0)
         {
-            el_x = scr_x + (p_elem->X >> 1);
-            el_y = scr_y + (p_elem->Y >> 1);
-            DrawSpriteWthShadowUsingScalingData(el_x, el_y, p_spr);
+            el_X = scr_x + (p_elem->X >> 1);
+            el_Y = scr_y + (p_elem->Y >> 1);
+            DrawSpriteWthShadowUsingScalingData(el_X, el_Y, p_spr);
         }
     }
     lbDisplay.DrawFlags = 0;
@@ -364,26 +367,26 @@ void draw_frame_glb_scale_alpha_frv(int scr_x, int scr_y, ubyte *frv, ushort frm
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    el = p_frm->FirstElement;
-    for (p_elem = &melement_ani[el]; p_elem > melement_ani; p_elem = &melement_ani[el])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
-        int el_x, el_y;
+        int el_X, el_Y;
 
-        el = p_elem->Next;
+        p_elem = &melement_ani[el];
         p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
         if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
             continue;
 
         lbDisplay.DrawFlags = p_elem->Flags & 0x07;
         if ((lbDisplay.DrawFlags & Lb_SPRITE_TRANSPAR4) == 0)
-                    lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
-        if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
-        {
-            el_x = scr_x + (p_elem->X >> 1);
-            el_y = scr_y + (p_elem->Y >> 1);
-            DrawSpriteWthShadowUsingScalingData(el_x, el_y, p_spr);
-        }
+            lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR8;
+
+        if (frv[(p_elem->Flags >> 4) & 0x1F] != ((p_elem->Flags >> 9) & 0x07))
+            continue;
+
+        el_X = scr_x + (p_elem->X >> 1);
+        el_Y = scr_y + (p_elem->Y >> 1);
+        DrawSpriteWthShadowUsingScalingData(el_X, el_Y, p_spr);
     }
     lbDisplay.DrawFlags = 0;
 }
@@ -398,7 +401,7 @@ void draw_frame_scaled_alpha(int scr_x, int scr_y, ushort frm,
   ushort scale, ushort alpha)
 {
     struct Frame *p_frm;
-    struct Element *p_el;
+    struct Element *p_elem;
     int swidth, sheight;
     ushort el;
 
@@ -406,11 +409,11 @@ void draw_frame_scaled_alpha(int scr_x, int scr_y, ushort frm,
     assert(p_frm < frame_end);
     lbSpriteReMapPtr = &pixmap.fade_table[256 * alpha];
 
-    el = p_frm->FirstElement;
     anim_elem_pos_min_set(INT16_MAX, INT16_MAX);
-    for (p_el = &melement_ani[el]; p_el > melement_ani; p_el = &melement_ani[p_el->Next])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
-        anim_elem_pos_mark(p_el);
+        p_elem = &melement_ani[el];
+        anim_elem_pos_mark(p_elem);
     }
 
     swidth = p_frm->SWidth;
@@ -438,6 +441,7 @@ void draw_frame_scaled_alpha_frv(short x, short y, ubyte *frv, ushort frm,
     int max_x, max_y;
     int min_x, min_y;
     int range_x, range_y;
+    ushort el;
     TbBool really_draw;
 
     really_draw = 0;
@@ -448,28 +452,30 @@ void draw_frame_scaled_alpha_frv(short x, short y, ubyte *frv, ushort frm,
     p_frm = &frame[frm];
     assert(p_frm < frame_end);
 
-    for (p_elem = &melement_ani[p_frm->FirstElement]; p_elem > melement_ani;
-      p_elem = &melement_ani[p_elem->Next])
+    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
     {
         struct TbSprite *p_spr;
+        int el_X, el_Y;
 
-        if (frv[(p_elem->Flags >> 4) & 0x1F] == ((p_elem->Flags >> 9) & 0x07))
-        {
-            int tmp;
+        p_elem = &melement_ani[el];
+        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+        if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
+            continue;
 
-            really_draw = 1;
-            p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-            if (min_x > p_elem->X >> 1)
-                min_x = p_elem->X >> 1;
-            if (min_y > p_elem->Y >> 1)
-                min_y = p_elem->Y >> 1;
-            tmp = p_spr->SWidth + (p_elem->X >> 1);
-            if (max_x < tmp)
-                max_x = tmp;
-            tmp = p_spr->SHeight + (p_elem->Y >> 1);
-            if (max_y < tmp)
-                max_y = tmp;
-        }
+        if (frv[(p_elem->Flags >> 4) & 0x1F] != ((p_elem->Flags >> 9) & 0x07))
+            continue;
+
+        really_draw = 1;
+        if (min_x > p_elem->X >> 1)
+            min_x = p_elem->X >> 1;
+        if (min_y > p_elem->Y >> 1)
+            min_y = p_elem->Y >> 1;
+        el_X = p_spr->SWidth + (p_elem->X >> 1);
+        el_Y = p_spr->SHeight + (p_elem->Y >> 1);
+        if (max_x < el_X)
+            max_x = el_X;
+        if (max_y < el_Y)
+            max_y = el_Y;
     }
 
     if (!really_draw)
