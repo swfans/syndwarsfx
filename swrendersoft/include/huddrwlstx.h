@@ -114,6 +114,15 @@ struct DIHudMapCoordLine {
     ubyte Col;
 };
 
+struct DIHudMapCoordFrame {
+    struct DIMapPoint Pt;
+    ushort Frame;
+    ushort DrwFlags;
+    ubyte Scale;
+    ubyte Bright;
+    ubyte Col;
+};
+
 struct DrawItemHud {
 	union {
         struct DIHudLine Line;
@@ -123,6 +132,7 @@ struct DrawItemHud {
 		struct DIHudClippedText ClpText;
 		struct DIHudWrappedText WrpText;
         struct DIHudMapCoordLine MapCorLine;
+        struct DIHudMapCoordFrame MapCorFrame;
 	} U;
 	ubyte Type;
 	ushort Flags;
@@ -153,6 +163,7 @@ int hud_width_shad_cl_flash_wrapped_text(short px, short py,
   struct TbSprite *p_font, const char *text, ushort drwflags, short units_per_px);
 
 void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine);
+void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame);
 
 /******************************************************************************/
 #ifdef __cplusplus

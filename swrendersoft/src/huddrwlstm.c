@@ -419,4 +419,26 @@ TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y,
     return true;
 }
 
+TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,
+  short cor_z, ushort frm, ushort drwflags, TbPixel colour)
+{
+    struct DrawItemHud dih;
+    struct DrawItemHud *p_di;
+
+    p_di = &dih;
+
+    p_di->U.MapCorFrame.Pt.X = cor_x;
+    p_di->U.MapCorFrame.Pt.Y = cor_y;
+    p_di->U.MapCorFrame.Pt.Z = cor_z;
+    p_di->U.MapCorFrame.DrwFlags = drwflags;
+    p_di->U.MapCorFrame.Frame = frm;
+    p_di->U.MapCorFrame.Scale = 16;
+    p_di->U.MapCorFrame.Bright = 32;
+    p_di->U.MapCorFrame.Col = colour;
+
+    //TODO enlist instead of drawing directly
+    hud_draw_mapcoord_frame(&p_di->U.MapCorFrame);
+    return true;
+}
+
 /******************************************************************************/

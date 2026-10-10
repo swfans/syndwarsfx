@@ -29,6 +29,7 @@
 #include "engincolour.h"
 #include "enginsngobjs.h"
 #include "engintrns.h"
+#include "huddrwlstm.h"
 
 #include "bigmap.h"
 #include "engindrwlstm_wrp.h"
@@ -52,60 +53,6 @@ short goto_point_frame_no = 0;
 short goto_point_frame_count = 0;
 
 /******************************************************************************/
-
-void func_70a88(int *p_cor_x, int *p_cor_y, int cor_z, ushort frm, TbPixel colour)
-{
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_func_70a88\n"
-        :  : "a" (p_cor_x), "d" (p_cor_y), "b" (cor_z), "c" (frm), "g" ((u32)colour));
-    return;
-#endif
-    struct EnginePoint ep;
-    struct Frame *p_frm;
-    struct Element *p_elem;
-    int pp_X, pp_Y;
-    int el;
-
-    ep.X3d = *p_cor_x - engn_xc;
-    ep.Y3d = 8 * *p_cor_y - engn_yc;
-    ep.Z3d = cor_z - engn_zc;
-    ep.Flags = 0;
-    transform_point(&ep);
-
-    pp_X = ep.pp.X;
-    pp_Y = ep.pp.Y;
-    *p_cor_x = pp_X;
-    *p_cor_y = pp_Y;
-
-    p_frm = &frame[frm];
-
-    for (el = p_frm->FirstElement; el > 0; el = p_elem->Next)
-    {
-        struct TbSprite *p_spr;
-        int el_X, el_Y;
-
-        p_elem = &melement_ani[el];
-
-        p_spr = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
-        if ((p_spr <= m_sprites) || (p_spr >= m_sprites_end))
-            continue;
-
-        if ((p_elem->Flags & 0xFE00) != 0)
-            continue;
-
-        lbDisplay.DrawFlags = p_elem->Flags & 0x07;
-        el_X = pp_X + (p_elem->X >> 1);
-        el_Y = pp_Y + (p_elem->Y >> 1);
-        if (colour != 0) {
-            LbSpriteDrawOneColour(el_X, el_Y, p_spr, colour);
-        } else {
-            LbSpriteDraw(el_X, el_Y, p_spr);
-        }
-    }
-    lbDisplay.DrawFlags = 0;
-}
 
 void show_goto_point(u32 flag)
 {
@@ -166,7 +113,7 @@ void show_goto_point(u32 flag)
         cor_y = PRCCOORD_TO_MAPCOORD(height);
         if ((p_thing->Flag2 & TgF2_Unkn00080000) != 0)
             colour = 48;
-        func_70a88(&cor_x, &cor_y, cor_z, frm, colour);
+        enlist_hud_draw_mapcoord_frame_one_colour(cor_x, cor_y, cor_z, frm, 0, colour);
     }
 }
 

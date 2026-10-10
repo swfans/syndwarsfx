@@ -92,6 +92,11 @@ TbBool enlist_hud_draw_mapcoord_line(short cor1_x, short cor1_y,
   short cor1_z, short cor2_x, short cor2_y, short cor2_z,
   ushort drwflags, ubyte thickness, TbPixel colour);
 
+/** Enlist drawing a frame on the provided map coordinates.
+ */
+TbBool enlist_hud_draw_mapcoord_frame_one_colour(short cor_x, short cor_y,
+  short cor_z, ushort frm, ushort drwflags, TbPixel colour);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

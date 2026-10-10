@@ -34,6 +34,9 @@
 #include "app_text_cw.h"
 #include "app_text_sf.h"
 #include "drawshape.h"
+#include "engincam.h"
+#include "engindrwlstx.h"
+#include "engintrns.h"
 #include "sprfontut.h"
 
 /******************************************************************************/
@@ -229,6 +232,30 @@ void hud_draw_mapcoord_line(struct DIHudMapCoordLine *p_diMapCorLine)
       p_diMapCorLine->PtBeg.X, p_diMapCorLine->PtBeg.Y, p_diMapCorLine->PtBeg.Z,
       p_diMapCorLine->PtEnd.X, p_diMapCorLine->PtEnd.Y, p_diMapCorLine->PtEnd.Z,
       p_diMapCorLine->Col);
+}
+
+void hud_draw_mapcoord_frame(struct DIHudMapCoordFrame *p_diMapCorFrame)
+{
+    struct EnginePoint ep;
+    int pp_X, pp_Y;
+
+    ep.X3d = p_diMapCorFrame->Pt.X - engn_xc;
+    ep.Y3d = 8 * p_diMapCorFrame->Pt.Y - engn_yc;
+    ep.Z3d = p_diMapCorFrame->Pt.Z - engn_zc;
+    ep.Flags = 0;
+    transform_point(&ep);
+
+    pp_X = ep.pp.X;
+    pp_Y = ep.pp.Y;
+
+    lbDisplay.DrawFlags = p_diMapCorFrame->DrwFlags;
+
+    if (p_diMapCorFrame->Col != 0) {
+        draw_frame_unscaled_one_colour(pp_X, pp_Y, p_diMapCorFrame->Frame,
+          p_diMapCorFrame->Col);
+    } else {
+        draw_frame_unscaled(pp_X, pp_Y, p_diMapCorFrame->Frame);
+    }
 }
 
 /******************************************************************************/
