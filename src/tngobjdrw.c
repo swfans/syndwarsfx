@@ -684,6 +684,8 @@ struct SingleObjectFace4 *build_continuos_slice_3d(int near_x, int near_y, int n
     stkargs[5] = (int)(intptr_t)col;
 
     asm volatile (
+      "push 20(%4)\n"
+      "push 16(%4)\n"
       "push 12(%4)\n"
       "push 8(%4)\n"
       "push 4(%4)\n"
@@ -904,8 +906,25 @@ void build_nuclear_bomb(struct SimpleThing *p_sthing)
  *  is added to the otherwise straight interpolated point, and a line segment
  *  is drawn from the previous jittered point to the current one.
  */
-static void do_beam_electric(int x1, int y1, int z1, int x2, int y2, int z2)
+void do_beam_electric(int x1, int y1, int z1,
+  int x2, int y2, int z2)//TODO add, ubyte colkp)
 {
+#if 1
+    // Pushed through a register holding them: a "g" operand may be placed
+    // relative to the stack pointer, which each push moves.
+    int stkargs[2];
+
+    stkargs[0] = (int)(intptr_t)y2;
+    stkargs[1] = (int)(intptr_t)z2;
+
+    asm volatile (
+      "push 4(%4)\n"
+      "push 0(%4)\n"
+      "call ASM_do_beam_electric\n"
+        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "S" (stkargs)
+        : "cc", "memory");
+    return;
+#endif
     int dx, dy, dz;
     int nx, ny, nz;
     int step_dx, step_dy, step_dz;
@@ -963,9 +982,9 @@ static void do_beam_electric(int x1, int y1, int z1, int x2, int y2, int z2)
         new_jit_z = (lbSinTable[step] * nx) >> 7;
 
         if (step != LbFPMath_PI) {
-            new_jit_x = (new_jit_x * (LbRandomPosShort() + 0x20)) >> 8;
-            new_jit_y = (new_jit_y * (LbRandomPosShort() + 0x20)) >> 8;
-            new_jit_z = (new_jit_z * (LbRandomPosShort() + 0x20)) >> 8;
+            new_jit_x = (new_jit_x * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
+            new_jit_y = (new_jit_y * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
+            new_jit_z = (new_jit_z * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
         }
 
         if (step != 0) {
@@ -1051,6 +1070,23 @@ static void build_laser_beam_segments(int start_x, int start_y, int start_depth,
     }
 }
 
+static void build_laser_beam_glare(int scr_x, int scr_y,
+  TbPixel beam_colour, int circle_depth)
+{
+    int circle_sort_key;
+
+    circle_sort_key = circle_depth;
+    if (circle_sort_key < 0)
+        circle_sort_key = 0;
+    else if (circle_sort_key > 9999)
+        circle_sort_key = 9999;
+
+    build_polygon_circle_2d(scr_x >> 8, scr_y >> 8, 13, 13,
+      0xf, game_textures, beam_colour, 32, 127, circle_sort_key);
+    build_polygon_circle_2d(scr_x >> 8, scr_y >> 8, 10, 10,
+      0xf, game_textures, beam_colour, 32, 127, circle_sort_key);
+}
+
 /** Draws a glowing laser beam line between two 3D points, including a muzzle flash.
  *
  *  The flash is drawn at the weapon-specific muzzle offset of p_owner.
@@ -1070,16 +1106,16 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
     int spread_x, spread_y;
     int step_x, step_y, step_z;
     short width1, width2, width3;
-    int circle_sort_key;
     int i;
     short ofs_x, ofs_y;
 
-    for (i = 0; i < num_electric_strands; i++)
+    for (i = 0; i < num_electric_strands; i++) {
         do_beam_electric(x1, y1 + 20, z1, x2, y2, z2);
+    }
 
     ep_near.Flags = 0;
     ep_near.X3d = x1 - engn_xc;
-    ep_near.Y3d = (y1 << 3) - (engn_yc >> 3);
+    ep_near.Y3d = (y1 << 3); // subtracted within transform_point(): - 8 * engn_yc;
     ep_near.Z3d = z1 - engn_zc;
     transform_point(&ep_near);
 
@@ -1087,11 +1123,11 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
 
     ep_far.Flags = 0;
     ep_far.X3d = x2 - engn_xc;
-    ep_far.Y3d = (y2 << 3) - (engn_yc >> 3);
+    ep_far.Y3d = (y2 << 3); // subtracted within transform_point(): - 8 * engn_yc;
     ep_far.Z3d = z2 - engn_zc;
     transform_point(&ep_far);
 
-    if ((ep_near.Flags & ep_far.Flags) & 0xf)
+    if (((ep_near.Flags & ep_far.Flags) & 0x0F) != 0)
         return;
 
     circle_x = (ep_near.pp.X << 8) + ((ofs_x * overall_scale) >> 1);
@@ -1106,26 +1142,16 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
         return;
 
     num_segments = (screen_dist / 20) >> 8;
+    if (num_segments < 1)
+        num_segments = 1;
 
     circle_x += ((dx * 150) / screen_dist) << 2;
     circle_y += ((dy * 150) / screen_dist) << 2;
 
-    circle_sort_key = ep_near.Z3d + circle_depth_bias;
-    if (circle_sort_key < 0)
-        circle_sort_key = 0;
-    else if (circle_sort_key > 9999)
-        circle_sort_key = 9999;
-
-    build_polygon_circle_2d(circle_x >> 8, circle_y >> 8, 13, 13,
-      0xf, game_textures, beam_colour, 32, 127, circle_sort_key);
-    build_polygon_circle_2d(circle_x >> 8, circle_y >> 8, 10, 10,
-      0xf, game_textures, beam_colour, 32, 127, circle_sort_key);
+    build_laser_beam_glare(circle_x, circle_y, beam_colour, ep_near.Z3d + circle_depth_bias);
 
     circle_x += ((dx * 150) / screen_dist) << 4;
     circle_y += ((dy * 150) / screen_dist) << 4;
-
-    if (num_segments < 1)
-        num_segments = 1;
 
     if (itime <= 2) {
         spread_x = 0;

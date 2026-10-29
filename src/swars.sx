@@ -50242,7 +50242,7 @@ GLOBAL_FUNC(ASM_build_razor_wire_strand)	/* 0x06953C */
 
 
 /*----------------------------------------------------------------*/
-do_beam_electric:	/* 0x0697B0 */
+GLOBAL_FUNC(ASM_do_beam_electric)	/* 0x0697B0 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -50471,7 +50471,7 @@ GLOBAL_FUNC(ASM_build_laser_beam)	/* 0x069A34 */
 		mov    %eax,0x64(%esp)
 		mov    %eax,%edx
 		mov    %esi,%eax
-		call   do_beam_electric
+		call   ac_do_beam_electric
 		mov    0xd8(%esp),%ecx
 		mov    0xd4(%esp),%eax
 		push   %ecx
@@ -50481,7 +50481,7 @@ GLOBAL_FUNC(ASM_build_laser_beam)	/* 0x069A34 */
 		mov    %ebp,%ecx
 		mov    %esi,%eax
 		shl    $0x3,%edi
-		call   do_beam_electric
+		call   ac_do_beam_electric
 		mov    EXPORT_SYMBOL(engn_yc),%eax
 		xor    %dl,%dl
 		mov    EXPORT_SYMBOL(engn_zc),%ebx
@@ -51103,7 +51103,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		mov    %eax,0x68(%esp)
 		mov    %eax,%edx
 		mov    %esi,%eax
-		call   do_beam_electric
+		call   ac_do_beam_electric
 		mov    0xd8(%esp),%ecx
 		mov    0xd4(%esp),%eax
 		push   %ecx
@@ -51112,7 +51112,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		push   %eax
 		mov    %ebp,%ecx
 		mov    %esi,%eax
-		call   do_beam_electric
+		call   ac_do_beam_electric
 		mov    0xd8(%esp),%edx
 		mov    0xd4(%esp),%ebx
 		push   %edx
@@ -51121,7 +51121,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		push   %ebx
 		mov    0x68(%esp),%edx
 		mov    0xb0(%esp),%ebx
-		call   do_beam_electric
+		call   ac_do_beam_electric
 		mov    0xd8(%esp),%ecx
 		mov    0xd4(%esp),%eax
 		push   %ecx
@@ -51131,7 +51131,7 @@ GLOBAL_FUNC(ASM_build_laser_beam_q)	/* 0x06A2E0 */
 		mov    %ebp,%ecx
 		mov    %esi,%eax
 		shl    $0x3,%edi
-		call   do_beam_electric
+		call   ac_do_beam_electric
 		mov    EXPORT_SYMBOL(engn_yc),%eax
 		xor    %dl,%dl
 		mov    EXPORT_SYMBOL(engn_zc),%ebx
