@@ -391,6 +391,30 @@ void build_laser(int cor1_x, int cor1_y, int cor1_z,
       depth_shift, itime, ofs_x, ofs_y, colour);
 }
 
+void build_electricity_strand(struct SimpleThing *p_sthing, ubyte itime)
+{
+#if 0
+    asm volatile (
+      "call ASM_build_electricity_strand\n"
+        : : "a" (p_sthing), "d" (itime));
+#endif
+    struct EnginePoint ep1, ep2;
+
+    ep1.Flags = 0;
+    ep1.X3d = (p_sthing->X >> 8) - engn_xc;
+    ep1.Y3d = (p_sthing->Y >> 8); // subtracted within transform_point(): - 8 * engn_yc;
+    ep1.Z3d = (p_sthing->Z >> 8) - engn_zc;
+    transform_point(&ep1);
+
+    ep2.Flags = 0;
+    ep2.X3d = p_sthing->U.UEffect.VX - engn_xc;
+    ep2.Y3d = p_sthing->U.UEffect.VY; // subtracted within transform_point(): - 8 * engn_yc;
+    ep2.Z3d = p_sthing->U.UEffect.VZ - engn_zc;
+    transform_point(&ep2);
+
+    build_wobble_line(ep1.pp.X, ep1.pp.Y, ep1.Z3d, ep2.pp.X, ep2.pp.Y, ep2.Z3d, p_sthing, itime);
+}
+
 void build_electricity(int cor1_x, int cor1_y, int cor1_z,
   int cor2_x, int cor2_y, int cor2_z, int itime, struct Thing *p_owner)
 {
@@ -424,6 +448,7 @@ void build_electricity(int cor1_x, int cor1_y, int cor1_z,
         ofs_x = ofs_y = 0;
     }
 
+    ep.Flags = 0;
     ep.X3d = cor1_x - engn_xc;
     ep.Y3d = 8 * cor1_y; // subtracted within transform_point(): - 8 * engn_yc;
     ep.Z3d = cor1_z - engn_zc;
@@ -433,12 +458,13 @@ void build_electricity(int cor1_x, int cor1_y, int cor1_z,
     scr1_y = ep.pp.Y + ((overall_scale * ofs_y) >> 9);
     scr1_depth = ep.Z3d;
 
+    ep.Flags = 0;
     ep.X3d = cor2_x - engn_xc;
     ep.Y3d = 8 * cor2_y; // subtracted within transform_point(): - 8 * engn_yc;
     ep.Z3d = cor2_z - engn_zc;
     transform_point(&ep);
 
-    build_wobble_line(scr1_x, scr1_y, scr1_depth, ep.pp.X, ep.pp.Y, ep.Z3d, 0, itime);
+    build_wobble_line(scr1_x, scr1_y, scr1_depth, ep.pp.X, ep.pp.Y, ep.Z3d, NULL, itime);
 }
 
 void draw_bang(struct SimpleThing *p_pow)

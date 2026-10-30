@@ -1247,13 +1247,6 @@ void build_laser29(struct Thing *p_thing)
       p_thing->Timer1, p_owntng);
 }
 
-void build_electricity_strand(struct SimpleThing *p_sthing, ubyte itime)
-{
-    asm volatile (
-      "call ASM_build_electricity_strand\n"
-        : : "a" (p_sthing), "d" (itime));
-}
-
 void build_razor_wire_strand(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
 {
     // Pushed through a register holding them: a "g" operand may be placed

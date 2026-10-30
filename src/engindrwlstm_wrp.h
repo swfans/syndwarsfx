@@ -59,6 +59,8 @@ void build_laser(int cor1_x, int cor1_y, int cor1_z,
   int cor2_x, int cor2_y, int cor2_z,
   int itime, struct Thing *p_owner, TbPixel colour);
 
+void build_electricity_strand(struct SimpleThing *p_sthing, ubyte itime);
+
 void build_electricity(int cor1_x, int cor1_y, int cor1_z,
   int cor2_x, int cor2_y, int cor2_z, int itime, struct Thing *p_owner);
 
