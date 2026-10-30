@@ -911,7 +911,7 @@ void build_nuclear_bomb(struct SimpleThing *p_sthing)
 void do_beam_electric(int x1, int y1, int z1,
   int x2, int y2, int z2)//TODO add, ubyte colkp)
 {
-#if 1
+#if 0
     // Pushed through a register holding them: a "g" operand may be placed
     // relative to the stack pointer, which each push moves.
     int stkargs[2];
@@ -932,8 +932,7 @@ void do_beam_electric(int x1, int y1, int z1,
     int step_dx, step_dy, step_dz;
     int prc_x, prc_y, prc_z;
     int length;
-    int step;
-    int jit_x, jit_y, jit_z;
+    int angl;
     int beg_cor_x, beg_cor_y, beg_cor_z;
     TbPixel colour;
 
@@ -972,29 +971,28 @@ void do_beam_electric(int x1, int y1, int z1,
 
     colour = colour_lookup[ColLU_WHITE];
 
-    jit_x = jit_y = jit_z = 0;
     beg_cor_x = beg_cor_y = beg_cor_z = 0;
 
-    for (step = 0; step <= LbFPMath_PI; step += LbFPMath_PI/16)
+    for (angl = 0; angl <= LbFPMath_PI; angl += LbFPMath_PI/16)
     {
-        int new_jit_x, new_jit_y, new_jit_z;
+        int jit_x, jit_y, jit_z;
 
-        new_jit_x = (lbSinTable[step] * nz) >> 7;
-        new_jit_y = (lbSinTable[step] * ny) >> 7;
-        new_jit_z = (lbSinTable[step] * nx) >> 7;
+        jit_x = (lbSinTable[angl] * nz) >> 7;
+        jit_y = (lbSinTable[angl] * ny) >> 7;
+        jit_z = (lbSinTable[angl] * nx) >> 7;
 
-        if (step != LbFPMath_PI) {
-            new_jit_x = (new_jit_x * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
-            new_jit_y = (new_jit_y * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
-            new_jit_z = (new_jit_z * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
+        if (angl != LbFPMath_PI) {
+            jit_x = (jit_x * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
+            jit_y = (jit_y * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
+            jit_z = (jit_z * ((LbRandomPosShort() & 0xFF) + 0x20)) >> 8;
         }
 
-        if (step != 0) {
+        if (angl != 0) {
             int end_cor_x, end_cor_y, end_cor_z;
 
-            end_cor_x = (prc_x + new_jit_x) >> 8;
-            end_cor_y = (prc_y + new_jit_y) >> 8;
-            end_cor_z = (prc_z + new_jit_z) >> 8;
+            end_cor_x = (prc_x + jit_x) >> 8;
+            end_cor_y = (prc_y + jit_y) >> 8;
+            end_cor_z = (prc_z + jit_z) >> 8;
             enlist_draw_mapwho_vect(beg_cor_x, beg_cor_y, beg_cor_z,
               end_cor_x, end_cor_y, end_cor_z, colour);
         }
@@ -1005,10 +1003,6 @@ void do_beam_electric(int x1, int y1, int z1,
         prc_x += step_dx;
         prc_y += step_dy;
         prc_z += step_dz;
-
-        jit_x = new_jit_x;
-        jit_y = new_jit_y;
-        jit_z = new_jit_z;
     }
 }
 
