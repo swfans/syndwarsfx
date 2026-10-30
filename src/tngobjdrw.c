@@ -703,6 +703,7 @@ struct SingleObjectFace4 *build_continuos_slice_3d(int near_x, int near_y, int n
 
     if (!use_cache) {
         LbMemorySet(&ep, 0, sizeof(struct EnginePoint));
+        ep.Flags = 0;
         ep.X3d = near_x - engn_xc;
         ep.Y3d = (near_y << 3); // subtracted within transform_point(): - 8 * engn_yc;
         ep.Z3d = near_z - engn_zc;
@@ -712,6 +713,7 @@ struct SingleObjectFace4 *build_continuos_slice_3d(int near_x, int near_y, int n
     }
 
     LbMemorySet(&ep, 0, sizeof(struct EnginePoint));
+    ep.Flags = 0;
     ep.X3d = far_x - engn_xc;
     ep.Y3d = (far_y << 3); // subtracted within transform_point(): - 8 * engn_yc;
     ep.Z3d = far_z - engn_zc;
@@ -1060,13 +1062,13 @@ static void build_laser_beam_segments(int start_x, int start_y, int start_depth,
             if (p_face4 != NULL) {
                 p_face4->Flags = 0x0f;
                 p_face4->ExCol = beam_colour;
+                use_cache = 1;
             }
         }
 
         cur_x = next_x;
         cur_y = next_y;
         cur_depth = next_depth;
-        use_cache = 1;
     }
 }
 
@@ -1154,9 +1156,6 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
     circle_y += ((dy * 150) / screen_dist) << 4;
 
     if (itime <= 2) {
-        spread_x = 0;
-        spread_y = 0;
-    } else {
         int perp_x, perp_y, perp_len;
 
         perp_x = dy >> 3;
@@ -1166,6 +1165,9 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
             perp_len = 1;
         spread_x = ((perp_x << 10) / perp_len) << 2;
         spread_y = ((perp_y << 10) / perp_len) << 2;
+    } else {
+        spread_x = 0;
+        spread_y = 0;
     }
 
     step_x = dx / num_segments;
@@ -1188,7 +1190,7 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
 
 void build_laser_beam(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
 {
-#if 1
+#if 0
     // Pushed through a register holding them: a "g" operand may be placed
     // relative to the stack pointer, which each push moves.
     int stkargs[4];
@@ -1214,7 +1216,7 @@ void build_laser_beam(int x1, int y1, int z1, int x2, int y2, int z2, int itime,
 
 void build_laser_beam_q(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
 {
-#if 1
+#if 0
     // Pushed through a register holding them: a "g" operand may be placed
     // relative to the stack pointer, which each push moves.
     int stkargs[4];
