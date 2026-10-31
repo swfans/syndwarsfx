@@ -273,12 +273,12 @@ short panel_state_to_player_agent(ushort panstate)
     return -1;
 }
 
-short font_hud_message_text_scale(struct TbSprite *font)
+short font_hud_message_text_scale(struct TbSprite *p_font)
 {
     int tx_height;
     int units_per_px;
 
-    lbFontPtr = small_font;
+    lbFontPtr = p_font;
     tx_height = my_char_height('A');
     // For window width=320, expect text height=5; so that should
     // produce unscaled sprite, which is 16 units per px.
@@ -695,139 +695,141 @@ void draw_players_chat(void)
 
 TbBool check_scanner_input(void)
 {
-    int map_x, map_y, map_z;
+    PlayerInfo *p_locplayer;
+    int cor_x, cor_y, cor_z;
 
-    SCANNER_find_position(lbDisplay.MouseX, lbDisplay.MouseY, &map_z, &map_x);
-    if (MAPCOORD_TO_TILE(map_x) >= 0 && MAPCOORD_TO_TILE(map_x) < 128
-      && MAPCOORD_TO_TILE(map_z) >= 0 && MAPCOORD_TO_TILE(map_z) < 128)
+    SCANNER_find_position(lbDisplay.MouseX, lbDisplay.MouseY, &cor_z, &cor_x);
+    if (MAPCOORD_TO_TILE(cor_x) < 0 || MAPCOORD_TO_TILE(cor_x) >= MAP_TILE_WIDTH)
+        return false;
+
+    if (MAPCOORD_TO_TILE(cor_z) < 0 || MAPCOORD_TO_TILE(cor_z) >= MAP_TILE_HEIGHT)
+        return false;
+
+    p_locplayer = &players[local_player_no];
+
+    if (lbDisplay.LeftButton)
     {
-        PlayerInfo *p_locplayer;
+        struct SpecialUserInput *p_usrinp;
+        struct Packet *p_pckt;
+        TbBool can_control;
+        short dcthing;
 
-        p_locplayer = &players[local_player_no];
+        dcthing = p_locplayer->DirectControl[mouser];
+        can_control = person_can_accept_control(dcthing);
+        p_usrinp = &p_locplayer->UserInput[mouser];
+        p_pckt = &packets[local_player_no];
 
-        if (lbDisplay.LeftButton)
+        lbDisplay.LeftButton = 0;
+        user_input_control_flags_raise(local_player_no, mouser, UInpCtrF_LBtnDown);
+        if ((p_locplayer->DoubleMode) || (user_input_control_mode_get(local_player_no, mouser) == UInpCtr_Mouse))
         {
-            struct SpecialUserInput *p_usrinp;
-            struct Packet *p_pckt;
-            TbBool can_control;
-            short dcthing;
+            cor_y = (alt_at_point(cor_x, cor_z) >> 8) + 20;
+            if ((gameturn & 0x7FFF) - p_usrinp->Turn >= 7)
+            {
+                p_usrinp->Turn = gameturn & 0x7FFF;
+                if (can_control)
+                    my_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_ABS, dcthing, cor_x, cor_y, cor_z);
+            }
+            else
+            {
+                p_usrinp->Turn = 0;
+                if (can_control)
+                    my_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_ABS_FF, dcthing, cor_x, cor_y, cor_z);
+            }
+        }
+        else
+        {
+            do_change_mouse(8);
+            build_packet(p_pckt, PAct_CONTROL_MODE, UInpCtr_Mouse, 0, 0, 0);
+        }
+        return true;
+    }
 
+    if (lbDisplay.RightButton)
+    {
+        struct SpecialUserInput *p_usrinp;
+        struct Packet *p_pckt;
+        TbBool can_control;
+        short dcthing;
+        short cwep;
+
+        dcthing = p_locplayer->DirectControl[mouser];
+        can_control = person_can_accept_control(dcthing);
+        p_usrinp = &p_locplayer->UserInput[mouser];
+
+        lbDisplay.RightButton = 0;
+        user_input_control_flags_raise(local_player_no, mouser, UInpCtrF_RBtnDown);
+        if (!p_locplayer->DoubleMode)
+        {
+            cor_y = (alt_at_point(cor_x, cor_z) >> 8) + 20;
             dcthing = p_locplayer->DirectControl[mouser];
-            can_control = person_can_accept_control(dcthing);
-            p_usrinp = &p_locplayer->UserInput[mouser];
+            cwep = things[dcthing].U.UPerson.CurrentWeapon;
             p_pckt = &packets[local_player_no];
 
-            lbDisplay.LeftButton = 0;
-            user_input_control_flags_raise(local_player_no, mouser, UInpCtrF_LBtnDown);
-            if ((p_locplayer->DoubleMode) || (user_input_control_mode_get(local_player_no, mouser) == UInpCtr_Mouse))
+            if ((cwep == WEP_ELEMINE) || (cwep == WEP_EXPLMINE))
             {
-                map_y = (alt_at_point(map_x, map_z) >> 8) + 20;
                 if ((gameturn & 0x7FFF) - p_usrinp->Turn >= 7)
                 {
                     p_usrinp->Turn = gameturn & 0x7FFF;
                     if (can_control)
-                        my_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_ABS, dcthing, map_x, map_y, map_z);
+                    {
+                        if (p_locplayer->TargetType == TrgTp_Unkn3)
+                            my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT, dcthing, cor_x, p_locplayer->Target, cor_z);
+                        else
+                            my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT, dcthing, cor_x, cor_y, cor_z);
+                    }
                 }
                 else
                 {
                     p_usrinp->Turn = 0;
                     if (can_control)
-                        my_build_packet(p_pckt, PAct_AGENT_GOTO_GND_PT_ABS_FF, dcthing, map_x, map_y, map_z);
-                }
-            }
-            else
-            {
-                do_change_mouse(8);
-                build_packet(p_pckt, PAct_CONTROL_MODE, UInpCtr_Mouse, 0, 0, 0);
-            }
-            return true;
-        }
-
-        if (lbDisplay.RightButton)
-        {
-            struct SpecialUserInput *p_usrinp;
-            struct Packet *p_pckt;
-            TbBool can_control;
-            short dcthing;
-            short cwep;
-
-            dcthing = p_locplayer->DirectControl[mouser];
-            can_control = person_can_accept_control(dcthing);
-            p_usrinp = &p_locplayer->UserInput[mouser];
-
-            lbDisplay.RightButton = 0;
-            user_input_control_flags_raise(local_player_no, mouser, UInpCtrF_RBtnDown);
-            if (!p_locplayer->DoubleMode)
-            {
-                map_y = (alt_at_point(map_x, map_z) >> 8) + 20;
-                dcthing = p_locplayer->DirectControl[mouser];
-                cwep = things[dcthing].U.UPerson.CurrentWeapon;
-                p_pckt = &packets[local_player_no];
-
-                if ((cwep == WEP_ELEMINE) || (cwep == WEP_EXPLMINE))
-                {
-                    if ((gameturn & 0x7FFF) - p_usrinp->Turn >= 7)
                     {
-                        p_usrinp->Turn = gameturn & 0x7FFF;
-                        if (can_control)
-                        {
-                            if (p_locplayer->TargetType == TrgTp_Unkn3)
-                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT, dcthing, map_x, p_locplayer->Target, map_z);
-                            else
-                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT, dcthing, map_x, map_y, map_z);
-                        }
-                    }
-                    else
-                    {
-                        p_usrinp->Turn = 0;
-                        if (can_control)
-                        {
-                            if (p_locplayer->TargetType == TrgTp_Unkn3)
-                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT_FF, dcthing, map_x, p_locplayer->Target, map_z);
-                            else
-                                my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT_FF, dcthing, map_x, map_y, map_z);
-                        }
+                        if (p_locplayer->TargetType == TrgTp_Unkn3)
+                            my_build_packet(p_pckt, PAct_PLANT_MINE_AT_FACE_PT_FF, dcthing, cor_x, p_locplayer->Target, cor_z);
+                        else
+                            my_build_packet(p_pckt, PAct_PLANT_MINE_AT_GND_PT_FF, dcthing, cor_x, cor_y, cor_z);
                     }
                 }
-                else if ((cwep == WEP_RAZORWIRE) || (cwep == WEP_EXPLWIRE))
+            }
+            else if ((cwep == WEP_RAZORWIRE) || (cwep == WEP_EXPLWIRE))
+            {
+                if ((gameturn & 0x7FFF) - p_usrinp->Turn >= 7)
                 {
-                    if ((gameturn & 0x7FFF) - p_usrinp->Turn >= 7)
+                    p_usrinp->Turn = gameturn & 0x7FFF;
+                    if (can_control)
                     {
-                        p_usrinp->Turn = gameturn & 0x7FFF;
-                        if (can_control)
-                        {
-                            if (p_locplayer->TargetType == TrgTp_Unkn3)
-                                my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, map_x, p_locplayer->Target, map_z);
-                            else
-                                my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, map_x, map_y, map_z);
-                        }
-                    }
-                    else
-                    {
-                        p_usrinp->Turn = 0;
-                        if (can_control)
-                        {
-                            if (p_locplayer->TargetType == TrgTp_Unkn3)
-                                my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT_FF, dcthing, map_x, p_locplayer->Target, map_z);
-                            else
-                                my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT_FF, dcthing, map_x, map_y, map_z);
-                        }
+                        if (p_locplayer->TargetType == TrgTp_Unkn3)
+                            my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, cor_x, p_locplayer->Target, cor_z);
+                        else
+                            my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, cor_x, cor_y, cor_z);
                     }
                 }
                 else
                 {
+                    p_usrinp->Turn = 0;
                     if (can_control)
                     {
                         if (p_locplayer->TargetType == TrgTp_Unkn3)
-                            my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, map_x, p_locplayer->Target, map_z);
+                            my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT_FF, dcthing, cor_x, p_locplayer->Target, cor_z);
                         else
-                            my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, map_x, map_y, map_z);
+                            my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT_FF, dcthing, cor_x, cor_y, cor_z);
                     }
                 }
             }
-            return true;
+            else
+            {
+                if (can_control)
+                {
+                    if (p_locplayer->TargetType == TrgTp_Unkn3)
+                        my_build_packet(p_pckt, PAct_SHOOT_AT_FACE_POINT, dcthing, cor_x, p_locplayer->Target, cor_z);
+                    else
+                        my_build_packet(p_pckt, PAct_SHOOT_AT_GND_POINT, dcthing, cor_x, cor_y, cor_z);
+                }
+            }
         }
+        return true;
     }
+
     return false;
 }
 

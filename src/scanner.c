@@ -614,7 +614,6 @@ int SCANNER_find_colour(int mapx, int mapy)
         : "=r" (ret) : "a" (mapx), "d" (mapy));
     return ret;
 #endif
-    struct MyMapElement *p_mapel;
     ushort textr;
     ubyte txtr_bits, tlpos_bits;
     int result;
@@ -1074,8 +1073,8 @@ void SCANNER_find_position(int x, int y, int *Ua, int *Vb)
     raw_u = base_u + sin_z * dt.x - cos_z * dt.y;
     raw_v = base_v + cos_z * dt.x + sin_z * dt.y;
 
-    raw_u <<= 7;
-    raw_v <<= 7;
+    raw_u = scanner_map_to_mapcoord(raw_u);
+    raw_v = scanner_map_to_mapcoord(raw_v);
 
     // Rescale, rounding toward zero (as opposed to a plain
     // arithmetic shift, which would round toward -infinity).
