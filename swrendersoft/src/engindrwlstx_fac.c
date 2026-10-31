@@ -83,6 +83,38 @@ void drawexec_face_tri(struct PolyPoint *point_a,
     stat_drawexec_faces++;
 }
 
+void drawexec_floor_quad(struct PolyPoint *point_a,
+  struct PolyPoint *point_b, struct PolyPoint *point_c,
+  struct PolyPoint *point_d)
+{
+    draw_trigpoly(point_a, point_b, point_c);
+    stat_drawexec_faces++;
+
+    draw_trigpoly(point_c, point_b, point_d);
+    stat_drawexec_faces++;
+}
+
+void drawexec_floor_quad_facing_up(struct PolyPoint *point_a,
+  struct PolyPoint *point_b, struct PolyPoint *point_c,
+  struct PolyPoint *point_d)
+{
+    int dist;
+
+    dist = (point_c->Y - point_b->Y) * (point_b->X - point_a->X)
+       - (point_c->X - point_b->X) * (point_b->Y - point_a->Y);
+    if (dist > 0) {
+        draw_trigpoly(point_a, point_b, point_c);
+    }
+    stat_drawexec_faces++;
+
+    dist = (point_b->X - point_c->X) * (point_d->Y - point_b->Y)
+       - (point_b->Y - point_c->Y) * (point_d->X - point_b->X);
+    if (dist > 0) {
+        draw_trigpoly(point_c, point_b, point_d);
+    }
+    stat_drawexec_faces++;
+}
+
 void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
   struct PolyPoint *p_pt3, struct PolyPoint *p_pt4, ubyte gflags)
 {
@@ -990,7 +1022,6 @@ void draw_floor_tile1a(ushort tl)
     struct PolyPoint point1;
     struct PolyPoint point2;
     struct PolyPoint point4;
-    int dist;
 
     p_floortl = &game_floor_tiles[tl];
     vec_colour = p_floortl->Col;
@@ -1027,19 +1058,7 @@ void draw_floor_tile1a(ushort tl)
         vec_colour = point3.S >> 16;
     }
 
-    dist = (point3.Y - point2.Y) * (point2.X - point1.X)
-       - (point3.X - point2.X) * (point2.Y - point1.Y);
-    if (dist > 0) {
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    stat_drawexec_faces++;
-
-    dist = (point2.X - point3.X) * (point4.Y - point2.Y)
-       - (point2.Y - point3.Y) * (point4.X - point2.X);
-    if (dist > 0) {
-        draw_trigpoly(&point3, &point2, &point4);
-    }
-    stat_drawexec_faces++;
+    drawexec_floor_quad_facing_up(&point1, &point2, &point3, &point4);
 
     // damage overlays
     if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
@@ -1047,11 +1066,7 @@ void draw_floor_tile1a(ushort tl)
         vec_mode = 6;
         set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
 
-        draw_trigpoly(&point1, &point2, &point3);
-        stat_drawexec_faces++;
-
-        draw_trigpoly(&point3, &point2, &point4);
-        stat_drawexec_faces++;
+        drawexec_floor_quad(&point1, &point2, &point3, &point4);
     }
 }
 
@@ -1062,7 +1077,6 @@ void draw_floor_tile1b(ushort tl)
     struct PolyPoint point1;
     struct PolyPoint point4;
     struct PolyPoint point3;
-    int dist;
 
     p_floortl = &game_floor_tiles[tl];
     vec_colour = p_floortl->Col;
@@ -1099,19 +1113,7 @@ void draw_floor_tile1b(ushort tl)
         vec_colour = point3.S << 16;
     }
 
-    dist = (point2.X - point1.X) * (point4.Y - point2.Y)
-       - (point2.Y - point1.Y) * (point4.X - point2.X);
-    if (dist > 0) {
-        draw_trigpoly(&point1, &point2, &point4);
-    }
-    stat_drawexec_faces++;
-
-    dist = (point3.X - point4.X) * (point1.Y - point3.Y)
-       - (point3.Y - point4.Y) * (point1.X - point3.X);
-    if (dist > 0) {
-        draw_trigpoly(&point4, &point3, &point1);
-    }
-    stat_drawexec_faces++;
+    drawexec_floor_quad_facing_up(&point2, &point4, &point1, &point3);
 
     // damage overlays
     if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
@@ -1119,11 +1121,7 @@ void draw_floor_tile1b(ushort tl)
         vec_mode = 6;
         set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
 
-        draw_trigpoly(&point1, &point2, &point4);
-        stat_drawexec_faces++;
-
-        draw_trigpoly(&point4, &point3, &point1);
-        stat_drawexec_faces++;
+        drawexec_floor_quad(&point2, &point4, &point1, &point3);
     }
     //TODO why the second time using the same page?
     if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
@@ -1131,11 +1129,7 @@ void draw_floor_tile1b(ushort tl)
         vec_mode = 6;
         set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
 
-        draw_trigpoly(&point1, &point2, &point4);
-        stat_drawexec_faces++;
-
-        draw_trigpoly(&point4, &point3, &point1);
-        stat_drawexec_faces++;
+        drawexec_floor_quad(&point2, &point4, &point1, &point3);
     }
 }
 
@@ -1264,11 +1258,10 @@ void draw_object_face4_pole(ushort face4)
         point4.S = 0x200000;
     }
 
-    draw_trigpoly(&point1, &point2, &point3);
-    stat_drawexec_faces++;
-
-    draw_trigpoly(&point4, &point1, &point3);
-    stat_drawexec_faces++;
+    // No need for TwoSided as the points are
+    // in correct order to make face visible
+    drawexec_face_tri(&point1, &point2, &point3, 0);
+    drawexec_face_tri(&point4, &point1, &point3, 0);
 }
 
 /**
@@ -1701,7 +1694,8 @@ void draw_object_face3_tran_tint(ushort face)
 
     vec_colour = face_transp_tinted_surface_col;
     vec_mode = 15;
-    draw_trigpoly(&point1, &point2, &point3);
+    // TwoSided faces not honored in this mode
+    drawexec_face_tri(&point1, &point2, &point3, 0);
 
     if ((p_face->GFlags & FGFlg_Unkn04) != 0)
     {
@@ -1758,13 +1752,9 @@ void draw_object_face4_tran_tint(ushort face4)
         point4.Y = p_scrpoint->Y + dword_176D04;
     }
 
-    {
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-
-    {
-        draw_trigpoly(&point4, &point3, &point2);
-    }
+    // TwoSided faces not honored in this mode
+    drawexec_face_tri(&point1, &point2, &point3, 0);
+    drawexec_face_tri(&point4, &point3, &point2, 0);
 
     vec_colour = face_transp_tinted_line_col;
 
@@ -1823,10 +1813,10 @@ void draw_shrapnel(ushort shrap)
 
     // Draw in both directions, so that rotating face would not disappear
     vec_mode = 0;
-    vec_colour = colour_lookup[8];
+    vec_colour = colour_lookup[ColLU_GREYLT];
     draw_trigpoly(&point1, &point2, &point3);
 
-    vec_colour = colour_lookup[9];
+    vec_colour = colour_lookup[ColLU_GREYMD];
     draw_trigpoly(&point1, &point3, &point2);
 }
 
