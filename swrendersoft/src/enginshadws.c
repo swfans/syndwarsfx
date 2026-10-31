@@ -102,7 +102,7 @@ void draw_multicolor_sprite_shadow(short scr_x, short scr_y, ushort sbfrm,
     struct EnginePoint ep1;
     struct EnginePoint ep3;
 
-    vec_mode = 10;
+    vec_mode = RendVec_mode10;
     assert(vec_tmap[shadow_tmap_page] != NULL);
     vec_map = vec_tmap[shadow_tmap_page];
 
@@ -150,12 +150,9 @@ void draw_multicolor_sprite_shadow(short scr_x, short scr_y, ushort sbfrm,
     ep2.pp.X = 4 * sc_a + scr_x - sh_x;
     ep2.pp.Y = 4 * sc_b + scr_y - sh_y;
 
-    if (vec_mode == 2)
-        vec_mode = 27;
     draw_trigpoly(&ep1.pp, &ep4.pp, &ep3.pp);
     stat_drawexec_faces++;
-    if (vec_mode == 2)
-        vec_mode = 27;
+
     draw_trigpoly(&ep2.pp, &ep1.pp, &ep3.pp);
     stat_drawexec_faces++;
 }
@@ -208,7 +205,7 @@ ushort draw_shadow_at_coords(struct SortMapPoint *p_cor1,
     next_screen_point += 4;
 
     p_face4 = &game_special_obj_faces4[face];
-    p_face4->Flags = 10;
+    p_face4->Flags = RendVec_mode10;
     p_face4->GFlags = 0x01;
     p_face4->ExCol = 16;
     p_face4->PointNo[1] = pt + 1;

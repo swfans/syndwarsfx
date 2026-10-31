@@ -20,6 +20,7 @@
 #define RENDER_GPOLY_H
 
 #include "bftypes.h"
+#include "poly.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,14 +30,28 @@ extern "C" {
 
 #define SINGLE_TEXTURE_DIM 32
 
+/** Extra entries, to be treated as appended to RenderingVectorMode.
+ */
+enum RenderingVectorGPMode {
+    RendVecGP_mode27 = 27,
+};
+
 struct PolyPoint;
 
 #pragma pack()
 /******************************************************************************/
 
 void gpoly_enable_pentium_pro(TbBool state);
-void draw_trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b,
+void trigpoly(struct PolyPoint *point_a, struct PolyPoint *point_b,
   struct PolyPoint *point_c);
+
+static inline void draw_trigpoly(struct PolyPoint *point_a,
+  struct PolyPoint *point_b, struct PolyPoint *point_c)
+{
+    if (vec_mode == RendVec_mode02)
+        vec_mode = RendVecGP_mode27;
+    trigpoly(point_a, point_b, point_c);
+}
 
 /******************************************************************************/
 #ifdef __cplusplus

@@ -101,11 +101,7 @@ TbResult AppDrawTexturedSlantBoxClip(s32 destX, s32 destY, s32 width, s32 height
     assert(vec_tmap[tmapNo] != NULL);
     vec_map = vec_tmap[tmapNo];
 
-    if (vec_mode == 2)
-        vec_mode = 27;
     draw_trigpoly(&point1.pp, &point4.pp, &point3.pp);
-    if (vec_mode == 2)
-        vec_mode = 27;
     draw_trigpoly(&point4.pp, &point2.pp, &point3.pp);
     return Lb_SUCCESS;
 }

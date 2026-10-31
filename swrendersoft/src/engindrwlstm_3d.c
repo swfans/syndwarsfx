@@ -520,7 +520,7 @@ struct SingleObjectFace4 *build_polygon_slice(short x1, short y1,
     }
 
     p_face4->ExCol = col;
-    p_face4->Flags = 15;
+    p_face4->Flags = RendVec_mode15;
 
     if (flag == 0) // First slice
     {
@@ -628,7 +628,7 @@ void build_polygon_circle_2d(int x1, int y1, int r1, int r2,
             break;
         }
 
-        p_face4->Flags = 17;
+        p_face4->Flags = RendVec_mode17;
         p_face4->PointNo[0] = pt4 + 2;
         p_face4->PointNo[1] = pt4 + 1;
         p_face4->PointNo[2] = pt3;
@@ -756,8 +756,8 @@ struct SingleObjectFace4 *build_glare(short cor_x, short cor_y_m8, short cor_z,
     p_sftex->Page = 4;
 
     p_face4->Texture = sftex;
-    p_face4->Flags = 0x08 | 0x01;
-    p_face4->GFlags = FGFlg_Unkn01;
+    p_face4->Flags = RendVec_mode09;
+    p_face4->GFlags = FGFlg_TwoSided;
 
     return p_face4;
 }
@@ -1132,7 +1132,7 @@ int object_face_get_visible_max_depth(short pt1, short pt2, short pt3, short pt4
     if ((flags_all & 0xF) != 0)
         return SHRT_MIN - 1;
 
-    if (((gflags & FGFlg_Unkn01) == 0) && (p_specpt3 != NULL)) {
+    if (((gflags & FGFlg_TwoSided) == 0) && (p_specpt3 != NULL)) {
         if (triangle_not_visible(p_specpt1, p_specpt2, p_specpt3))
             return SHRT_MIN - 1;
     }

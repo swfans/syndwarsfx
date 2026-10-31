@@ -28,7 +28,7 @@ extern "C" {
 #pragma pack(1)
 
 enum FaceGFlags {
-    FGFlg_Unkn01     = 0x01,
+    FGFlg_TwoSided   = 0x01, /**< The face is bilateral - should be visible from both sides. */
     FGFlg_Unkn02     = 0x02,
     FGFlg_Unkn04     = 0x04,
     FGFlg_Unkn08     = 0x08,
@@ -88,7 +88,7 @@ struct SingleObjectFace4 { // sizeof=40
     short PointNo[4];
     ushort Texture;
     ubyte GFlags;
-    ubyte Flags;
+    ubyte Flags; /**< Usually stores vec_mode to be used for drawing. */
     ushort ExCol;
     ushort Object; /**< offs=0x0E Index of the SingleObject associated to this face. */
     short Shade0; /**< offs=0x10 Index of the Normal containing LightRatio for point 0. */

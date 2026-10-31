@@ -72,6 +72,17 @@ TbPixel face_transp_tinted_line_col = 0;
 
 /******************************************************************************/
 
+void drawexec_face_tri(struct PolyPoint *point_a,
+  struct PolyPoint *point_b, struct PolyPoint *point_c, ushort gflags)
+{
+    draw_trigpoly(point_a, point_b, point_c);
+
+    if ((gflags & FGFlg_TwoSided) != 0) {
+        draw_trigpoly(point_a, point_c, point_b);
+    }
+    stat_drawexec_faces++;
+}
+
 void set_floor_texture_uv(ushort sftex, struct PolyPoint *p_pt1, struct PolyPoint *p_pt2,
   struct PolyPoint *p_pt3, struct PolyPoint *p_pt4, ubyte gflags)
 {
@@ -451,16 +462,17 @@ void draw_object_face4g_textrd(ushort face4)
     p_face4 = &game_object_faces4[face4];
     vec_colour = p_face4->ExCol;
     vec_mode = p_face4->Flags;
+
     if (p_face4->Texture != 0)
     {
         if ((p_face4->GFlags & (FGFlg_Unkn40|FGFlg_Unkn02)) != 0) {
             uint frame;
             frame = (render_anim_turn >> RENDER_ANIM_TURN_SHIFT) + 4 * p_face4->Object;
             if ((frame & 0x0F) <= 7) {
-                vec_mode = 2;
+                vec_mode = RendVec_mode02;
             } else {
                 vec_colour = 0;
-                vec_mode = 0;
+                vec_mode = RendVec_mode00;
             }
         }
         if ((p_face4->GFlags & FGFlg_Unkn20) != 0) {
@@ -564,18 +576,7 @@ void draw_object_face4g_textrd(ushort face4)
         }
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point2);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point1, &point2, &point3, p_face4->GFlags);
 
     if (p_face4->Texture != 0)
     {
@@ -588,18 +589,7 @@ void draw_object_face4g_textrd(ushort face4)
         }
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point2);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point2, &point3);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point4, &point3, &point2, p_face4->GFlags);
 }
 
 /**
@@ -616,7 +606,7 @@ void draw_object_face3_reflect(ushort face3)
 
     p_face = &game_object_faces3[face3];
     vec_colour = p_face->ExCol;
-    vec_mode = 27;
+    vec_mode = RendVecGP_mode27;
     set_floor_texture_uv_shade3(face3, &point1, &point3, &point2);
 
     {
@@ -647,18 +637,7 @@ void draw_object_face3_reflect(ushort face3)
         point3.Y = p_scrpoint->Y + dword_176D04;
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point2);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point1, &point2, &point3, p_face->GFlags);
 }
 
 /**
@@ -716,31 +695,8 @@ void draw_object_face4_reflect(ushort face4)
         point4.Y = p_scrpoint->Y + dword_176D04;
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point2);
-    }
-    stat_drawexec_faces++;
-
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point2);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point2, &point3);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point1, &point2, &point3, p_face4->GFlags);
+    drawexec_face_tri(&point4, &point3, &point2, p_face4->GFlags);
 }
 
 void draw_ex_face(ushort exface)
@@ -776,14 +732,7 @@ void draw_ex_face(ushort exface)
       point2.Y = p_scrpoint[2].Y;
       point2.S = 0x100000;
 
-      if (vec_mode == 2)
-          vec_mode = 27;
-      draw_trigpoly(&point1, &point2, &point3);
-
-      if (vec_mode == 2)
-          vec_mode = 27;
-      draw_trigpoly(&point3, &point2, &point1);
-      stat_drawexec_faces++;
+      drawexec_face_tri(&point1, &point2, &point3, FGFlg_TwoSided);
       break;
     case 2:
     case 4:
@@ -807,23 +756,8 @@ void draw_ex_face(ushort exface)
       point4.Y = p_scrpoint[3].Y;
       point4.S = 0x100000;
 
-      if (vec_mode == 2)
-          vec_mode = 27;
-      draw_trigpoly(&point1, &point2, &point3);
-
-      if (vec_mode == 2)
-          vec_mode = 27;
-      draw_trigpoly(&point3, &point2, &point1);
-      stat_drawexec_faces++;
-
-      if (vec_mode == 2)
-          vec_mode = 27;
-      draw_trigpoly(&point2, &point3, &point4);
-
-      if (vec_mode == 2)
-          vec_mode = 27;
-      draw_trigpoly(&point4, &point3, &point2);
-      stat_drawexec_faces++;
+      drawexec_face_tri(&point1, &point2, &point3, FGFlg_TwoSided);
+      drawexec_face_tri(&point2, &point3, &point4, FGFlg_TwoSided);
       break;
     default:
       break;
@@ -933,18 +867,7 @@ void draw_object_face3g_textrd(ushort face3)
         }
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point2);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point1, &point2, &point3, p_face->GFlags);
 }
 
 void draw_object_face4d_textrd_dk(ushort face4)
@@ -1049,18 +972,7 @@ void draw_object_face4d_textrd_dk(ushort face4)
         point4.S = 0x200000;
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point2);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point1, &point2, &point3, p_face4->GFlags);
 
     if (p_face4->Texture != 0)
     {
@@ -1068,18 +980,7 @@ void draw_object_face4d_textrd_dk(ushort face4)
           &point2, &point4, 0);
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point2);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point2, &point3);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point4, &point3, &point2, p_face4->GFlags);
 }
 
 void draw_floor_tile1a(ushort tl)
@@ -1128,20 +1029,14 @@ void draw_floor_tile1a(ushort tl)
 
     dist = (point3.Y - point2.Y) * (point2.X - point1.X)
        - (point3.X - point2.X) * (point2.Y - point1.Y);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
+    if (dist > 0) {
         draw_trigpoly(&point1, &point2, &point3);
     }
     stat_drawexec_faces++;
 
     dist = (point2.X - point3.X) * (point4.Y - point2.Y)
        - (point2.Y - point3.Y) * (point4.X - point2.X);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
+    if (dist > 0) {
         draw_trigpoly(&point3, &point2, &point4);
     }
     stat_drawexec_faces++;
@@ -1151,10 +1046,10 @@ void draw_floor_tile1a(ushort tl)
     {
         vec_mode = 6;
         set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+
         draw_trigpoly(&point1, &point2, &point3);
         stat_drawexec_faces++;
-        if (vec_mode == 2)
-            vec_mode = 27;
+
         draw_trigpoly(&point3, &point2, &point4);
         stat_drawexec_faces++;
     }
@@ -1206,20 +1101,14 @@ void draw_floor_tile1b(ushort tl)
 
     dist = (point2.X - point1.X) * (point4.Y - point2.Y)
        - (point2.Y - point1.Y) * (point4.X - point2.X);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
+    if (dist > 0) {
         draw_trigpoly(&point1, &point2, &point4);
     }
     stat_drawexec_faces++;
 
     dist = (point3.X - point4.X) * (point1.Y - point3.Y)
        - (point3.Y - point4.Y) * (point1.X - point3.X);
-    if (dist > 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
+    if (dist > 0) {
         draw_trigpoly(&point4, &point3, &point1);
     }
     stat_drawexec_faces++;
@@ -1229,10 +1118,10 @@ void draw_floor_tile1b(ushort tl)
     {
         vec_mode = 6;
         set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+
         draw_trigpoly(&point1, &point2, &point4);
         stat_drawexec_faces++;
-        if (vec_mode == 2)
-            vec_mode = 27;
+
         draw_trigpoly(&point4, &point3, &point1);
         stat_drawexec_faces++;
     }
@@ -1241,10 +1130,10 @@ void draw_floor_tile1b(ushort tl)
     {
         vec_mode = 6;
         set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+
         draw_trigpoly(&point1, &point2, &point4);
         stat_drawexec_faces++;
-        if (vec_mode == 2)
-            vec_mode = 27;
+
         draw_trigpoly(&point4, &point3, &point1);
         stat_drawexec_faces++;
     }
@@ -1302,37 +1191,14 @@ void draw_special_object_face4(ushort face4)
         point4.S = p_face4->Shade3 << 15;
     }
 
-    if ((p_face4->Flags == 10) || (p_face4->Flags == 9))
+    if ((p_face4->Flags == RendVec_mode10) || (p_face4->Flags == RendVec_mode09))
     {
         set_floor_texture_uv(p_face4->Texture, &point2, &point1, &point3,
           &point4, p_face4->GFlags);
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point3, &point2, &point1);
-    }
-    stat_drawexec_faces++;
-
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point4);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point1);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point1, &point2, &point3, p_face4->GFlags);
+    drawexec_face_tri(&point1, &point3, &point4, p_face4->GFlags);
 }
 
 /**
@@ -1398,13 +1264,9 @@ void draw_object_face4_pole(ushort face4)
         point4.S = 0x200000;
     }
 
-    if (vec_mode == 2)
-        vec_mode = 27;
     draw_trigpoly(&point1, &point2, &point3);
     stat_drawexec_faces++;
 
-    if (vec_mode == 2)
-        vec_mode = 27;
     draw_trigpoly(&point4, &point1, &point3);
     stat_drawexec_faces++;
 }
@@ -1520,6 +1382,7 @@ void draw_object_face3d_textrd(ushort face3)
         vec_mode = 0;
         vec_colour = pixmap.fade_table[256 * (point3.S >> 16) + colour_lookup[ColLU_RED]];
         draw_trigpoly(&point1, &point2, &point3);
+
         vec_colour = colour_lookup[ColLU_GREEN];
         if ((render_faces_flags & RendFacF_Perspectv3SkipWireframe) == 0)
         {
@@ -1531,16 +1394,7 @@ void draw_object_face3d_textrd(ushort face3)
     }
     else
     {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-        if ((p_face->GFlags & FGFlg_Unkn01) != 0)
-        {
-            if (vec_mode == 2)
-                vec_mode = 27;
-            draw_trigpoly(&point1, &point3, &point2);
-        }
-        stat_drawexec_faces++;
+        drawexec_face_tri(&point1, &point2, &point3, p_face->GFlags);
     }
 
     if ((p_face->GFlags & FGFlg_Unkn04) != 0)
@@ -1566,6 +1420,7 @@ void draw_object_face4d_textrd(ushort face4)
     p_face4 = &game_object_faces4[face4];
     vec_colour = p_face4->ExCol;
     vec_mode = p_face4->Flags;
+
     if (p_face4->Texture != 0)
     {
         if ((p_face4->GFlags & FGFlg_Unkn40) != 0) {
@@ -1672,18 +1527,7 @@ void draw_object_face4d_textrd(ushort face4)
         point4.S = 0x200000;
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point2);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point1, &point2, &point3, p_face4->GFlags);
 
     if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
@@ -1701,18 +1545,7 @@ void draw_object_face4d_textrd(ushort face4)
         }
     }
 
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point3, &point2);
-    }
-    if ((p_face4->GFlags & FGFlg_Unkn01) != 0)
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point4, &point2, &point3);
-    }
-    stat_drawexec_faces++;
+    drawexec_face_tri(&point4, &point3, &point2, p_face4->GFlags);
 
     if ((p_face4->GFlags & FGFlg_Unkn04) != 0)
     {
@@ -1820,16 +1653,7 @@ void draw_object_face3d_textrd_dk(ushort face3)
     }
     else
     {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-        if ((p_face->GFlags & FGFlg_Unkn01) != 0)
-        {
-            if (vec_mode == 2)
-                vec_mode = 27;
-            draw_trigpoly(&point1, &point3, &point2);
-        }
-        stat_drawexec_faces++;
+        drawexec_face_tri(&point1, &point2, &point3, p_face->GFlags);
     }
 }
 
@@ -1935,14 +1759,10 @@ void draw_object_face4_tran_tint(ushort face4)
     }
 
     {
-        if (vec_mode == 2)
-            vec_mode = 27;
         draw_trigpoly(&point1, &point2, &point3);
     }
 
     {
-        if (vec_mode == 2)
-            vec_mode = 27;
         draw_trigpoly(&point4, &point3, &point2);
     }
 
@@ -2004,17 +1824,10 @@ void draw_shrapnel(ushort shrap)
     // Draw in both directions, so that rotating face would not disappear
     vec_mode = 0;
     vec_colour = colour_lookup[8];
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point2, &point3);
-    }
+    draw_trigpoly(&point1, &point2, &point3);
+
     vec_colour = colour_lookup[9];
-    {
-        if (vec_mode == 2)
-            vec_mode = 27;
-        draw_trigpoly(&point1, &point3, &point2);
-    }
+    draw_trigpoly(&point1, &point3, &point2);
 }
 
 /******************************************************************************/
