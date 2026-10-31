@@ -236,7 +236,7 @@ TbBool draw_world_landmass_shape(struct ScreenBox *p_box)
     dword_1C4930[0] = 0x8000;
     dword_1C48D0 = proj_origin.X;
     dword_1C48D4 = proj_origin.Y;
-    vec_mode = 17;
+    vec_mode = RendVec_mode17;
     vec_colour = 174;
     for (i = 0; i < 6; i++)
     {

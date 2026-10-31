@@ -797,10 +797,10 @@ void build_laser_guided_piece(struct Thing *p_laser)
             break;
 
         if (count == 1) {
-            p_face4->Flags = 0;
+            p_face4->Flags = RendVec_mode00;
             p_face4->ExCol = colour_lookup[ColLU_WHITE];
         } else {
-            p_face4->Flags = 0x08 | 0x02;
+            p_face4->Flags = RendVec_mode10;
             p_face4->ExCol = 0x35 - (count * 4);
         }
 
@@ -1054,7 +1054,7 @@ static void build_laser_beam_segments(int start_x, int start_y, int start_depth,
             p_face4 = build_polygon_slice(cur_x >> 8, cur_y >> 8,
               next_x >> 8, next_y >> 8, width, width, fade_colour, sort_key, use_cache);
             if (p_face4 != NULL) {
-                p_face4->Flags = 0x0f;
+                p_face4->Flags = RendVec_mode15;
                 p_face4->ExCol = beam_colour;
                 use_cache = 1;
             }
@@ -1094,8 +1094,8 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
   int itime, struct Thing *p_owner, int num_electric_strands, TbPixel beam_colour,
   int circle_depth_bias)
 {
-    struct EnginePoint ep_near, ep_far;
-    int circle_x, circle_y;
+    struct EnginePoint ep_beg, ep_end;
+    int pscr_beg_x, pscr_beg_y;
     int dx, dy, dz;
     int screen_dist;
     int num_segments;
@@ -1109,29 +1109,29 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
         do_beam_electric(x1, y1 + 20, z1, x2, y2, z2);
     }
 
-    ep_near.Flags = 0;
-    ep_near.X3d = x1 - engn_xc;
-    ep_near.Y3d = (y1 << 3); // subtracted within transform_point(): - 8 * engn_yc;
-    ep_near.Z3d = z1 - engn_zc;
-    transform_point(&ep_near);
+    ep_beg.Flags = 0;
+    ep_beg.X3d = x1 - engn_xc;
+    ep_beg.Y3d = (y1 << 3); // subtracted within transform_point(): - 8 * engn_yc;
+    ep_beg.Z3d = z1 - engn_zc;
+    transform_point(&ep_beg);
 
     get_bullet_start_offsets(&ofs_x, &ofs_y, p_owner);
 
-    ep_far.Flags = 0;
-    ep_far.X3d = x2 - engn_xc;
-    ep_far.Y3d = (y2 << 3); // subtracted within transform_point(): - 8 * engn_yc;
-    ep_far.Z3d = z2 - engn_zc;
-    transform_point(&ep_far);
+    ep_end.Flags = 0;
+    ep_end.X3d = x2 - engn_xc;
+    ep_end.Y3d = (y2 << 3); // subtracted within transform_point(): - 8 * engn_yc;
+    ep_end.Z3d = z2 - engn_zc;
+    transform_point(&ep_end);
 
-    if (((ep_near.Flags & ep_far.Flags) & 0x0F) != 0)
+    if (((ep_beg.Flags & ep_end.Flags) & 0x0F) != 0)
         return;
 
-    circle_x = (ep_near.pp.X << 8) + ((ofs_x * overall_scale) >> 1);
-    circle_y = (ep_near.pp.Y << 8) + ((ofs_y * overall_scale) >> 1);
+    pscr_beg_x = (ep_beg.pp.X << 8) + ((ofs_x * overall_scale) >> 1);
+    pscr_beg_y = (ep_beg.pp.Y << 8) + ((ofs_y * overall_scale) >> 1);
 
-    dx = (ep_far.pp.X << 8) - circle_x;
-    dy = (ep_far.pp.Y << 8) - circle_y;
-    dz = (ep_far.Z3d << 8) - (ep_near.Z3d << 8);
+    dx = (ep_end.pp.X << 8) - pscr_beg_x;
+    dy = (ep_end.pp.Y << 8) - pscr_beg_y;
+    dz = (ep_end.Z3d << 8) - (ep_beg.Z3d << 8);
 
     screen_dist = LbSqrL(dx * dx + dy * dy);
     if (screen_dist == 0)
@@ -1141,13 +1141,13 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
     if (num_segments < 1)
         num_segments = 1;
 
-    circle_x += ((dx * 150) / screen_dist) << 2;
-    circle_y += ((dy * 150) / screen_dist) << 2;
+    pscr_beg_x += ((dx * 150) / screen_dist) << 2;
+    pscr_beg_y += ((dy * 150) / screen_dist) << 2;
 
-    build_laser_beam_glare(circle_x, circle_y, beam_colour, ep_near.Z3d + circle_depth_bias);
+    build_laser_beam_glare(pscr_beg_x, pscr_beg_y, beam_colour, ep_beg.Z3d + circle_depth_bias);
 
-    circle_x += ((dx * 150) / screen_dist) << 4;
-    circle_y += ((dy * 150) / screen_dist) << 4;
+    pscr_beg_x += ((dx * 150) / screen_dist) << 4;
+    pscr_beg_y += ((dy * 150) / screen_dist) << 4;
 
     if (itime <= 2) {
         int perp_x, perp_y, perp_len;
@@ -1172,13 +1172,13 @@ static void build_laser_beam_generic(int x1, int y1, int z1, int x2, int y2, int
     width2 = (itime > 2) ? 6 : itime;
     width3 = (itime > 2) ? 2 : itime;
 
-    build_laser_beam_segments(circle_x, circle_y, ep_near.Z3d << 8,
+    build_laser_beam_segments(pscr_beg_x, pscr_beg_y, ep_beg.Z3d << 8,
       step_x, step_y, step_z, num_segments, width1, itime, beam_colour);
 
-    build_laser_beam_segments(circle_x + spread_x, circle_y + spread_y, ep_near.Z3d << 8,
+    build_laser_beam_segments(pscr_beg_x + spread_x, pscr_beg_y + spread_y, ep_beg.Z3d << 8,
       step_x, step_y, step_z, num_segments, width2, itime, beam_colour);
 
-    build_laser_beam_segments(circle_x - spread_x, circle_y - spread_y, ep_near.Z3d << 8,
+    build_laser_beam_segments(pscr_beg_x - spread_x, pscr_beg_y - spread_y, ep_beg.Z3d << 8,
       step_x, step_y, step_z, num_segments, width3, itime, beam_colour);
 }
 
@@ -1247,8 +1247,12 @@ void build_laser29(struct Thing *p_thing)
       p_thing->Timer1, p_owntng);
 }
 
-void build_razor_wire_strand(int x1, int y1, int z1, int x2, int y2, int z2, int itime, struct Thing *p_owner)
+/** Draws a single jittery, sawtooth-edged line segment between two 3D points.
+ */
+void build_razor_wire_strand(int x1, int y1, int z1,
+  int x2, int y2, int z2, int itime, struct Thing *p_owner)
 {
+#if 0
     // Pushed through a register holding them: a "g" operand may be placed
     // relative to the stack pointer, which each push moves.
     int stkargs[4];
@@ -1266,6 +1270,104 @@ void build_razor_wire_strand(int x1, int y1, int z1, int x2, int y2, int z2, int
       "call ASM_build_razor_wire_strand\n"
         : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "S" (stkargs)
         : "cc", "memory");
+    return;
+#endif
+    struct EnginePoint ep_beg, ep_end;
+    int pscr_dx, pscr_dy, pscr_ddepth;
+    int screen_dist;
+    int num_segments;
+    int step_x, step_y, step_depth;
+    int cur_x, cur_y, cur_depth;
+    int phase, counter;
+    int seg;
+
+    ep_beg.Flags = 0;
+    ep_beg.X3d = x1 - engn_xc;
+    ep_beg.Y3d = (y1 << 3); // subtracted within transform_point(): - 8 * engn_yc;
+    ep_beg.Z3d = z1 - engn_zc;
+    transform_point(&ep_beg);
+
+    ep_end.Flags = 0;
+    ep_end.X3d = x2 - engn_xc;
+    ep_end.Y3d = (y2 << 3); // subtracted within transform_point(): - 8 * engn_yc;
+    ep_end.Z3d = z2 - engn_zc;
+    transform_point(&ep_end);
+
+    if (((ep_beg.Flags & ep_end.Flags) & 0x0F) != 0)
+        return;
+
+    pscr_dx = (ep_end.pp.X << 8) - (ep_beg.pp.X << 8);
+    pscr_dy = (ep_end.pp.Y << 8) - (ep_beg.pp.Y << 8);
+    pscr_ddepth = (ep_end.Z3d << 8) - (ep_beg.Z3d << 8);
+
+    screen_dist = LbSqrL(pscr_dx * pscr_dx + pscr_dy * pscr_dy);
+    if (screen_dist < 0x200)
+        return;
+
+    num_segments = (screen_dist / 10) >> 8;
+    if (num_segments < 1)
+        num_segments = 1;
+
+    step_x = pscr_dx / num_segments;
+    step_y = pscr_dy / num_segments;
+    step_depth = pscr_ddepth / num_segments;
+
+    counter = gameturn & 1;
+    phase = counter << 6;
+
+    cur_x = ep_beg.pp.X << 8;
+    cur_y = ep_beg.pp.Y << 8;
+    cur_depth = ep_beg.Z3d << 8;
+
+    for (seg = 0; seg < num_segments; seg++)
+    {
+        int next_x, next_y, next_depth;
+
+        next_x = cur_x + step_x;
+        next_y = cur_y + step_y;
+        next_depth = cur_depth + step_depth;
+
+        if ((cur_x > 0) && ((cur_x >> 8) < lbDisplay.GraphicsScreenWidth)
+         && (cur_y > 0) && ((cur_y >> 8) < lbDisplay.GraphicsScreenHeight))
+        {
+            int sort_key;
+            int wobble;
+
+            sort_key = (cur_depth >> 8) + 0x1288;
+            if (sort_key < 0)
+                sort_key = 0;
+            else if (sort_key > 9999)
+                sort_key = 9999;
+
+            // A sine-driven brightness/visibility pulse: only segments that
+            // land within a middle band of the sine wave get drawn, giving
+            // the wire a flickering, dashed look that animates with gameturn.
+            wobble = (lbSinTable[phase & 0x3ff] >> 11) + 0x20;
+
+            if ((wobble > 0x20) && (wobble < 0x41))
+            {
+                struct SingleObjectFace4 *p_face4;
+                short w1, w2;
+
+                // Width alternates between the two edges each segment,
+                // producing the sawtooth "razor" silhouette.
+                w1 = (counter & 1) ? 1 : 0;
+                w2 = (counter & 1) ? 0 : 1;
+
+                p_face4 = build_polygon_slice(cur_x >> 8, cur_y >> 8,
+                  next_x >> 8, next_y >> 8, w1, w2, wobble, sort_key, 0);
+                if (p_face4 != NULL)
+                    p_face4->Flags = RendVec_mode10;
+            }
+
+            phase += 0x40;
+            counter++;
+        }
+
+        cur_x = next_x;
+        cur_y = next_y;
+        cur_depth = next_depth;
+    }
 }
 
 void build_soul(struct SimpleThing *p_sthing)
@@ -1294,14 +1396,14 @@ void build_razor_wire(struct Thing *p_thing)
     struct Thing *p_dcthing;
     ushort mask;
 
-    mask = 0x7F;
     if (p_thing->U.UEffect.LeisurePlace == (gameturn & 0xFFFF))
         return;
+    p_thing->U.UEffect.LeisurePlace = (gameturn & 0xFFFF);
 
     p_locplayer = &players[local_player_no];
     p_dcthing = &things[p_locplayer->DirectControl[0]];
 
-    p_thing->U.UEffect.LeisurePlace = (gameturn & 0xFFFF);
+    mask = 0x7F;
     if (p_thing->SubType != 0)
         mask = 0x1F;
     if ((p_thing->U.UEffect.Group != p_dcthing->U.UPerson.EffectiveGroup)
@@ -1333,9 +1435,9 @@ short draw_thing_object(struct Thing *p_thing)
     struct SimpleThing *p_sthing;
 
     p_sthing = (struct SimpleThing *)p_thing;
-    if (p_sthing < &sthings[-1500])
+    if (p_sthing < &sthings[-STHINGS_LIMIT])
         return -9999;
-    if (p_thing > &things[1000])
+    if (p_thing > &things[THINGS_LIMIT])
         return -9999;
 
     switch (p_thing->Type)

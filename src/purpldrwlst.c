@@ -446,7 +446,7 @@ void draw_purple_screen(void)
     my_set_text_window(0, 0, lbDisplay.GraphicsScreenWidth,
         lbDisplay.GraphicsScreenHeight);
     screen_hotspots_clear();
-    vec_mode = 17;
+    vec_mode = RendVec_mode17;
     draw_purple_drawitems();
     purple_draw_index = 0;
     lbDisplay.DrawFlags = 0;
