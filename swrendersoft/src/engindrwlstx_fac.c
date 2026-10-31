@@ -1061,10 +1061,10 @@ void draw_floor_tile1a(ushort tl)
     drawexec_floor_quad_facing_up(&point1, &point2, &point3, &point4);
 
     // damage overlays
-    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
+    if ((p_floortl->TearAround > 0) && (p_floortl->TearAround <= 12))
     {
         vec_mode = 6;
-        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->TearAround);
 
         drawexec_floor_quad(&point1, &point2, &point3, &point4);
     }
@@ -1116,18 +1116,10 @@ void draw_floor_tile1b(ushort tl)
     drawexec_floor_quad_facing_up(&point2, &point4, &point1, &point3);
 
     // damage overlays
-    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
+    if ((p_floortl->TearAround > 0) && (p_floortl->TearAround <= 12))
     {
         vec_mode = 6;
-        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
-
-        drawexec_floor_quad(&point2, &point4, &point1, &point3);
-    }
-    //TODO why the second time using the same page?
-    if ((p_floortl->Page > 0) && (p_floortl->Page <= 12))
-    {
-        vec_mode = 6;
-        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->Page);
+        set_floor_texture_uv_damaged_ground(&point1, &point2, &point3, &point4, p_floortl->TearAround);
 
         drawexec_floor_quad(&point2, &point4, &point1, &point3);
     }

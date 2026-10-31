@@ -39,7 +39,7 @@ struct FloorTile { // sizeof=39
     ubyte Flags;
     ubyte Flags2;
     ubyte Flags2b;
-    ubyte Page;
+    ubyte TearAround;	/**< Which around tiles have surface damaged/torn */
     short Offset;
 };
 
