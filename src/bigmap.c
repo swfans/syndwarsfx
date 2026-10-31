@@ -332,6 +332,7 @@ int alt_at_point_under_height(int cor_x, int cor_z, int h)
     {
         struct MyMapElement *p_mapel;
         p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
+        //TODO this restricts col_column index to 12 bits
         col = p_mapel->ColumnHead & 0xFFF;
         qb = map_coord_to_collision_qbit_index(cor_x, cor_z);
     }

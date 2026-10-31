@@ -65,6 +65,9 @@ struct rectangle { // sizeof=4
 
 #pragma pack()
 
+#define scanner_map_to_mapcoord(c) (c << 7)
+#define mapcoord_to_scanner_map(c) (c >> 7)
+
 /******************************************************************************/
 
 /** String of keycodes for changing arrow mode.
@@ -417,15 +420,21 @@ void SCANNER_scanconvert(int x0, int y0, int x1, int y1, int x2, int y2, int col
 
 void SCANNER_fill_triangle(int z1, int x1, int z2, int x2, int z3, int x3, TbPixel colour)
 {
-    SCANNER_scanconvert(z1 >> 7, x1 >> 7, z2 >> 7, x2 >> 7, z3 >> 7, x3 >> 7, colour);
+    SCANNER_scanconvert(mapcoord_to_scanner_map(z1), mapcoord_to_scanner_map(x1),
+      mapcoord_to_scanner_map(z2), mapcoord_to_scanner_map(x2),
+      mapcoord_to_scanner_map(z3), mapcoord_to_scanner_map(x3), colour);
 }
 
 /** A quad face is filled in as two triangles: {0,1,2} and {1,2,3}.
  */
 void SCANNER_fill_quad(int z1, int x1, int z2, int x2, int z3, int x3, int z4, int x4, TbPixel colour)
 {
-    SCANNER_scanconvert(z1 >> 7, x1 >> 7, z2 >> 7, x2 >> 7, z3 >> 7, x3 >> 7, colour);
-    SCANNER_scanconvert(z2 >> 7, x2 >> 7, z3 >> 7, x3 >> 7, z4 >> 7, x4 >> 7, colour);
+    SCANNER_scanconvert(mapcoord_to_scanner_map(z1), mapcoord_to_scanner_map(x1),
+      mapcoord_to_scanner_map(z2), mapcoord_to_scanner_map(x2),
+      mapcoord_to_scanner_map(z3), mapcoord_to_scanner_map(x3), colour);
+    SCANNER_scanconvert(mapcoord_to_scanner_map(z2), mapcoord_to_scanner_map(x2),
+      mapcoord_to_scanner_map(z3), mapcoord_to_scanner_map(x3),
+      mapcoord_to_scanner_map(z4), mapcoord_to_scanner_map(x4), colour);
 }
 
 void SCANNER_fill_in_object(int object_idx, TbPixel colour)
@@ -469,7 +478,8 @@ void SCANNER_fill_in_object(int object_idx, TbPixel colour)
             map_x[k] = p_pt->X + p_obj->MapX;
             map_z[k] = p_pt->Z + p_obj->MapZ;
         }
-        SCANNER_fill_quad(map_z[0], map_x[0], map_z[1], map_x[1], map_z[2], map_x[2], map_z[3], map_x[3], colour);
+        SCANNER_fill_quad(map_z[0], map_x[0], map_z[1], map_x[1],
+          map_z[2], map_x[2], map_z[3], map_x[3], colour);
     }
 }
 
@@ -611,8 +621,7 @@ int SCANNER_find_colour(int mapx, int mapy)
 
     tlpos_bits =  (mapx >> 6) & 2;
     tlpos_bits |= (mapy >> 7) & 1;
-    p_mapel = &game_my_big_map[128 * MAPCOORD_TO_TILE(mapx) + MAPCOORD_TO_TILE(mapy)];
-    textr = p_mapel->Texture & 0x3FFF;
+    textr = floor_texture_at_point(mapy, mapx);
     txtr_bits = get_my_texture_bits(textr);
 
     switch (tlpos_bits)
@@ -658,11 +667,11 @@ int SCANNER_find_colour(int mapx, int mapy)
 
 static void SCANNER_fill_in_floor(int x1, int z1, int x2, int z2)
 {
-    int tile_x, tile_z;
+    int map_x, map_z;
 
-    for (tile_x = x1; tile_x <= x2; tile_x++)
+    for (map_x = x1; map_x <= x2; map_x++)
     {
-        for (tile_z = z1; tile_z <= z2; tile_z++)
+        for (map_z = z1; map_z <= z2; map_z++)
         {
             int alt1, alt2, alt3, alt4;
             int cor_x, cor_z;
@@ -670,8 +679,8 @@ static void SCANNER_fill_in_floor(int x1, int z1, int x2, int z2)
             short brig;
             TbPixel col1;
 
-            cor_x = tile_x << 7;
-            cor_z = tile_z << 7;
+            cor_x = scanner_map_to_mapcoord(map_x);
+            cor_z = scanner_map_to_mapcoord(map_z);
 
             sc_col = SCANNER_find_colour(cor_x, cor_z);
             if (sc_col == 0)
@@ -695,7 +704,7 @@ static void SCANNER_fill_in_floor(int x1, int z1, int x2, int z2)
             if (brig > PALETTE_FADE_LEVELS - 1)
                 brig = PALETTE_FADE_LEVELS - 1;
 
-            SCANNER_data[tile_x][tile_z] = pixmap.fade_table[256 * brig + col1];
+            SCANNER_data[map_x][map_z] = pixmap.fade_table[256 * brig + col1];
         }
     }
 }

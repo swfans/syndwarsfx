@@ -818,7 +818,8 @@ void lvdraw_do_floor(void)
             p_floortl->Flags2 = p_mapel->Flags | floor_flags2;
             p_floortl->Flags2b = p_mapel->Flags2;
             p_floortl->Offset = p_mapel - game_my_big_map;
-            p_floortl->Page = p_mapel->ColumnHead >> 12;
+            //TODO this restricts col_column index to 12 bits
+            p_floortl->TearAround = p_mapel->ColumnHead >> 12;
 
             p_sqlight++;
             // p_spnx += 2; -- already done earlier
@@ -993,7 +994,8 @@ void lvdraw_do_floor_flyby(int cor_z_beg, int ranges_x_len, struct Range *smrang
                     p_floortl->Flags = RendVec_mode21;
                 else
                     p_floortl->Flags = RendVec_mode05;
-                p_floortl->Page = (ushort)p_mapel->ColumnHead >> 12;
+                //TODO this restricts col_column index to 12 bits
+                p_floortl->TearAround = p_mapel->ColumnHead >> 12;
             }
             else
             {
