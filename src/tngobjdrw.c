@@ -1420,14 +1420,91 @@ void build_razor_wire(struct Thing *p_thing)
 
 void build_time_pod(struct SimpleThing *p_sthing)
 {
+#if 0
     asm volatile ("call ASM_build_time_pod\n"
         : : "a" (p_sthing));
+    return;
+#endif
+  build_polygon_circle(
+    PRCCOORD_TO_MAPCOORD(p_sthing->X),
+    PRCCOORD_TO_MAPCOORD(p_sthing->Y) + 10,
+    PRCCOORD_TO_MAPCOORD(p_sthing->Z),
+    p_sthing->Radius >> 4, 30, 15, game_textures,
+    colour_lookup[ColLU_BLUE], 16, 63);
 }
 
 void build_stasis_pod(struct SimpleThing *p_sthing)
 {
+#if 0
     asm volatile ("call ASM_build_stasis_pod\n"
         : : "a" (p_sthing));
+    return;
+#endif
+    int cor_x, cor_y, cor_z;
+    ushort radius, pod_radius;
+    ushort pod_angl;
+    TbPixel tint_colour;
+    ubyte seg;
+
+    tint_colour = colour_lookup[ColLU_RED];
+    cor_x = (p_sthing->X >> 8) - engn_xc;
+    cor_y = (p_sthing->Y >> 8);
+    cor_z = (p_sthing->Z >> 8) - engn_zc;
+    radius = p_sthing->Radius;
+    if (radius == 0)
+        return;
+
+    pod_angl = 16 * gameturn - 16 * p_sthing->ThingOffset;
+    for (seg = 0; seg < 8; seg++)
+    {
+        int cor_beg_x, cor_beg_z;
+        int cor_dy;
+        int angl_swp;
+        TbBool use_cache;
+
+        pod_angl &= 0x01FF;
+        pod_radius = (radius * lbSinTable[pod_angl + LbFPMath_PI/2]) >> 16;
+        cor_dy = (radius * lbSinTable[pod_angl]) >> 19;
+        use_cache = 0;
+
+        for (angl_swp = 0; angl_swp < 2 * LbFPMath_PI; angl_swp += LbFPMath_PI/32)
+        {
+            int cor_dx, cor_dz;
+            int angl;
+            ushort sln;
+            ushort brig;
+            TbPixel colour;
+
+            if (!use_cache)
+            {
+                use_cache = 1;
+                angl = (angl_swp + 16 * gameturn + 2 * LbFPMath_PI - LbFPMath_PI/32) & LbFPMath_AngleMask;
+                cor_beg_x = cor_x + ((pod_radius * lbSinTable[angl]) >> 16);
+                cor_beg_z = cor_z + ((pod_radius * lbSinTable[angl + LbFPMath_PI/2]) >> 16);
+            }
+            angl = (angl_swp + 16 * gameturn) & LbFPMath_AngleMask;
+            cor_dx = (pod_radius * lbSinTable[angl]) >> 16;
+            cor_dz = (pod_radius * lbSinTable[angl + LbFPMath_PI/2]) >> 16;
+
+            if (((angl_swp >> 9) & 1) != 0)
+                brig = 16;
+            else
+                brig = 48;
+            colour = pixmap.fade_table[256 * brig + tint_colour];
+
+            sln = enlist_draw_mapwho_vect(
+              cor_x + cor_dx, cor_y + cor_dy, cor_z + cor_dz,
+              cor_beg_x, cor_y + cor_dy, cor_beg_z, colour);
+            if (sln != 0) {
+                struct SortLine *p_sline;
+                p_sline = &game_sort_lines[sln];
+                p_sline->Flags = 0x02;
+            }
+            cor_beg_x = cor_x + cor_dx;
+            cor_beg_z = cor_z + cor_dz;
+        }
+        pod_angl += 100;
+    }
 }
 
 short draw_thing_object(struct Thing *p_thing)
