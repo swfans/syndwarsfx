@@ -46,6 +46,7 @@
 #include "sound.h"
 #include "thing_expld.h"
 #include "thing_fire.h"
+#include "thing_search.h"
 #include "vehicle.h"
 #include "game.h"
 #include "swlog.h"
@@ -731,8 +732,47 @@ void find_and_stasis(struct SimpleThing *p_stasis, int radius)
 
 void find_and_time_travel(struct SimpleThing *p_sthing)
 {
+#if 0
     asm volatile ("call ASM_find_and_time_travel\n"
         :  : "a" (p_sthing));
+#endif
+    struct Thing *p_hittng;
+
+    p_hittng = check_for_radius_hit_person(
+      p_sthing->X, p_sthing->Y, p_sthing->Z,
+      p_sthing->Radius, 0, 1, 0);
+    if (p_hittng == NULL) {
+        return;
+    }
+
+    if (p_hittng->Type == TT_VEHICLE)
+    {
+        struct Thing *p_person;
+        ThingIdx person;
+
+        for (person = p_hittng->U.UVehicle.PassengerHead;
+          person != 0; person = p_person->U.UPerson.LinkPassenger)
+        {
+            p_person = &things[person];
+            p_person->Flag2 |= 0x0002;
+        }
+    }
+    if ((p_hittng->Type != SmTT_STATIC) &&
+      (p_hittng->Type != TT_BUILDING))
+    {
+        delete_node(p_hittng);
+        p_hittng->Flag2 |= 0x0002;
+        p_hittng->U.UPerson.SpecialTimer = 100;
+        play_dist_sample(p_hittng, 0x33u, 0x7Fu, 0x40u, 100, 0, 3);
+    }
+    if (p_hittng->Type == TT_PERSON)
+    {
+        stop_looped_weapon_sample(p_hittng,
+          p_hittng->U.UPerson.CurrentWeapon);
+        if ((p_hittng->Flag2 & 0x0001) != 0) {
+            finalise_razor_wire(p_hittng);
+        }
+    }
 }
 
 void process_time_pod(struct SimpleThing *p_sthing)
