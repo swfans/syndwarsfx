@@ -20,6 +20,7 @@
 
 #include "bfbox.h"
 #include "bfutility.h"
+#include "bfmath.h"
 #include "bfmemut.h"
 #include "bfscreen.h"
 #include "ssampply.h"
@@ -428,10 +429,34 @@ void unkn_update_lights(void)
 
 int recalc_rocket_direction(struct Thing *p_rocket)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_recalc_rocket_direction\n"
         : "=r" (ret) : "a" (p_rocket));
     return ret;
+#endif
+    struct Thing *p_target;
+    int cor_dx, cor_dy, cor_dz;
+    int new_vx, new_vy, new_vz;
+    int dist;
+
+    p_target = p_rocket->PTarget;
+    cor_dx = (p_target->X - p_rocket->X) >> 8;
+    cor_dz = (p_target->Z - p_rocket->Z) >> 8;
+    cor_dy = (p_target->Y - p_rocket->Y) >> 8;
+    dist = LbSqrL(cor_dx * cor_dx + cor_dz * cor_dz);
+    if (dist == 0)
+        dist = 1;
+    new_vx = (cor_dx << 8) / dist;
+    new_vy = (cor_dy << 8) / dist;
+    new_vz = (cor_dz << 8) / dist;
+    if (new_vx * p_rocket->VX + new_vy * p_rocket->VY + new_vz * p_rocket->VZ < 0)
+        return 0;
+
+    p_rocket->VX = new_vx;
+    p_rocket->VY = new_vy;
+    p_rocket->VZ = new_vz;
+    return 1;
 }
 
 void process_rocket(struct Thing *p_rocket)
