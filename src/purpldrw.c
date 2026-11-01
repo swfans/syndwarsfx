@@ -1653,6 +1653,7 @@ ubyte info_box_text(struct ScreenInfoBox *p_box)
 void draw_triangle_purple_list(int x1, int y1,
   int x2, int y2, int x3, int y3, TbPixel colour)
 {
+#if 0
     // Pushed through a register holding them: a "g" operand may be placed
     // relative to the stack pointer, which each push moves.
     int stkargs[3];
@@ -1668,6 +1669,22 @@ void draw_triangle_purple_list(int x1, int y1,
       "call ASM_draw_triangle_purple_list\n"
         : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "S" (stkargs)
         : "cc", "memory");
+    return;
+#endif
+    struct PurpleDrawItem *p_pditem;
+
+    p_pditem = &purple_draw_list[purple_draw_index];
+    purple_draw_index++;
+
+    p_pditem->U.Triangle.X1 = lbDisplay.GraphicsWindowX + x1;
+    p_pditem->U.Triangle.Y1 = lbDisplay.GraphicsWindowY + y1;
+    p_pditem->U.Triangle.X2 = lbDisplay.GraphicsWindowX + x2;
+    p_pditem->U.Triangle.Y2 = lbDisplay.GraphicsWindowY + y2;
+    p_pditem->U.Triangle.X3 = lbDisplay.GraphicsWindowX + x3;
+    p_pditem->U.Triangle.Y3 = lbDisplay.GraphicsWindowY + y3;
+    p_pditem->U.Triangle.Colour = colour;
+    p_pditem->Flags = lbDisplay.DrawFlags;
+    p_pditem->Type = PuDT_TRIANGLE;
 }
 
 void draw_flic_purple_list(void (*fn)())
