@@ -110023,7 +110023,7 @@ GLOBAL_FUNC(ASM_process_rocket)	/* 0x0C9100 */
 
 
 /*----------------------------------------------------------------*/
-process_c_iff:	/* 0x0C99C8 */
+GLOBAL_FUNC(ASM_process_c_iff)	/* 0x0C99C8 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -110233,7 +110233,7 @@ GLOBAL_FUNC(ASM_process_mine)	/* 0x0C9ADC */
 		ret
 	jump_c9bfa:
 		mov    %esi,%eax
-		call   process_c_iff
+		call   ac_process_c_iff
 		pop    %edi
 		pop    %esi
 		pop    %edx

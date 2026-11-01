@@ -440,6 +440,13 @@ void process_laser_guided(struct Thing *p_laser)
         : : "a" (p_laser));
 }
 
+void process_c_iff(struct Thing *p_mine)
+{
+    asm volatile (
+      "call ASM_process_c_iff\n"
+        : : "a" (p_mine));
+}
+
 void process_mine(struct SimpleThing *p_mine)
 {
     asm volatile (
