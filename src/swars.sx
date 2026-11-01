@@ -95184,7 +95184,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 		je     jump_bcdf9
 		mov    %esp,%edx
 		lea    0x25(%ebp),%eax
-		call   mech_unkn_func_13
+		call   ac_mech_unkn_func_13
 	jump_bcdf9:
 		xor    %edx,%edx
 		mov    0x0(%ebp),%dx
@@ -95201,7 +95201,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 		shl    $0x2,%eax
 		add    %eax,%edx
 		lea    0x25(%ebp),%eax
-		call   mech_unkn_func_14
+		call   ac_mech_unkn_func_14
 		xor    %edx,%edx
 		mov    0x0(%ebp),%dx
 		lea    0x0(,%edx,4),%eax
@@ -96379,7 +96379,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_12)	/* 0x0BD008 */
 
 
 /*----------------------------------------------------------------*/
-mech_unkn_func_13:	/* 0x0BDD60 */
+GLOBAL_FUNC(ASM_mech_unkn_func_13)	/* 0x0BDD60 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -97320,7 +97320,7 @@ matrix_transpose_cp:	/* 0x0BE6EC */
 
 
 /*----------------------------------------------------------------*/
-mech_unkn_func_14:	/* 0x0BE72C */
+GLOBAL_FUNC(ASM_mech_unkn_func_14)	/* 0x0BE72C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    (%eax),%ebx

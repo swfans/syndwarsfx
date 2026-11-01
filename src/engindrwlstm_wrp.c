@@ -1052,13 +1052,128 @@ int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
     return ret;
 }
 
+int mech_unkn_func_13(struct M33 *p_mat1, struct M33 *p_mat2)
+{
+    int ret;
+    asm volatile ("call ASM_mech_unkn_func_13\n"
+        : "=r" (ret) : "a" (p_mat1),  "d" (p_mat2));
+    return ret;
+}
+
+int mech_unkn_func_14(struct M33 *p_mat1, struct M33 *p_mat2)
+{
+    int ret;
+    asm volatile ("call ASM_mech_unkn_func_14\n"
+        : "=r" (ret) : "a" (p_mat1),  "d" (p_mat2));
+    return ret;
+}
+
 int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,
   struct M31 *p_bodypos, struct M33 *p_mat)
 {
+#if 1
     int ret;
     asm volatile ("call ASM_mech_unkn_func_11\n"
         : "=r" (ret) : "a" (p_itm4),  "d" (p_bodypos),  "b" (p_mat));
     return ret;
+#endif
+    struct M33 locmat2;
+    int i;
+    struct M31 locvec1, locvec2;
+    ubyte n_func12;
+
+    locvec1 = p_itm4->field_61;
+    locvec2 = p_itm4->field_61;
+    n_func12 = 0;
+    locvec2.R[0] += p_itm4->field_6D.R[0];
+    locvec2.R[1] += p_itm4->field_6D.R[1];
+    locvec2.R[2] += p_itm4->field_6D.R[2];
+    mech_unkn_func_18(1, p_mat, &locvec2, &locvec1);
+
+    locvec2.R[0] = (locvec1.R[0] >> 14) + p_bodypos->R[0];
+    locvec2.R[1] = (locvec1.R[1] >> 14) + p_bodypos->R[1];
+    locvec2.R[2] = (locvec1.R[2] >> 14) + p_bodypos->R[2];
+
+    p_itm4->mat25.R[0][0] = p_mat->R[0][0];
+    p_itm4->mat25.R[0][1] = p_mat->R[0][1];
+    p_itm4->mat25.R[0][2] = p_mat->R[0][2];
+    p_itm4->mat25.R[1][0] = p_mat->R[1][0];
+    p_itm4->mat25.R[1][1] = p_mat->R[1][1];
+    p_itm4->mat25.R[1][2] = p_mat->R[1][2];
+    p_itm4->mat25.R[2][0] = p_mat->R[2][0];
+    p_itm4->mat25.R[2][1] = p_mat->R[2][1];
+    p_itm4->mat25.R[2][2] = p_mat->R[2][2];
+
+    if (p_itm4->angle_49
+      && (p_itm4->mat25.R[0][0] || p_itm4->mat25.R[0][1] || p_itm4->mat25.R[0][2])
+      && (p_itm4->mat25.R[1][0] || p_itm4->mat25.R[1][1] || p_itm4->mat25.R[1][2])
+      && (p_itm4->mat25.R[2][0] || p_itm4->mat25.R[2][1] || p_itm4->mat25.R[2][2]))
+    {
+        mech_unkn_func_12(&p_itm4->mat25, &locmat2, lbSinTable[p_itm4->angle_49], lbSinTable[p_itm4->angle_49 + 512], 0);
+        ++n_func12;
+    }
+    if (p_itm4->angle_4D
+      && (p_itm4->mat25.R[0][0] || p_itm4->mat25.R[0][1] || p_itm4->mat25.R[0][2])
+      && (p_itm4->mat25.R[1][0] || p_itm4->mat25.R[1][1] || p_itm4->mat25.R[1][2])
+      && (p_itm4->mat25.R[2][0] || p_itm4->mat25.R[2][1] || p_itm4->mat25.R[2][2]))
+    {
+        mech_unkn_func_12(&p_itm4->mat25, &locmat2, lbSinTable[p_itm4->angle_4D], lbSinTable[p_itm4->angle_4D + 512], 1u);
+        ++n_func12;
+    }
+    if (p_itm4->angle_51
+      && (p_itm4->mat25.R[0][0] || p_itm4->mat25.R[0][1] || p_itm4->mat25.R[0][2])
+      && (p_itm4->mat25.R[1][0] || p_itm4->mat25.R[1][1] || p_itm4->mat25.R[1][2])
+      && (p_itm4->mat25.R[2][0] || p_itm4->mat25.R[2][1] || p_itm4->mat25.R[2][2]))
+    {
+        mech_unkn_func_12(&p_itm4->mat25, &locmat2, lbSinTable[p_itm4->angle_51], lbSinTable[p_itm4->angle_51 + 512], 2u);
+        ++n_func12;
+    }
+    if (n_func12 > 0) {
+        mech_unkn_func_13(&p_itm4->mat25, &locmat2);
+    }
+    {
+        struct Thing *p_thing;
+        struct M33 *p_rmat;
+
+        p_thing = &things[p_itm4->thing];
+        p_rmat = &local_mats[p_thing->U.UObject.MatrixIndex];
+        mech_unkn_func_14(&p_itm4->mat25, p_rmat);
+        p_thing->X = locvec2.R[0];
+        p_thing->Y = locvec2.R[1];
+        p_thing->Z = locvec2.R[2];
+    }
+    if (p_itm4->field_23 == 5)
+    {
+        mech_rocket1_launch_cor_x = locvec2.R[0];
+        mech_rocket1_launch_cor_y = locvec2.R[1];
+        mech_rocket1_launch_cor_z = locvec2.R[2];
+    }
+    if (p_itm4->field_23 == 6)
+    {
+        mech_rocket2_launch_cor_x = locvec2.R[0];
+        mech_rocket2_launch_cor_y = locvec2.R[1];
+        mech_rocket2_launch_cor_z = locvec2.R[2];
+    }
+
+    if (p_itm4->field_79 == 1)
+    {
+        struct Thing *p_thing;
+        struct SingleObject *p_sobj;
+
+        p_thing = &things[p_itm4->thing];
+        p_sobj = &game_objects[p_thing->U.UObject.Object];
+        draw_rot_object(
+          p_thing->X - engn_xc,
+          p_thing->Y - engn_yc,
+          p_thing->Z - engn_zc,
+          p_sobj, p_thing);
+    }
+
+    for (i = 0; i < p_itm4->field_2; i++)
+    {
+        mech_unkn_func_11(p_itm4->field_3[i], &locvec2, &p_itm4->mat25);
+    }
+    return 0;
 }
 
 int mech_unkn_func_03(struct Thing *p_thing)
