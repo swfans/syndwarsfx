@@ -95048,7 +95048,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 		mov    $0x1,%eax
 		mov    %ecx,0x38(%esp)
 		lea    0x24(%esp),%ecx
-		call   mech_unkn_func_18
+		call   ac_mech_unkn_func_18
 		mov    0x24(%esp),%eax
 		mov    0x3c(%esp),%edx
 		sar    $0xe,%eax
@@ -95113,7 +95113,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 		lea    0x25(%ebp),%eax
 		mov    EXPORT_SYMBOL(lbSinTable)+2048(,%ebx,4),%ecx
 		mov    EXPORT_SYMBOL(lbSinTable)(,%ebx,4),%ebx
-		call   mech_unkn_func_12
+		call   ac_mech_unkn_func_12
 		incb   0x44(%esp)
 	jump_bcd2a:
 		cmpl   $0x0,0x4d(%ebp)
@@ -95145,7 +95145,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 		lea    0x25(%ebp),%eax
 		mov    EXPORT_SYMBOL(lbSinTable)+2048(,%ebx,4),%ecx
 		mov    EXPORT_SYMBOL(lbSinTable)(,%ebx,4),%ebx
-		call   mech_unkn_func_12
+		call   ac_mech_unkn_func_12
 		incb   0x44(%esp)
 	jump_bcd89:
 		cmpl   $0x0,0x51(%ebp)
@@ -95177,7 +95177,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 		lea    0x25(%ebp),%eax
 		mov    EXPORT_SYMBOL(lbSinTable)+2048(,%ebx,4),%ecx
 		mov    EXPORT_SYMBOL(lbSinTable)(,%ebx,4),%ebx
-		call   mech_unkn_func_12
+		call   ac_mech_unkn_func_12
 		incb   0x44(%esp)
 	jump_bcde8:
 		cmpb   $0x0,0x44(%esp)
@@ -95314,7 +95314,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_11)	/* 0x0BCC08 */
 
 
 /*----------------------------------------------------------------*/
-mech_unkn_func_12:	/* 0x0BD008 */
+GLOBAL_FUNC(ASM_mech_unkn_func_12)	/* 0x0BD008 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -97213,7 +97213,7 @@ mech_unkn_func_13:	/* 0x0BDD60 */
 
 
 /*----------------------------------------------------------------*/
-mech_unkn_func_18:	/* 0x0BE620 */
+GLOBAL_FUNC(ASM_mech_unkn_func_18)	/* 0x0BE620 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi

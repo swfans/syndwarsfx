@@ -1033,6 +1033,25 @@ short draw_object(int sh_x, int sh_y, int sh_z,
     return draw_object_faces(cor_dx, cor_dy, cor_dz, point_object, doflags);
 }
 
+int mech_unkn_func_18(uint a1, struct M33 *p_mat, struct M31 *p_vec1, struct M31 *p_vec2)
+{
+    int ret;
+    asm volatile ("call ASM_mech_unkn_func_18\n"
+        : "=r" (ret) : "a" (a1),  "d" (p_mat),  "b" (p_vec1),  "c" (p_vec2));
+    return ret;
+}
+
+int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
+  int factor_x, int factor_z, int a5)
+{
+    int ret;
+    asm volatile (
+      "push %5\n"
+      "call ASM_mech_unkn_func_12\n"
+        : "=r" (ret) : "a" (p_mat1),  "d" (p_mat2),  "b" (factor_x),  "c" (factor_z), "g" ((int)a5));
+    return ret;
+}
+
 int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,
   struct M31 *p_bodypos, struct M33 *p_mat)
 {
