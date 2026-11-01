@@ -353,7 +353,10 @@ int gun_out_anim(struct Thing *p_person, ubyte shoot_flag);
 
 ushort set_player_weapon_turn(struct Thing *p_person, ushort delay_turns);
 
-s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot);
+s32 laser_hit_at(s32 cor1_x, s32 cor1_y, s32 cor1_z,
+  s32 *p_cor2_x, s32 *p_cor2_y, s32 *p_cor2_z,
+  struct Thing *p_shot);
+
 void finalise_razor_wire(struct Thing *p_person);
 void init_lay_razor(struct Thing *p_thing, short x, short y, short z, int flag);
 void init_mgun_laser(struct Thing *p_owner, ushort start_age);

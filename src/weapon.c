@@ -5391,15 +5391,18 @@ void process_weapon(struct Thing *p_person)
     }
 }
 
-s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing *p_shot)
+s32 laser_hit_at(s32 cor1_x, s32 cor1_y, s32 cor1_z,
+  s32 *p_cor2_x, s32 *p_cor2_y, s32 *p_cor2_z,
+  struct Thing *p_shot)
 {
+#if 1
     s32 ret;
     // Pushed through a register holding them: a "g" operand may be placed
     // relative to the stack pointer, which each push moves.
     int stkargs[3];
 
-    stkargs[0] = (int)(intptr_t)y2;
-    stkargs[1] = (int)(intptr_t)z2;
+    stkargs[0] = (int)(intptr_t)p_cor2_y;
+    stkargs[1] = (int)(intptr_t)p_cor2_z;
     stkargs[2] = (int)(intptr_t)p_shot;
 
     asm volatile (
@@ -5408,9 +5411,10 @@ s32 laser_hit_at(s32 x1, s32 y1, s32 z1, s32 *x2, s32 *y2, s32 *z2, struct Thing
       "push 0(%5)\n"
       "call ASM_laser_hit_at\n"
         : "=r" (ret)
-        : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "S" (stkargs)
+        : "a" (cor1_x), "d" (cor1_y), "b" (cor1_z), "c" (p_cor2_x), "S" (stkargs)
         : "cc", "memory");
     return ret;
+#endif
 }
 
 /******************************************************************************/
