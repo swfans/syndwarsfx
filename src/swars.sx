@@ -112097,7 +112097,7 @@ GLOBAL_FUNC(ASM_process_time_pod)	/* 0x0CAF50 */
 
 
 /*----------------------------------------------------------------*/
-find_and_stasis:	/* 0x0CB0E4 */
+GLOBAL_FUNC (ASM_find_and_stasis)	/* 0x0CB0E4 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -112355,7 +112355,7 @@ func_cb31e:
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0x14(%esi),%dx
-		call   find_and_stasis
+		call   ac_find_and_stasis
 		pop    %edi
 		pop    %esi
 		pop    %edx
@@ -112378,7 +112378,7 @@ func_cb3ac:
 		xor    %edx,%edx
 		mov    %esi,%eax
 		mov    0x14(%esi),%dx
-		call   find_and_stasis
+		call   ac_find_and_stasis
 		pop    %edi
 		pop    %esi
 		pop    %edx

@@ -29,6 +29,7 @@ extern "C" {
 #pragma pack(1)
 
 struct Thing;
+struct SimpleThing;
 
 typedef struct {
     short Arg1;
@@ -119,6 +120,8 @@ short find_nearest_person_min(int x, int y, int z,
   int n_dist, int *a_dist, int angle1, u32 group_bits);
 
 struct Thing *check_for_people(int x, int y, int z, ushort radius);
+
+void find_and_stasis(struct SimpleThing *p_stasis, int radius);
 
 /******************************************************************************/
 #ifdef __cplusplus

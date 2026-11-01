@@ -1102,4 +1102,10 @@ struct Thing *check_for_people(int x, int y, int z, ushort radius)
     return ret;
 }
 
+void find_and_stasis(struct SimpleThing *p_stasis, int radius)
+{
+    asm volatile ("call ASM_find_and_stasis\n"
+        :  : "a" (p_stasis), "d" (radius));
+}
+
 /******************************************************************************/
