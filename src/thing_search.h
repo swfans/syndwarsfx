@@ -118,6 +118,8 @@ struct Thing *check_for_radius_hit_person(int prc_x, int prc_y, int prc_z,
 short find_nearest_person_min(int x, int y, int z,
   int n_dist, int *a_dist, int angle1, u32 group_bits);
 
+struct Thing *check_for_people(int x, int y, int z, ushort radius);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

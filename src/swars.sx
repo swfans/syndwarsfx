@@ -15750,7 +15750,7 @@ GLOBAL_FUNC(ASM_bul_hit_vector)	/* 0x0498DC */
 
 
 /*----------------------------------------------------------------*/
-check_for_people:	/* 0x049EA8 */
+GLOBAL_FUNC(ASM_check_for_people)	/* 0x049EA8 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -30645,7 +30645,7 @@ GLOBAL_FUNC(ASM_process_intelligent_door)	/* 0x056B88 */
 		mov    0x20(%esi),%ebx
 		mov    0x1c(%esi),%edx
 		mov    0x18(%esi),%eax
-		call   check_for_people
+		call   ac_check_for_people
 		test   %eax,%eax
 		jne    jump_56d17
 		push   $0x1

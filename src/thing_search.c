@@ -1093,5 +1093,13 @@ short find_nearest_person_min(int x, int y, int z,
     return ret;
 }
 
+struct Thing *check_for_people(int x, int y, int z, ushort radius)
+{
+    struct Thing *ret;
+    asm volatile (
+      "call ASM_check_for_people\n"
+        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (radius));
+    return ret;
+}
 
 /******************************************************************************/
