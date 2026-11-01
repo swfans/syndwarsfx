@@ -76,7 +76,7 @@ void print_mapel_collision_columns(void);
  */
 void print_collision_vects(void);
 
-int unkn_path_func_001(struct Thing *p_thing, ubyte a2);
+void unkn_path_func_001(struct Thing *p_thing, ubyte a2);
 
 /** Checks whether line segment (x1,y1)-(x2,y2) intersects segment (x3,y3)-(x4,y4).
  */

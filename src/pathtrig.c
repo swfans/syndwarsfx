@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "pathtrig.h"
 
+#include "bfkeybd.h"
 #include "bfmath.h"
 #include "bfmemory.h"
 #include <assert.h>
@@ -25,11 +26,15 @@
 #include <limits.h>
 #include <stdlib.h>
 
+#include "drawshape.h"
+#include "engincolour.h"
+
 #include "bigmap.h"
 #include "building.h"
 #include "enginsngobjs.h"
 #include "game.h"
 #include "game_data.h"
+#include "hud_draw.h"
 #include "lvwalk.h"
 #include "thing.h"
 #include "tngcolisn.h"
@@ -80,12 +85,51 @@ enum ThinWallType {
 
 extern const int MOD3[];
 
-int unkn_path_func_001(struct Thing *p_thing, ubyte a2)
+void unkn_path_func_001(struct Thing *p_thing, ubyte a2)
 {
-    int ret;
+#if 0
     asm volatile ("call ASM_unkn_path_func_001\n"
-        : "=r" (ret) : "a" (p_thing), "d" (a2));
-    return ret;
+        :  : "a" (p_thing), "d" (a2));
+    return;
+#endif
+    int cor_beg_x, cor_beg_z;
+    ushort pt, pt_max;
+    ushort path;
+
+    if (a2 == 1)
+        return;
+
+    path = p_thing->U.UPerson.PathIndex;
+    pt = p_thing->PathOffset;
+    pt_max = my_paths[path].Flag;
+    cor_beg_x = PRCCOORD_TO_MAPCOORD(p_thing->X);
+    cor_beg_z = PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    while (path > 0)
+    {
+        int cor_end_x, cor_end_y, cor_end_z;
+        int cor_beg_y;
+
+        if (pt >= pt_max)
+            break;
+        cor_end_x = my_paths[path].X[pt & 3];
+        cor_end_z = my_paths[path].Z[pt & 3];
+        cor_beg_y = alt_at_point(cor_beg_x, cor_beg_z) >> 5;
+        cor_end_y = alt_at_point(cor_end_x, cor_end_z) >> 5;
+
+        if (lbShift == KMod_SHIFT) {
+            draw_mapcoord_line_directed_to_target(cor_beg_x, cor_beg_y, cor_beg_z,
+              cor_end_x, cor_end_y, cor_end_z, colour_lookup[2]);
+        } else {
+            draw_mapcoord_line_col(cor_beg_x, cor_beg_y, cor_beg_z,
+              cor_end_x, cor_end_y, cor_end_z, colour_lookup[2]);
+        }
+        cor_beg_x = cor_end_x;
+        cor_beg_z = cor_end_z;
+
+        pt++;
+        if ((pt & 3) == 0)
+            path = my_paths[path].Next;
+    }
 }
 
 //TODO temp copy of static func

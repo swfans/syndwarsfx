@@ -129,50 +129,6 @@ int draw_lines_scrcoord_to_all_group_members(short scr_x, short scr_y, ushort gr
     return i;
 }
 
-void draw_mapcoord_line_directed_to_target(int probe_x, int probe_y, int probe_z, int target_x, int target_y, int target_z, TbPixel colour)
-{
-    int dist_x, dist_y, dist_z;
-    int tdist;
-    int cur_x, cur_y, cur_z;
-    int prv_x, prv_z;
-    ushort step, steps_tot;
-    TbPixel col2;
-
-    dist_x = target_x - probe_x;
-    dist_y = target_y - probe_y;
-    dist_z = target_z - probe_z;
-    tdist = LbSqrL(dist_x * dist_x + dist_z * dist_z);
-
-    if (tdist == 0) {
-        return;
-    }
-    dist_x = 50 * dist_x / tdist;
-    dist_y = 50 * dist_y / tdist;
-    dist_z = 50 * dist_z / tdist;
-    col2 = colour - 1;
-    steps_tot = tdist / 50;
-
-    // Arrows toward target
-    for (step = 1; step < steps_tot; step += 8)
-    {
-        cur_x = probe_x + dist_x * (step);
-        cur_y = probe_y + dist_y * (step);
-        cur_z = probe_z + dist_z * (step);
-        prv_x = probe_x + dist_x * (step - 1);
-        prv_z = probe_z + dist_z * (step - 1);
-
-        enlist_hud_draw_mapcoord_line_only_whole(cur_x, cur_y, cur_z,
-          prv_x + dist_z, cur_y, prv_z - dist_x, 0, 1, col2);
-
-        enlist_hud_draw_mapcoord_line_only_whole(cur_x, cur_y, cur_z,
-          prv_x - dist_z, cur_y, prv_z + dist_x, 0, 1, col2);
-    }
-
-    // Line from floor under mouse to target
-    enlist_hud_draw_mapcoord_line_only_whole(probe_x, probe_y, probe_z,
-      target_x, target_y, target_z, 0, 1, colour);
-}
-
 /** Searches all existing things in order to find one for debug.
  * @param ttype Thing type, or -1 to catch all basic types, or -2 to catch all possible.
  */

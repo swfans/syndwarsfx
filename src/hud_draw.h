@@ -33,6 +33,9 @@ struct Thing;
 #pragma pack()
 /******************************************************************************/
 
+void draw_mapcoord_line_directed_to_target(int probe_x, int probe_y, int probe_z,
+  int target_x, int target_y, int target_z, TbPixel colour);
+
 TbBool enlist_hud_draw_line_from_thing_to_mapcoord(ThingIdx thing,
   short cor2_x, short cor2_y_m8, short cor2_z, ushort drwflags, ubyte colkp);
 TbBool enlist_hud_draw_line_from_thing_ptr_to_mapcoord(struct Thing *p_thing,
