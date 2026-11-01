@@ -16524,7 +16524,7 @@ nullsub_3:	/* 0x04A7F8 */
 
 
 /*----------------------------------------------------------------*/
-unkn_update_thing_to_light:	/* 0x04A7FC */
+GLOBAL_FUNC(ASM_unkn_update_thing_to_light)	/* 0x04A7FC */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -16652,7 +16652,7 @@ GLOBAL_FUNC(ASM_process_lighting_unkn1)	/* 0x04A870 */
 		and    $0xffff,%eax
 		mov    %ecx,%ebx
 		mov    %ebp,%edx
-		call   unkn_update_thing_to_light
+		call   ac_unkn_update_thing_to_light
 	jump_4a968:
 		add    $0x8,%esp
 		pop    %ebp

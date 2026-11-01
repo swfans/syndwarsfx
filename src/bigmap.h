@@ -94,7 +94,7 @@ enum MyMapElementFlags2 {
 
 struct MyMapElement { // sizeof=18
   ushort Texture; /**< offs=0x00 Index of SingleFloorTexture for this tile, and texture flags. */
-  ushort Shade;
+  ushort Shade; /**< Index of the first QuickLight in a chain associated to this tile. */
   ubyte ShadeR;
   ubyte Flags;
   short Alt; /**< offs=0x06 Ground element altitude (at the beginning of the tile). */

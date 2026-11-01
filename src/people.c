@@ -29,6 +29,7 @@
 #include <stdlib.h>
 
 #include "engincolour.h"
+#include "enginlights.h"
 #include "drawtext.h"
 #include "huddrwlstm.h"
 
@@ -7433,10 +7434,54 @@ void process_wander_and_fly(struct Thing *p_person, struct Thing *p_vehicle)
         : : "a" (p_person), "d" (p_vehicle));
 }
 
+void unkn_update_thing_to_light(ushort light_id, struct Thing *p_thing, ubyte a3)
+{
+#if 0
+    asm volatile ("call ASM_unkn_update_thing_to_light\n"
+        : : "a" (light_id), "d" (p_thing), "b" (a3));
+    return;
+#endif
+    struct FullLight *p_fulight;
+    int dx, dz;
+    short len1, len2;
+
+    p_fulight = &game_full_lights[light_id];
+    dx = p_fulight->X - PRCCOORD_TO_MAPCOORD(p_thing->X);
+    dz = p_fulight->Z - PRCCOORD_TO_MAPCOORD(p_thing->Z);
+    len1 = arctan(dx, -dz) + 4;
+    len2 = LbSqrL(dz * dz + dx * dx);
+    p_thing->U.UPerson.Shadows[a3 + 0] = len1 >> 3;
+    p_thing->U.UPerson.Shadows[a3 + 1] = len2 >> 3;
+}
+
 void process_lighting_unkn1(struct Thing *p_person)
 {
+#if 0
     asm volatile ("call ASM_process_lighting_unkn1\n"
         : : "a" (p_person));
+    return;
+#endif
+    struct MyMapElement *p_mapel;
+    MapCoord cor_x, cor_z;
+    ushort qlight;
+
+    if ((p_person->Flag & TngF_Destroyed) != 0)
+        return;
+
+    p_person->U.UPerson.Shadows[0] = 0;
+    p_person->U.UPerson.Shadows[1] = 0;
+    p_person->U.UPerson.Shadows[2] = 0;
+    p_person->U.UPerson.Shadows[3] = 0;
+
+    cor_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+    cor_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * MAPCOORD_TO_TILE(cor_z) + MAPCOORD_TO_TILE(cor_x)];
+
+    qlight = get_brightest_quick_light(p_mapel->Shade);
+
+    if (qlight != 0) {
+        unkn_update_thing_to_light(quick_light_to_full_light(qlight), p_person, 0);
+    }
 }
 
 void person_find_next_state(struct Thing *p_person)
