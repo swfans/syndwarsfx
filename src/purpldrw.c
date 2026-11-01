@@ -101,13 +101,6 @@ void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
 
 void draw_box_purple_list(int x, int y, uint width, uint height, TbPixel colour)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_box_purple_list\n"
-        : : "a" (x), "d" (y), "b" (width), "c" (height), "g" (colour));
-    return;
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
@@ -124,12 +117,6 @@ void draw_box_purple_list(int x, int y, uint width, uint height, TbPixel colour)
 
 void draw_text_purple_list2(int x, int y, const char *text, ushort line)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_text_purple_list2\n"
-        : : "a" (x), "d" (y), "b" (text), "c" (line));
-    return;
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
@@ -166,11 +153,6 @@ void draw_sprite_purple_list(int x, int y, const struct TbSprite *p_sprite)
 
 void draw_trig_purple_list(int x2, int y2, int x3, int y3)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_trig_purple_list\n"
-        : : "a" (x2), "d" (y2), "b" (x3), "c" (y3));
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
@@ -187,11 +169,6 @@ void draw_trig_purple_list(int x2, int y2, int x3, int y3)
 
 void copy_box_purple_list(int x, int y, uint width, uint height)
 {
-#if 0
-    asm volatile (
-      "call ASM_copy_box_purple_list\n"
-        : : "a" (x), "d" (y), "b" (width), "c" (height));
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
@@ -208,11 +185,6 @@ void copy_box_purple_list(int x, int y, uint width, uint height)
 
 void draw_hotspot_purple_list(int x, int y)
 {
-#if 0
-    asm volatile (
-      "call ASM_draw_hotspot_purple_list\n"
-        : : "a" (x), "d" (y));
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
@@ -360,12 +332,6 @@ void flashy_draw_projector_box_vertical_lines(short box_x, short box_y,
 
 ubyte flashy_draw_purple_shape(struct ScreenShape *p_shape)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_flashy_draw_purple_shape\n"
-        : "=r" (ret) : "a" (p_shape));
-    return ret;
-#endif
     short i;
     ubyte pt1, pt2;
 
@@ -1646,12 +1612,6 @@ ubyte button_text(struct ScreenButton *p_btn)
 
 ubyte info_box_text(struct ScreenInfoBox *p_box)
 {
-#if 0
-    ubyte ret;
-    asm volatile ("call ASM_info_box_text\n"
-        : "=r" (ret) : "a" (p_box));
-    return ret;
-#endif
     short txwidth, lnheight;
     short scr1_x, scr1_y;
     short scr2_x, scr2_y;

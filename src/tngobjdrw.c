@@ -911,22 +911,6 @@ void build_nuclear_bomb(struct SimpleThing *p_sthing)
 void do_beam_electric(int x1, int y1, int z1,
   int x2, int y2, int z2)//TODO add, ubyte colkp)
 {
-#if 0
-    // Pushed through a register holding them: a "g" operand may be placed
-    // relative to the stack pointer, which each push moves.
-    int stkargs[2];
-
-    stkargs[0] = (int)(intptr_t)y2;
-    stkargs[1] = (int)(intptr_t)z2;
-
-    asm volatile (
-      "push 4(%4)\n"
-      "push 0(%4)\n"
-      "call ASM_do_beam_electric\n"
-        : : "a" (x1), "d" (y1), "b" (z1), "c" (x2), "S" (stkargs)
-        : "cc", "memory");
-    return;
-#endif
     int dx, dy, dz;
     int nx, ny, nz;
     int step_dx, step_dy, step_dz;
@@ -1435,11 +1419,6 @@ void build_time_pod(struct SimpleThing *p_sthing)
 
 void build_stasis_pod(struct SimpleThing *p_sthing)
 {
-#if 0
-    asm volatile ("call ASM_build_stasis_pod\n"
-        : : "a" (p_sthing));
-    return;
-#endif
     int cor_x, cor_y, cor_z;
     ushort radius, pod_radius;
     ushort pod_angl;

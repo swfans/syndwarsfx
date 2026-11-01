@@ -56,6 +56,8 @@
 /******************************************************************************/
 #pragma pack(1)
 
+struct unkn_mech_struc4;
+
 struct BulStart {
     sbyte OffsetX;
     sbyte OffsetY;
@@ -63,17 +65,10 @@ struct BulStart {
 
 struct unkn_mech_struc4 { // sizeof=0x7A
     short thing;
-    ubyte field_2[33];
+    ubyte field_2;
+    struct unkn_mech_struc4 *field_3[8];
     short field_23;
-    int field_25;
-    int field_29;
-    int field_2D;
-    int field_31;
-    int field_35;
-    int field_39;
-    int field_3D;
-    int field_41;
-    int field_45;
+    struct M33 mat25;
     int angle_49;
     int angle_4D;
     int angle_51;
@@ -393,11 +388,6 @@ void build_laser(int cor1_x, int cor1_y, int cor1_z,
 
 void build_electricity_strand(struct SimpleThing *p_sthing, ubyte itime)
 {
-#if 0
-    asm volatile (
-      "call ASM_build_electricity_strand\n"
-        : : "a" (p_sthing), "d" (itime));
-#endif
     struct EnginePoint ep1, ep2;
 
     ep1.Flags = 0;

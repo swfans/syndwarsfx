@@ -874,24 +874,6 @@ ubyte mem_group_arrived_square2(struct Thing *p_person, ushort group, short x, s
 ubyte mem_group_arrived(ushort group, short cor_x, short cor_y, short cor_z,
   int radius, int count)
 {
-#if 0
-    ubyte ret;
-    // Pushed through a register holding them: a "g" operand may be placed
-    // relative to the stack pointer, which each push moves.
-    int stkargs[2];
-
-    stkargs[0] = (int)(intptr_t)radius;
-    stkargs[1] = (int)(intptr_t)count;
-
-    asm volatile (
-      "push 4(%5)\n"
-      "push 0(%5)\n"
-      "call ASM_mem_group_arrived\n"
-        : "=r" (ret)
-        : "a" (group), "d" (cor_x), "b" (cor_y), "c" (cor_z), "S" (stkargs)
-        : "cc", "memory");
-    return ret;
-#endif
     struct Thing *p_thing;
     ThingIdx thing;
     PlayerIdx plyr;

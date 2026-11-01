@@ -230,13 +230,6 @@ short mouse_move_y_coord_over_box_base(struct ScreenBoxBase *box)
 
 void init_screen_box(struct ScreenBox *p_box, ScrCoord x, ScrCoord y, ushort width, ushort height, int drawspeed)
 {
-#if 0
-    asm volatile (
-      "push %5\n"
-      "push %4\n"
-      "call ASM_init_screen_box\n"
-        : : "a" (p_box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed));
-#endif
     p_box->Flags = GBxFlg_Unkn0001;
     p_box->DrawFn = flashy_draw_purple_box;
     p_box->SpecialDrawFn = NULL;
@@ -252,15 +245,6 @@ void init_screen_box(struct ScreenBox *p_box, ScrCoord x, ScrCoord y, ushort wid
 void init_screen_text_box(struct ScreenTextBox *p_box, ScrCoord x, ScrCoord y,
   ushort width, ushort height, int drawspeed, struct TbSprite *p_font, ushort textspeed)
 {
-#if 0
-    asm volatile (
-      "push %7\n"
-      "push %6\n"
-      "push %5\n"
-      "push %4\n"
-      "call ASM_init_screen_text_box\n"
-        : : "a" (box), "d" (x), "b" (y), "c" (width), "g" (height), "g" (drawspeed), "g" (p_font), "g" (textspeed));
-#endif
     p_box->Flags = GBxFlg_Unkn0001;
     p_box->DrawFn = flashy_draw_purple_text_box;
     p_box->Text = 0;
