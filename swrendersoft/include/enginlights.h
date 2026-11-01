@@ -80,6 +80,10 @@ extern ushort next_light_command;
 
 uint cummulate_shade_from_quick_lights(ushort light_first);
 
+ushort get_brightest_quick_light(ushort light_first);
+
+ushort quick_light_to_full_light(ushort light);
+
 /** Maps fields from old FullLight struct to the current one.
  */
 void refresh_old_full_light_format(struct FullLight *p_fulight,

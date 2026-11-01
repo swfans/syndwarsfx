@@ -37,20 +37,55 @@ uint cummulate_shade_from_quick_lights(ushort light_first)
     struct QuickLight *p_qlight;
     ushort light;
     uint shade;
-    short i;
+    uint k;
 
     shade = 0;
-    for (light = light_first, i = 0; light != 0; light = p_qlight->NextQuick, i++)
+    for (light = light_first, k = 0; light != 0; light = p_qlight->NextQuick, k++)
     {
         short intens;
 
-        if (i > MAX_LIGHTS_AFFECTING_FACE)
+        if (k > MAX_LIGHTS_AFFECTING_FACE)
             break;
         p_qlight = &game_quick_lights[light];
         intens = game_full_lights[p_qlight->Light].Intensity;
+
         shade += intens * p_qlight->Ratio;
     }
     return shade;
+}
+
+ushort get_brightest_quick_light(ushort light_first)
+{
+    struct QuickLight *p_qlight;
+    ushort light, best_light;
+    int best_shade;
+    uint k;
+
+    best_light = 0;
+    best_shade = 0;
+    for (light = light_first, k = 0; light != 0; light = p_qlight->NextQuick, k++)
+    {
+        short intens;
+
+        if (k > MAX_LIGHTS_AFFECTING_FACE)
+            break;
+        p_qlight = &game_quick_lights[light];
+        intens = game_full_lights[p_qlight->Light].Intensity;
+
+        if (best_shade < intens * p_qlight->Ratio) {
+            best_shade = intens * p_qlight->Ratio;
+            best_light = light;
+        }
+    }
+    return best_light;
+}
+
+ushort quick_light_to_full_light(ushort light)
+{
+    struct QuickLight *p_qlight;
+
+    p_qlight = &game_quick_lights[light];
+    return p_qlight->Light;
 }
 
 void refresh_old_full_light_format(struct FullLight *p_fulight,
