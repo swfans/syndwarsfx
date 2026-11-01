@@ -7430,8 +7430,48 @@ void person_being_persuaded(struct Thing *p_person)
 
 void process_wander_and_fly(struct Thing *p_person, struct Thing *p_vehicle)
 {
+#if 0
     asm volatile ("call ASM_process_wander_and_fly\n"
         : : "a" (p_person), "d" (p_vehicle));
+#endif
+    int cor_base_x, cor_base_z;
+    int cor_nxt_x, cor_nxt_z;
+    int i;
+    ushort angl;
+
+    if (p_vehicle->State != VehSt_PARKED_PARAL &&
+      p_vehicle->State != VehSt_NONE &&
+      p_vehicle->State != VehSt_FLY_LANDING)
+    {
+        short timer;
+
+        timer = p_person->U.UPerson.Timer2;
+        p_person->U.UPerson.Timer2--;
+        if ((timer >= 0) && p_vehicle->State != VehSt_UNKN_41)
+            return;
+    }
+
+    angl = LbRandomAnyShort() & LbFPMath_AngleMask;
+    cor_base_z = PRCCOORD_TO_MAPCOORD(p_person->Z);
+    cor_base_x = PRCCOORD_TO_MAPCOORD(p_person->X);
+
+    for (i = 0; i < 8; i++)
+    {
+        cor_nxt_x = cor_base_x + (lbSinTable[angl + LbFPMath_PI/2] >> 4);
+        cor_nxt_z = cor_base_z + (lbSinTable[angl] >> 4);
+        //TODO avoid running into buildings as well?
+        if (cor_nxt_x >= TILE_TO_MAPCOORD(1,0)/2 &&
+          cor_nxt_x < MAP_COORD_WIDTH - TILE_TO_MAPCOORD(1,0)/2)
+            if (cor_nxt_z >= TILE_TO_MAPCOORD(1,0)/2 &&
+              cor_nxt_z < MAP_COORD_HEIGHT - TILE_TO_MAPCOORD(1,0)/2)
+                break;
+        angl = (angl + LbFPMath_PI/4) & LbFPMath_AngleMask;
+    }
+    if (i < 8)
+    {
+        start_goto_vehicle(p_vehicle, cor_nxt_x, cor_nxt_z);
+        p_person->U.UPerson.Timer2 = 1500;
+    }
 }
 
 void unkn_update_thing_to_light(ushort light_id, struct Thing *p_thing, ubyte a3)
