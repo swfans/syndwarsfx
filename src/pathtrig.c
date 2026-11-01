@@ -87,11 +87,6 @@ extern const int MOD3[];
 
 void unkn_path_func_001(struct Thing *p_thing, ubyte a2)
 {
-#if 0
-    asm volatile ("call ASM_unkn_path_func_001\n"
-        :  : "a" (p_thing), "d" (a2));
-    return;
-#endif
     int cor_beg_x, cor_beg_z;
     ushort pt, pt_max;
     ushort path;

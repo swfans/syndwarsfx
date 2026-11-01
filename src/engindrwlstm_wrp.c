@@ -1071,12 +1071,6 @@ int mech_unkn_func_14(struct M33 *p_mat1, struct M33 *p_mat2)
 int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,
   struct M31 *p_bodypos, struct M33 *p_mat)
 {
-#if 0
-    int ret;
-    asm volatile ("call ASM_mech_unkn_func_11\n"
-        : "=r" (ret) : "a" (p_itm4),  "d" (p_bodypos),  "b" (p_mat));
-    return ret;
-#endif
     struct M33 locmat2;
     int i;
     struct M31 locvec1, locvec2;

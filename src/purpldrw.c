@@ -74,13 +74,6 @@ static TbBool button_input_suppressed_by_modal_box(struct ScreenButton *p_btn)
 
 void draw_line_purple_list(int x1, int y1, int x2, int y2, int colour)
 {
-#if 0
-    asm volatile (
-      "push %4\n"
-      "call ASM_draw_line_purple_list\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "g" (colour));
-    return;
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
@@ -1653,24 +1646,6 @@ ubyte info_box_text(struct ScreenInfoBox *p_box)
 void draw_triangle_purple_list(int x1, int y1,
   int x2, int y2, int x3, int y3, TbPixel colour)
 {
-#if 0
-    // Pushed through a register holding them: a "g" operand may be placed
-    // relative to the stack pointer, which each push moves.
-    int stkargs[3];
-
-    stkargs[0] = (int)(intptr_t)x3;
-    stkargs[1] = (int)(intptr_t)y3;
-    stkargs[2] = (int)(intptr_t)colour;
-
-    asm volatile (
-      "push 8(%4)\n"
-      "push 4(%4)\n"
-      "push 0(%4)\n"
-      "call ASM_draw_triangle_purple_list\n"
-        : : "a" (x1), "d" (y1), "b" (x2), "c" (y2), "S" (stkargs)
-        : "cc", "memory");
-    return;
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
@@ -1689,11 +1664,6 @@ void draw_triangle_purple_list(int x1, int y1,
 
 void draw_flic_purple_list(void (*fn)())
 {
-#if 0
-    asm volatile ("call ASM_draw_flic_purple_list\n"
-        : : "a" (fn));
-    return;
-#endif
     struct PurpleDrawItem *p_pditem;
 
     p_pditem = &purple_draw_list[purple_draw_index];
