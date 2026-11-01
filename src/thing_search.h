@@ -121,8 +121,6 @@ short find_nearest_person_min(int x, int y, int z,
 
 struct Thing *check_for_people(int x, int y, int z, ushort radius);
 
-void find_and_stasis(struct SimpleThing *p_stasis, int radius);
-
 /******************************************************************************/
 #ifdef __cplusplus
 }

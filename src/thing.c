@@ -716,6 +716,18 @@ void process_stasis_pod(struct SimpleThing *p_sthing)
         : : "a" (p_sthing));
 }
 
+void find_and_stasis(struct SimpleThing *p_stasis, int radius)
+{
+    asm volatile ("call ASM_find_and_stasis\n"
+        :  : "a" (p_stasis), "d" (radius));
+}
+
+void find_and_time_travel(struct SimpleThing *p_sthing)
+{
+    asm volatile ("call ASM_find_and_time_travel\n"
+        :  : "a" (p_sthing));
+}
+
 void process_time_pod(struct SimpleThing *p_sthing)
 {
     asm volatile (

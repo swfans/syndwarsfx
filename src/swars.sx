@@ -111870,7 +111870,7 @@ func_ca88e:
 
 
 /*----------------------------------------------------------------*/
-find_and_time_travel:	/* 0x0CAE78 */
+GLOBAL_FUNC(ASM_find_and_time_travel)	/* 0x0CAE78 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -112015,7 +112015,7 @@ GLOBAL_FUNC(ASM_process_time_pod)	/* 0x0CAF50 */
 		mov    %cx,0xa(%esi)
 	jump_caff8:
 		mov    %esi,%eax
-		call   find_and_time_travel
+		call   ac_find_and_time_travel
 		pop    %esi
 		pop    %edx
 		pop    %ecx
