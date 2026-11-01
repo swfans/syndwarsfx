@@ -109201,7 +109201,7 @@ GLOBAL_FUNC(ASM_process_razor_wire)	/* 0x0C9050 */
 
 
 /*----------------------------------------------------------------*/
-recalc_rocket_direction:	/* 0x0C9054 */
+GLOBAL_FUNC(ASM_recalc_rocket_direction)	/* 0x0C9054 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -109374,7 +109374,7 @@ GLOBAL_FUNC(ASM_process_rocket)	/* 0x0C9100 */
 		test   $0x1,%al
 		jne    jump_c91ec
 		mov    %esi,%eax
-		call   recalc_rocket_direction
+		call   ac_recalc_rocket_direction
 		test   %eax,%eax
 		jne    jump_c91ec
 		mov    $0x18,%edx

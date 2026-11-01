@@ -426,6 +426,14 @@ void unkn_update_lights(void)
     return;
 }
 
+int recalc_rocket_direction(struct Thing *p_rocket)
+{
+    int ret;
+    asm volatile ("call ASM_recalc_rocket_direction\n"
+        : "=r" (ret) : "a" (p_rocket));
+    return ret;
+}
+
 void process_rocket(struct Thing *p_rocket)
 {
     //TODO modify to make the rocket disappear when falling into sludge
