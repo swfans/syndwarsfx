@@ -1823,6 +1823,12 @@ struct Thing *new_sim_person(int x, int y, int z, ubyte subtype)
     return p_person;
 }
 
+void should_i_get_item(struct Thing *p_person, struct SimpleThing *p_sthing)
+{
+    asm volatile ("call ASM_should_i_get_item\n"
+        : : "a" (p_person), "d" (p_sthing));
+}
+
 short check_for_other_people(int x, int y, int z, struct Thing *p_person)
 {
     short ret;

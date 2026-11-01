@@ -15887,7 +15887,7 @@ GLOBAL_FUNC(ASM_check_for_people)	/* 0x049EA8 */
 
 
 /*----------------------------------------------------------------*/
-should_i_get_item:	/* 0x04A018 */
+GLOBAL_FUNC(ASM_should_i_get_item)	/* 0x04A018 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -16148,7 +16148,7 @@ GLOBAL_FUNC(ASM_check_for_other_people)	/* 0x04A118 */
 		je     jump_4a2f3
 		mov    %ebx,%edx
 		mov    %esi,%eax
-		call   should_i_get_item
+		call   ac_should_i_get_item
 	jump_4a2f3:
 		mov    0x24(%esp),%ebp
 		mov    0x1c(%ebx),%eax
