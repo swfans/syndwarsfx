@@ -34607,7 +34607,7 @@ init_electricity_bomb:	/* 0x05A4D0 */
 		push   $0x4
 		add    %eax,%ecx
 		mov    %ebp,%eax
-		call   create_growing_e_strand
+		call   ac_create_growing_e_strand
 		jmp    jump_5a4ed
 	jump_5a54c:
 		push   $0x0
@@ -102154,7 +102154,7 @@ GLOBAL_FUNC(ASM_create_electric_strand)	/* 0x0C3324 */
 
 
 /*----------------------------------------------------------------*/
-create_growing_e_strand:	/* 0x0C33DC */
+GLOBAL_FUNC(ASM_create_growing_e_strand)	/* 0x0C33DC */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -102766,7 +102766,7 @@ GLOBAL_FUNC(ASM_process_electric_strand)	/* 0x0C3A40 */
 		mov    0x2a(%esi),%eax
 		sar    $0x10,%edx
 		sar    $0x10,%eax
-		call   create_growing_e_strand
+		call   ac_create_growing_e_strand
 		add    $0x4,%esp
 		pop    %esi
 		pop    %edx

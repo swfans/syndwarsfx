@@ -736,6 +736,29 @@ void process_laser(struct Thing *p_laser)
         : : "a" (p_laser));
 }
 
+struct SimpleThing *create_growing_e_strand(int x, int y, int z,
+  struct Thing *p_thing, int health, int owner)
+{
+#if 1
+    struct SimpleThing *ret;
+    // Pushed through a register holding them: a "g" operand may be placed
+    // relative to the stack pointer, which each push moves.
+    int stkargs[2];
+
+    stkargs[0] = (int)(intptr_t)health;
+    stkargs[1] = (int)(intptr_t)owner;
+
+    asm volatile (
+      "push 4(%5)\n"
+      "push 0(%5)\n"
+      "call ASM_create_growing_e_strand\n"
+        : "=r" (ret)
+        : "a" ((s32)x), "d" ((s32)y), "b" ((s32)z), "c" (p_thing), "S" (stkargs)
+        : "cc", "memory");
+    return ret;
+#endif
+}
+
 void create_another_strand(struct SimpleThing *p_sthing)
 {
     asm volatile (
