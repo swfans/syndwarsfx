@@ -2282,9 +2282,24 @@ void set_person_animmode_run(struct Thing *p_person)
 
 void set_xz_for_tri(struct SingleObjectFace3 *p_face, int *x, int *z)
 {
+#if 0
     asm volatile (
       "call ASM_set_xz_for_tri\n"
         :  : "a" (p_face), "d" (x), "b" (z));
+    return;
+#endif
+    struct SingleObject *p_obj;
+    struct SinglePoint *p_pt1;
+    struct SinglePoint *p_pt0;
+    struct SinglePoint *p_pt2;
+
+    p_obj = &game_objects[p_face->Object];
+    p_pt1 = &game_object_points[p_face->PointNo[1]];
+    p_pt0 = &game_object_points[p_face->PointNo[0]];
+    p_pt2 = &game_object_points[p_face->PointNo[2]];
+
+    *x = p_obj->MapX + (p_pt1->X + p_pt0->X + p_pt2->X) / 3;
+    *z = p_obj->MapZ + (p_pt1->Z + p_pt0->Z + p_pt2->Z) / 3;
 }
 
 ushort build_navigate_path(struct Thing *p_thing, int x, int z, int face)
