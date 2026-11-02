@@ -102325,7 +102325,7 @@ create_growing_e_strand:	/* 0x0C33DC */
 
 
 /*----------------------------------------------------------------*/
-create_another_strand:	/* 0x0C35F4 */
+GLOBAL_FUNC(ASM_create_another_strand)	/* 0x0C35F4 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -102687,7 +102687,7 @@ GLOBAL_FUNC(ASM_process_electric_strand)	/* 0x0C3A40 */
 		cmp    $0xf,%eax
 		jge    jump_c3a59
 		mov    %esi,%eax
-		call   create_another_strand
+		call   ac_create_another_strand
 		jmp    jump_c3a59
 	jump_c3aa2:
 		mov    0x28(%esi),%ax

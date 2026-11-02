@@ -736,6 +736,13 @@ void process_laser(struct Thing *p_laser)
         : : "a" (p_laser));
 }
 
+void create_another_strand(struct SimpleThing *p_sthing)
+{
+    asm volatile (
+      "call ASM_create_another_strand\n"
+        : : "a" (p_sthing));
+}
+
 void process_electric_strand(struct SimpleThing *p_sthing)
 {
     asm volatile (
