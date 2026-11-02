@@ -2280,6 +2280,13 @@ void set_person_animmode_run(struct Thing *p_person)
     p_person->Speed = calc_person_speed(p_person);
 }
 
+void set_xz_for_tri(struct SingleObjectFace3 *p_face, int *x, int *z)
+{
+    asm volatile (
+      "call ASM_set_xz_for_tri\n"
+        :  : "a" (p_face), "d" (x), "b" (z));
+}
+
 ushort build_navigate_path(struct Thing *p_thing, int x, int z, int face)
 {
     ushort ret;

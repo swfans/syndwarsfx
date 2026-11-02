@@ -98393,7 +98393,7 @@ set_xz_for_quad123:	/* 0x0BFB48 */
 
 
 /*----------------------------------------------------------------*/
-set_xz_for_tri:	/* 0x0BFC10 */
+GLOBAL_FUNC(ASM_set_xz_for_tri)	/* 0x0BFC10 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -98673,7 +98673,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_person)	/* 0x0BFD00 */
 		lea    0x4(%esp),%ebx
 		mov    %dx,0x14(%esp)
 		mov    %esp,%edx
-		call   set_xz_for_tri
+		call   ac_set_xz_for_tri
 		jmp    jump_bff88
 	jump_bff30:
 		testb  $0x20,0xc(%esi)
@@ -98730,7 +98730,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_person)	/* 0x0BFD00 */
 		lea    0xc(%esp),%ebx
 		lea    0x8(%esp),%edx
 		mov    0x1e(%eax),%di
-		call   set_xz_for_tri
+		call   ac_set_xz_for_tri
 		jmp    jump_c002f
 	jump_bffde:
 		testb  $0x20,0xc(%ecx)
@@ -99025,7 +99025,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_face)	/* 0x0C0298 */
 		lea    0xc(%esp),%ebx
 		lea    0x8(%esp),%edx
 		mov    0x1e(%eax),%cx
-		call   set_xz_for_tri
+		call   ac_set_xz_for_tri
 		jmp    jump_c03b9
 	jump_c0352:
 		testb  $0x20,0xc(%esi)
@@ -99072,7 +99072,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_face)	/* 0x0C0298 */
 		lea    0x4(%esp),%ebx
 		mov    %esp,%edx
 		mov    0x1e(%eax),%di
-		call   set_xz_for_tri
+		call   ac_set_xz_for_tri
 		jmp    jump_c03fe
 	jump_c03de:
 		mov    %eax,%edx
@@ -99214,7 +99214,7 @@ GLOBAL_FUNC(ASM_build_navigate_path_to_face_xz)	/* 0x0C04C8 */
 		lea    0x4(%esp),%ebx
 		mov    %esp,%edx
 		mov    0x1e(%eax),%cx
-		call   set_xz_for_tri
+		call   ac_set_xz_for_tri
 		jmp    jump_c05cf
 	jump_c0582:
 		testb  $0x20,0xc(%esi)
@@ -99454,7 +99454,7 @@ GLOBAL_FUNC(ASM_build_navigate_path)	/* 0x0C06D0 */
 		lea    0x4(%esp),%ebx
 		mov    %esp,%edx
 		mov    0x1e(%eax),%cx
-		call   set_xz_for_tri
+		call   ac_set_xz_for_tri
 		jmp    jump_c0899
 	jump_c084d:
 		testb  $0x20,0xc(%esi)
