@@ -974,6 +974,13 @@ void process_scale_effect(struct SimpleThing *p_sthing, ThingIdx thing_item)
     }
 }
 
+void test_stuff(int x, int y, int z, ushort owner)
+{
+    asm volatile (
+      "call ASM_test_stuff\n"
+        : : "a" (x), "d" (y), "b" (z), "c" ((int)owner));
+}
+
 void process_nuclear_bomb(struct SimpleThing *p_sthing, ThingIdx thing_item)
 {
     asm volatile (

@@ -105616,7 +105616,7 @@ GLOBAL_FUNC(ASM_process_mushroom)	/* 0x0C65E0 */
 
 
 /*----------------------------------------------------------------*/
-test_stuff:	/* 0x0C66CC */
+GLOBAL_FUNC(ASM_test_stuff)	/* 0x0C66CC */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi
@@ -105925,7 +105925,7 @@ GLOBAL_FUNC(ASM_process_nuclear_bomb)	/* 0x0C67EC */
 		mov    -0x14(%ebp),%ebx
 		mov    -0x20(%ebp),%edx
 		mov    -0x10(%ebp),%eax
-		call   test_stuff
+		call   ac_test_stuff
 	jump_c6a7c:
 		mov    -0x1c(%ebp),%eax
 		mov    0x28(%eax),%ax
