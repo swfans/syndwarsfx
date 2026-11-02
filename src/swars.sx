@@ -106379,7 +106379,7 @@ ASM_angle_between_points:	/* 0x0C6FA0 */
 
 
 /*----------------------------------------------------------------*/
-napalm_person:	/* 0x0C6FB0 */
+GLOBAL_FUNC(ASM_napalm_person)	/* 0x0C6FB0 */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		push   %ecx
@@ -106813,7 +106813,7 @@ GLOBAL_FUNC(ASM_process_drift_smoke)	/* 0x0C71CC */
 	jump_c74e0:
 		mov    $0x2,%edx
 		mov    %ebx,%eax
-		call   napalm_person
+		call   ac_napalm_person
 		test   %al,%al
 		je     jump_c7637
 		xor    %edx,%edx
@@ -107155,7 +107155,7 @@ GLOBAL_FUNC(ASM_process_napalm_flame)	/* 0x0C7678 */
 	jump_c78b5:
 		mov    $0x1,%edx
 		mov    %ebx,%eax
-		call   napalm_person
+		call   ac_napalm_person
 		test   %al,%al
 		je     jump_c79ec
 		xor    %edx,%edx
@@ -107422,7 +107422,7 @@ GLOBAL_FUNC(ASM_process_flame1)	/* 0x0C7A80 */
 	jump_c7bc1:
 		mov    $0x1,%edx
 		mov    %ebx,%eax
-		call   napalm_person
+		call   ac_napalm_person
 		test   %al,%al
 		je     jump_c7cfa
 		xor    %edx,%edx

@@ -879,6 +879,14 @@ void process_unkn58(struct SimpleThing *p_sthing)
     p_sthing->Frame = frm;
 }
 
+ubyte napalm_person(struct Thing *p_person, ushort multi)
+{
+    ubyte ret;
+    asm volatile ("call ASM_napalm_person\n"
+        : "=r" (ret) : "a" (p_person), "d" (multi));
+    return ret;
+}
+
 void process_drift_smoke(struct SimpleThing *p_sthing, ThingIdx thing_item)
 {
     asm volatile (
