@@ -58825,7 +58825,7 @@ GLOBAL_FUNC(ASM_start_goto_vehicle)	/* 0x07841C */
 		mov    %esi,%ebx
 		mov    %edi,%edx
 		mov    %ecx,%eax
-		call   build_tank_path
+		call   ac_build_tank_path
 		test   %eax,%eax
 		je     jump_78725
 		mov    0x4a(%ecx),%eax
@@ -99781,7 +99781,7 @@ ariadne_initialise_route:
 
 
 /*----------------------------------------------------------------*/
-build_tank_path:	/* 0x0C0C58 */
+GLOBAL_FUNC(ASM_build_tank_path)	/* 0x0C0C58 */
 /*----------------------------------------------------------------*/
 		push   %ecx
 		push   %esi

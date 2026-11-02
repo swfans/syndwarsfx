@@ -2232,6 +2232,15 @@ void person_init_drop_special(struct Thing *p_person, ThingIdx item)
         : : "a" (p_person), "d" (item));
 }
 
+int build_tank_path(struct Thing *p_thing, int x, int z)
+{
+    int ret;
+    asm volatile (
+      "call ASM_build_tank_path\n"
+        : "=r" (ret) : "a" (p_thing), "d" (x), "b" (z));
+    return ret;
+}
+
 int start_goto_vehicle(struct Thing *p_vehicle, int x, int z)
 {
     int ret;
