@@ -79079,7 +79079,7 @@ GLOBAL_FUNC(ASM_init_crater_textures)	/* 0x0885B0 */
 		movb   $0x60,0x1(%ebx,%eax,2)
 		movb   $0x3f,0x2(%ebx,%eax,2)
 		movb   $0x60,0x3(%ebx,%eax,2)
-		mov    %dx,crater_unkn_texture_flags
+		mov    %dx,EXPORT_SYMBOL(crater_unkn_texture_flags)
 		movb   $0x3f,0x4(%ebx,%eax,2)
 		xor    %ecx,%ecx
 		movb   $0x7f,0x5(%ebx,%eax,2)
@@ -80105,7 +80105,7 @@ process_map_crater:	/* 0x08907C */
 		andw   $0xc000,(%ecx,%eax,1)
 		movswl (%ebx),%eax
 		imul   $0x12,%eax,%eax
-		mov    crater_unkn_texture_flags,%dx
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%dx
 		or     %dx,(%ecx,%eax,1)
 		movswl (%ebx),%eax
 		imul   $0x12,%eax,%eax
@@ -80558,7 +80558,7 @@ process_map_crater:	/* 0x08907C */
 		and    $0x3f,%bh
 		movswl %bx,%ecx
 		xor    %ebx,%ebx
-		mov    crater_unkn_texture_flags,%bx
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%bx
 		cmp    %ebx,%ecx
 		je     jump_897ff
 		lea    0x1(%eax),%ecx
@@ -80630,7 +80630,7 @@ process_map_crater:	/* 0x08907C */
 		mov    EXPORT_SYMBOL(game_my_big_map),%edx
 		add    %edx,%eax
 		andw   $0xc000,(%eax)
-		mov    crater_unkn_texture_flags,%dx
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%dx
 		mov    (%eax),%bx
 		or     %edx,%ebx
 		mov    0x11(%eax),%dh
@@ -80810,7 +80810,7 @@ process_map_crater:	/* 0x08907C */
 		mov    %edx,0xc(%esp)
 		xor    %edx,%edx
 		mov    0xc(%esp),%ecx
-		mov    crater_unkn_texture_flags,%dx
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%dx
 		cmp    %ecx,%edx
 		je     jump_89b2c
 		lea    -0x81(%eax),%ecx
@@ -81495,7 +81495,7 @@ func_8a2f7:
 		add    %eax,%esi
 		mov    (%esi),%di
 		and    $0xffffc000,%edi
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    %di,(%esi)
 		or     %eax,%edi
 		mov    0x11(%esi),%al
@@ -81551,7 +81551,7 @@ func_8a3a6:
 		add    %edi,%esi
 		mov    (%esi),%di
 		and    $0xffffc000,%edi
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    %di,(%esi)
 		or     %eax,%edi
 		mov    0x11(%esi),%ah
@@ -81608,7 +81608,7 @@ func_8a3a6:
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		add    %edi,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    (%esi),%di
 		or     %eax,%edi
 		mov    0x11(%esi),%al
@@ -81671,7 +81671,7 @@ func_8a3a6:
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		add    %edi,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    (%esi),%di
 		or     %eax,%edi
 		mov    0x11(%esi),%ah
@@ -81736,7 +81736,7 @@ func_8a3a6:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -81794,7 +81794,7 @@ func_8a3a6:
 		jne    jump_8be74
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -81851,7 +81851,7 @@ func_8a766:
 		add    %eax,%esi
 		mov    (%esi),%di
 		and    $0xffffc000,%edi
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    %di,(%esi)
 		or     %eax,%edi
 		mov    0x11(%esi),%al
@@ -81905,7 +81905,7 @@ func_8a766:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    (%esi),%di
 		or     %eax,%edi
 		mov    0x11(%esi),%ah
@@ -81965,7 +81965,7 @@ func_8a766:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    (%esi),%di
 		or     %eax,%edi
 		mov    0x11(%esi),%al
@@ -82027,7 +82027,7 @@ func_8a766:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82082,7 +82082,7 @@ func_8a766:
 		jne    jump_8aaec
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -82141,7 +82141,7 @@ func_8a766:
 		jne    jump_8abbc
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -82206,7 +82206,7 @@ func_8a766:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82268,7 +82268,7 @@ func_8a766:
 		jne    jump_8ad5d
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -82333,7 +82333,7 @@ func_8a766:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82394,7 +82394,7 @@ func_8ae35:
 		add    %edi,%esi
 		mov    (%esi),%di
 		and    $0xffffc000,%edi
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    %di,(%esi)
 		or     %eax,%edi
 		mov    0x11(%esi),%ah
@@ -82448,7 +82448,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    (%esi),%di
 		or     %eax,%edi
 		mov    0x11(%esi),%al
@@ -82510,7 +82510,7 @@ func_8ae35:
 		jne    jump_8b059
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%edi,%esi,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%edi,%esi,1)
 		andb   $0xf,0x11(%edi,%esi,1)
 		call   ac_LbRandomAnyShort
@@ -82569,7 +82569,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82626,7 +82626,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82685,7 +82685,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82747,7 +82747,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82809,7 +82809,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82868,7 +82868,7 @@ func_8ae35:
 		jne    jump_8b4e8
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -82934,7 +82934,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -82995,7 +82995,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -83053,7 +83053,7 @@ func_8ae35:
 		jne    jump_8b746
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -83115,7 +83115,7 @@ func_8ae35:
 		jne    jump_8b812
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -83176,7 +83176,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -83234,7 +83234,7 @@ func_8ae35:
 		jne    jump_8b99b
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -83299,7 +83299,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -83359,7 +83359,7 @@ func_8ae35:
 		add    %eax,%esi
 		mov    (%esi),%di
 		and    $0xffffc000,%edi
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    %di,(%esi)
 		or     %eax,%edi
 		mov    0x11(%esi),%ah
@@ -83425,7 +83425,7 @@ func_8ae35:
 		jne    jump_8bc0d
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -83490,7 +83490,7 @@ func_8ae35:
 		mov    EXPORT_SYMBOL(game_my_big_map),%eax
 		add    %eax,%esi
 		andw   $0xc000,(%esi)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi)
 		andb   $0xf,0x11(%esi)
 		call   ac_LbRandomAnyShort
@@ -83550,7 +83550,7 @@ func_8ae35:
 		add    %edi,%esi
 		mov    (%esi),%di
 		and    $0xffffc000,%edi
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		mov    %di,(%esi)
 		or     %eax,%edi
 		mov    0x11(%esi),%al
@@ -83616,7 +83616,7 @@ func_8ae35:
 		jne    jump_8be74
 		mov    EXPORT_SYMBOL(game_my_big_map),%esi
 		andw   $0xc000,(%esi,%ebp,1)
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		or     %ax,(%esi,%ebp,1)
 		andb   $0xf,0x11(%esi,%ebp,1)
 		call   ac_LbRandomAnyShort
@@ -83716,7 +83716,7 @@ func_8ae35:
 		and    $0x3f,%ah
 		movswl %ax,%ecx
 		xor    %eax,%eax
-		mov    crater_unkn_texture_flags,%ax
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%ax
 		cmp    %eax,%ecx
 		je     jump_8c060
 		mov    0x34(%esp),%ebp
@@ -83793,7 +83793,7 @@ func_8ae35:
 		add    %edx,%eax
 		mov    (%eax),%cx
 		and    $0xffffc000,%ecx
-		mov    crater_unkn_texture_flags,%dx
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%dx
 		mov    %cx,(%eax)
 		or     %edx,%ecx
 		mov    0x11(%eax),%dl
@@ -83867,7 +83867,7 @@ func_8ae35:
 		mov    (%eax),%ax
 		xor    %edx,%edx
 		and    $0x3f,%ah
-		mov    crater_unkn_texture_flags,%dx
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%dx
 		cwtl
 		add    %edi,%ebx
 		cmp    %edx,%eax
@@ -83882,7 +83882,7 @@ func_8ae35:
 		and    $0x3f,%dh
 		movswl %dx,%ecx
 		xor    %edx,%edx
-		mov    crater_unkn_texture_flags,%dx
+		mov    EXPORT_SYMBOL(crater_unkn_texture_flags),%dx
 		cmp    %edx,%ecx
 		sete   %cl
 		mov    %cl,(%esp)
@@ -114559,7 +114559,7 @@ data_1c42f4:
 		.short  0x0
 data_1c42f6:
 		.fill   0x6
-crater_unkn_texture_flags:	/* 0x1C42FC */
+GLOBAL (crater_unkn_texture_flags)	/* 0x1C42FC */
 		.short  0x0
 data_1c42fe:
 		.short  0x0

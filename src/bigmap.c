@@ -527,6 +527,15 @@ void update_map_flags(void)
     }
 }
 
+uint sea_texture(int tex)
+{
+    uint ret;
+    asm volatile (
+      "call ASM_sea_texture\n"
+        : "=r" (ret) : "a" (tex));
+    return ret;
+}
+
 TbBool map_floor_is_water(MapCoord cor_x, MapCoord cor_z)
 {
     ushort textr;

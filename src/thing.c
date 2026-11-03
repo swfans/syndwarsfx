@@ -344,15 +344,6 @@ void init_just_things(void)
         :  :  : "eax" );
 }
 
-uint sea_texture(int tex)
-{
-    uint ret;
-    asm volatile (
-      "call ASM_sea_texture\n"
-        : "=r" (ret) : "a" (tex));
-    return ret;
-}
-
 void init_things(void)
 {
 #if 0

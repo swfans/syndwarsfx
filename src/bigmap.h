@@ -147,6 +147,10 @@ extern struct MyMapElement *game_my_big_map;
 extern struct ColColumn *game_col_columns;
 extern ushort next_col_column;
 
+/** Floor texture index used to mark freshly created crater ground.
+ */
+extern ushort crater_unkn_texture_flags;
+
 extern struct MapOffset spiral_step[SPIRAL_STEPS_COUNT];
 extern ushort dist_tiles_to_spiral_step[MAP_TILE_WIDTH];
 extern ushort spiral_dist_tiles_limit;
@@ -203,6 +207,10 @@ int is_this_a_nice_place_for_a_picnic(s32 prc_x, s32 prc_z);
 /** Sets some of the map elements flags based on other properties.
  */
 void update_map_flags(void);
+
+/** Checks whether given floor texture represents sea/water graphics.
+ */
+uint sea_texture(int tex);
 
 TbBool map_floor_is_water(MapCoord cor_x, MapCoord cor_z);
 TbBool map_floor_is_sludge(MapCoord cor_x, MapCoord cor_z);
