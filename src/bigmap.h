@@ -170,7 +170,9 @@ short get_mapwho_thing_index(short tile_x, short tile_z);
 void init_search_spiral(void);
 int alt_at_point(short x, short z);
 int alt_at_point_under_height(int cor_x, int cor_z, int h);
+
 ushort floor_texture_at_point(MapCoord cor_x, MapCoord cor_z);
+ushort floor_texture_at_tile(short tile_x, short tile_z);
 
 ubyte map_coord_to_collision_qbit_index(short x, short z);
 void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb);

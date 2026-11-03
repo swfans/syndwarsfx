@@ -33,6 +33,8 @@ syndwarsfx_SOURCES = \
 	config.h \
 	bmbang.c \
 	bmbang.h \
+	bmcrater.c \
+	bmcrater.h \
 	bat_s.sx \
 	bat.c \
 	bat.h \

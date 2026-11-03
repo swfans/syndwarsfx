@@ -232,13 +232,9 @@ void init_search_spiral(void)
     LOGSYNC("Created for distance up to %hu tiles", spiral_dist_tiles_limit);
 }
 
-ushort floor_texture_at_point(MapCoord cor_x, MapCoord cor_z)
+ushort floor_texture_at_tile(short tile_x, short tile_z)
 {
     struct MyMapElement *p_mapel;
-    short tile_x, tile_z;
-
-    tile_x = MAPCOORD_TO_TILE(cor_x);
-    tile_z = MAPCOORD_TO_TILE(cor_z);
 
     if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
         return 0;
@@ -247,6 +243,16 @@ ushort floor_texture_at_point(MapCoord cor_x, MapCoord cor_z)
 
     p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
     return (p_mapel->Texture & 0x3FFF);
+}
+
+ushort floor_texture_at_point(MapCoord cor_x, MapCoord cor_z)
+{
+    short tile_x, tile_z;
+
+    tile_x = MAPCOORD_TO_TILE(cor_x);
+    tile_z = MAPCOORD_TO_TILE(cor_z);
+
+    return floor_texture_at_tile(tile_x, tile_z);
 }
 
 int alt_at_point(short x, short z)
@@ -569,12 +575,6 @@ TbBool floor_texture_is_fluid(ushort textr)
     if (my_texture_is_only_using_index(textr, 29))
         return true;
     return false;
-}
-
-void quick_crater(int x, int z, int size)
-{
-    asm volatile ("call ASM_quick_crater\n"
-        :  : "a" (x), "d" (z), "b" (size));
 }
 
 u32 map_distance_deltas_precise(int dt_x, int dt_y, int dt_z)

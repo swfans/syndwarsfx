@@ -27,13 +27,6 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
-struct MapCreater {
-    short MapX;
-    short MapY;
-    short Depth;
-    short Iterations;
-};
-
 struct Thing;
 
 #pragma pack()

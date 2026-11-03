@@ -25,8 +25,6 @@
 #include "swlog.h"
 /******************************************************************************/
 
-#define MAP_CRATERS_COUNT 128
-
 #pragma pack(1)
 
 struct CircleDetail {
@@ -47,9 +45,6 @@ struct BangDetail {
 };
 
 #pragma pack()
-
-extern ubyte map_crater_next;
-extern struct MapCreater map_craters[MAP_CRATERS_COUNT];
 
 void bang_init(void)
 {
@@ -86,25 +81,6 @@ void bang_new5(int x, int y, int z, int type, int owner)
 void bang_new4(int x, int y, int z, int type)
 {
     new_bang(x, y, z, type, 0, 0);
-}
-
-void create_crater(short tile_x, short tile_y, short depth)
-{
-    int cratr_no;
-
-    LOGSYNC("crater at (%d,%d) depth %d\n", tile_x, tile_y, depth);
-    if (tile_x < 0 || tile_x >= MAP_TILE_WIDTH)
-        return;
-    if (tile_y < 0 || tile_y >= MAP_TILE_HEIGHT)
-        return;
-    cratr_no = map_crater_next;
-    map_crater_next++;
-    if (map_crater_next >= MAP_CRATERS_COUNT)
-        map_crater_next = 0;
-    map_craters[cratr_no].MapX = tile_x;
-    map_craters[cratr_no].MapY = tile_y;
-    map_craters[cratr_no].Depth = depth;
-    map_craters[cratr_no].Iterations = 0;
 }
 
 ubyte unused_func_026(ubyte a1)
