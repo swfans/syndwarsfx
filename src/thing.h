@@ -1030,6 +1030,7 @@ const char *state_change_result_name(StateChRes res);
 
 TbBool person_command_to_text(char *out, ushort cmd, ubyte a3);
 
+void bad_tile_debug(void);
 void things_debug_hud(void);
 void navi_onscreen_debug(TbBool a1);
 

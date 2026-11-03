@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "engincam.h"
 #include "engincolour.h"
 #include "enginlights.h"
 #include "drawtext.h"
@@ -1830,13 +1831,201 @@ void should_i_get_item(struct Thing *p_person, struct SimpleThing *p_sthing)
         : : "a" (p_person), "d" (p_sthing));
 }
 
+ThingIdx check_for_other_people_on_tile(int x, int y, int z,
+  short tile_x, short tile_z, struct Thing *p_person)
+{
+    ThingIdx thing;
+    ThingIdx found;
+    uint k;
+
+    thing = get_mapwho_thing_index(tile_x, tile_z);
+    k = 0;
+    while (thing != 0)
+    {
+        if (thing <= 0)
+        {
+            struct SimpleThing *p_sthing;
+
+            p_sthing = &sthings[thing];
+            if (p_sthing->Type == SmTT_DROPPED_ITEM)
+            {
+                if ((p_person->Flag & TngF_Persuaded) != 0)
+                    should_i_get_item(p_person, p_sthing);
+
+                {
+                    int tdy;
+
+                    tdy = PRCCOORD_TO_MAPCOORD(p_sthing->Y - y);
+                    if ((tdy < 25) && (tdy > -25))
+                    {
+                        int tdx, tdz, dist, radsum;
+
+                        tdx = PRCCOORD_TO_MAPCOORD(p_sthing->X - x);
+                        tdz = PRCCOORD_TO_MAPCOORD(p_sthing->Z - z);
+                        dist = map_distance_deltas_fast(tdx, tdy, tdz);
+                        radsum = p_sthing->Radius + p_person->Radius;
+                        if (dist < radsum)
+                        {
+                            p_person->Flag |= TngF_Unkn08000000;
+                            p_person->U.UPerson.StandOnThing = p_sthing->ThingOffset;
+                        }
+                    }
+                }
+            }
+            else if (p_sthing->Type == SmTT_STATIC)
+            {
+                if ((found == 0) && (p_sthing->SubType != 1) &&
+                  (p_person->U.UPerson.BumpCount < 2))
+                {
+                    int tdy;
+
+                    tdy = PRCCOORD_TO_MAPCOORD(p_sthing->Y - y);
+                    if ((tdy < 25) && (tdy > -25))
+                    {
+                        int tdx, tdz, dist, rad;
+
+                        tdx = PRCCOORD_TO_MAPCOORD(p_sthing->X - x);
+                        tdz = PRCCOORD_TO_MAPCOORD(p_sthing->Z - z);
+                        dist = map_distance_deltas_fast(tdx, tdy, tdz);
+                        rad = static_radii[p_sthing->StartFrame - 999] / 2;
+                        if (rad != 0)
+                        {
+                            int radsum;
+                            radsum = rad + p_person->Radius;
+                            if (dist < radsum)
+                                found = p_sthing->ThingOffset;
+                        }
+                    }
+                }
+            }
+            thing = p_sthing->Next;
+        }
+        else
+        {
+            struct Thing *p_thing;
+
+            p_thing = &things[thing];
+            if (p_thing->Type == TT_PERSON)
+            {
+                if (((p_thing->Flag & (TngF_Destroyed | TngF_PlayerAgent)) == 0) &&
+                  ((p_person->Flag & TngF_Persuaded) == (p_thing->Flag & TngF_Persuaded)) &&
+                  (p_person->State != PerSt_WANDER) &&
+                  ((p_person->Flag & TngF_PlayerAgent) == 0) &&
+                  (p_thing != p_person) &&
+                  (p_thing->State != PerSt_DEAD) &&
+                  (found == 0))
+                {
+                    int tdy;
+
+                    tdy = PRCCOORD_TO_MAPCOORD(p_thing->Y - y);
+                    if ((tdy < 25) && (tdy > -25))
+                    {
+                        int tdx, tdz, dist, radsum;
+
+                        tdx = PRCCOORD_TO_MAPCOORD(p_thing->X - x);
+                        tdz = PRCCOORD_TO_MAPCOORD(p_thing->Z - z);
+                        dist = 2 * map_distance_deltas_fast(tdx, tdy, tdz);
+                        radsum = p_thing->Radius + p_person->Radius;
+                        if ((dist < radsum) &&
+                          (((p_person->Flag & TngF_Persuaded) == 0) || (p_person >= p_thing)))
+                        {
+                            ubyte bump;
+
+                            bump = p_person->U.UPerson.BumpMode;
+                            if (bump == 0)
+                                bump = p_person->U.UPerson.Angle;
+                            bump++;
+                            p_thing->U.UPerson.BumpMode = bump;
+                            found = p_thing->ThingOffset;
+                        }
+                    }
+                }
+            }
+            else if (p_thing->Type == TT_VEHICLE)
+            {
+                if (p_thing->SubType != VehOM_CLAWTANK)
+                {
+                    int tdy;
+
+                    tdy = PRCCOORD_TO_MAPCOORD(p_thing->Y - y);
+                    if ((tdy < 25) && (tdy > -25))
+                    {
+                        int tdx, tdz, dist, radsum;
+
+                        tdx = PRCCOORD_TO_MAPCOORD(p_thing->X - x);
+                        tdz = PRCCOORD_TO_MAPCOORD(p_thing->Z - z);
+                        dist = map_distance_deltas_fast(tdx, tdy, tdz);
+                        radsum = p_person->Radius + (p_thing->Radius - (p_thing->Radius >> 2));
+                        if (dist < radsum)
+                        {
+                            p_person->Flag &= ~(TngF_Unkn08000000|TngF_Unkn02000000);
+                            p_person->U.UPerson.StandOnThing = p_thing->ThingOffset;
+                            p_person->Flag |= TngF_Unkn01000000;
+                            if (!can_i_enter_vehicle(p_person, p_thing))
+                                found = p_thing->ThingOffset;
+                        }
+                    }
+                }
+            }
+            thing = p_thing->Next;
+        }
+        k++;
+        if (k >= MAX_THINGS_ON_TILE) {
+            bad_mapwho_tl_x = tile_x;
+            bad_mapwho_tl_z = tile_z;
+            break;
+        }
+    }
+
+    return found;
+}
+
 short check_for_other_people(int x, int y, int z, struct Thing *p_person)
 {
+#if 0
     short ret;
     asm volatile (
       "call ASM_check_for_other_people\n"
         : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (p_person));
     return ret;
+#endif
+    short tile_x_center, tile_z_center;
+    short dx, dz;
+    ThingIdx found;
+
+    p_person->Flag &= ~(TngF_StandOnVehicle | TngF_Unkn08000000);
+    found = 0;
+
+    if ((x < 0) || (x >= 0x800000) || (z < 0) || (z >= 0x800000))
+        return 1;
+
+    tile_x_center = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(x));
+    tile_z_center = MAPCOORD_TO_TILE(PRCCOORD_TO_MAPCOORD(z));
+
+    for (dx = -1; dx <= 1; dx++)
+    {
+        short cur_tile_x;
+
+        cur_tile_x = tile_x_center + dx;
+        if ((cur_tile_x <= 0) || (cur_tile_x >= MAP_TILE_WIDTH))
+            continue;
+
+        for (dz = -1; dz <= 1; dz++)
+        {
+            short cur_tile_z;
+            ThingIdx found_on_tl;
+
+            cur_tile_z = tile_z_center + dz;
+            if ((cur_tile_z <= 0) || (cur_tile_z >= MAP_TILE_HEIGHT))
+                continue;
+
+            found_on_tl = check_for_other_people_on_tile(x, y, z,
+              cur_tile_x, cur_tile_z, p_person);
+            if (found_on_tl != 0)
+                found = found_on_tl;
+        }
+    }
+    return found;
 }
 
 void check_persons_target(struct Thing *p_person)
@@ -4926,7 +5115,10 @@ void alert_peeps_on_mapwho_tile(short tile_x, short tile_z,
         }
         k++;
         if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
-            LOGERR("Infinite loop in mapwho things list");
+            LOGERR("Infinite loop in mapwho (%d,%d) things list",
+              (int)tile_x, (int)tile_z);
+            bad_mapwho_tl_x = tile_x;
+            bad_mapwho_tl_z = tile_z;
             break;
         }
     }

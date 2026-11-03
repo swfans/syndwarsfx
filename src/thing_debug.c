@@ -1285,4 +1285,35 @@ TbBool person_command_to_text(char *out, ushort cmd, ubyte a3)
     return result;
 }
 
+/** Debug problematic map tiles.
+ *
+ * If the thing chain on a tile is unreasonably long (likely
+ * a corrupted/overflowed mapwho list); draw a series of
+ * expanding warning circles.
+ */
+void bad_tile_debug(void)
+{
+    int cor_x, cor_y, cor_z;
+    ushort width;
+
+    if (bad_mapwho_tl_x == -1)
+        return;
+
+    cor_x = TILE_TO_MAPCOORD(bad_mapwho_tl_x & 0x0FFF, 127);
+    cor_z = TILE_TO_MAPCOORD(bad_mapwho_tl_z, 127);
+    cor_y = alt_at_point(cor_x, cor_z);
+
+
+    for (width = 0x100; width < 0x2400; width += 0x300)
+    {
+        draw_map_flat_circle(cor_x, cor_y,
+          cor_z, width, colour_lookup[ColLU_WHITE]);
+    }
+    if ((bad_mapwho_tl_x & 0x8000) == 0) {
+        engn_xc = cor_x;
+        engn_zc = cor_z;
+        bad_mapwho_tl_x |= 0x8000;
+    }
+}
+
 /******************************************************************************/

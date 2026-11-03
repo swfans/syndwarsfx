@@ -6189,8 +6189,10 @@ void game_process(void)
           || (ingame.DisplayMode == DpM_UNKN_1)
           || (ingame.DisplayMode == DpM_UNKN_3B))
             process_things();
-        if (debug_hud_things)
+        if (debug_hud_things) {
+            bad_tile_debug();
             things_debug_hud();
+        }
         if (ingame.DisplayMode != DpM_PURPLEMNU)
             process_packets();
         joy_input();

@@ -2025,10 +2025,10 @@ void persons_taser_affecting_things(struct Thing *p_person)
             short tile_x, tile_z;
 
             tile_x = MAPCOORD_TO_TILE(cor_x) + dt_x;
-            if (tile_x <= 0 && tile_x >= 128)
+            if (tile_x <= 0 && tile_x >= MAP_TILE_WIDTH)
                 continue;
             tile_z = MAPCOORD_TO_TILE(cor_z) + dt_z;
-            if (tile_z <= 0 && tile_z >= 128)
+            if (tile_z <= 0 && tile_z >= MAP_TILE_HEIGHT)
                 continue;
             thing = get_mapwho_thing_index(tile_x, tile_z);
             k = 0;
@@ -2060,9 +2060,12 @@ void persons_taser_affecting_things(struct Thing *p_person)
                     }
                     thing = p_thing->Next;
                 }
-                if (k >= 400) //TODO replace with MAX_THINGS_ON_TILE
-                    break;
                 k++;
+                if (k >= MAX_THINGS_ON_TILE) {
+                    bad_mapwho_tl_x = tile_x;
+                    bad_mapwho_tl_z = tile_z;
+                    break;
+                }
             }
         }
     }

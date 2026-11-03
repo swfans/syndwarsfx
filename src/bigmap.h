@@ -55,6 +55,8 @@ extern "C" {
  */
 #define TILE_TO_MAPCOORD(tile, mpos) (((tile) << 8) + (mpos))
 
+#define MAX_THINGS_ON_TILE 200
+
 /** Length of the spiral, which speeds up searching for things in vicinity
  * of given map coords. It does not make sense to search this way if the
  * amount of tiles searched exceeds half of things limit; so this should

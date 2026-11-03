@@ -53,6 +53,8 @@ typedef s32 (*ThingMinFilter)(ThingIdx thing, short X, short Z, ThingFilterParam
 
 #pragma pack()
 /******************************************************************************/
+extern short bad_mapwho_tl_x;
+extern short bad_mapwho_tl_z;
 
 /** Unified function to find a thing of given type within given circle and matching bool filter.
  *

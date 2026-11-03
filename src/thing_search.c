@@ -31,6 +31,11 @@
 #include "weapon.h"
 
 /******************************************************************************/
+/** Problematic tile for mapwho debug.
+ */
+short bad_mapwho_tl_x = -1;
+short bad_mapwho_tl_z = -1;
+
 
 /** Searches for a thing of given type on the specific mapwho tile.
  * Besides being given a title, the thing must also meet circular range condition.
@@ -81,7 +86,10 @@ ThingIdx find_thing_on_mapwho_tile_within_circle_with_bfilter(short tile_x, shor
         }
         k++;
         if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
-            LOGERR("Infinite loop in mapwho things list");
+            LOGERR("Infinite loop in mapwho (%d,%d) things list",
+              (int)tile_x, (int)tile_z);
+            bad_mapwho_tl_x = tile_x;
+            bad_mapwho_tl_z = tile_z;
             break;
         }
     }
@@ -146,7 +154,10 @@ ThingIdx find_thing_on_mapwho_tile_within_circle_with_mfilter(s32 *p_min_fval, s
         }
         k++;
         if (k >= STHINGS_LIMIT+THINGS_LIMIT) {
-            LOGERR("Infinite loop in mapwho things list");
+            LOGERR("Infinite loop in mapwho (%d,%d) things list",
+              (int)tile_x, (int)tile_z);
+            bad_mapwho_tl_x = tile_x;
+            bad_mapwho_tl_z = tile_z;
             break;
         }
     }

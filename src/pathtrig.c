@@ -76,8 +76,6 @@ extern short link__MapColVectEmptyHead;
  */
 ubyte *ground_map = NULL;
 
-#define MAX_THINGS_ON_TILE 200
-
 enum ThinWallType {
     THIN_BLOCK = 0,
     THIN_PASS = 1,
