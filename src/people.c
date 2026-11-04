@@ -1982,13 +1982,6 @@ ThingIdx check_for_other_people_on_tile(int x, int y, int z,
 
 short check_for_other_people(int x, int y, int z, struct Thing *p_person)
 {
-#if 0
-    short ret;
-    asm volatile (
-      "call ASM_check_for_other_people\n"
-        : "=r" (ret) : "a" (x), "d" (y), "b" (z), "c" (p_person));
-    return ret;
-#endif
     short tile_x_center, tile_z_center;
     short dx, dz;
     ThingIdx found;
