@@ -96409,7 +96409,7 @@ matrix_transpose_cp:	/* 0x0BE6EC */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_mech_unkn_func_14)	/* 0x0BE72C */
+GLOBAL_FUNC(ASM_matrix_transpose_copy)	/* 0x0BE72C */
 /*----------------------------------------------------------------*/
 		push   %ebx
 		mov    (%eax),%ebx

@@ -1108,14 +1108,6 @@ int mech_unkn_func_13(struct M33 *p_mat1, struct M33 *p_mat2)
     return ret;
 }
 
-int mech_unkn_func_14(struct M33 *p_mat1, struct M33 *p_mat2)
-{
-    int ret;
-    asm volatile ("call ASM_mech_unkn_func_14\n"
-        : "=r" (ret) : "a" (p_mat1),  "d" (p_mat2));
-    return ret;
-}
-
 int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,
   struct M31 *p_bodypos, struct M33 *p_mat)
 {
@@ -1179,7 +1171,7 @@ int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,
 
         p_thing = &things[p_itm4->thing];
         p_rmat = &local_mats[p_thing->U.UObject.MatrixIndex];
-        mech_unkn_func_14(&p_itm4->mat25, p_rmat);
+        matrix_transpose_copy(&p_itm4->mat25, p_rmat);
         p_thing->X = locvec2.R[0];
         p_thing->Y = locvec2.R[1];
         p_thing->Z = locvec2.R[2];

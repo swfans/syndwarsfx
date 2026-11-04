@@ -43,6 +43,11 @@ extern struct M33 local_mats[LOCAL_MATS_COUNT];
 extern ushort next_local_mat;
 
 void matrix_identity_fill(struct M33 *p_matx);
+
+/** Transpose mat1 into mat2.
+ */
+void matrix_transpose_copy(struct M33 *p_mat1, struct M33 *p_mat2);
+
 void matrix_transform(struct M31 *p_result, struct M33 *p_trans, struct M31 *p_source);
 void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short zangle);
 

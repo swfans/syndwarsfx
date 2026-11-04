@@ -31,6 +31,19 @@ void matrix_identity_fill(struct M33 *p_mat)
         : : "a" (p_mat));
 }
 
+void matrix_transpose_copy(struct M33 *p_mat1, struct M33 *p_mat2)
+{
+#if 0
+    asm volatile ("call ASM_matrix_transpose_copy\n"
+        :  : "a" (p_mat1),  "d" (p_mat2));
+#endif
+    int row, col;
+
+    for (row = 0; row < 3; row++)
+        for (col = 0; col < 3; col++)
+            p_mat2->R[col][row] = p_mat1->R[row][col];
+}
+
 void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short zangle)
 {
     asm volatile ("call ASM_rotate_object_axis\n"
