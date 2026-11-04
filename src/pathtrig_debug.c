@@ -87,12 +87,12 @@ void print_mapel_collision_columns(void)
     {
         for (tile_z = 0; tile_z < MAP_TILE_HEIGHT; tile_z++)
         {
-            struct MyMapElement *p_mapel;
             struct ColColumn *p_ccol;
+            ushort ccol;
 
-            p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
-            if (p_mapel->ColumnHead == 0) continue;
-            p_ccol = &game_col_columns[p_mapel->ColumnHead];
+            ccol = get_mapel_col_column_head(tile_x, tile_z);
+            if (ccol == 0) continue;
+            p_ccol = &game_col_columns[ccol];
 
             LOGSYNC_F("%02d,%02d qbits %04x %04x %04x %04x", (int)tile_x, (int)tile_z,
               (int)p_ccol->QBits[0], (int)p_ccol->QBits[1],

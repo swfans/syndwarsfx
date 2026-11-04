@@ -72,6 +72,8 @@ extern "C" {
  */
 #define MAX_WALKABLE_STEEPNESS_PER_256 98
 
+#define COL_COLUMN_MASK 0x0FFF
+
 enum MyMapElementFlags {
     MEF1_Unkn01     = 0x01,
     MEF1_Unkn02     = 0x02,
@@ -166,16 +168,19 @@ TbBool map_coords_limit(MapCoord *cor_x, MapCoord *cor_y, MapCoord *cor_z, long 
 void clear_mapwho_on_whole_map(void);
 void refresh_old_my_big_map_format(struct MyMapElement *p_mapel,
  struct MyMapElementOldV7 *p_oldmapel, u32 fmtver);
+
 short get_mapwho_thing_index(short tile_x, short tile_z);
+
+ushort get_mapel_col_column_head(short tile_x, short tile_z);
+void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb);
+ubyte map_coord_to_collision_qbit_index(short x, short z);
+
 void init_search_spiral(void);
 int alt_at_point(short x, short z);
 int alt_at_point_under_height(int cor_x, int cor_z, int h);
 
 ushort floor_texture_at_point(MapCoord cor_x, MapCoord cor_z);
 ushort floor_texture_at_tile(short tile_x, short tile_z);
-
-ubyte map_coord_to_collision_qbit_index(short x, short z);
-void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb);
 
 /** Computes length of vector defined by given 3 coordinates.
  * Uses some simplifications, but is fast. Requires the resulting
@@ -231,8 +236,6 @@ TbBool floor_texture_is_fluid(ushort textr);
  * disregard any changes to the computed flags - then using this makes sense.
  */
 TbBool compute_map_tile_is_blocking_walk(short tile_x, short tile_z);
-
-void quick_crater(int x, int z, int size);
 
 /******************************************************************************/
 #ifdef __cplusplus

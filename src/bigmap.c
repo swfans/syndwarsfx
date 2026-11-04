@@ -18,6 +18,7 @@
 /******************************************************************************/
 #include "bigmap.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <limits.h>
 #include "bfmath.h"
@@ -325,7 +326,7 @@ int alt_at_point_under_height(int cor_x, int cor_z, int h)
     return ret;
 #endif
     short tile_x, tile_z;
-    ushort col;
+    ushort ccol;
     ubyte qb;
 
     tile_x = MAPCOORD_TO_TILE(cor_x);
@@ -335,13 +336,9 @@ int alt_at_point_under_height(int cor_x, int cor_z, int h)
         return 0;
     if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
         return 0;
-    {
-        struct MyMapElement *p_mapel;
-        p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (tile_z) + (tile_x)];
-        //TODO this restricts col_column index to 12 bits
-        col = p_mapel->ColumnHead & 0xFFF;
-        qb = map_coord_to_collision_qbit_index(cor_x, cor_z);
-    }
+
+    ccol = get_mapel_col_column_head(tile_x, tile_z);
+    qb = map_coord_to_collision_qbit_index(cor_x, cor_z);
 
     int alt_curr, alt_best, h_max;
 
@@ -349,18 +346,18 @@ int alt_at_point_under_height(int cor_x, int cor_z, int h)
     alt_curr = 8 * alt_at_point(cor_x, cor_z);
     alt_best = alt_curr;
 
-    if (col != 0)
+    if (ccol != 0)
     {
-        struct ColColumn *p_col;
+        struct ColColumn *p_ccol;
         u32 mask;
 
-        p_col = &game_col_columns[col];
+        p_ccol = &game_col_columns[ccol];
 
         for (mask = 1; mask; mask *= 2)
         {
             if (alt_curr > h_max)
                 break;
-            if ((mask & p_col->QBits[qb]) != 0)
+            if ((mask & p_ccol->QBits[qb]) != 0)
                 alt_best = alt_curr;
             alt_curr += 0x8000;
         }
@@ -428,6 +425,20 @@ ubyte map_coord_to_collision_qbit_index(short x, short z)
     return qb;
 }
 
+ushort get_mapel_col_column_head(short tile_x, short tile_z)
+{
+    struct MyMapElement *p_mapel;
+
+    if ((tile_x < 0) || (tile_x >= MAP_TILE_WIDTH))
+        return 0;
+    if ((tile_z < 0) || (tile_z >= MAP_TILE_HEIGHT))
+        return 0;
+
+    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tile_z + tile_x];
+
+    return p_mapel->ColumnHead & COL_COLUMN_MASK;
+}
+
 void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb)
 {
     struct ColColumn *p_ccol;
@@ -435,7 +446,7 @@ void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb
 
     if (setbit < 0)
         return;
-    ccol = p_mapel->ColumnHead;
+    ccol = p_mapel->ColumnHead & COL_COLUMN_MASK;
     if (ccol == 0)
     {
         int limit;
@@ -448,6 +459,7 @@ void set_mapel_col_columns(struct MyMapElement *p_mapel, short setbit, ushort qb
         ccol = next_col_column;
         next_col_column++;
 
+        assert((ccol & COL_COLUMN_MASK) == ccol);
         p_mapel->ColumnHead = ccol;
         p_ccol = &game_col_columns[ccol];
         p_ccol->QBits[0] = 0;

@@ -141,7 +141,7 @@ static void quick_crater_stamp_tile(int x, int z, int depth, TbBool gated,
         return;
 
     p_mapel->Texture = (p_mapel->Texture & 0xC000) | crater_unkn_texture_flags;
-    p_mapel->ColumnHead &= 0x0FFF; // clear TearAround, shared zip-pass will fill it in
+    p_mapel->ColumnHead &= COL_COLUMN_MASK; // clear TearAround, shared zip-pass will fill it in
     p_mapel->Alt -= (short)(2 * depth + (LbRandomAnyShort() & 3));
 
     if (x < *min_x) *min_x = x;
@@ -171,11 +171,11 @@ static void quick_crater_stamp_shape(int cx, int cz, const struct CraterTileSpec
  * TearAround (diagonal/edge blend) value for every non-crater tile
  * touching the crater, to avoid harsh texture transitions.
  */
-void quick_crater(int x, int z, int size)
+void quick_crater(int tl_cent_x, int tl_cent_z, int size)
 {
 #if 0
     asm volatile ("call ASM_quick_crater\n"
-        :  : "a" (x), "d" (z), "b" (size));
+        :  : "a" (tl_cent_x), "d" (tl_cent_z), "b" (size));
     return;
 #endif
     int min_x, max_x, min_z, max_z;
@@ -184,32 +184,32 @@ void quick_crater(int x, int z, int size)
     if (current_map == 11) // map011 Orbital Station
         return;
     if ((size < 0) || (size > 3)) {
-        LOGWARN("crater at (%d,%d) has invalid size %d\n", x, z, size);
+        LOGWARN("crater at (%d,%d) has invalid size %d\n", tl_cent_x, tl_cent_z, size);
         return;
     }
 
-    min_x = max_x = x;
-    min_z = max_z = z;
+    min_x = max_x = tl_cent_x;
+    min_z = max_z = tl_cent_z;
 
     switch (size)
     {
     case 0:
-        quick_crater_stamp_shape(x, z, crater_tiles_size0,
+        quick_crater_stamp_shape(tl_cent_x, tl_cent_z, crater_tiles_size0,
           sizeof(crater_tiles_size0) / sizeof(crater_tiles_size0[0]),
           &min_x, &max_x, &min_z, &max_z);
         break;
     case 1:
-        quick_crater_stamp_shape(x, z, crater_tiles_size1,
+        quick_crater_stamp_shape(tl_cent_x, tl_cent_z, crater_tiles_size1,
           sizeof(crater_tiles_size1) / sizeof(crater_tiles_size1[0]),
           &min_x, &max_x, &min_z, &max_z);
         break;
     case 2:
-        quick_crater_stamp_shape(x, z, crater_tiles_size2,
+        quick_crater_stamp_shape(tl_cent_x, tl_cent_z, crater_tiles_size2,
           sizeof(crater_tiles_size2) / sizeof(crater_tiles_size2[0]),
           &min_x, &max_x, &min_z, &max_z);
         break;
     case 3:
-        quick_crater_stamp_shape(x, z, crater_tiles_size3,
+        quick_crater_stamp_shape(tl_cent_x, tl_cent_z, crater_tiles_size3,
           sizeof(crater_tiles_size3) / sizeof(crater_tiles_size3[0]),
           &min_x, &max_x, &min_z, &max_z);
         break;
@@ -246,7 +246,7 @@ void quick_crater(int x, int z, int size)
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
                 p_mapel->Texture = (p_mapel->Texture & 0xC000) | crater_unkn_texture_flags;
-                p_mapel->ColumnHead &= 0x0FFF;
+                p_mapel->ColumnHead &= COL_COLUMN_MASK;
             }
         }
     }
@@ -306,7 +306,7 @@ void quick_crater(int x, int z, int size)
             if (tear != 0) {
                 struct MyMapElement *p_mapel;
                 p_mapel = &game_my_big_map[MAP_TILE_WIDTH * tl_z + tl_x];
-                p_mapel->ColumnHead = (p_mapel->ColumnHead & 0x0FFF) | (tear << 12);
+                p_mapel->ColumnHead = (p_mapel->ColumnHead & COL_COLUMN_MASK) | (tear << 12);
             }
         }
     }

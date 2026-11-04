@@ -7803,8 +7803,8 @@ void people_intel(ubyte flag)
 
 void process_person(struct Thing *p_person)
 {
-    struct MyMapElement *p_mapel;
     short state;
+    ushort ccol;
 
     if ( (p_person->Flag & TngF_PlayerAgent) != 0 && (p_person->Flag2 & TgF2_Unkn10000000) != 0 )
     {
@@ -7820,8 +7820,8 @@ void process_person(struct Thing *p_person)
         }
     }
     p_person->Flag2 &= ~TgF2_Unkn8000;
-    p_mapel = &game_my_big_map[MAP_TILE_WIDTH * (p_person->Z >> 16) + (p_person->X >> 16)];
-    if (((p_person->Flag2 & TgF2_InsideBuilding) != 0) && (p_mapel->ColumnHead == 0))
+    ccol = get_mapel_col_column_head(p_person->X >> 16, p_person->Z >> 16);
+    if (((p_person->Flag2 & TgF2_InsideBuilding) != 0) && (ccol == 0))
         p_person->Flag2 &= ~TgF2_InsideBuilding;
 
     if ( ((gameturn + p_person->ThingOffset) & 0x7F) == 0)

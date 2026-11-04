@@ -30,6 +30,7 @@
 
 #include "bigmap.h"
 #include "bmbang.h"
+#include "bmcrater.h"
 #include "scanner.h"
 #include "sound.h"
 #include "swlog.h"

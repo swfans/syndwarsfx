@@ -41,6 +41,8 @@ struct Thing;
 
 void create_crater(short tile_x, short tile_y, short depth);
 
+void quick_crater(int tl_cent_x, int tl_cent_z, int size);
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

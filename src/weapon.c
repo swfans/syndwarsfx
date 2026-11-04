@@ -37,6 +37,7 @@
 
 #include "bigmap.h"
 #include "bmbang.h"
+#include "bmcrater.h"
 #include "building.h"
 #include "campaign.h"
 #include "game.h"

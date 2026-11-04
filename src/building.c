@@ -29,6 +29,7 @@
 #include "ssampply.h"
 #include "bigmap.h"
 #include "bmbang.h"
+#include "bmcrater.h"
 #include "game_options.h"
 #include "game_speed.h"
 #include "game.h"
