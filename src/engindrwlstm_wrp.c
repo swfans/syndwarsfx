@@ -22,6 +22,7 @@
 #include "bfmath.h"
 #include "bfmemut.h"
 #include "bfpalette.h"
+#include "bfsprite.h"
 #include "bfutility.h"
 #include <assert.h>
 #include <limits.h>
@@ -335,11 +336,58 @@ void draw_bang_wobble_line(struct SimpleThing *p_pow)
 
 void calc_bul_offsets(void)
 {
-#if 1
+#if 0
     asm volatile ("call ASM_calc_bul_offsets\n"
         :  :  : "eax", "cc", "memory" );
     return;
 #endif
+    int count;
+    int i;
+
+    count = (int)(nstart_ani_end - nstart_ani);
+
+    for (i = 0; i < (int)(sizeof(bul_starts)/sizeof(bul_starts[0])); i++)
+    {
+        bul_starts[i].OffsetX = 0;
+        bul_starts[i].OffsetY = 0;
+    }
+
+    for (i = 1; i < count - 1; i++)
+    {
+        ushort ani_idx;
+        ushort elem_idx;
+
+        if (i >= (int)(sizeof(bul_starts)/sizeof(bul_starts[0]))) {
+            break;
+        }
+
+        ani_idx = nstart_ani[i];
+        elem_idx = frame[ani_idx].FirstElement;
+
+        while (elem_idx != 0)
+        {
+            struct Element *p_elem;
+
+            p_elem = &melement_ani[elem_idx];
+            if (p_elem->ToSprite != 0)
+            {
+                struct TbSprite *p_sprite;
+
+                p_sprite = (struct TbSprite *)((ubyte *)m_sprites + p_elem->ToSprite);
+                if (((p_elem->Flags & 0x1F0) == 0x40) && ((p_elem->Flags & 0xFE00) == 0x400))
+                {
+                    bul_starts[i].OffsetX = (sbyte)(p_elem->X + p_sprite->SWidth);
+                    bul_starts[i].OffsetY = (sbyte)(p_elem->Y + p_sprite->SHeight);
+                    break;
+                }
+            }
+            elem_idx = p_elem->Next;
+        }
+
+        if ((bul_starts[i].OffsetX == 0) && (bul_starts[i].OffsetY == 0)) {
+            bul_starts[i].OffsetY = -30;
+        }
+    }
 }
 
 void get_bullet_start_offsets(short *p_ofs_x, short *p_ofs_y, const struct Thing *p_person)
