@@ -56,6 +56,14 @@ void bang_init(void)
     phwoar_init();
 }
 
+/** Fill in the type-specific fields of a freshly allocated Phwoar entry.
+ */
+void fillin_phwoar_type_info(struct Phwoar *p_phwoar)
+{
+    asm volatile ("call ASM_fillin_phwoar_type_info\n"
+        : : "a" (p_phwoar) : "cc", "memory");
+}
+
 void new_bang(int x, int y, int z, int type, int owner, int c)
 {
     // Pushed through a register holding them: a "g" operand may be placed

@@ -91044,7 +91044,7 @@ give_some_phwoar:	/* 0x0B118C */
 
 
 /*----------------------------------------------------------------*/
-fillin_phwoar_type_info:	/* 0x0B11D8 */
+GLOBAL_FUNC(ASM_fillin_phwoar_type_info)	/* 0x0B11D8 */
 /*----------------------------------------------------------------*/
 		push   %edx
 		sub    $0x20,%esp
@@ -92454,7 +92454,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		mov    %dx,EXPORT_SYMBOL(phwoar)+0x18(%eax)
 		mov    %dl,EXPORT_SYMBOL(phwoar)+0x1A(%eax)
 		add    $EXPORT_SYMBOL(phwoar),%eax
-		call   fillin_phwoar_type_info
+		call   ac_fillin_phwoar_type_info
 	jump_b261a:
 		mov    0xb2(%esp),%eax
 		sar    $0x10,%eax
@@ -110347,7 +110347,7 @@ func_ca166:
 		mov    %al,0xf(%edx)
 		mov    %edx,%eax
 		mov    %ecx,0x1c(%esp)
-		call   fillin_phwoar_type_info
+		call   ac_fillin_phwoar_type_info
 		testb  $0x80,0x10(%ebx)
 		je     jump_ca235
 		mov    (%ebx),%eax
@@ -110576,7 +110576,7 @@ func_ca37b:
 		mov    %al,0xf(%edx)
 		mov    %edx,%eax
 		mov    %ecx,0x44(%esp)
-		call   fillin_phwoar_type_info
+		call   ac_fillin_phwoar_type_info
 		testb  $0x80,0x10(%ebx)
 		je     jump_ca396
 		mov    (%ebx),%eax
@@ -110680,7 +110680,7 @@ func_ca500:
 		dec    %al
 		mov    %al,0xf(%edx)
 		mov    %edx,%eax
-		call   fillin_phwoar_type_info
+		call   ac_fillin_phwoar_type_info
 		testb  $0x80,0x10(%ebx)
 		je     jump_ca6be
 		mov    (%ebx),%eax
@@ -110822,7 +110822,7 @@ func_ca6a3:
 		dec    %al
 		mov    %al,0xf(%edx)
 		mov    %edx,%eax
-		call   fillin_phwoar_type_info
+		call   ac_fillin_phwoar_type_info
 		testb  $0x80,0x10(%ebx)
 		je     jump_ca7e8
 		mov    (%ebx),%ecx
@@ -110992,7 +110992,7 @@ func_ca88e:
 		dec    %al
 		mov    %al,0xf(%edx)
 		mov    %edx,%eax
-		call   fillin_phwoar_type_info
+		call   ac_fillin_phwoar_type_info
 		testb  $0x80,0x10(%ebx)
 		je     jump_ca8ba
 		mov    (%ebx),%eax
