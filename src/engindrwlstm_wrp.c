@@ -1081,12 +1081,34 @@ short draw_object(int sh_x, int sh_y, int sh_z,
     return draw_object_faces(cor_dx, cor_dy, cor_dz, point_object, doflags);
 }
 
-int mech_unkn_func_18(uint a1, struct M33 *p_mat, struct M31 *p_vec1, struct M31 *p_vec2)
+/** Transforms vecs_num vectors from p_vecs1 into p_vecs2 using the transpose of p_mat.
+ *
+ * Transforms vectors like: p_vec2[i] = transpose(p_mat) * p_vec1[i], which is equivalent
+ * to treating each vector as a row vector multiplied by p_mat.
+ */
+int vectors_mul_by_transposed_matrix(uint vecs_num, const struct M33 *p_mat,
+  const struct M31 *p_vecs1, struct M31 *p_vecs2)
 {
+#if 0
     int ret;
-    asm volatile ("call ASM_mech_unkn_func_18\n"
-        : "=r" (ret) : "a" (a1),  "d" (p_mat),  "b" (p_vec1),  "c" (p_vec2));
+    asm volatile ("call ASM_vectors_mul_by_transposed_matrix\n"
+        : "=r" (ret) : "a" (vecs_num),  "d" (p_mat),  "b" (p_vec1),  "c" (p_vec2));
     return ret;
+#endif
+    uint i;
+
+    for (i = 0; i < vecs_num; i++)
+    {
+        int x, y, z;
+
+        x = p_vecs1[i].R[0];
+        y = p_vecs1[i].R[1];
+        z = p_vecs1[i].R[2];
+        p_vecs2[i].R[0] = p_mat->R[0][0] * x + p_mat->R[1][0] * y + p_mat->R[2][0] * z;
+        p_vecs2[i].R[1] = p_mat->R[0][1] * x + p_mat->R[1][1] * y + p_mat->R[2][1] * z;
+        p_vecs2[i].R[2] = p_mat->R[0][2] * x + p_mat->R[1][2] * y + p_mat->R[2][2] * z;
+    }
+    return 0;
 }
 
 /** Normalises a 3-component Q14 fixed-point vector (unit length == 0x4000) in place.
@@ -1098,11 +1120,11 @@ static void mech12_norm_vec3_q14(int *p_x, int *p_y, int *p_z)
     int x, y, z, ss, i;
 
     x = *p_x; y = *p_y; z = *p_z;
-    ss = (int)((((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14));
+    ss = (((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14);
     if (ss == 0)
     {
         x <<= 16; y <<= 16; z <<= 16;
-        ss = (int)((((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14));
+        ss = (((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14);
     }
     if (ss == 0)
     {
@@ -1137,7 +1159,7 @@ static void mech12_norm_vec3_q14(int *p_x, int *p_y, int *p_z)
             } else {
                 break;
             }
-            ss = (int)((((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14));
+            ss = (((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14);
             dx >>= 1; dy >>= 1; dz >>= 1;
         }
     }
@@ -1145,15 +1167,109 @@ static void mech12_norm_vec3_q14(int *p_x, int *p_y, int *p_z)
     *p_x = x; *p_y = y; *p_z = z;
 }
 
+/* Permute mat1 into mat2, and apply axis rotation to mat1.
+ *
+ * While mat2 looks like a scratch storage here, its final
+ * content can be also relied upon by the caller afterwards.
+ * Rotation angle is provided as sine and cosine values.
+ */
 int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
-  int factor_x, int factor_z, int a5)
+  int sin_angl, int cos_angl, int axis)
 {
+#if 1
     int ret;
     asm volatile (
       "push %5\n"
       "call ASM_mech_unkn_func_12\n"
-        : "=r" (ret) : "a" (p_mat1),  "d" (p_mat2),  "b" (factor_x),  "c" (factor_z), "g" ((int)a5));
+        : "=r" (ret) : "a" (p_mat1),  "d" (p_mat2),  "b" (sin_angl),  "c" (cos_angl), "g" ((int)axis));
     return ret;
+#endif
+    struct M33 work;
+    int sin_neg, sin_pos, cos_val;
+    int row;
+
+    // Build a permuted copy of mat1 into mat2.
+    p_mat2->R[0][0] = p_mat1->R[0][2];
+    p_mat2->R[0][1] = p_mat1->R[1][1];
+    p_mat2->R[0][2] = p_mat1->R[2][2];
+    p_mat2->R[1][0] = p_mat1->R[0][1];
+    p_mat2->R[1][1] = p_mat1->R[1][0];
+    p_mat2->R[1][2] = p_mat1->R[2][1];
+    p_mat2->R[2][0] = p_mat1->R[0][0];
+    p_mat2->R[2][1] = p_mat1->R[1][2];
+    p_mat2->R[2][2] = p_mat1->R[2][0];
+
+    sin_neg = -sin_angl;
+    if (sin_neg >= 0x10000)
+        sin_neg = 0xffff;
+    sin_pos = -sin_neg;
+    cos_val = cos_angl;
+
+    switch (axis)
+    {
+    case 0:
+        // Rotate around local axis 0: spin columns 1/2 of each row, keep column 0.
+        for (row = 0; row < 3; row++)
+        {
+            int b, c;
+
+            b = p_mat2->R[row][1];
+            c = p_mat2->R[row][2];
+            work.R[row][0] = p_mat2->R[row][0];
+            work.R[row][1] = (((s64)b * cos_val) >> 16) + (((s64)c * sin_pos) >> 16);
+            work.R[row][2] = (((s64)b * sin_neg) >> 16) + (((s64)c * cos_val) >> 16);
+        }
+        mech12_norm_vec3_q14(&work.R[0][1], &work.R[1][1], &work.R[2][1]);
+        mech12_norm_vec3_q14(&work.R[0][2], &work.R[1][2], &work.R[2][2]);
+        break;
+    case 1:
+        // Rotate around local axis 1: spin columns 0/2 of each row, keep column 1.
+        for (row = 0; row < 3; row++)
+        {
+            int a, c;
+
+            a = p_mat2->R[row][0];
+            c = p_mat2->R[row][2];
+            work.R[row][0] = (((s64)a * cos_val) >> 16) + (((s64)c * sin_neg) >> 16);
+            work.R[row][1] = p_mat2->R[row][1];
+            work.R[row][2] = (((s64)a * sin_pos) >> 16) + (((s64)c * cos_val) >> 16);
+        }
+        mech12_norm_vec3_q14(&work.R[0][0], &work.R[1][0], &work.R[2][0]);
+        mech12_norm_vec3_q14(&work.R[0][2], &work.R[1][2], &work.R[2][2]);
+        break;
+    case 2:
+        // Rotate around local axis 2: spin columns 0/1 of each row, keep column 2.
+        for (row = 0; row < 3; row++)
+        {
+            int a, b;
+
+            a = p_mat2->R[row][0];
+            b = p_mat2->R[row][1];
+            work.R[row][0] = (((s64)a * cos_val) >> 16) + (((s64)b * sin_pos) >> 16);
+            work.R[row][1] = (((s64)a * sin_neg) >> 16) + (((s64)b * cos_val) >> 16);
+            work.R[row][2] = p_mat2->R[row][2];
+        }
+        mech12_norm_vec3_q14(&work.R[0][0], &work.R[1][0], &work.R[2][0]);
+        mech12_norm_vec3_q14(&work.R[0][1], &work.R[1][1], &work.R[2][1]);
+        break;
+    default:
+        LOGERR("invalid rotation axis provided: %d", (int)axis);
+        return 0;
+    }
+
+    // Undo the permutation applied above, writing the
+    // rotated/normalised matrix back into mat1.
+    p_mat1->R[0][2] = work.R[0][0];
+    p_mat1->R[1][1] = work.R[0][1];
+    p_mat1->R[2][2] = work.R[0][2];
+    p_mat1->R[0][1] = work.R[1][0];
+    p_mat1->R[1][0] = work.R[1][1];
+    p_mat1->R[2][1] = work.R[1][2];
+    p_mat1->R[0][0] = work.R[2][0];
+    p_mat1->R[1][2] = work.R[2][1];
+    p_mat1->R[2][0] = work.R[2][2];
+
+    return 0;
 }
 
 /** Re-orthonormalises a (possibly fixed-point-drifted) rotation matrix.
@@ -1235,7 +1351,7 @@ int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,
     locvec2.R[0] += p_itm4->field_6D.R[0];
     locvec2.R[1] += p_itm4->field_6D.R[1];
     locvec2.R[2] += p_itm4->field_6D.R[2];
-    mech_unkn_func_18(1, p_mat, &locvec2, &locvec1);
+    vectors_mul_by_transposed_matrix(1, p_mat, &locvec2, &locvec1);
 
     locvec2.R[0] = (locvec1.R[0] >> 14) + p_bodypos->R[0];
     locvec2.R[1] = (locvec1.R[1] >> 14) + p_bodypos->R[1];

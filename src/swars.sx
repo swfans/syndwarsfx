@@ -96302,7 +96302,7 @@ GLOBAL_FUNC(ASM_mech_unkn_func_13)	/* 0x0BDD60 */
 
 
 /*----------------------------------------------------------------*/
-GLOBAL_FUNC(ASM_mech_unkn_func_18)	/* 0x0BE620 */
+GLOBAL_FUNC(ASM_vectors_mul_by_transposed_matrix)	/* 0x0BE620 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
