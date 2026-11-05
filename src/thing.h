@@ -1120,6 +1120,11 @@ struct SimpleThing *create_stasis_pod(MapCoord x, MapCoord y, MapCoord z,
 struct SimpleThing *create_time_pod(MapCoord x, MapCoord y, MapCoord z,
   ushort timer);
 
+/** Creates a temporary light thing at given position and params.
+ */
+struct SimpleThing *create_temp_light(int prc_x, int prc_y, int prc_z,
+  short min_bright, short duration, short range_bright);
+
 struct SimpleThing *create_electric_strand(MapCoord x, MapCoord y, MapCoord z,
   MapCoord x2, MapCoord y2, MapCoord z2, int sound);
 

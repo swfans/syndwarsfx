@@ -727,6 +727,32 @@ void process_laser(struct Thing *p_laser)
         : : "a" (p_laser));
 }
 
+struct SimpleThing *create_temp_light(int prc_x, int prc_y, int prc_z,
+  short min_bright, short duration, short range_bright)
+{
+    short thing;
+    struct SimpleThing *p_sthing;
+
+    thing = get_new_sthing();
+    if (thing == 0)
+        return NULL;
+    if (thing <= -(STHINGS_LIMIT + 1))
+        return NULL;
+
+    p_sthing = &sthings[thing];
+
+    p_sthing->Type = SmTT_TEMP_LIGHT;
+    //TODO switch from precise coords to map coords when all callers are remade
+    p_sthing->X = prc_x; // MAPCOORD_TO_PRCCOORD(cor_x,127);
+    p_sthing->Y = prc_y; // MAPCOORD_TO_PRCCOORD(cor_y,127);
+    p_sthing->Z = prc_z; // MAPCOORD_TO_PRCCOORD(cor_z,127);
+    p_sthing->Timer1 = duration;
+    p_sthing->U.ULight.MinBright = min_bright;
+    p_sthing->U.ULight.RangeBright = range_bright;
+
+    return p_sthing;
+}
+
 struct SimpleThing *create_growing_e_strand(int x, int y, int z,
   struct Thing *p_thing, int health, int owner)
 {

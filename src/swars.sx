@@ -30453,7 +30453,7 @@ GLOBAL_FUNC(ASM_process_shield)	/* 0x056FAC */
 
 
 /*----------------------------------------------------------------*/
-create_temp_light:	/* 0x0571E4 */
+GLOBAL_FUNC(ASM_create_temp_light)	/* 0x0571E4 */
 /*----------------------------------------------------------------*/
 		push   %esi
 		push   %edi
@@ -91835,7 +91835,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		push   $0x80
 		mov    %ebp,%ebx
 		add    $0x6400,%edx
-		call   create_temp_light
+		call   ac_create_temp_light
 		jmp    jump_b2629
 	jump_b1c40:
 		cmp    $0xf,%ecx
@@ -91869,7 +91869,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		push   $0x50
 		mov    %ebp,%ebx
 		add    $0x6400,%edx
-		call   create_temp_light
+		call   ac_create_temp_light
 		add    $0xbc,%esp
 		pop    %ebp
 		pop    %edi
@@ -91901,7 +91901,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		push   $0x32
 		mov    %ebp,%ebx
 		add    $0x6400,%edx
-		call   create_temp_light
+		call   ac_create_temp_light
 		add    $0xbc,%esp
 		pop    %ebp
 		pop    %edi
@@ -91939,7 +91939,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		push   $0xa
 		mov    %ebp,%ebx
 		add    $0xc800,%edx
-		call   create_temp_light
+		call   ac_create_temp_light
 		add    $0xbc,%esp
 		pop    %ebp
 		pop    %edi
@@ -91979,7 +91979,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		push   $0x80
 		mov    %ebp,%ebx
 		add    $0x9600,%edx
-		call   create_temp_light
+		call   ac_create_temp_light
 		add    $0xbc,%esp
 		pop    %ebp
 		pop    %edi
@@ -92150,7 +92150,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		push   $0x32
 		mov    %ebp,%ebx
 		mov    $0x96,%esi
-		call   create_temp_light
+		call   ac_create_temp_light
 		mov    %esi,0xa8(%esp)
 		mov    $0x7f,%eax
 		mov    $0x1,%edx
@@ -92163,7 +92163,7 @@ GLOBAL_FUNC (ASM_new_bang)	/* 0xB1B30 */
 		push   $0x32
 		mov    0xa4(%esp),%eax
 		mov    %ebp,%ebx
-		call   create_temp_light
+		call   ac_create_temp_light
 		mov    $0x96,%edx
 		mov    $0x40,%ebx
 		mov    %edx,0xa8(%esp)
