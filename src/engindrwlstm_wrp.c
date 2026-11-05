@@ -1176,7 +1176,7 @@ static void mech12_norm_vec3_q14(int *p_x, int *p_y, int *p_z)
 int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
   int sin_angl, int cos_angl, int axis)
 {
-#if 1
+#if 0
     int ret;
     asm volatile (
       "push %5\n"
@@ -1190,13 +1190,13 @@ int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
 
     // Build a permuted copy of mat1 into mat2.
     p_mat2->R[0][0] = p_mat1->R[0][2];
-    p_mat2->R[0][1] = p_mat1->R[1][1];
+    p_mat2->R[0][1] = p_mat1->R[1][2];
     p_mat2->R[0][2] = p_mat1->R[2][2];
     p_mat2->R[1][0] = p_mat1->R[0][1];
-    p_mat2->R[1][1] = p_mat1->R[1][0];
+    p_mat2->R[1][1] = p_mat1->R[1][1];
     p_mat2->R[1][2] = p_mat1->R[2][1];
     p_mat2->R[2][0] = p_mat1->R[0][0];
-    p_mat2->R[2][1] = p_mat1->R[1][2];
+    p_mat2->R[2][1] = p_mat1->R[1][0];
     p_mat2->R[2][2] = p_mat1->R[2][0];
 
     sin_neg = -sin_angl;
@@ -1260,13 +1260,13 @@ int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
     // Undo the permutation applied above, writing the
     // rotated/normalised matrix back into mat1.
     p_mat1->R[0][2] = work.R[0][0];
-    p_mat1->R[1][1] = work.R[0][1];
+    p_mat1->R[1][2] = work.R[0][1];
     p_mat1->R[2][2] = work.R[0][2];
     p_mat1->R[0][1] = work.R[1][0];
-    p_mat1->R[1][0] = work.R[1][1];
+    p_mat1->R[1][1] = work.R[1][1];
     p_mat1->R[2][1] = work.R[1][2];
     p_mat1->R[0][0] = work.R[2][0];
-    p_mat1->R[1][2] = work.R[2][1];
+    p_mat1->R[1][0] = work.R[2][1];
     p_mat1->R[2][0] = work.R[2][2];
 
     return 0;
