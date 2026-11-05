@@ -2689,8 +2689,8 @@ TbBool weapon_shooting_fluid_creates_splash(MapCoord cor_x, MapCoord cor_z, usho
         p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1091, timer);
         if (p_sthing != NULL) {
             p_sthing->Object = first_size + (LbRandomAnyShort() & 0x7F);
-            // Generic type which just plays animation until end
-            p_sthing->SubType = 58;
+            // Splash type, spawns more bulges around like water splash does
+            p_sthing->SubType = 60;
             play_dist_ssample(p_sthing, 25, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
         }
         return true;

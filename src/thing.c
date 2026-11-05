@@ -608,8 +608,8 @@ void process_grenade(struct Thing *p_grenade)
             p_effect = create_scale_effect(cor_x, cor_y, cor_z, 1091, 8);
             if (p_effect != NULL) {
                 p_effect->Object = 62 + (LbRandomAnyShort() & 0x7F);
-                // Generic type which just plays animation until end
-                p_effect->SubType = 58;
+                // Splash type, spawns more bulges around like water splash does
+                p_effect->SubType = 60;
                 create_sound_effect(cor_x, cor_y, cor_z, 25, 0, 0);
             }
             remove_thing(p_grenade->ThingOffset);
@@ -945,9 +945,43 @@ void process_flame1(struct SimpleThing *p_sthing)
 
 void process_splash(struct SimpleThing *p_sthing)
 {
+#if 0
     asm volatile (
       "call ASM_process_splash\n"
         : : "a" (p_sthing));
+#endif
+    ushort frm;
+
+    p_sthing->Timer1--;
+    // Every other turn of the timer, spawn another splash nearby
+    if ((p_sthing->Timer1 > 0) && ((p_sthing->Timer1 & 0x01) != 0))
+    {
+        struct SimpleThing *p_splash;
+        ushort cor_x, cor_z;
+        int cor_y;
+
+        cor_x = PRCCOORD_TO_MAPCOORD(p_sthing->X) + (LbRandomAnyShort() & 0xFF) - 128;
+        cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z) + (LbRandomAnyShort() & 0xFF) - 128;
+        cor_y = alt_at_point(cor_x, cor_z) >> 8;
+        // The original always used water splash animation 1087; using the animation
+        // of the parent effect allows sludge bulges to multiply as well. Scale
+        // effects store their animation index decreased by one as StartFrame.
+        p_splash = create_scale_effect(cor_x, cor_y, cor_z, p_sthing->StartFrame + 1, 0);
+        if (p_splash != NULL) {
+            p_splash->SubType = 60;
+            p_splash->Object = 62 + (LbRandomAnyShort() & 0x7F);
+        }
+    }
+
+    frm = frame[p_sthing->Frame].Next;
+
+    if ((frame[frm].Flags & 0x01) != 0) {
+        remove_sthing(p_sthing->ThingOffset);
+        delete_snode(p_sthing);
+        return;
+    }
+
+    p_sthing->Frame = frm;
 }
 
 void process_scale_effect(struct SimpleThing *p_sthing, ThingIdx thing_item)
