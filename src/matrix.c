@@ -27,8 +27,13 @@ ushort next_local_mat = 1;
 
 void matrix_identity_fill(struct M33 *p_mat)
 {
+#if 0
     asm volatile ("call ASM_matrix_identity_fill\n"
         : : "a" (p_mat));
+#endif
+    p_mat->R[0][0] = 0x4000; p_mat->R[0][1] = 0; p_mat->R[0][2] = 0;
+    p_mat->R[1][0] = 0; p_mat->R[1][1] = 0x4000; p_mat->R[1][2] = 0;
+    p_mat->R[2][0] = 0; p_mat->R[2][1] = 0; p_mat->R[2][2] = 0x4000;
 }
 
 void matrix_transpose_copy(struct M33 *p_mat1, struct M33 *p_mat2)
@@ -42,6 +47,57 @@ void matrix_transpose_copy(struct M33 *p_mat1, struct M33 *p_mat2)
     for (row = 0; row < 3; row++)
         for (col = 0; col < 3; col++)
             p_mat2->R[col][row] = p_mat1->R[row][col];
+}
+
+void matrix_rotate_yaw_copy(const struct M33 *p_src, struct M33 *p_dst,
+  int cos_v, int sin_v)
+{
+    int row;
+    for (row = 0; row < 3; row++)
+    {
+        int a, c;
+        a = p_src->R[row][0];
+        c = p_src->R[row][2];
+        p_dst->R[row][0] = (int)((((s64)a * sin_v) >> 16)
+          + (((s64)c * cos_v) >> 16));
+        p_dst->R[row][1] = p_src->R[row][1];
+        p_dst->R[row][2] = (int)((((s64)c * sin_v) >> 16)
+          - (((s64)a * cos_v) >> 16));
+    }
+}
+
+void matrix_rotate_pitch_copy(const struct M33 *p_src, struct M33 *p_dst,
+  int cos_v, int sin_v)
+{
+    int row;
+    for (row = 0; row < 3; row++)
+    {
+        int a, b;
+        a = p_src->R[row][0];
+        b = p_src->R[row][1];
+        p_dst->R[row][0] = (int)((((s64)a * cos_v) >> 16)
+          - (((s64)b * sin_v) >> 16));
+        p_dst->R[row][1] = (int)((((s64)b * cos_v) >> 16)
+          + (((s64)a * sin_v) >> 16));
+        p_dst->R[row][2] = p_src->R[row][2];
+    }
+}
+
+void matrix_rotate_roll_copy(const struct M33 *p_src, struct M33 *p_dst,
+  int cos_v, int sin_v)
+{
+    int row;
+    for (row = 0; row < 3; row++)
+    {
+        int b, c;
+        b = p_src->R[row][1];
+        c = p_src->R[row][2];
+        p_dst->R[row][0] = p_src->R[row][0];
+        p_dst->R[row][1] = (int)((((s64)b * sin_v) >> 16)
+          + (((s64)c * cos_v) >> 16));
+        p_dst->R[row][2] = (int)((((s64)c * sin_v) >> 16)
+          - (((s64)b * cos_v) >> 16));
+    }
 }
 
 void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short zangle)

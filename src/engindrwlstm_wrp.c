@@ -1089,6 +1089,62 @@ int mech_unkn_func_18(uint a1, struct M33 *p_mat, struct M31 *p_vec1, struct M31
     return ret;
 }
 
+/** Normalises a 3-component Q14 fixed-point vector (unit length == 0x4000) in place.
+ *
+ * Uses a bisection-based iterative algorithm, with up to 10 refining steps.
+ */
+static void mech12_norm_vec3_q14(int *p_x, int *p_y, int *p_z)
+{
+    int x, y, z, ss, i;
+
+    x = *p_x; y = *p_y; z = *p_z;
+    ss = (int)((((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14));
+    if (ss == 0)
+    {
+        x <<= 16; y <<= 16; z <<= 16;
+        ss = (int)((((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14));
+    }
+    if (ss == 0)
+    {
+        /* Degenerate (zero) vector - fall back to a unit vector on the first axis. */
+        *p_x = 0x4000;
+        *p_y = 0;
+        *p_z = 0;
+        return;
+    }
+
+    while (ss > 0x10000)
+    {
+        ss >>= 2;
+        x >>= 1; y >>= 1; z >>= 1;
+    }
+    while (ss < 0x1000)
+    {
+        ss <<= 2;
+        x <<= 1; y <<= 1; z <<= 1;
+    }
+
+    {
+        int dx, dy, dz;
+
+        dx = x >> 1; dy = y >> 1; dz = z >> 1;
+        for (i = 10; i > 0; i--)
+        {
+            if (ss > 0x4001) {
+                x -= dx; y -= dy; z -= dz;
+            } else if (ss < 0x3fff) {
+                x += dx; y += dy; z += dz;
+            } else {
+                break;
+            }
+            ss = (int)((((s64)x * x) >> 14) + (((s64)y * y) >> 14) + (((s64)z * z) >> 14));
+            dx >>= 1; dy >>= 1; dz >>= 1;
+        }
+    }
+
+    *p_x = x; *p_y = y; *p_z = z;
+}
+
 int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
   int factor_x, int factor_z, int a5)
 {
@@ -1100,12 +1156,69 @@ int mech_unkn_func_12(struct M33 *p_mat1, struct M33 *p_mat2,
     return ret;
 }
 
+/** Re-orthonormalises a (possibly fixed-point-drifted) rotation matrix.
+ *
+ * Decompose the matrix into yaw/pitch/roll angles (roll angle requires
+ * re-applying the first two). Then rebuild a clean matrix from those
+ * angles. Finally, re-normalise all 3 rows.
+ */
 int mech_unkn_func_13(struct M33 *p_mat1, struct M33 *p_mat2)
 {
+#if 0
     int ret;
     asm volatile ("call ASM_mech_unkn_func_13\n"
         : "=r" (ret) : "a" (p_mat1),  "d" (p_mat2));
     return ret;
+#endif
+    int len_xz, len_full, len_roll;
+    int cos_yaw, sin_yaw, cos_pitch, sin_pitch, cos_roll, sin_roll;
+
+    // Decompose row0 into yaw/pitch angles
+    len_xz = LbSqrL(p_mat1->R[0][0] * p_mat1->R[0][0]
+      + p_mat1->R[0][2] * p_mat1->R[0][2]);
+    len_full = LbSqrL((ulong)(p_mat1->R[0][0] * p_mat1->R[0][0]
+      + p_mat1->R[0][1] * p_mat1->R[0][1]
+      + p_mat1->R[0][2] * p_mat1->R[0][2]));
+
+    if (len_xz > 0) {
+        cos_yaw = (((s64)p_mat1->R[0][2] << 16) / len_xz);
+        sin_yaw = (((s64)p_mat1->R[0][0] << 16) / len_xz);
+    } else {
+        cos_yaw = 0;
+        sin_yaw = 0x10000;
+    }
+    sin_pitch = (((s64)p_mat1->R[0][1] << 16) / len_full);
+    cos_pitch = (((s64)len_xz << 16) / len_full);
+
+    // Apply yaw, then pitch, overwriting mat1 with the Pitch(Yaw(mat1)).
+    matrix_rotate_yaw_copy(p_mat1, p_mat2, cos_yaw, sin_yaw);
+    matrix_rotate_pitch_copy(p_mat2, p_mat1, cos_pitch, -sin_pitch);
+
+    // The roll angle is derived from row1 of the matrix AFTER the
+    // yaw+pitch rotations above were applied.
+    len_roll = LbSqrL(p_mat1->R[1][1] * p_mat1->R[1][1]
+      + p_mat1->R[1][2] * p_mat1->R[1][2]);
+    if (len_roll > 0) {
+        cos_roll = (((s64)p_mat1->R[1][2] << 16) / len_roll);
+        sin_roll = (((s64)p_mat1->R[1][1] << 16) / len_roll);
+    } else {
+        cos_roll = 0;
+        sin_roll = 0x10000;
+    }
+
+    // Build a clean rotation matrix in mat1 by creating an identity matrix,
+    // then applyint angle transformations: Yaw(Pitch(Roll(identity))).
+    matrix_identity_fill(p_mat2);
+    matrix_rotate_roll_copy(p_mat2, p_mat1, -cos_roll, sin_roll);
+    matrix_rotate_pitch_copy(p_mat1, p_mat2, cos_pitch, sin_pitch);
+    matrix_rotate_yaw_copy(p_mat2, p_mat1, -cos_yaw, sin_yaw);
+
+    // Final precision cleanup: re-normalise each row to unit length.
+    mech12_norm_vec3_q14(&p_mat1->R[0][0], &p_mat1->R[0][1], &p_mat1->R[0][2]);
+    mech12_norm_vec3_q14(&p_mat1->R[1][0], &p_mat1->R[1][1], &p_mat1->R[1][2]);
+    mech12_norm_vec3_q14(&p_mat1->R[2][0], &p_mat1->R[2][1], &p_mat1->R[2][2]);
+
+    return 0;
 }
 
 int mech_unkn_func_11(struct unkn_mech_struc4 *p_itm4,

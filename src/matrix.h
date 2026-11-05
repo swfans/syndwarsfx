@@ -48,6 +48,21 @@ void matrix_identity_fill(struct M33 *p_matx);
  */
 void matrix_transpose_copy(struct M33 *p_mat1, struct M33 *p_mat2);
 
+/** Rotates columns 0 and 2 of a 3x3 matrix, for yaw part of Euler decomposition.
+ */
+void matrix_rotate_yaw_copy(const struct M33 *p_src, struct M33 *p_dst,
+  int cos_v, int sin_v);
+
+/** Rotates columns 0 and 1 of a 3x3 matrix, for pitch part of Euler decomposition.
+ */
+void matrix_rotate_pitch_copy(const struct M33 *p_src, struct M33 *p_dst,
+  int cos_v, int sin_v);
+
+/** Rotates columns 1 and 2 of a 3x3 matrix, for roll part of Euler decomposition.
+ */
+void matrix_rotate_roll_copy(const struct M33 *p_src, struct M33 *p_dst,
+  int cos_v, int sin_v);
+
 void matrix_transform(struct M31 *p_result, struct M33 *p_trans, struct M31 *p_source);
 void rotate_object_axis(struct M33 *p_base, short xangle, short yangle, short zangle);
 
