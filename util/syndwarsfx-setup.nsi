@@ -174,8 +174,12 @@ Section "Game music"  Section_1
   Goto inst_music_done
 inst_music_go:
   SetOutPath $PLUGINSDIR
-  File "${BUILDENV_UTIL_DIR}\rip.exe"
-  File "${BUILDENV_UTIL_DIR}\akrip32.dll"
+  File "${BUILDENV_UTIL_DIR}\cd-paranoia.exe"
+  File "${BUILDENV_UTIL_DIR}\libcdio_cdda-2.dll"
+  File "${BUILDENV_UTIL_DIR}\libcdio-21.dll"
+  File "${BUILDENV_UTIL_DIR}\libcdio_paranoia-2.dll"
+  File "${BUILDENV_UTIL_DIR}\libwinpthread-1.dll"
+  File "${BUILDENV_UTIL_DIR}\libiconv-2.dll"
   File "${BUILDENV_UTIL_DIR}\oggenc.exe"
   File "${BUILDENV_UTIL_DIR}\libogg.dll"
   File "${BUILDENV_UTIL_DIR}\libvorbis.dll"
@@ -183,7 +187,10 @@ inst_music_go:
   File "${BUILDENV_UTIL_DIR}\libFLAC_dynamic.dll"
   File "${BUILDENV_UTIL_DIR}\oggenc_LICENSE"
   CreateDirectory "$INSTDIR\music"
-  ExecWait "$PLUGINSDIR\rip.exe $inst_src_root_dir $\"$INSTDIR\music$\""
+  StrCpy $0 $inst_src_root_dir -1   ;strip the trailing slash from drive letter - CD Paranoia does not like this
+  ExecWait "$PLUGINSDIR\cd-paranoia.exe -d $0 2 $\"$INSTDIR\music\track1.wav$\""
+  ExecWait "$PLUGINSDIR\cd-paranoia.exe -d $0 3 $\"$INSTDIR\music\track2.wav$\""
+  ExecWait "$PLUGINSDIR\cd-paranoia.exe -d $0 4 $\"$INSTDIR\music\track3.wav$\""
   ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_1.ogg$\" $\"$INSTDIR\music\track1.wav$\""
   ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_2.ogg$\" $\"$INSTDIR\music\track2.wav$\""
   ExecWait "$PLUGINSDIR\oggenc.exe -b 192 --output=$\"$INSTDIR\music\track_3.ogg$\" $\"$INSTDIR\music\track3.wav$\""
