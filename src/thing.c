@@ -586,7 +586,7 @@ void process_grenade(struct Thing *p_grenade)
             cor_x = PRCCOORD_TO_MAPCOORD(p_grenade->X);
             cor_z = PRCCOORD_TO_MAPCOORD(p_grenade->Z);
             cor_y = PRCCOORD_TO_MAPCOORD(alt_at_point(cor_x, cor_z));
-            p_effect = create_scale_effect(cor_x, cor_y, cor_z, 1087, 8);
+            p_effect = create_scale_effect(cor_x, cor_y, cor_z, SPLASH_ANIM_WATER, 8);
             if (p_effect != NULL) {
                 p_effect->SubType = 60;
                 p_effect->Object = 62 + (LbRandomAnyShort() & 0x7F);
@@ -605,11 +605,11 @@ void process_grenade(struct Thing *p_grenade)
             cor_x = PRCCOORD_TO_MAPCOORD(p_grenade->X);
             cor_z = PRCCOORD_TO_MAPCOORD(p_grenade->Z);
             cor_y = PRCCOORD_TO_MAPCOORD(alt_at_point(cor_x, cor_z));
-            p_effect = create_scale_effect(cor_x, cor_y, cor_z, 1091, 8);
+            p_effect = create_scale_effect(cor_x, cor_y, cor_z, SPLASH_ANIM_SLUDGE, 8);
             if (p_effect != NULL) {
-                p_effect->Object = 62 + (LbRandomAnyShort() & 0x7F);
-                // Generic type which just plays animation until end
-                p_effect->SubType = 58;
+                p_effect->Object = 62 + SPLASH_SLUDGE_EXTRA_SIZE + (LbRandomAnyShort() & 0x7F);
+                // Splash type, spawns more bulges around like water splash does
+                p_effect->SubType = 60;
                 create_sound_effect(cor_x, cor_y, cor_z, 25, 0, 0);
             }
             remove_thing(p_grenade->ThingOffset);
@@ -969,11 +969,86 @@ void process_flame1(struct SimpleThing *p_sthing)
         : : "a" (p_sthing));
 }
 
+/** Properties of extra splashes spawned around an impact on a fluid.
+ */
+struct FluidSplashProps {
+    /** Animation of the splash, which also identifies the fluid. */
+    ushort Anim;
+    /** Random mask deciding whether to skip spawning a splash; zero means never skip. */
+    ushort SkipMask;
+    /** Random mask for splash position; the splash is spread by half of it in each direction. */
+    ushort SpreadMask;
+    /** Smallest size of a splash; random size is added to it. */
+    ushort SizeBase;
+};
+
+static const struct FluidSplashProps fluid_splash_props[] = {
+    // Water, as in the original game; must stay first, as the default
+    {SPLASH_ANIM_WATER,  0x00, 0xFF, 62},
+    // Sludge is dense - about half the bulges, closer to the impact, but bulkier
+    {SPLASH_ANIM_SLUDGE, 0x01, 0x7F, 62 + SPLASH_SLUDGE_EXTRA_SIZE},
+};
+
+static const struct FluidSplashProps *get_fluid_splash_props(ushort anim)
+{
+    int i;
+
+    for (i = 0; i < (int)(sizeof(fluid_splash_props)/sizeof(fluid_splash_props[0])); i++)
+    {
+        if (fluid_splash_props[i].Anim == anim)
+            return &fluid_splash_props[i];
+    }
+    return &fluid_splash_props[0];
+}
+
 void process_splash(struct SimpleThing *p_sthing)
 {
+#if 0
     asm volatile (
       "call ASM_process_splash\n"
         : : "a" (p_sthing));
+#endif
+    const struct FluidSplashProps *p_props;
+    ushort anim, frm;
+
+    // The original always used water splash animation 1087; using the animation
+    // of the parent effect allows sludge bulges to multiply as well. Scale
+    // effects store their animation index decreased by one as StartFrame.
+    anim = p_sthing->StartFrame + 1;
+    p_props = get_fluid_splash_props(anim);
+
+    p_sthing->Timer1--;
+    // Every other turn of the timer, spawn another splash nearby; dense fluids
+    // randomly skip some. Water never skips, and does not use a random value
+    // for it, to keep the original sequence of random values.
+    if ((p_sthing->Timer1 > 0) && ((p_sthing->Timer1 & 0x01) != 0) &&
+      ((p_props->SkipMask == 0) || ((LbRandomAnyShort() & p_props->SkipMask) == 0)))
+    {
+        struct SimpleThing *p_splash;
+        ushort cor_x, cor_z;
+        int cor_y;
+        short spread;
+
+        spread = (p_props->SpreadMask + 1) / 2;
+        cor_x = PRCCOORD_TO_MAPCOORD(p_sthing->X) + (LbRandomAnyShort() & p_props->SpreadMask) - spread;
+        cor_z = PRCCOORD_TO_MAPCOORD(p_sthing->Z) + (LbRandomAnyShort() & p_props->SpreadMask) - spread;
+        cor_y = alt_at_point(cor_x, cor_z) >> 8;
+        p_splash = create_scale_effect(cor_x, cor_y, cor_z, anim, 0);
+        if (p_splash != NULL) {
+            p_splash->SubType = 60;
+            p_splash->Object = p_props->SizeBase + (LbRandomAnyShort() & 0x7F);
+        }
+    }
+
+    frm = frame[p_sthing->Frame].Next;
+
+    if ((frame[frm].Flags & 0x01) != 0) {
+        remove_sthing(p_sthing->ThingOffset);
+        delete_snode(p_sthing);
+        return;
+    }
+
+    p_sthing->Frame = frm;
 }
 
 void process_scale_effect(struct SimpleThing *p_sthing, ThingIdx thing_item)
