@@ -35,6 +35,13 @@ extern "C" {
 
 #define INVALID_THING &things[0]
 
+/** Animation index of the water splash effect. */
+#define SPLASH_ANIM_WATER 1087
+/** Animation index of the sludge bulge effect. */
+#define SPLASH_ANIM_SLUDGE 1091
+/** Size added to sludge bulges over water splashes; sludge is dense, so bulges are bulkier. */
+#define SPLASH_SLUDGE_EXTRA_SIZE 34
+
 enum ThingType {
     TT_NONE = 0x0,
     TT_UNKN1 = 0x1,

@@ -2670,7 +2670,7 @@ TbBool weapon_shooting_fluid_creates_splash(MapCoord cor_x, MapCoord cor_z, usho
     {
         // Create water splash effect
         cor_y = alt_at_point(cor_x, cor_z) >> 8;
-        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1087, timer);
+        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, SPLASH_ANIM_WATER, timer);
         if (p_sthing != NULL) {
             p_sthing->Object = first_size + (LbRandomAnyShort() & 0x7F);
             p_sthing->SubType = 60;
@@ -2682,9 +2682,10 @@ TbBool weapon_shooting_fluid_creates_splash(MapCoord cor_x, MapCoord cor_z, usho
     {
         // Create sludge bulge effect
         cor_y = alt_at_point(cor_x, cor_z) >> 8;
-        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, 1091, timer);
+        p_sthing = create_scale_effect(cor_x, cor_y, cor_z, SPLASH_ANIM_SLUDGE, timer);
         if (p_sthing != NULL) {
-            p_sthing->Object = first_size + (LbRandomAnyShort() & 0x7F);
+            // Sludge is dense, so bulges are bulkier than water splashes
+            p_sthing->Object = first_size + SPLASH_SLUDGE_EXTRA_SIZE + (LbRandomAnyShort() & 0x7F);
             // Splash type, spawns more bulges around like water splash does
             p_sthing->SubType = 60;
             play_dist_ssample(p_sthing, 25, FULL_VOL, EQUL_PAN, NORM_PTCH, LOOP_NO, 3);
