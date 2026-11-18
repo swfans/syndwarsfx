@@ -190,7 +190,7 @@ jobs:
 
       - name: Install python modules
         run: |
-          python -m pip install polib
+          python -m pip install --break-system-packages polib
 
       - name: Install WildMIDI
         run: |
