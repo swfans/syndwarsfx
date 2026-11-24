@@ -106,7 +106,8 @@ void swap_wscreen(void)
 
 TbBool screen_idle_update(void)
 {
-    //TODO when this gets modified to run it separate thread, it should only run if screen not locked
+    if (LbScreenIsLocked())
+        return false;
     swap_wscreen();
     return true;
 }
