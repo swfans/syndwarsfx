@@ -150,23 +150,26 @@ jobs:
           install: >-
               git
               unzip
-              mingw-w64-i686-python-pip
+              python
+              python-pip              
               mingw-w64-i686-toolchain
               mingw-w64-i686-autotools
-              mingw-w64-i686-libpng
-              mingw-w64-i686-SDL2
-              mingw-w64-i686-libvorbis
-              mingw-w64-i686-libogg
+
 
       - name: Manual install of extra MSYS2 packages
         run: |
           # package no longer supported: mingw-w64-i686-openal
           pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-libmysofa-1.3.4-1-any.pkg.tar.zst
           pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-openal-1.25.2-1-any.pkg.tar.zst
+          pacman -U --noconfirm --needed --assume-installed mingw-w64-i686-vulkan=999 https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-SDL2-2.32.8-1-any.pkg.tar.zst
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-libogg-1.3.6-1-any.pkg.tar.zst
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-libvorbis-1.3.7-3-any.pkg.tar.zst
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-libpng-1.6.59-2-any.pkg.tar.zst
+          
 
       - name: Install python modules
         run: |
-          python -m pip install polib
+          python -m pip install --break-system-packages polib
 
       - name: Install WildMIDI
         run: |
