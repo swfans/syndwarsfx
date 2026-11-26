@@ -147,54 +147,24 @@ jobs:
         with:
           msystem: MINGW32
           update: true
-          # The i686 libraries are installed in the next step: MSYS2 has removed them
-          # from the live repo. python/pip come from the 64-bit MSYS environment
-          # (only used to run the polib build scripts, not for the 32-bit target).
           install: >-
               git
               unzip
-              curl
               python
-              python-pip
+              python-pip              
               mingw-w64-i686-toolchain
               mingw-w64-i686-autotools
 
-      - name: Install 32-bit libraries from the MSYS2 package archive
+
+      - name: Manual install of extra MSYS2 packages
         run: |
-          # MSYS2 no longer ships these i686 packages in the live repo, but the old
-          # package files are still hosted at repo.msys2.org. Install the newest
-          # archived build of each. Once a run succeeds, copy the resolved versions
-          # from the log and pin them below to make the build fully reproducible.
-          BASE=https://repo.msys2.org/mingw/mingw32
-          curl -fsSL "$BASE/" -o listing.html
-
-          latest() {
-            grep -oE "href=\"mingw-w64-i686-$1-[0-9][^\"]*-any\.pkg\.tar\.zst\"" listing.html \
-              | sed -E 's/^href="//; s/"$//' | sort -V | tail -n 1
-          }
-
-          urls=()
-          for pkg in SDL2 libpng libvorbis libogg; do
-            file=$(latest "$pkg")
-            if [ -z "$file" ]; then echo "::error::No archived package found for $pkg"; exit 1; fi
-            echo "$pkg -> $file"
-            urls+=("$BASE/$file")
-          done
-
-          # Already pinned packages (no longer in the live repo)
-          urls+=("$BASE/mingw-w64-i686-libmysofa-1.3.4-1-any.pkg.tar.zst")
-          urls+=("$BASE/mingw-w64-i686-openal-1.25.2-1-any.pkg.tar.zst")
-
-          # One transaction, so the packages can depend on each other.
-          # SDL2 depends on mingw-w64-i686-vulkan, which MSYS2 has removed; SDL2 only
-          # loads Vulkan at runtime, so declare that dependency as already satisfied.
-          # (Without this pacman silently skips SDL2 when run with --noconfirm.)
-          pacman -U --noconfirm --needed             --assume-installed mingw-w64-i686-vulkan=999             "${urls[@]}"
-
-          # Fail loudly if any package was skipped
-          for pkg in SDL2 libpng libvorbis libogg libmysofa openal; do
-            pacman -Q "mingw-w64-i686-$pkg"
-          done
+          # package no longer supported: mingw-w64-i686-openal
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-libmysofa-1.3.4-1-any.pkg.tar.zst
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-openal-1.25.2-1-any.pkg.tar.zst
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-SDL2-2.32.8-1-any.pkg.tar.zst
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-libvorbis-1.3.7-3-any.pkg.tar.zst
+          pacman -U --noconfirm https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-libogg-1.3.6-1-any.pkg.tar.zst
+          
 
       - name: Install python modules
         run: |
