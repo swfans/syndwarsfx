@@ -208,7 +208,7 @@ void screen_save_backup_buffer(struct ScreenBufBkp *bkp)
 {
     LbScreenStoreGraphicsWindow(&bkp->GWindow);
     bkp->WScreen = lbDisplay.WScreen;
-    bkp->PhysicalScreenWidth = lbDisplay.GraphicsScreenWidth;
+    bkp->PhysicalScreenWidth = lbDisplay.PhysicalScreenWidth;
     bkp->PhysicalScreenHeight = lbDisplay.PhysicalScreenHeight;
     bkp->GraphicsScreenWidth = lbDisplay.GraphicsScreenWidth;
     bkp->GraphicsScreenHeight = lbDisplay.GraphicsScreenHeight;
@@ -229,7 +229,7 @@ void screen_switch_to_custom_buffer(struct ScreenBufBkp *bkp,
 void screen_load_backup_buffer(struct ScreenBufBkp *bkp)
 {
     lbDisplay.WScreen = bkp->WScreen;
-    lbDisplay.GraphicsScreenWidth = bkp->PhysicalScreenWidth;
+    lbDisplay.PhysicalScreenWidth = bkp->PhysicalScreenWidth;
     lbDisplay.PhysicalScreenHeight = bkp->PhysicalScreenHeight;
     lbDisplay.GraphicsScreenWidth = bkp->GraphicsScreenWidth;
     lbDisplay.GraphicsScreenHeight = bkp->GraphicsScreenHeight;
