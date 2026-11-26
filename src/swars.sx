@@ -270,7 +270,6 @@
 .global EXPORT_SYMBOL(network_players);	/* 0x1C5B58 */
 .global EXPORT_SYMBOL(net_player_colours);	/* 0x1C5C30 */
 .global EXPORT_SYMBOL(group_factions);	/* 0x1C5C38 */
-.global EXPORT_SYMBOL(net_host_player_no);	/* 0x1C6D49 */
 .global EXPORT_SYMBOL(login_name);		/* 0x1C6D4C */
 .global EXPORT_SYMBOL(background_type);	/* 0x1C6DEC */
 .global EXPORT_SYMBOL(global_date);		/* 0x1C6DF0 */
@@ -83876,7 +83875,7 @@ GLOBAL_FUNC(ASM_my_preprocess_text)	/* 0x0A35AC */
 		call   ac_memmove
 		xor    %eax,%eax
 	jump_a3643:
-		mov    EXPORT_SYMBOL(net_host_player_no)(%eax),%edx
+		mov    EXPORT_SYMBOL(login_name)-3(%eax),%edx
 		sar    $0x18,%edx
 		test   %edx,%edx
 		je     jump_a35f4
